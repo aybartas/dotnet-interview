@@ -14,21 +14,22 @@
 |---|-------|------|
 | 0 | [Ön Koşullar](#0-ön-koşullar) | Git, HTTP, CLI, algoritma |
 | 1 | [C# Dili](#1-c-dili) | Dilin kendisi, temelden ileriye |
-| 2 | [.NET Platform Temelleri](#2-net-platform-temelleri) | Runtime, hosting, configuration, DI, middleware, logging |
-| 3 | [Multithreading, Concurrency & Async](#3-multithreading-concurrency--async) | Thread, TPL, senkronizasyon, async internals |
-| 4 | [API Geliştirme](#4-api-geliştirme) | REST, gRPC, GraphQL, SignalR, versioning, güvenlik |
-| 5 | [Veri Erişimi & ORM](#5-veri-erişimi--orm) | EF Core, Dapper, ADO.NET, mapping |
-| 6 | [Veritabanları](#6-veritabanları) | SQL Server, PostgreSQL, MongoDB, Redis |
-| 7 | [Test](#7-test) | Unit, integration, E2E, performance, architecture |
-| 8 | [Mimari & Tasarım](#8-mimari--tasarım) | SOLID, patterns, Clean Arch, DDD, CQRS |
-| 9 | [Microservices & Dağıtık Sistemler](#9-microservices--dağıtık-sistemler) | Message broker, saga, gateway, resilience |
-| 10 | [Performans & Bellek](#10-performans--bellek) | GC, allocation, benchmark, AOT |
-| 11 | [Güvenlik](#11-güvenlik) | OWASP, auth, secrets, kriptografi |
-| 12 | [Docker, Kubernetes & DevOps](#12-docker-kubernetes--devops) | Container, orchestration, CI/CD, IaC |
-| 13 | [Azure Cloud](#13-azure-cloud) | PaaS servisleri, Aspire |
-| 14 | [AI Engineering (.NET)](#14-ai-engineering-net) | Semantic Kernel, RAG, agents, ML.NET |
-| 15 | [Sistem Tasarımı](#15-sistem-tasarımı) | Scalability, case study'ler |
-| 16 | [Mülakat Süreci](#16-mülakat-süreci) | Coding, behavioral, system design |
+| 2 | [Derleme, Build & Çalıştırma](#2-derleme-build--çalıştırma) | Roslyn, IL, MSBuild, apphost, JIT, publish modelleri |
+| 3 | [.NET Platform Servisleri](#3-net-platform-servisleri) | Hosting, configuration, DI, middleware, logging |
+| 4 | [Multithreading, Concurrency & Async](#4-multithreading-concurrency--async) | Thread, TPL, senkronizasyon, async internals |
+| 5 | [API Geliştirme](#5-api-geliştirme) | REST, gRPC, GraphQL, SignalR, versioning, güvenlik |
+| 6 | [Veri Erişimi & ORM](#6-veri-erişimi--orm) | EF Core, Dapper, ADO.NET, mapping |
+| 7 | [Veritabanları](#7-veritabanları) | SQL Server, PostgreSQL, MongoDB, Redis |
+| 8 | [Test](#8-test) | Unit, integration, E2E, performance, architecture |
+| 9 | [Mimari & Tasarım](#9-mimari--tasarım) | SOLID, patterns, Clean Arch, DDD, CQRS |
+| 10 | [Microservices & Dağıtık Sistemler](#10-microservices--dağıtık-sistemler) | Message broker, saga, gateway, resilience |
+| 11 | [Performans & Bellek](#11-performans--bellek) | GC, allocation, benchmark, AOT |
+| 12 | [Güvenlik](#12-güvenlik) | OWASP, auth, secrets, kriptografi |
+| 13 | [Docker, Kubernetes & DevOps](#13-docker-kubernetes--devops) | Container, orchestration, CI/CD, IaC |
+| 14 | [Azure Cloud](#14-azure-cloud) | PaaS servisleri, Aspire |
+| 15 | [AI Engineering (.NET)](#15-ai-engineering-net) | Semantic Kernel, RAG, agents, ML.NET |
+| 16 | [Sistem Tasarımı](#16-sistem-tasarımı) | Scalability, case study'ler |
+| 17 | [Mülakat Süreci](#17-mülakat-süreci) | Coding, behavioral, system design |
 
 Ayrıca: [Seviye Matrisi](#seviye-matrisi) · [Repo Yapısı](#repo-yapısı) · [Çalışma Planı](#çalışma-planı) · [Kaynaklar](#kaynaklar)
 
@@ -63,21 +64,22 @@ Hangi seviyede hangi bölümlerin **hangi derinlikte** beklendiğinin özeti. M�
 | Bölüm | 🟢 Junior | 🟡 Mid | 🔴 Senior |
 |-------|----------|--------|-----------|
 | **0. Ön Koşullar** | Git, HTTP, CLI | + REST olgunluk, TLS | + DNS/CDN/ağ katmanı |
-| **1. C# Dili** | Sözdizimi, OOP, collections, LINQ temel | Delegate/event, modern C#, LINQ ileri | Span/Memory, source generator, IL/expression tree |
-| **2. Platform Temelleri** | DI nedir, appsettings, ILogger | Middleware yazma, Options pattern, hosting, background service | Host internals, startup performansı, modül tasarımı |
-| **3. Multithreading** | async/await kullanımı, Task | TPL, senkronizasyon, concurrent collections | Memory model, lock-free, Channel, distributed lock |
-| **4. API** | REST, status code, CRUD endpoint | Versioning, validation, OpenAPI, HttpClientFactory | gRPC/GraphQL seçimi, BFF, gateway, API evolution |
-| **5. Veri Erişimi** | EF Core CRUD, migration | Tracking, N+1, Dapper, Fluent API | Sorgu planı, bulk ops, çoklu provider stratejisi |
-| **6. Veritabanları** | SELECT/JOIN, index nedir | Transaction, isolation, MongoDB, Redis | Sharding, replication, sorgu optimizasyonu |
-| **7. Test** | xUnit, AAA, mocking | Integration test, TestContainers, coverage | Test stratejisi, architecture test, performans testi |
-| **8. Mimari** | Katmanlı mimari | SOLID, design patterns, Clean Arch | DDD, CQRS, trade-off savunması |
-| **9. Microservices** | — | Message broker temeli, Docker Compose | Saga, outbox, consistency, decomposition |
-| **10. Performans** | StringBuilder, ToList yeri | Caching, async I/O | GC tuning, BenchmarkDotNet, AOT, profiling |
-| **11. Güvenlik** | JWT kullanımı, HTTPS | OWASP Top 10, policy auth | Threat modeling, secrets rotation, supply chain |
-| **12. Docker/DevOps** | `docker run`, Dockerfile | Compose, multi-stage, CI pipeline | K8s, IaC, deployment stratejileri |
-| **13. Azure** | Portal, App Service deploy | Azure SQL, Storage, Key Vault, App Insights | Mimari seçimi, maliyet, Aspire, multi-region |
-| **14. AI** | LLM/prompt temel | OpenAI SDK, embedding, Semantic Kernel | RAG mimarisi, agent, eval, guardrail |
-| **15. System Design** | — | Temel case'ler | Full design interview |
+| **1. C# Dili** | Sözdizimi, tip sistemi, OOP, collections, LINQ temel | Delegate/event, modern C#, LINQ ileri | Span/Memory, source generator, expression tree |
+| **2. Derleme & Çalıştırma** | `bin`/`obj` ne, `run` vs `publish` | IL/metadata, apphost, deployment modelleri, MSBuild | JIT/tiered/PGO, AOT & trimming, assembly loading |
+| **3. Platform Servisleri** | DI nedir, appsettings, ILogger | Middleware yazma, Options pattern, hosting, background service | Host internals, startup performansı, modül tasarımı |
+| **4. Multithreading** | async/await kullanımı, Task | TPL, senkronizasyon, concurrent collections | Memory model, lock-free, Channel, distributed lock |
+| **5. API** | REST, status code, CRUD endpoint | Versioning, validation, OpenAPI, HttpClientFactory | gRPC/GraphQL seçimi, BFF, gateway, API evolution |
+| **6. Veri Erişimi** | EF Core CRUD, migration | Tracking, N+1, Dapper, Fluent API | Sorgu planı, bulk ops, çoklu provider stratejisi |
+| **7. Veritabanları** | SELECT/JOIN, index nedir | Transaction, isolation, MongoDB, Redis | Sharding, replication, sorgu optimizasyonu |
+| **8. Test** | xUnit, AAA, mocking | Integration test, TestContainers, coverage | Test stratejisi, architecture test, performans testi |
+| **9. Mimari** | Katmanlı mimari | SOLID, design patterns, Clean Arch | DDD, CQRS, trade-off savunması |
+| **10. Microservices** | — | Message broker temeli, Docker Compose | Saga, outbox, consistency, decomposition |
+| **11. Performans** | StringBuilder, ToList yeri | Caching, async I/O | GC tuning, BenchmarkDotNet, AOT, profiling |
+| **12. Güvenlik** | JWT kullanımı, HTTPS | OWASP Top 10, policy auth | Threat modeling, secrets rotation, supply chain |
+| **13. Docker/DevOps** | `docker run`, Dockerfile | Compose, multi-stage, CI pipeline | K8s, IaC, deployment stratejileri |
+| **14. Azure** | Portal, App Service deploy | Azure SQL, Storage, Key Vault, App Insights | Mimari seçimi, maliyet, Aspire, multi-region |
+| **15. AI** | LLM/prompt temel | OpenAI SDK, embedding, Semantic Kernel | RAG mimarisi, agent, eval, guardrail |
+| **16. System Design** | — | Temel case'ler | Full design interview |
 
 ---
 
@@ -95,31 +97,43 @@ dotnet-interview/
 │   └── 04-algorithms-datastructures/
 │
 ├── 01-csharp/
-│   ├── 01-fundamentals/
+│   ├── 01-program-anatomy/             # entry point, namespace, erişim belirleyicileri
 │   │   ├── README.md                   # kavramsal anlatım
 │   │   ├── src/                        # çalışan .NET projesi
 │   │   └── interview-questions.md
-│   ├── 02-oop/
-│   ├── 03-collections-generics/
-│   ├── 04-exception-handling/
-│   ├── 05-delegates-events-lambdas/
-│   ├── 06-linq/
-│   ├── 07-modern-csharp/               # C# 8 → 14
-│   ├── 08-span-memory/
-│   └── 09-reflection-sourcegen/
+│   ├── 02-type-system-memory/          # value/reference, stack/heap, boxing
+│   ├── 03-oop/
+│   ├── 04-collections-generics/
+│   ├── 05-exception-handling/
+│   ├── 06-delegates-events-lambdas/
+│   ├── 07-linq/
+│   ├── 08-modern-csharp/               # C# 8 → 14
+│   ├── 09-span-memory/
+│   └── 10-reflection-sourcegen/
 │
-├── 02-dotnet-platform/                 # ".NET basics"
-│   ├── 01-runtime-clr-il/
-│   ├── 02-generic-host-lifecycle/
-│   ├── 03-configuration/               # appsettings, env, secrets, Options
-│   ├── 04-dependency-injection/
-│   ├── 05-middleware-pipeline/
-│   ├── 06-filters-attributes/
-│   ├── 07-logging/
-│   ├── 08-background-services/
-│   └── 09-environments-deployment/
+├── 02-compilation-runtime/             # "kod derlenince ne oluyor?"
+│   ├── 01-roslyn-compilation/          # lexer→parser→binder→IL, lowering
+│   ├── 02-il-metadata-assembly/        # IL okuma, PE formatı, dll vs exe
+│   ├── 03-msbuild-build-process/       # csproj, restore, target, binlog
+│   ├── 04-bin-obj-artifacts/           # hangi dosya ne işe yarar
+│   ├── 05-pdb-debugging-symbols/
+│   ├── 06-apphost-startup-chain/       # exe nasıl oluşuyor, hostfxr→coreclr
+│   ├── 07-run-build-publish/           # komutların farkı
+│   ├── 08-deployment-models/           # FDD, SCD, single-file, trimmed, AOT
+│   ├── 09-jit-runtime-execution/       # tiered compilation, PGO, ALC
+│   └── 10-observation-labs/            # ölç, aç, bak egzersizleri
 │
-├── 03-multithreading/
+├── 03-dotnet-platform/                 # ".NET basics" — platform servisleri
+│   ├── 01-generic-host-lifecycle/
+│   ├── 02-configuration/               # appsettings, env, secrets, Options
+│   ├── 03-dependency-injection/
+│   ├── 04-middleware-pipeline/
+│   ├── 05-filters-attributes/
+│   ├── 06-logging/
+│   ├── 07-background-services/
+│   └── 08-environments-deployment/
+│
+├── 04-multithreading/
 │   ├── 01-concepts/                    # process/thread, concurrency vs parallelism
 │   ├── 02-thread-threadpool/
 │   ├── 03-task-tpl/
@@ -133,7 +147,7 @@ dotnet-interview/
 │   ├── 11-distributed-locking/
 │   └── 12-debugging-profiling/
 │
-├── 04-api/
+├── 05-api/
 │   ├── 01-http-web-foundations/
 │   ├── 02-rest-design/
 │   ├── 03-aspnetcore-webapi/
@@ -150,14 +164,14 @@ dotnet-interview/
 │   ├── 14-api-performance/
 │   └── 15-api-patterns/                # BFF, gateway, webhook, async API
 │
-├── 05-data-access/
+├── 06-data-access/
 │   ├── 01-adonet/
 │   ├── 02-ef-core/
 │   ├── 03-dapper/
 │   ├── 04-object-mapping/
 │   └── 05-repository-uow-specification/
 │
-├── 06-databases/
+├── 07-databases/
 │   ├── 01-relational-fundamentals/
 │   ├── 02-sql-server/
 │   ├── 03-postgresql/
@@ -168,7 +182,7 @@ dotnet-interview/
 │   ├── 08-migrations/
 │   └── 09-search-engines/
 │
-├── 07-testing/
+├── 08-testing/
 │   ├── 01-unit-testing/
 │   ├── 02-mocking/
 │   ├── 03-integration-testing/
@@ -177,7 +191,7 @@ dotnet-interview/
 │   ├── 06-performance-testing/
 │   └── 07-architecture-testing/
 │
-├── 08-architecture/
+├── 09-architecture/
 │   ├── 01-solid/
 │   ├── 02-design-patterns/
 │   ├── 03-layered-vs-clean/
@@ -186,7 +200,7 @@ dotnet-interview/
 │   ├── 06-vertical-slice/
 │   └── 07-modular-monolith/
 │
-├── 09-distributed/
+├── 10-distributed/
 │   ├── 01-microservices-fundamentals/
 │   ├── 02-message-brokers/
 │   ├── 03-event-driven/
@@ -195,7 +209,7 @@ dotnet-interview/
 │   ├── 06-resilience-polly/
 │   └── 07-distributed-concepts/        # CAP, consistency, consensus
 │
-├── 10-performance/
+├── 11-performance/
 │   ├── 01-benchmarking/
 │   ├── 02-memory-gc/
 │   ├── 03-allocation-reduction/
@@ -203,7 +217,7 @@ dotnet-interview/
 │   ├── 05-aot-trimming/
 │   └── 06-profiling-diagnostics/
 │
-├── 11-security/
+├── 12-security/
 │   ├── 01-owasp-top10/
 │   ├── 02-authentication/
 │   ├── 03-authorization/
@@ -211,7 +225,7 @@ dotnet-interview/
 │   ├── 05-cryptography/
 │   └── 06-supply-chain/
 │
-├── 12-devops/
+├── 13-devops/
 │   ├── 01-docker-basics/
 │   ├── 02-dockerfile-dotnet/
 │   ├── 03-docker-compose/
@@ -219,7 +233,7 @@ dotnet-interview/
 │   ├── 05-ci-cd/
 │   └── 06-iac/
 │
-├── 13-azure/
+├── 14-azure/
 │   ├── 01-app-service/
 │   ├── 02-azure-sql/
 │   ├── 03-cosmos-db/
@@ -232,7 +246,7 @@ dotnet-interview/
 │   ├── 10-container-apps-aks/
 │   └── 11-dotnet-aspire/
 │
-├── 14-ai/
+├── 15-ai/
 │   ├── 01-llm-fundamentals/
 │   ├── 02-microsoft-extensions-ai/
 │   ├── 03-semantic-kernel/
@@ -242,14 +256,14 @@ dotnet-interview/
 │   ├── 07-ml-net/
 │   └── 08-ai-evaluation-safety/
 │
-├── 15-system-design/
+├── 16-system-design/
 │   ├── 01-scalability/
 │   ├── 02-caching-at-scale/
 │   ├── 03-rate-limiting/
 │   ├── 04-data-partitioning/
 │   └── 05-case-studies/
 │
-└── 16-interview/
+└── 17-interview/
     ├── coding-challenges/
     ├── behavioral-questions.md
     ├── system-design-drills.md
@@ -318,20 +332,75 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ## 1. C# Dili
 
-### 1.1 Temeller 🟢
-- Value type vs reference type — stack/heap yerleşimi, kopyalama semantiği
-- `struct` vs `class` vs `record` vs `record struct` — ne zaman hangisi
-- `string` immutability, string interning, `StringBuilder`
-- Nullable value types (`int?`) vs nullable reference types (`string?`, `#nullable enable`)
-- Null operatörleri: `?.`, `??`, `??=`, `!` (null-forgiving)
-- Boxing / unboxing — nerede gizlice olur, maliyeti
-- `var`, `dynamic`, `object` farkları
-- `const` vs `readonly` vs `static readonly`
-- `ref`, `out`, `in` parametreleri
-- Tuple, deconstruction, named tuple
-- Implicit/explicit conversion, `operator` overloading
+### 1.1 Bir C# Programının Anatomisi 🟢
+> "Bu kod nasıl çalışıyor?" sorusunun dil tarafındaki cevabı. Derleyici tarafı [Bölüm 2](#2-derleme-build--çalıştırma)'de.
 
-### 1.2 OOP 🟢
+- **Entry point:** `Main` metodunun geçerli imzaları — `void Main()`, `int Main()`, `Main(string[] args)`, `async Task Main()` — ve exit code'un anlamı
+- **Top-level statements** (C# 9+) — derleyici bunu gizli bir `Program` sınıfı + `Main` metoduna çevirir; `args` ve `return` nasıl çalışır
+- Neden integration test'te `public partial class Program { }` eklemek gerekir (`WebApplicationFactory<Program>`)
+- Namespace, file-scoped namespace (`namespace X;`), iç içe namespace
+- `using` direktifi türleri: normal, `static`, alias (`using Json = System.Text.Json;`), **global using**, implicit usings (SDK'nın otomatik eklediği)
+- **Erişim belirleyicileri — tam tablo:**
+
+  | Belirleyici | Aynı sınıf | Türeyen (aynı assembly) | Aynı assembly | Türeyen (farklı assembly) | Her yer |
+  |-------------|:---------:|:----------------------:|:-------------:|:------------------------:|:-------:|
+  | `private` | ✅ | ❌ | ❌ | ❌ | ❌ |
+  | `private protected` | ✅ | ✅ | ❌ | ❌ | ❌ |
+  | `protected` | ✅ | ✅ | ❌ | ✅ | ❌ |
+  | `internal` | ✅ | ✅ | ✅ | ❌ | ❌ |
+  | `protected internal` | ✅ | ✅ | ✅ | ✅ | ❌ |
+  | `public` | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+  - Varsayılan erişim seviyeleri (tip → `internal`, üye → `private`)
+  - `InternalsVisibleTo` ile test projesine `internal` açma
+- `static class`, static üye, **static constructor** — ne zaman çalışır, `beforefieldinit` etkisi, thread-safety garantisi
+- `partial` class / method / property — source generator'ların temel mekanizması
+- **Statement vs expression** ayrımı; expression-bodied members (`=>`)
+- Değişken kapsamı (scope), gölgeleme (shadowing), definite assignment analizi
+- Tip dönüşümleri: implicit, explicit (cast), `is`, `as`, `Convert`, `Parse` vs `TryParse`
+- `checked` / `unchecked` aritmetik, integer overflow davranışı (varsayılan **unchecked**)
+- Operatör önceliği, associativity, short-circuit (`&&`/`||` vs `&`/`|`)
+- `nameof`, `typeof`, `sizeof`, `default`, `with`
+- Preprocessor direktifleri: `#if DEBUG`, `#region`, `#nullable`, `#pragma warning`
+- Yorum satırları ve **XML documentation comment** (`///`) — OpenAPI ve IntelliSense'e yansıması
+- `[CallerMemberName]`, `[CallerLineNumber]`, `[CallerArgumentExpression]` — compile-time enjekte edilen bilgi
+
+### 1.2 Tip Sistemi & Bellek Modeli 🟢→🟡
+> Mülakatın en klasik açılışı: "value type ile reference type farkı nedir?" — ama yüzeysel cevap yetmez.
+
+- **Unified type system:** her şey `System.Object`'ten türer; `int` = `System.Int32` (dil anahtar kelimesi = BCL tipi takma adı)
+- Tip hiyerarşisi: `object` → `ValueType` → `Enum`; `class`, `interface`, `delegate`, `array`
+- **Value type vs reference type:**
+  - Kopyalama semantiği (değer kopyası vs referans kopyası) — asıl fark bu, "stack/heap" değil
+  - **Yaygın yanılgı:** "value type her zaman stack'te" — sınıf alanı olan, closure'a yakalanan, boxing'e uğrayan, array elemanı olan value type **heap**'tedir
+  - Atama, parametre geçişi ve `readonly` davranışı
+  - Eşitlik: `==` varsayılan davranışı (value type: bit karşılaştırma; reference type: referans eşitliği)
+- `struct` vs `class` vs `record` vs `record struct` vs `readonly struct` — **karar tablosu**
+  - Struct ne zaman: küçük (≤16 byte civarı), immutable, kısa ömürlü, değer semantiği isteniyor
+  - Mutable struct neden tehlikeli (defensive copy, koleksiyonda güncelleme tuzağı)
+- **Boxing / unboxing:** ne zaman gizlice olur (interface'e atama, `object` parametre, non-generic koleksiyon, string interpolation, `Enum` ile `Equals`), allocation maliyeti, nasıl kaçınılır
+- `string`:
+  - Immutability — neden ve sonuçları
+  - **String interning** ve literal'ların paylaşımı; `string.Intern`
+  - `==` string'de neden değer karşılaştırması yapar (operator overload)
+  - `StringBuilder` ne zaman kazandırır (döngüde birleştirme), ne zaman gereksiz
+  - `string.Compare` vs `Equals` vs `StringComparison` — **kültür duyarlılığı** ve `StringComparison.Ordinal` tercihi
+  - UTF-16 iç gösterimi, `char` vs rune vs grapheme; Unicode ve `Length` tuzağı
+- **Nullable:**
+  - Nullable value types (`int?` = `Nullable<int>`) — `HasValue`, `Value`, lifted operatörler
+  - Nullable reference types (`string?`) — **sadece compile-time**, runtime'da hiçbir şey yok
+  - `#nullable enable`, uyarı seviyeleri, `!` (null-forgiving) ne zaman meşru
+- Null operatörleri: `?.`, `?[]`, `??`, `??=`, C# 14 `?.=`
+- `default(T)` ve tip bazında varsayılan değerler
+- `var` (compile-time çıkarım, IL'de izi yok) vs `dynamic` (runtime binding, DLR maliyeti) vs `object`
+- `const` (compile-time sabit, **çağıran assembly'ye gömülür** — versiyonlama tuzağı) vs `readonly` vs `static readonly`
+- `ref`, `out`, `in` parametreleri; `ref` return, `ref` local, `ref readonly`
+- Tuple (`ValueTuple`) vs eski `Tuple`, deconstruction, named tuple elemanlarının derleme zamanı doğası
+- `enum` — altta yatan tip, `[Flags]`, `Enum.Parse`/`TryParse`, boxing maliyeti
+- Implicit/explicit conversion operatörü, `operator` overloading, `IParsable<T>`/`ISpanParsable<T>` (C# 11 generic math)
+- Generic'ler **runtime'da reified** — Java'nın type erasure'ından farkı (klasik mülakat sorusu); value type için ayrı native kod, reference type için paylaşılan kod
+
+### 1.3 OOP 🟢
 - Encapsulation, Inheritance, Polymorphism, Abstraction — sadece tanım değil, **örnekle**
 - `abstract class` vs `interface` — ne zaman hangisi (karar tablosu)
 - `sealed`, `virtual`, `override`, `new` keyword'leri ve method hiding
@@ -343,7 +412,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - `object` sınıfının metodları: `Equals`, `GetHashCode`, `ToString` — birlikte override kuralı
 - `IEquatable<T>`, `IComparable<T>`, `IComparer<T>`
 
-### 1.3 Collections & Generics 🟢→🟡
+### 1.4 Collections & Generics 🟢→🟡
 - `List<T>`, `Dictionary<TKey,TValue>`, `HashSet<T>`, `Queue<T>`, `Stack<T>`, `LinkedList<T>`
 - `SortedList`, `SortedDictionary`, `SortedSet`, `PriorityQueue<TElement,TPriority>`
 - Arayüz hiyerarşisi: `IEnumerable<T>` → `ICollection<T>` → `IList<T>`; `IReadOnlyList<T>`, `IReadOnlyDictionary<,>`
@@ -355,7 +424,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - `ImmutableArray<T>`, `FrozenDictionary<TKey,TValue>` (.NET 8+) — okuma ağırlıklı senaryolar
 - Big-O karşılaştırma tablosu
 
-### 1.4 Exception Handling 🟢
+### 1.5 Exception Handling 🟢
 - `try` / `catch` / `finally` / `using` / `await using`
 - Exception hiyerarşisi, custom exception yazımı (ne zaman gerekli)
 - Exception filter (`when`) — stack unwinding farkı
@@ -366,7 +435,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Global exception handling: `IExceptionHandler` (.NET 8+), middleware, `ProblemDetails`
 - Ne zaman exception, ne zaman `Result<T>` pattern
 
-### 1.5 Delegates, Events, Lambdas 🟢→🟡
+### 1.6 Delegates, Events, Lambdas 🟢→🟡
 - `delegate`, `Func<>`, `Action<>`, `Predicate<>`
 - Multicast delegate, invocation list
 - `event` keyword — neden sadece delegate değil
@@ -375,7 +444,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - `Expression<Func<T,bool>>` — expression tree, EF Core'un temel mekanizması
 - Anonim metodlar, local function vs lambda (allocation farkı)
 
-### 1.6 LINQ 🟢→🔴
+### 1.7 LINQ 🟢→🔴
 - Query syntax vs method syntax
 - **Deferred vs immediate execution** — en sık sorulan LINQ konusu
 - Temel operatörler: `Select`, `SelectMany`, `Where`, `GroupBy`, `Join`, `GroupJoin`, `OrderBy/ThenBy`
@@ -390,7 +459,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - LINQ performans: `Count() > 0` vs `Any()`, `OrderBy` maliyeti
 - Custom LINQ operatörü yazma (extension method)
 
-### 1.7 Modern C# (8 → 14) 🟡
+### 1.8 Modern C# (8 → 14) 🟡
 - **C# 8:** nullable reference types, pattern matching genişletmesi, `switch` expression, async streams (`IAsyncEnumerable`), ranges/indices (`^1`, `1..3`), default interface methods, `using` declaration
 - **C# 9:** records, init-only setters, top-level statements, target-typed `new`, pattern enhancements
 - **C# 10:** file-scoped namespace, global usings, record struct, constant interpolated strings
@@ -400,7 +469,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **C# 14:** **extension members** (property/operator/static üye ekleme), **`field` keyword** (backing field'sız property validation), null-conditional assignment (`?.=`), `Span<T>` implicit conversion iyileştirmeleri, file-based apps (`dotnet run app.cs`)
 - Pattern matching bütünü: type, constant, relational, logical (`and`/`or`/`not`), property, positional, list patterns
 
-### 1.8 Span, Memory & Yüksek Performans Tipleri 🔴
+### 1.9 Span, Memory & Yüksek Performans Tipleri 🔴
 - `Span<T>` / `ReadOnlySpan<T>` — stack-only, allocation'sız dilimleme
 - `Memory<T>` / `ReadOnlyMemory<T>` — async'te neden `Span` kullanılamaz
 - `ref struct` kısıtları, `scoped` keyword
@@ -411,7 +480,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - String işlemlerinde `AsSpan()` ile `Substring` allocation'ından kaçınma
 - `SearchValues<T>` (.NET 8+)
 
-### 1.9 Reflection, Attributes & Source Generators 🔴
+### 1.10 Reflection, Attributes & Source Generators 🔴
 - `Type`, `MethodInfo`, `PropertyInfo`, `Activator.CreateInstance`
 - Reflection'ın maliyeti ve cache stratejileri
 - Custom attribute yazma ve okuma
@@ -426,22 +495,308 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 2. .NET Platform Temelleri
+## 2. Derleme, Build & Çalıştırma
+
+> **"C# kodu derlenince ne oluyor? `dotnet run` ile `publish` farkı ne? Kod nasıl `.exe` oluyor?"**
+> Çoğu geliştiricinin yıllarca çalışıp hiç sormadığı, mülakatta ise kıdemi anında ele veren bölüm.
+> Bu bölüm okunacak değil, **gözlemlenecek** — her başlıkta "aç ve bak" egzersizi var.
+
+**Tek cümlelik özet (önce bunu oku, sonra detaya gir):**
+```
+C# kaynak kod
+  → [Roslyn derleyici] → IL + metadata içeren .dll (assembly)
+  → [MSBuild] bin/ klasörüne .dll + .exe(apphost) + .deps.json + .runtimeconfig.json
+  → [çalıştırma] apphost.exe → hostfxr → hostpolicy → CoreCLR
+  → [JIT] IL'i metodun ilk çağrısında native makine koduna çevirir
+  → CPU çalıştırır
+```
+**Kritik gerçek:** Senin kodun **her zaman `.dll`** olarak derlenir. `.exe` senin IL'ini içermez — sadece o `.dll`'i başlatan küçük bir native launcher'dır.
+
+### 2.1 Kaynak Koddan IL'e: Roslyn Derleyicisi 🟡
+- **Roslyn** nedir: C#/VB derleyicisi, açık kaynak, "compiler as a service" (IDE, analyzer, source generator hep bunu kullanır)
+- **Derleme aşamaları:**
+  1. **Lexing** — karakterler → token'lar
+  2. **Parsing** — token'lar → **syntax tree** (sözdizimsel yapı)
+  3. **Binding / semantic analysis** — sembol çözümleme, tip kontrolü, overload resolution → **semantic model**
+  4. **Lowering** — syntactic sugar'ın basit yapılara açılması
+  5. **IL emission** — IL + metadata yazımı → `.dll`
+- Compile-time error (CS####) vs runtime exception — hangi hata nerede yakalanır
+- **Lowering: derleyicinin gizli dönüşümleri** — mülakatta çok değerli:
+
+  | Yazdığın | Derleyicinin ürettiği |
+  |----------|----------------------|
+  | `foreach` | `GetEnumerator()` + `while(MoveNext())` + `try/finally { Dispose() }` |
+  | `using` deyimi | `try/finally` + `Dispose()` |
+  | `async`/`await` | `IAsyncStateMachine` implement eden **state machine** struct/class |
+  | `yield return` | Iterator state machine sınıfı |
+  | lambda + closure | **Display class** (yakalanan değişkenler alan olur) |
+  | `var` | Gerçek tip — IL'de `var` diye bir şey yok |
+  | String interpolation | `string.Format` veya `DefaultInterpolatedStringHandler` |
+  | LINQ query syntax | Extension method zinciri (`Where().Select()`) |
+  | Auto-property | `private` backing field + `get_X()`/`set_X()` metodları |
+  | `record` | Class + `Equals`/`GetHashCode`/`ToString`/`Deconstruct`/`<Clone>$` |
+  | Primary constructor | Yakalanan parametreler için gizli alanlar |
+  | `lock` | `Monitor.Enter`/`Exit` + `try/finally` (C# 13'te `Lock.EnterScope`) |
+  | Collection expression `[1,2]` | Tip bazında en verimli oluşturma kodu |
+
+- **sharplab.io** — bu dönüşümleri canlı görmek için en iyi araç (Results: C# → "Lowered C#" veya "IL")
+- Nullable reference types **sadece derleme zamanı** — IL'de `[Nullable]` attribute'u olarak iz bırakır, runtime kontrolü yoktur
+- `var` ve `dynamic` farkının IL'deki karşılığı (`dynamic` → `CallSite` + DLR çağrıları)
+- Conditional compilation: `#if DEBUG`, `DefineConstants`, `[Conditional("DEBUG")]` attribute'u
+- Source generator'ların derlemeye katılması — üretilen kodun `obj/.../generated/` altında görünmesi (`EmitCompilerGeneratedFiles`)
+- Analyzer'lar ve derleme zamanı kural ihlalleri
+
+**Lab:** Aynı dosyayı sharplab.io'ya yapıştır; `foreach`, `async`, lambda, `record` için üretilen kodu incele.
+
+### 2.2 IL, Metadata ve Assembly Anatomisi 🟡→🔴
+- **IL (Intermediate Language / MSIL / CIL)** nedir, neden var: dil bağımsızlığı (C#/F#/VB aynı IL'e çıkar) + platform bağımsızlığı
+- IL **stack-based** bir sanal makine dilidir (register-based değil)
+- Temel opcode'lar: `ldarg`, `ldloc`, `stloc`, `ldfld`, `call`, `callvirt`, `newobj`, `box`/`unbox`, `ret`
+- **`call` vs `callvirt`** — `callvirt` sanal dispatch yapar **ve null kontrolü içerir**; derleyici neden non-virtual metodlarda bile `callvirt` üretir (klasik derin soru)
+- **Assembly = PE (Portable Executable) dosyası.** İçeriği:
+  - DOS/PE header (Windows uyumluluk mirası)
+  - **CLR header** (bu bir managed assembly'dir işareti)
+  - **Metadata tabloları** — `TypeDef`, `MethodDef`, `Field`, `MemberRef`, `AssemblyRef`... (tiplerin ve üyelerin tam tanımı)
+  - **IL kodu**
+  - **Manifest** — assembly adı, versiyon, kültür, public key, referans verilen assembly'ler
+  - Gömülü kaynaklar (resx, embedded file)
+- **`.dll` ile `.exe` aynı formattadır** — fark PE header'daki bir bayrak ve entry point varlığı. .NET'te uygulama kodun **her zaman `.dll`**'dir
+- Metadata sayesinde reflection mümkün — tip bilgisi assembly'nin içinde taşınır
+- Assembly identity: `name, version, culture, publicKeyToken`; strong naming
+- **İnceleme araçları:** ILSpy (ücretsiz, tercih edilen), dnSpy, JetBrains dotPeek, `ildasm`, `dotnet-ildasm`
+- Decompile edilebilirlik — kodunun okunabilir olduğu gerçeği ve obfuscation'ın sınırları
+
+**Lab:** Kendi `bin/Debug/net10.0/MyApp.dll` dosyanı ILSpy ile aç. Bir metodun IL'ini oku. Yazdığın C#'a "geri" decompile et, farkları gör.
+
+### 2.3 MSBuild ve Build Süreci 🟡
+- `.csproj` = **MSBuild proje dosyası** (XML). SDK-style (`<Project Sdk="Microsoft.NET.Sdk">`) vs eski verbose format
+- MSBuild kavram modeli: **Property** (`<TargetFramework>`), **Item** (`<PackageReference>`), **Target** (çalıştırılabilir adım), **Task** (atomik iş)
+- Build hattı: `Restore` → `Build` (→ `Publish`)
+- **Restore ne yapar:** paket grafiğini çözer, indirir, `obj/project.assets.json` üretir
+  - Transitive dependency, versiyon çakışması çözümü (**nearest wins** kuralı), `<PackageReference>` vs eski `packages.config`
+  - Floating version (`1.2.*`) riski, lock file (`packages.lock.json`) ile deterministik restore
+- **`Directory.Build.props` / `.targets`** — tüm projelere ortak ayar (repo genelinde tek yerden yönetim)
+- **Central Package Management** (`Directory.Packages.props` + `ManagePackageVersionsCentrally`)
+- **Debug vs Release farkı:**
+
+  | | Debug | Release |
+  |---|-------|---------|
+  | JIT optimizasyonu | Kapalı | Açık |
+  | `DEBUG` sembolü | Tanımlı | Tanımsız |
+  | Inline / dead code elimination | Yok | Var |
+  | Değişken ömrü | Uzatılmış (debug için) | Kısaltılmış |
+  | Debug deneyimi | Tam | Kısıtlı (değişkenler "optimized away") |
+
+- Incremental build ve neden bazen `dotnet clean` gerekir
+- `TreatWarningsAsErrors`, `WarningsAsErrors`, `NoWarn`, `.editorconfig`
+- **Deterministic build** — aynı girdi → byte-byte aynı çıktı (CI doğrulaması, reproducible build)
+- `dotnet build -v detailed` ile ayrıntı; **`dotnet build -bl`** ile binary log + MSBuild Structured Log Viewer (build teşhisinin en güçlü aracı)
+- Multi-targeting (`<TargetFrameworks>net8.0;net10.0</TargetFrameworks>`) ve `#if NET10_0_OR_GREATER`
+
+**Lab:** `dotnet build -bl` çalıştır, `msbuild.binlog` dosyasını Structured Log Viewer'da aç; hangi target'ın ne kadar sürdüğünü gör.
+
+### 2.4 `obj/` ve `bin/` — Hangi Dosya Ne İşe Yarar? 🟢
+- **`obj/` = ara çıktılar (intermediate)**
+  - `project.assets.json` — restore sonucu, tam bağımlılık grafiği
+  - `*.nuget.g.props` / `*.nuget.g.targets` — NuGet'in ürettiği MSBuild import'ları
+  - `Debug/net10.0/` → derlenmiş `.dll`, `.pdb`, `AssemblyInfo.cs` (otomatik üretilen), `.editorconfig` türevleri
+  - `generated/` → source generator çıktıları (`EmitCompilerGeneratedFiles=true` ile)
+- **`bin/` = son çıktı**
+
+  | Dosya | Ne işe yarar |
+  |-------|--------------|
+  | `MyApp.dll` | **Senin kodun** — IL + metadata |
+  | `MyApp.exe` | apphost — `.dll`'i başlatan native launcher (Windows) |
+  | `MyApp.pdb` | Debug sembolleri (satır numarası eşlemesi) |
+  | `MyApp.deps.json` | Bağımlılık manifesti: hangi assembly, hangi yol, hangi RID |
+  | `MyApp.runtimeconfig.json` | Hangi runtime sürümü, roll-forward, GC/threading ayarları |
+  | `*.dll` (diğerleri) | NuGet bağımlılıkları (framework dışı olanlar) |
+  | `appsettings.json` | `CopyToOutputDirectory` ile kopyalanan içerik dosyaları |
+
+- Neden ikisi de `.gitignore`'da olmalı
+- `bin/`'i silmeden `obj/`'yi silmek neden bazen tek başına yetmez
+- `CopyToOutputDirectory` vs `CopyToPublishDirectory` — `launchSettings.json` neden publish'e gitmez
+
+**Lab:** Boş bir console app oluştur, build et, `bin/Debug/net10.0/` içeriğini listele; her dosyayı yukarıdaki tabloyla eşleştir. `runtimeconfig.json` ve `deps.json`'ı açıp oku.
+
+### 2.5 PDB & Debug Sembolleri 🟡
+- PDB nedir: **IL offset ↔ kaynak satır** eşlemesi + local değişken adları
+- Portable PDB (cross-platform, modern) vs Windows PDB; **embedded PDB** (`<DebugType>embedded</DebugType>`)
+- Release build'de stack trace'in **satır numarası gösterebilmesi için PDB gerekir** — production teşhisinde kritik
+- **Source Link** — NuGet paketinin kaynak koduna debugger ile inebilmek
+- Symbol server, `.snupkg` ve nuget.org sembol yayını
+- Production'a PDB göndermeli mi: teşhis kolaylığı vs tersine mühendislik kolaylığı trade-off'u
+- `DebuggerDisplay`, `DebuggerStepThrough`, `DebuggerHidden` attribute'ları
+
+### 2.6 `.exe` Nasıl Oluşuyor? — apphost & Başlatma Zinciri 🟡→🔴
+> **"C# kodu nasıl exe oluyor?"** sorusunun gerçek cevabı — ve çoğu adayın bilmediği kısım.
+
+- **Yanıt:** Olmuyor. Senin kodun `.dll`'dir. `.exe` ayrı, **native** bir launcher'dır.
+- **apphost** nedir: .NET SDK ile gelen küçük native yürütülebilir şablon
+- Build sırasında ne olur:
+  1. SDK, apphost şablonunu `bin/` içine `MyApp.exe` olarak kopyalar
+  2. İçindeki placeholder string'i **senin `.dll` adınla patch'ler**
+  3. Sonuç: çalıştırıldığında `MyApp.dll`'i arayıp başlatan bir exe
+- `<UseAppHost>false</UseAppHost>` → `.exe` üretilmez, sadece `dotnet MyApp.dll` ile çalışır
+- Linux/macOS'ta uzantısız executable, Windows'ta `.exe`
+- **Başlatma zinciri (startup chain):**
+  ```
+  MyApp.exe          (apphost — native kod, .NET değil)
+    ↓
+  hostfxr            "Hangi runtime?"
+                     · runtimeconfig.json'ı okur
+                     · framework referansını çözer (Microsoft.NETCore.App / AspNetCore.App)
+                     · roll-forward politikasını uygular (patch/minor/major)
+                     · kurulu runtime'ları tarar, uygun sürümü seçer
+    ↓
+  hostpolicy         "Hangi assembly'ler, nereden?"
+                     · deps.json'ı okur
+                     · probing path'lerini kurar (app dir, NuGet fallback)
+                     · TPA (Trusted Platform Assemblies) listesini oluşturur
+    ↓
+  coreclr            CLR'ı başlatır
+                     · GC heap'ini kurar
+                     · Default AssemblyLoadContext'i oluşturur
+                     · type system'i ayağa kaldırır
+    ↓
+  MyApp.dll          Entry point (Main) bulunur ve çağrılır
+  ```
+- **`runtimeconfig.json` içeriği:** `tfm`, `framework` (ad + sürüm), `rollForward`, `configProperties`
+  (`System.GC.Server`, `System.GC.Concurrent`, `System.Runtime.TieredCompilation`, `System.Globalization.Invariant`)
+- **`deps.json`:** hangi kütüphane hangi yoldan, hangi RID için — eksik/yanlış olursa `FileNotFoundException`
+- **`dotnet MyApp.dll`** ile çalıştırma: `dotnet` muxer'ı apphost'un yerini alır (aynı zinciri kendisi başlatır)
+- Framework-dependent uygulamanın runtime bulamaması: *"You must install .NET to run this application"* hatası ve `DOTNET_ROOT`
+- `dotnet --info`, `dotnet --list-runtimes`, `dotnet --list-sdks` ile ortam teşhisi
+- Roll-forward politikaları: `LatestPatch` (varsayılan), `Minor`, `Major`, `Disable`
+
+**Lab:** `UseAppHost=false` ile build et — `.exe` kaybolur, `dotnet MyApp.dll` hâlâ çalışır. Sonra `runtimeconfig.json`'daki sürümü kurulu olmayan bir sürüme elle değiştir, hatayı gör.
+
+### 2.7 `dotnet run` vs `build` vs `publish` 🟢→🟡
+
+| Komut | Ne yapar | Çıktı | Ne zaman |
+|-------|----------|-------|----------|
+| `dotnet restore` | Bağımlılıkları çözer/indirir | `obj/project.assets.json` | CI'da explicit adım |
+| `dotnet build` | Derler (implicit restore) | `bin/<config>/<tfm>/` | Geliştirme, derleme doğrulama |
+| `dotnet run` | Build eder **ve çalıştırır** | `bin/` + çalışan process | **Sadece geliştirme** |
+| `dotnet watch run` | Dosya değişiminde yeniden çalıştırır / hot reload | — | Geliştirme döngüsü |
+| `dotnet publish` | **Dağıtıma hazır, kendi kendine yeten** klasör üretir | `bin/<config>/<tfm>/publish/` | **Deployment** |
+| `dotnet test` | Test projesini build edip çalıştırır | Test sonuçları | CI |
+| `dotnet pack` | NuGet paketi üretir | `.nupkg` | Kütüphane yayını |
+
+**`build` ile `publish` arasındaki gerçek farklar:**
+- `build` sadece derler; bağımlılıkların tamamını tek klasöre toplamayı garanti etmez
+- `publish` **tüm bağımlılıkları** toplar, `_framework`/statik dosyaları ekler, `web.config` üretir (IIS)
+- `publish` RID-specific olabilir, `build` genelde portable
+- **Trimming, single-file, AOT sadece `publish` aşamasında** uygulanır
+- `publish` varsayılan olarak Release'dir (.NET 8+); `build` ve `run` varsayılan Debug
+
+**`dotnet run` neden production'da kullanılmaz:**
+- SDK gerektirir (production sunucusunda sadece runtime olmalı)
+- Her çalıştırmada build kontrolü yapar → yavaş, öngörülemez başlangıç
+- Build araçları ve kaynak kod sunucuda bulunur → güvenlik yüzeyi
+- Container image'ı gereksiz şişer
+- `--no-build` bile SDK bağımlılığını kaldırmaz
+
+**Ek detaylar:**
+- `dotnet run --project ./src/Api`, `dotnet run -- --arg değeri` (`--` sonrası uygulamaya geçer)
+- `--launch-profile` ve `launchSettings.json` — **sadece geliştirme**, publish çıktısına dahil edilmez (çok sık yanlış anlaşılır; production ayarları env var / appsettings'ten gelir)
+- `dotnet run` ile ortam: `ASPNETCORE_ENVIRONMENT` varsayılan `Development`
+- **.NET 10 file-based apps:** `dotnet run app.cs` — `.csproj` olmadan tek dosya çalıştırma; `#:package` direktifi ile paket referansı
+
+**Lab:** Aynı projeyi `dotnet build` ve `dotnet publish` ile çıkar; iki klasörü `diff` ile karşılaştır, farkı listele.
+
+### 2.8 Deployment Modelleri 🟡→🔴
+
+| Model | Runtime gereksinimi | Boyut | Cold start | Not |
+|-------|--------------------|-------|-----------|-----|
+| **Framework-dependent (FDD)** | Makinede kurulu | ~yüzlerce KB | Orta | Varsayılan; güvenlik yamaları runtime'dan gelir |
+| **Self-contained (SCD)** | Yok, uygulamayla gelir | ~60-70 MB | Orta | Runtime'ı **sen** güncellemek zorundasın |
+| **Single-file** | Modele göre | Tek dosya | Orta | Dağıtım kolaylığı; native kütüphaneler için extract olabilir |
+| **Trimmed** | Uygulamayla | Belirgin küçülme | Orta | Reflection riski, trim uyarıları |
+| **ReadyToRun (R2R)** | Kurulu veya SCD | Artar | **İyileşir** | IL + önceden derlenmiş native; JIT hâlâ var |
+| **Native AOT** | Yok | ~1-10 MB | **En hızlı** | JIT yok, reflection/dynamic kısıtlı |
+
+- **RID (Runtime Identifier):** `win-x64`, `linux-x64`, `linux-musl-x64` (Alpine), `linux-arm64`, `osx-arm64`
+- Komut örnekleri:
+  ```bash
+  dotnet publish -c Release                                    # FDD, portable
+  dotnet publish -c Release -r linux-x64 --self-contained      # SCD
+  dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true
+  dotnet publish -c Release -r linux-x64 -p:PublishTrimmed=true
+  dotnet publish -c Release -r linux-x64 -p:PublishAot=true
+  dotnet publish -c Release -r linux-x64 -p:PublishReadyToRun=true
+  ```
+- **Trimming:** kullanılmayan IL'in atılması; `TrimMode=full` vs `partial`; **IL2xxx uyarıları** ciddiye alınmalı — reflection ile erişilen tip atılabilir → runtime'da patlar
+- **Native AOT kısıtları:** `Assembly.Load`, `Reflection.Emit`, dinamik kod üretimi, bazı serializer'lar çalışmaz → **source generator** ile çözüm (JSON, logging, regex, DI)
+- AOT'un kazandırdığı: çok hızlı cold start, düşük bellek, küçük image, runtime kurulumu yok
+- AOT'un kaybettirdiği: build süresi, platform-spesifik çıktı, kütüphane uyumluluğu, JIT'in runtime optimizasyonları
+- **Karar rehberi:**
+  - Uzun ömürlü web API, container → FDD + chiseled image (küçük + güvenlik yaması kolay)
+  - Serverless / Function / CLI aracı → Native AOT veya R2R (cold start kritik)
+  - Kurulum gerektirmeyen masaüstü/araç dağıtımı → self-contained single-file
+- Docker ile ilişkisi: [Bölüm 13.2](#132-net-için-dockerfile-)
+
+**Lab:** Aynı "Hello World" API'yi FDD / SCD / single-file / trimmed / AOT olarak publish et. **Klasör boyutlarını ve ilk isteğe kadar geçen süreyi ölç**, tabloya dök. Fark seni şaşırtacak.
+
+### 2.9 Runtime'da Ne Oluyor? — JIT ve Çalıştırma 🟡→🔴
+- IL makine kodu **değildir** → **JIT (Just-In-Time)** derleyici, metot **ilk çağrıldığında** onu native koda çevirir
+- Method stub / pre-stub mekanizması: ilk çağrı JIT'i tetikler, sonraki çağrılar doğrudan native koda gider
+- **Tiered compilation:**
+  - **Tier 0** — hızlı derle, az optimize et (uygulama hızlı ayağa kalksın)
+  - **Tier 1** — sık çağrılan metodlar (~30 çağrı eşiği) tam optimizasyonla yeniden derlenir
+  - **OSR (On-Stack Replacement)** — uzun süren döngüdeki bir metodu **çalışırken** Tier 1'e yükseltme
+- **Dynamic PGO** (.NET 8+ varsayılan açık): runtime profili ile guarded devirtualization, daha akıllı inline kararları
+- JIT optimizasyonları: inlining, bounds check elimination, constant folding/propagation, dead code elimination, loop hoisting, register allocation, SIMD intrinsics
+- **Neden Release build'i debug etmek zordur:** inline edilen metodlar stack'te görünmez, değişkenler "optimized away" olur
+- `[MethodImpl(MethodImplOptions.NoInlining / AggressiveInlining)]` — ne zaman meşru
+- ReadyToRun ile JIT yükünü öne alma; AOT ile tamamen kaldırma
+- **Assembly yükleme:**
+  - `AssemblyLoadContext` (Default ALC, collectible ALC)
+  - Plugin mimarisi ve izole yükleme (eski `AppDomain`'in yerini alan model)
+  - `AssemblyResolve` / `Resolving` event'leri
+  - Probing: uygulama klasörü → `deps.json` yönlendirmesi → NuGet fallback folder
+  - Assembly version conflict ve binding redirect'in Core'daki karşılığı
+- **Type loading:** tip ilk kullanıldığında yüklenir; method table (vtable) kurulumu
+- **Static constructor ne zaman çalışır:** `beforefieldinit` semantiği — tam olarak ne zaman tetiklendiğinin garantisi (ince ama sevilen mülakat sorusu); thread-safety garantisi CLR tarafından verilir
+- Managed heap kurulumu ve GC başlangıcı (detay: [Bölüm 11.2](#112-bellek-yönetimi--gc-))
+- **Uygulama sonlanması:** `Main` dönüşü, `Environment.Exit`, `ProcessExit` event'i, finalizer thread ve finalizer'ların **garantili çalışmaması**
+- Ortam değişkenleriyle runtime davranışını değiştirme: `DOTNET_TieredCompilation`, `DOTNET_TieredPGO`, `DOTNET_ReadyToRun`, `DOTNET_gcServer`
+
+**Lab:** Bir döngüde çok çağrılan metot yaz; `DOTNET_TieredCompilation=0` ile ve varsayılanla çalıştır, startup ve steady-state performansını karşılaştır.
+
+### 2.10 Gözlem Laboratuvarı 🟡
+Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
+
+1. Console app oluştur → `bin/Debug/net10.0/` içeriğini listele, her dosyanın görevini yaz
+2. `ILSpy` ile kendi `.dll`'ini aç, bir metodun IL'ini oku
+3. sharplab.io'da `foreach` / `async` / lambda / `record` lowering'ini incele
+4. `UseAppHost=false` ile build et — `.exe`'nin kaybolduğunu, `dotnet app.dll`'in çalıştığını gör
+5. `runtimeconfig.json` + `deps.json` içeriğini satır satır yorumla
+6. `runtimeconfig.json`'daki runtime sürümünü bozup hata mesajını gözlemle
+7. FDD / SCD / single-file / trimmed / AOT publish et → **boyut + cold start tablosu** çıkar
+8. `dotnet build -bl` → binlog'u Structured Log Viewer'da aç, en yavaş target'ı bul
+9. Debug vs Release IL'ini ILSpy'da karşılaştır
+10. Reflection kullanan bir kodu `PublishTrimmed` ile yayınla → runtime hatasını gör, `[DynamicDependency]` veya source generator ile düzelt
+11. Aynı uygulamayı `aspnet` ve `aspnet:*-chiseled` ve AOT Docker image'ı olarak paketle, boyutları karşılaştır
+
+**Bu bölümün mülakat çıktısı:** "`dotnet run` ile `dotnet publish` arasındaki fark nedir, production'a hangisiyle çıkarsın ve neden?", "C# kodu nasıl `.exe` oluyor?", "IL nedir, neden var?", "Native AOT ne kazandırır, ne kaybettirir?" sorularına **mekanizmayı anlatarak** cevap verebilmek.
+
+---
+
+## 3. .NET Platform Servisleri
 
 > Bu bölüm "C# biliyorum ama .NET'i bilmiyorum" boşluğunu kapatır. Mülakatlarda **en çok atlanan ve en çok sorulan** kısım burasıdır.
+> Platformun kendisi (derleme/çalıştırma) [Bölüm 2](#2-derleme-build--çalıştırma)'de; burası uygulamanın üzerine kurulduğu **servisler**.
 
-### 2.1 Runtime, CLR & IL 🟢→🔴
-- .NET Framework vs .NET Core vs .NET 5+ (birleşik .NET) tarihçesi ve neden önemli
-- **.NET 10 LTS** (Kasım 2025 → Kasım 2028), STS vs LTS release cadence
-- CLR: JIT compilation, IL (Intermediate Language), metadata
-- Tiered compilation, OSR (on-stack replacement), PGO (profile-guided optimization)
-- ReadyToRun (R2R), Native AOT — ne zaman hangisi
-- Assembly, AssemblyLoadContext, strong name
-- `AppDomain` neden yok (Core'da), plugin yükleme alternatifleri
-- GC'ye giriş (detay [Bölüm 10](#10-performans--bellek)'da)
-- `ildasm` / ILSpy / sharplab.io ile IL okuma
+### 3.0 .NET Sürüm Ekosistemi 🟢→🟡
+- .NET Framework vs .NET Core vs .NET 5+ (birleşik .NET) tarihçesi ve neden hâlâ önemli
+- **.NET 10 LTS** (Kasım 2025 → Kasım 2028); LTS vs STS release cadence (her Kasım yeni sürüm)
+- .NET Standard'ın rolü ve artık neden gerilediği
+- `TargetFramework` seçimi, multi-targeting, `net10.0` vs `net10.0-windows`
+- Sürüm yükseltme stratejisi ve breaking change taramaları
+- .NET 11 önizleme başlıkları: runtime-native async, ASP.NET Core'da Zstandard, EF Core vector search, C#'ta union types
 
-### 2.2 Generic Host & Uygulama Yaşam Döngüsü 🟡
+### 3.1 Generic Host & Uygulama Yaşam Döngüsü 🟡
 - `IHost`, `IHostBuilder`, `HostApplicationBuilder` (.NET 6+ minimal hosting model)
 - `WebApplication.CreateBuilder()` altında ne oluyor
 - `IHostedService` ve `BackgroundService` lifecycle: `StartAsync` → `ExecuteAsync` → `StopAsync`
@@ -451,7 +806,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Container/Kubernetes'te SIGTERM handling
 - Startup performansı ve cold start
 
-### 2.3 Configuration 🟢→🟡
+### 3.2 Configuration 🟢→🟡
 > Mülakatta "configuration nasıl çalışır" sorusu, kıdemi ayıran sorulardan.
 
 - **Configuration provider zinciri ve öncelik sırası:**
@@ -476,7 +831,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Custom configuration provider yazma
 - Azure App Configuration ile merkezi config ve feature flag
 
-### 2.4 Dependency Injection 🟢→🔴
+### 3.3 Dependency Injection 🟢→🔴
 - DI nedir, Inversion of Control ile ilişkisi, Service Locator neden anti-pattern
 - Built-in container (`Microsoft.Extensions.DependencyInjection`)
 - **Lifetime'lar:**
@@ -495,7 +850,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - 3rd party container: Autofac (ne zaman gerekir — property injection, interceptor, modül)
 - DI'ın performans etkisi ve `IServiceProvider` doğrulama
 
-### 2.5 Middleware Pipeline 🟡
+### 3.4 Middleware Pipeline 🟡
 > ASP.NET Core'un kalbi. "Request geldiğinde ne oluyor?" sorusunun cevabı.
 
 - Request pipeline zihinsel modeli: iç içe geçmiş halkalar (matruşka), request in → response out
@@ -519,7 +874,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Middleware vs Filter vs Endpoint filter — karar tablosu
 - Performans: middleware sayısının etkisi, short-circuit
 
-### 2.6 Filters & Attributes 🟡
+### 3.5 Filters & Attributes 🟡
 - Filter pipeline sırası: Authorization → Resource → Action → Exception → Result
 - `IActionFilter` / `IAsyncActionFilter`
 - `IResourceFilter` — caching için ideal nokta
@@ -532,7 +887,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Middleware yerine filter ne zaman tercih edilir (model binding sonrasına erişim)
 - Model validation filter örneği
 
-### 2.7 Logging 🟢→🟡
+### 3.6 Logging 🟢→🟡
 - `ILogger<T>` ve kategori isimlendirmesi
 - **Log level'ları ve doğru kullanımı:** Trace, Debug, Information, Warning, Error, Critical
 - **Structured logging** — string interpolation neden yanlış:
@@ -548,9 +903,9 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Log filtreleme ve `appsettings.json` üzerinden level yönetimi
 - Hassas veri loglamama (PII, token, şifre) — GDPR/KVKK
 - Log maliyeti ve sampling
-- **OpenTelemetry** ile logs/metrics/traces birleşimi (detay [Bölüm 9](#9-microservices--dağıtık-sistemler))
+- **OpenTelemetry** ile logs/metrics/traces birleşimi (detay [Bölüm 10](#10-microservices--dağıtık-sistemler))
 
-### 2.8 Background Services & Zamanlanmış Görevler 🟡
+### 3.7 Background Services & Zamanlanmış Görevler 🟡
 - `BackgroundService` / `IHostedService` implementasyonu
 - `ExecuteAsync` içinde sonsuz döngü + `CancellationToken` doğru kullanımı
 - Background service'te **scoped servis kullanımı** (`IServiceScopeFactory`) — çok sık hata
@@ -564,7 +919,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Worker Service template (`dotnet new worker`)
 - Ne zaman background service, ne zaman ayrı bir servis/function
 
-### 2.9 Ortamlar & Deployment Konfigürasyonu 🟡
+### 3.8 Ortamlar & Deployment Konfigürasyonu 🟡
 - `ASPNETCORE_ENVIRONMENT` / `DOTNET_ENVIRONMENT`
 - `IWebHostEnvironment.IsDevelopment()` ve ortama göre davranış
 - Development exception page vs production hata sayfası
@@ -577,11 +932,11 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 3. Multithreading, Concurrency & Async
+## 4. Multithreading, Concurrency & Async
 
 > Senior mülakatlarının en ayırt edici bölümü. "Tanımı biliyor mu" değil, **"production'da bunu yaşadı mı"** ölçülür.
 
-### 3.1 Temel Kavramlar 🟢
+### 4.1 Temel Kavramlar 🟢
 - Process vs Thread vs Task — hangi seviyede ne
 - **Concurrency vs Parallelism** — aynı şey değil (klasik açılış sorusu)
 - **CPU-bound vs I/O-bound** iş yükü ayrımı — hangisinde ne kullanılır
@@ -593,7 +948,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Thread safety nedir, immutability'nin rolü
 - Foreground vs background thread
 
-### 3.2 Thread & ThreadPool 🟡
+### 4.2 Thread & ThreadPool 🟡
 - `Thread` sınıfı ile manuel thread — ne zaman hâlâ gerekli (nadiren)
 - `Thread.Sleep` vs `await Task.Delay` — thread bloklama farkı
 - `ThreadPool` nasıl çalışır: work queue, worker thread, I/O completion port
@@ -605,7 +960,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - `Thread.Yield`, `SpinWait` ve busy-wait
 - `[ThreadStatic]`, `ThreadLocal<T>`, `AsyncLocal<T>` — farkları
 
-### 3.3 Task & Task Parallel Library (TPL) 🟡
+### 4.3 Task & Task Parallel Library (TPL) 🟡
 - `Task` ve `Task<T>` — "gelecekte tamamlanacak iş" soyutlaması
 - `Task` vs `Thread` — Task bir thread değildir
 - `Task.Run` vs `Task.Factory.StartNew` (ve `TaskCreationOptions.LongRunning`)
@@ -618,7 +973,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Fire-and-forget tehlikesi ve güvenli yapma yöntemleri
 - Unobserved task exception
 
-### 3.4 async/await Derinlemesine 🟡→🔴
+### 4.4 async/await Derinlemesine 🟡→🔴
 - `async`/`await`'in derleyici tarafından **state machine**'e dönüşümü (sharplab.io ile göster)
 - `await` noktasında ne olur: thread serbest bırakılır, continuation kaydedilir
 - **`async void` neden kötü** — exception yakalanamaz, tamamlanma beklenemez (istisna: event handler)
@@ -635,7 +990,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Async exception yayılımı ve stack trace kalitesi
 - **.NET 11 önizleme:** runtime-native async (state machine yerine runtime desteği)
 
-### 3.5 Senkronizasyon Primitifleri 🟡→🔴
+### 4.5 Senkronizasyon Primitifleri 🟡→🔴
 | Primitif | Kullanım | Async destekler mi |
 |----------|----------|--------------------|
 | `lock` / `Monitor` | Aynı process içi karşılıklı dışlama | ❌ |
@@ -657,7 +1012,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - `volatile` keyword ve memory barrier — ne yapar, ne yapmaz
 - `Monitor.Wait` / `Pulse` ile condition variable
 
-### 3.6 Concurrent Collections 🟡
+### 4.6 Concurrent Collections 🟡
 - `ConcurrentDictionary<TKey,TValue>`
   - `GetOrAdd` / `AddOrUpdate` — **factory delegate birden fazla çalışabilir** (kritik detay)
   - `Count` ve enumeration'ın snapshot semantiği
@@ -667,7 +1022,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Concurrent collection kullanmak **her zaman** thread-safe kod demek değil (compound operation problemi)
 - Lock'lu `Dictionary` vs `ConcurrentDictionary` — ne zaman hangisi daha hızlı
 
-### 3.7 Parallel & PLINQ 🟡
+### 4.7 Parallel & PLINQ 🟡
 - `Parallel.For`, `Parallel.ForEach`, `Parallel.Invoke`
 - `Parallel.ForEachAsync` (.NET 6+) — async iş için doğru araç
 - `ParallelOptions.MaxDegreeOfParallelism` — neden sınırlamak gerekir
@@ -679,7 +1034,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Thread-local state ile aggregation (`Parallel.For` overload'ları)
 - False sharing ve cache line — paralel performansın gizli düşmanı
 
-### 3.8 Channels & Pipeline'lar 🔴
+### 4.8 Channels & Pipeline'lar 🔴
 - `System.Threading.Channels` — modern producer/consumer
 - `Channel.CreateUnbounded` vs `CreateBounded` — **backpressure** kavramı
 - `BoundedChannelFullMode`: Wait, DropOldest, DropNewest, DropWrite
@@ -690,7 +1045,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - TPL Dataflow (`System.Threading.Tasks.Dataflow`) — `BufferBlock`, `TransformBlock`, `ActionBlock`
 - Gerçek senaryo: log işleme, batch insert, rate-limited API çağrısı
 
-### 3.9 Cancellation 🟡
+### 4.9 Cancellation 🟡
 - `CancellationToken` / `CancellationTokenSource` modeli
 - Cooperative cancellation — kimse zorla durdurulmaz
 - `ThrowIfCancellationRequested()` vs `IsCancellationRequested` kontrolü
@@ -702,7 +1057,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Cancellation ile `OperationCanceledException` yakalama stratejisi
 - EF Core, HttpClient ve diğer I/O çağrılarına token geçirmeyi unutmama
 
-### 3.10 Concurrency Problemleri & Bellek Modeli 🔴
+### 4.10 Concurrency Problemleri & Bellek Modeli 🔴
 - **Race condition** — örnek, tespit, çözüm
 - **Deadlock** — dört koşul (mutual exclusion, hold&wait, no preemption, circular wait), kilit sıralaması ile önleme
 - **Livelock** ve **starvation**
@@ -715,7 +1070,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Immutability ile concurrency'den kaçınma (en iyi çözüm çoğu zaman)
 - Actor model'e giriş (Orleans, Akka.NET, Proto.Actor)
 
-### 3.11 Dağıtık Kilitleme 🔴
+### 4.11 Dağıtık Kilitleme 🔴
 - Tek instance'ta `lock` yeterli, çoklu instance'ta değil
 - Redis tabanlı distributed lock (Redlock algoritması ve eleştirileri)
 - SQL tabanlı lock (`sp_getapplock`, advisory lock in Postgres)
@@ -725,7 +1080,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Leader election
 - Optimistic concurrency (rowversion) vs distributed lock — hangisi ne zaman
 
-### 3.12 Concurrency Debugging & Profiling 🔴
+### 4.12 Concurrency Debugging & Profiling 🔴
 - Visual Studio Parallel Stacks / Parallel Watch penceresi
 - `dotnet-counters` ile ThreadPool metrikleri (queue length, thread count)
 - `dotnet-dump` + `dotnet-stack` ile hang analizi
@@ -739,11 +1094,11 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 4. API Geliştirme
+## 5. API Geliştirme
 
 > .NET backend mülakatlarının **merkezi**. Bir API'yi tasarlayabilmek, güvenceye alabilmek ve evrimleştirebilmek.
 
-### 4.1 HTTP & Web Temelleri 🟢
+### 5.1 HTTP & Web Temelleri 🟢
 - (Bkz. [0.2](#02-http--web-temelleri-)) — API bölümünün önkoşulu
 - Request lifecycle: TCP → TLS → HTTP → Kestrel → middleware → endpoint
 - Kestrel vs IIS vs HTTP.sys
@@ -751,7 +1106,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - HTTP/2 multiplexing ve gRPC'ye etkisi
 - HTTP/3 (QUIC) ve .NET desteği
 
-### 4.2 REST API Tasarımı 🟢→🟡
+### 5.2 REST API Tasarımı 🟢→🟡
 - REST kısıtları: stateless, client-server, cacheable, uniform interface, layered
 - **Richardson Maturity Model** (Level 0 → 3 / HATEOAS)
 - Resource-oriented isimlendirme: `/api/orders/{id}/items` — çoğul isim, fiil kullanmama
@@ -771,7 +1126,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Error response standardı: **RFC 7807 / 9457 `ProblemDetails`**
 - API tasarım kılavuzları: Microsoft REST Guidelines, Google AIP, Zalando
 
-### 4.3 ASP.NET Core Web API 🟡
+### 5.3 ASP.NET Core Web API 🟡
 - **Controller-based vs Minimal API** — karar kriterleri, performans farkı
 - `[ApiController]` attribute'unun sağladıkları (otomatik 400, binding source inference)
 - Routing: attribute routing, route template, route constraint, route parameter transformer
@@ -786,17 +1141,17 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Server-Sent Events (SSE) desteği (.NET 10)
 - CORS yapılandırması ve preflight
 
-### 4.4 Minimal API & REPR Pattern 🟡
+### 5.4 Minimal API & REPR Pattern 🟡
 - Minimal API felsefesi, performans avantajı, AOT uyumu
 - Endpoint organizasyonu: extension method ile modüler gruplama
 - **REPR pattern** (Request-Endpoint-Response) — controller şişmesine alternatif
 - **FastEndpoints** kütüphanesi
 - **Ardalis.ApiEndpoints**
-- Vertical slice architecture ile uyumu ([Bölüm 8](#8-mimari--tasarım))
+- Vertical slice architecture ile uyumu ([Bölüm 9](#9-mimari--tasarım))
 - `IEndpointFilter` ile cross-cutting concern
 - Minimal API'de DI, validation, authorization
 
-### 4.5 Validation & Hata Yönetimi 🟡
+### 5.5 Validation & Hata Yönetimi 🟡
 - `DataAnnotations` (`[Required]`, `[Range]`, `[EmailAddress]`, custom `ValidationAttribute`)
 - **FluentValidation** — karmaşık kurallar, koşullu validation, async validation
 - Minimal API'de validation (.NET 10 built-in validation desteği)
@@ -808,7 +1163,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Validation hatalarının i18n/lokalizasyonu
 - `Result<T>` pattern ile exception'sız hata akışı (OneOf, ErrorOr, FluentResults)
 
-### 4.6 API Versioning 🟡
+### 5.6 API Versioning 🟡
 - Neden versiyonlama gerekir, breaking vs non-breaking değişiklik
 - **Versiyonlama stratejileri:**
   - URL path: `/api/v1/orders` (en yaygın, en açık)
@@ -822,7 +1177,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Tolerant reader pattern
 - Versiyon emeklilik (sunset) politikası
 
-### 4.7 API Dokümantasyonu 🟡
+### 5.7 API Dokümantasyonu 🟡
 - **OpenAPI (Swagger) spesifikasyonu** — ne işe yarar
 - .NET 9+ built-in OpenAPI desteği (`Microsoft.AspNetCore.OpenApi`) vs Swashbuckle vs NSwag
 - **Scalar** — modern Swagger UI alternatifi
@@ -832,7 +1187,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - API contract-first yaklaşımı
 - Postman/Bruno/`.http` dosyaları ile API test koleksiyonu
 
-### 4.8 API Güvenliği 🟡→🔴
+### 5.8 API Güvenliği 🟡→🔴
 - **Authentication:**
   - JWT Bearer token akışı, token yapısı (header.payload.signature), imza doğrulama
   - Access token vs refresh token, token ömrü stratejisi
@@ -859,7 +1214,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Request size limit, timeout, DoS koruması
 - Audit logging
 
-### 4.9 gRPC 🟡
+### 5.9 gRPC 🟡
 - Protocol Buffers (protobuf) ve `.proto` şeması
 - Contract-first geliştirme, kod üretimi
 - HTTP/2 üzerine kurulu olması — performans kaynağı
@@ -873,7 +1228,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - .NET'te gRPC servisi ve client oluşturma, DI entegrasyonu
 - gRPC health check, load balancing
 
-### 4.10 GraphQL 🟡
+### 5.10 GraphQL 🟡
 - GraphQL nedir, REST'ten farkı (over-fetching / under-fetching çözümü)
 - Schema, type system, query / mutation / subscription
 - **HotChocolate** (.NET'te fiili standart), GraphQL-dotnet alternatifi
@@ -886,7 +1241,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Federation / schema stitching (microservice'lerde)
 - **Ne zaman GraphQL, ne zaman REST** — dürüst trade-off
 
-### 4.11 Real-time: SignalR & WebSockets 🟡
+### 5.11 Real-time: SignalR & WebSockets 🟡
 - WebSocket protokolü, handshake, upgrade
 - Ham WebSocket vs SignalR
 - **SignalR Hub** modeli, `HubContext` ile sunucudan client'a mesaj
@@ -901,7 +1256,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Karar tablosu: SSE vs WebSocket vs SignalR vs polling
 - Gerçek senaryo: bildirim, canlı dashboard, chat, işbirlikçi düzenleme
 
-### 4.12 HTTP Client & Dış Servis Entegrasyonu 🟡
+### 5.12 HTTP Client & Dış Servis Entegrasyonu 🟡
 - **`HttpClient` socket exhaustion problemi** — `using (var client = new HttpClient())` neden felaket
 - `IHttpClientFactory`: named client, typed client, generated client
 - `HttpClientHandler` ömrü ve DNS değişikliği sorunu (`SetHandlerLifetime`)
@@ -917,7 +1272,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Dış servis hatalarını domain hatasına çevirme
 - Testte `HttpClient` mock'lama (`DelegatingHandler`, WireMock.Net)
 
-### 4.13 Serialization 🟡
+### 5.13 Serialization 🟡
 - **`System.Text.Json`** (varsayılan) vs `Newtonsoft.Json` — farklar ve migration tuzakları
 - `JsonSerializerOptions`: naming policy (camelCase), ignore null, enum converter
 - Custom `JsonConverter<T>`
@@ -929,7 +1284,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Circular reference (`ReferenceHandler.Preserve`)
 - Alternatifler: MessagePack, Protobuf, System.Text.Json vs binary formatlar
 
-### 4.14 API Performansı 🔴
+### 5.14 API Performansı 🔴
 - Response compression (Brotli, Gzip; .NET 11'de Zstandard)
 - **Caching katmanları:**
   - Client cache (`Cache-Control`, `ETag`, `If-None-Match` → `304`)
@@ -946,7 +1301,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Yük testi: k6, Bombardier, NBomber, Crank
 - Latency percentile'ları (p50/p95/p99) — ortalama neden yalan söyler
 
-### 4.15 API Mimari Pattern'leri 🔴
+### 5.15 API Mimari Pattern'leri 🔴
 - **API Gateway** (YARP, Ocelot, Azure API Management) — routing, auth, rate limit, aggregation
 - **Backend For Frontend (BFF)** — web/mobile için ayrı API katmanı
 - BFF + cookie ile SPA güvenliği (token'ı tarayıcıda tutmama)
@@ -963,16 +1318,16 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 5. Veri Erişimi & ORM
+## 6. Veri Erişimi & ORM
 
-### 5.1 ADO.NET 🟢
+### 6.1 ADO.NET 🟢
 - `DbConnection`, `DbCommand`, `DbDataReader`, `DbTransaction`
 - **Parametreli sorgu** ve SQL injection önleme
 - Connection pooling nasıl çalışır, connection string'in pool'a etkisi
 - `using` ile connection yönetimi, connection leak
 - ORM'lerin altında ne olduğunu bilmek — mülakatta değerli
 
-### 5.2 Entity Framework Core 🟡→🔴
+### 6.2 Entity Framework Core 🟡→🔴
 - Code-first vs Database-first (scaffold)
 - `DbContext` ve `DbSet<T>`, **scoped lifetime** kuralı ve `IDbContextFactory` (Blazor/background service)
 - **Migrations:** `dotnet ef migrations add/update/script`, idempotent script, production'da uygulama stratejisi
@@ -994,7 +1349,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - EF Core loglama ve `LogTo` ile üretilen SQL'i görme
 - **EF Core performans anti-pattern'leri** checklist'i
 
-### 5.3 Dapper 🟡
+### 6.3 Dapper 🟡
 - Micro-ORM felsefesi, ne zaman EF Core yerine Dapper
 - `Query`, `QueryAsync`, `QueryFirstOrDefault`, `Execute`
 - Multi-mapping (`splitOn`), multiple result set (`QueryMultiple`)
@@ -1003,7 +1358,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - EF Core + Dapper hibrit kullanımı (yazma EF, karmaşık okuma Dapper — CQRS'e doğal uyum)
 - Dapper.Contrib, Dapper.FastCrud
 
-### 5.4 Object Mapping 🟡
+### 6.4 Object Mapping 🟡
 - Entity ↔ DTO ayrımı neden gerekli (over-posting, API contract kararlılığı)
 - **Manuel mapping** — en hızlı ve en açık (varsayılan tercih olmalı)
 - **Mapperly** — source generator tabanlı, AOT uyumlu, sıfır runtime maliyeti
@@ -1011,7 +1366,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Mapping profil testleri (`AssertConfigurationIsValid`)
 - Projection ile DB seviyesinde mapping (`Select` → DTO, `ProjectTo`)
 
-### 5.5 Repository, Unit of Work & Specification 🟡
+### 6.5 Repository, Unit of Work & Specification 🟡
 - Repository pattern — ne zaman gerekli, ne zaman **gereksiz soyutlama**
 - "`DbContext` zaten Repository + UoW" argümanı ve karşı argümanlar
 - Generic repository neden çoğu zaman anti-pattern
@@ -1021,9 +1376,9 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 6. Veritabanları
+## 7. Veritabanları
 
-### 6.1 İlişkisel Temeller 🟢→🔴
+### 7.1 İlişkisel Temeller 🟢→🔴
 - Normalizasyon (1NF, 2NF, 3NF, BCNF) ve bilinçli **denormalizasyon**
 - Primary key, foreign key, unique, check, default constraint
 - Surrogate key vs natural key; int vs GUID vs **sequential GUID (GUIDv7)** — index fragmentation
@@ -1036,7 +1391,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Window function'lar: `ROW_NUMBER`, `RANK`, `LAG`/`LEAD`, `SUM() OVER()`
 - CTE ve recursive CTE
 
-### 6.2 SQL Server 🟡
+### 7.2 SQL Server 🟡
 - T-SQL özellikleri, `MERGE` ve bilinen sorunları
 - **Execution plan okuma** — estimated vs actual, en pahalı operatörü bulma
 - Index seek vs index scan vs table scan vs key lookup
@@ -1049,7 +1404,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Always On availability group, backup/restore stratejisi
 - DMV'ler ile teşhis (`sys.dm_exec_query_stats`, `sys.dm_db_index_usage_stats`)
 
-### 6.3 PostgreSQL 🟡
+### 7.3 PostgreSQL 🟡
 - Npgsql driver, EF Core Postgres provider farkları
 - **`EXPLAIN (ANALYZE, BUFFERS)`** ile plan analizi
 - Index tipleri: B-tree, **GIN**, GiST, BRIN, Hash — hangi veri tipine hangisi
@@ -1066,7 +1421,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Connection pooling: PgBouncer neden gerekli
 - SQL Server'dan Postgres'e göç tuzakları (case sensitivity, identifier quoting, `IDENTITY` vs `SERIAL`)
 
-### 6.4 MongoDB 🟡
+### 7.4 MongoDB 🟡
 - Document model, BSON, `_id` ve ObjectId
 - **MongoDB.Driver** (.NET): `IMongoCollection<T>`, LINQ provider, `FilterDefinition`
 - CRUD, `UpdateOne` vs `ReplaceOne`, upsert, `FindOneAndUpdate`
@@ -1082,7 +1437,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Atlas Vector Search (AI senaryosu)
 - **Ne zaman MongoDB, ne zaman ilişkisel** — dürüst karşılaştırma
 
-### 6.5 Redis 🟡
+### 7.5 Redis 🟡
 - In-memory key-value store, tek thread'li model
 - Veri tipleri: string, list, set, sorted set, hash, stream, bitmap, HyperLogLog
 - **Kullanım senaryoları:** cache, session store, distributed lock, rate limiter, leaderboard, pub/sub, queue
@@ -1095,7 +1450,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Redis Streams ile event log
 - **Cache invalidation** stratejileri ve cache stampede (thundering herd) çözümü
 
-### 6.6 Sorgu Optimizasyonu 🔴
+### 7.6 Sorgu Optimizasyonu 🔴
 - Yavaş sorguyu bulma: DB tarafı (DMV, `pg_stat_statements`), uygulama tarafı (EF logging, MiniProfiler, APM)
 - Execution plan okuma disiplini
 - Index tasarımı: hangi kolonlar, hangi sırayla, covering index
@@ -1108,7 +1463,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Denormalizasyon ve materialized view ile okuma hızlandırma
 - Read replica'ya okuma yönlendirme ve replication lag
 
-### 6.7 Transaction'lar & Isolation 🔴
+### 7.7 Transaction'lar & Isolation 🔴
 - **Isolation level'lar** ve engelledikleri anomaliler:
 
 | Level | Dirty Read | Non-repeatable Read | Phantom Read |
@@ -1128,7 +1483,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Transaction süresini kısa tutma kuralı (içinde HTTP çağrısı yapmama)
 - Retry politikası ve idempotency
 
-### 6.8 Migration Stratejileri 🟡
+### 7.8 Migration Stratejileri 🟡
 - EF Core Migrations, FluentMigrator, DbUp, Flyway/Liquibase
 - Migration'ı kim uygular: uygulama startup'ı mı, pipeline adımı mı (trade-off)
 - **Zero-downtime şema değişikliği:** expand → migrate → contract pattern
@@ -1139,7 +1494,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Çoklu instance deployment sırasında şema uyumu
 - Seed data yönetimi
 
-### 6.9 Arama Motorları 🟡
+### 7.9 Arama Motorları 🟡
 - Neden DB `LIKE '%...%'` yetmez
 - **Elasticsearch / OpenSearch**: index, mapping, analyzer, tokenizer
 - Full-text search, fuzzy matching, relevance scoring (BM25)
@@ -1148,13 +1503,13 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Alternatifler: Meilisearch, Typesense, Azure AI Search
 - PostgreSQL full-text search (`tsvector`) ve `pg_trgm` — ne zaman yeterli
 - CDC ile DB → search index senkronizasyonu
-- Hybrid search (keyword + vector) — [AI bölümü](#14-ai-engineering-net) ile kesişim
+- Hybrid search (keyword + vector) — [AI bölümü](#15-ai-engineering-net) ile kesişim
 
 ---
 
-## 7. Test
+## 8. Test
 
-### 7.1 Unit Testing 🟢
+### 8.1 Unit Testing 🟢
 - xUnit (`[Fact]`, `[Theory]`, `[InlineData]`, `[MemberData]`, `[ClassData]`)
 - NUnit ve MSTest farkları; TUnit (yeni nesil)
 - **Arrange-Act-Assert** ve Given-When-Then
@@ -1168,7 +1523,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Coverage: Coverlet, ReportGenerator — **coverage yüzdesinin yanıltıcılığı**
 - TDD döngüsü (red-green-refactor) ve gerçekçi kullanımı
 
-### 7.2 Mocking 🟡
+### 8.2 Mocking 🟡
 - Test double türleri: dummy, stub, spy, mock, fake
 - **NSubstitute** (tercih edilen), Moq (SponsorLink tartışması), FakeItEasy
 - Mock ne zaman gereksiz — gerçek nesne kullanmak daha iyi olduğunda
@@ -1176,7 +1531,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Zaman, rastgelelik, GUID gibi non-deterministik bağımlılıkları soyutlama
 - Over-mocking anti-pattern'i ve kırılgan testler
 
-### 7.3 Integration Testing 🟡
+### 8.3 Integration Testing 🟡
 - **`WebApplicationFactory<TProgram>`** ile in-memory API testi
 - Test için servis değiştirme (`ConfigureTestServices`)
 - Authentication'ı test için bypass etme (test auth handler)
@@ -1185,14 +1540,14 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **Respawn** ile testler arası DB temizleme
 - Test izolasyonu ve paralel çalıştırma
 
-### 7.4 TestContainers 🟡
+### 8.4 TestContainers 🟡
 - Docker ile gerçek bağımlılıkları (Postgres, SQL Server, Redis, MongoDB, RabbitMQ, Kafka) ayağa kaldırma
 - `Testcontainers` .NET kütüphanesi
 - Container yaşam döngüsü ve test performansı
 - CI'da TestContainers çalıştırma
 - .NET Aspire ile test orkestrasyonu
 
-### 7.5 E2E & Diğer Test Türleri 🟡
+### 8.5 E2E & Diğer Test Türleri 🟡
 - **Playwright** (.NET) ile tarayıcı otomasyonu; Selenium alternatifi
 - API E2E testi ve smoke test
 - **Snapshot testing** — Verify
@@ -1201,14 +1556,14 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Behavior testing — SpecFlow/Reqnroll
 - Test piramidi vs test trophy — modern görüş
 
-### 7.6 Performans Testi 🔴
+### 8.6 Performans Testi 🔴
 - **BenchmarkDotNet** — mikro-benchmark, `[MemoryDiagnoser]`, doğru ölçüm kuralları
 - Yük testi: k6, NBomber, Bombardier, JMeter, Crank
 - Load vs stress vs soak vs spike testi
 - SLO/SLI tanımlama, p95/p99 hedefleri
 - Baseline oluşturma ve CI'da regresyon tespiti
 
-### 7.7 Architecture Testing 🔴
+### 8.7 Architecture Testing 🔴
 - **NetArchTest** / **ArchUnitNET** ile mimari kuralları test etme
 - Örnek kurallar: "Domain katmanı Infrastructure'a referans veremez", "Controller'lar `DbContext` kullanamaz"
 - Katman ihlallerini CI'da yakalama
@@ -1216,9 +1571,9 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 8. Mimari & Tasarım
+## 9. Mimari & Tasarım
 
-### 8.1 SOLID 🟡
+### 9.1 SOLID 🟡
 - **S**ingle Responsibility — "tek bir değişme sebebi"
 - **O**pen/Closed — genişlemeye açık, değişikliğe kapalı
 - **L**iskov Substitution — klasik ihlal örnekleri (Square/Rectangle, `NotImplementedException`)
@@ -1228,7 +1583,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - DRY, KISS, YAGNI, Law of Demeter, composition over inheritance
 - SOLID'in aşırı uygulanması (gereksiz soyutlama) eleştirisi
 
-### 8.2 Design Patterns 🟡
+### 9.2 Design Patterns 🟡
 - **Creational:** Singleton (thread-safe + DI ile alternatifi), Factory Method, Abstract Factory, Builder, Prototype
 - **Structural:** Adapter, Decorator, Facade, Proxy, Composite, Bridge, Flyweight
 - **Behavioral:** Strategy, Observer, Mediator, Chain of Responsibility, Command, Template Method, State, Visitor, Iterator, Memento
@@ -1237,7 +1592,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **Anti-pattern'ler:** God object, anemic domain model, service locator, primitive obsession, magic string
 - Pattern seçimi: problemden başla, pattern'den değil
 
-### 8.3 Katmanlı vs Clean Architecture 🟡→🔴
+### 9.3 Katmanlı vs Clean Architecture 🟡→🔴
 - Klasik N-tier (Presentation / Business / Data) ve sınırları
 - **Clean Architecture:** Domain → Application → Infrastructure → Presentation
 - **Dependency Rule** — bağımlılıklar içeriye doğru, Domain hiçbir şeye bağlı değil
@@ -1247,7 +1602,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **Trade-off:** ne zaman fazla geliyor (küçük CRUD servis), ne zaman kurtarıyor
 - Katmanları proje olarak mı klasör olarak mı ayırmalı
 
-### 8.4 Domain-Driven Design 🔴
+### 9.4 Domain-Driven Design 🔴
 - **Strategic DDD:** Ubiquitous Language, Bounded Context, Context Map, subdomain türleri (core/supporting/generic)
 - **Tactical DDD:**
   - Entity (kimlik) vs **Value Object** (değer, immutable)
@@ -1260,7 +1615,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - DDD ne zaman **aşırı** (basit CRUD'da)
 - EF Core ile DDD: private setter, backing field, owned type, value object mapping
 
-### 8.5 CQRS & MediatR 🔴
+### 9.5 CQRS & MediatR 🔴
 - Command / Query ayrımının **asıl amacı** (farklı model, farklı optimizasyon)
 - CQRS ≠ Event Sourcing (sık karıştırılır)
 - Basit CQRS (aynı DB, farklı model) vs tam CQRS (ayrı read store)
@@ -1269,14 +1624,14 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Read model projection ve eventual consistency
 - CQRS'in maliyeti — ne zaman gereksiz karmaşıklık
 
-### 8.6 Vertical Slice Architecture 🔴
+### 9.6 Vertical Slice Architecture 🔴
 - Katman yerine **özellik** bazlı organizasyon
 - "Feature klasörü" içinde request, handler, validator, endpoint bir arada
 - Clean Architecture ile karşılaştırma ve ne zaman hangisi
 - Coupling'i kabullenme, yüksek cohesion
 - FastEndpoints/Minimal API ile doğal uyum
 
-### 8.7 Modular Monolith 🔴
+### 9.7 Modular Monolith 🔴
 - Microservice'e geçmeden önce doğru adım
 - Modül sınırları = bounded context
 - Modüller arası iletişim: in-process mediator vs event
@@ -1287,9 +1642,9 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 9. Microservices & Dağıtık Sistemler
+## 10. Microservices & Dağıtık Sistemler
 
-### 9.1 Microservice Temelleri 🔴
+### 10.1 Microservice Temelleri 🔴
 - Ne zaman microservice, ne zaman **monolit** (ekip büyüklüğü, deployment bağımsızlığı, scale profili)
 - Microservice'in gizli maliyetleri: dağıtık debugging, veri tutarlılığı, operasyon yükü
 - Service decomposition: bounded context, subdomain, veri sahipliği
@@ -1300,7 +1655,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **Dapr** ile building block yaklaşımı
 - **.NET Aspire** ile yerel orkestrasyon ve servis keşfi
 
-### 9.2 Message Broker'lar 🔴
+### 10.2 Message Broker'lar 🔴
 - Kuyruk (point-to-point) vs Topic (pub/sub) semantiği
 - **RabbitMQ:** exchange tipleri (direct, topic, fanout, headers), binding, queue, DLQ, prefetch
 - **Apache Kafka:** topic, partition, offset, consumer group, log compaction, retention — event streaming modeli
@@ -1313,7 +1668,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Poison message yönetimi
 - Kafka vs RabbitMQ karar tablosu
 
-### 9.3 Event-Driven Architecture 🔴
+### 10.3 Event-Driven Architecture 🔴
 - Domain event vs **Integration event** — sınır ve serialization farkı
 - Event notification vs event-carried state transfer vs event sourcing
 - **Event Sourcing:** append-only log, replay, snapshot, projection; Marten/EventStoreDB
@@ -1321,7 +1676,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **Eventual consistency** — kullanıcıya nasıl anlatılır, UI'da nasıl ele alınır
 - Event storming ile modelleme
 
-### 9.4 Outbox & Saga 🔴
+### 10.4 Outbox & Saga 🔴
 - **Dual-write problemi:** DB'ye yaz + mesaj gönder — neden atomik değil
 - **Transactional Outbox pattern** — aynı transaction'da outbox tablosuna yazma, ayrı process ile publish
 - Inbox pattern ile consumer idempotency
@@ -1333,14 +1688,14 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
   - MassTransit state machine (Automatonymous)
 - Gerçek senaryo: sipariş → ödeme → stok → kargo akışı ve her adımın telafisi
 
-### 9.5 API Gateway & Edge 🔴
+### 10.5 API Gateway & Edge 🔴
 - Gateway sorumlulukları: routing, auth, rate limit, aggregation, protocol translation
 - **YARP** (Microsoft'un reverse proxy'si) ile özelleştirilebilir gateway
 - Ocelot, Azure API Management, Kong, nginx
 - BFF ile ilişkisi
 - Gateway'in tek hata noktası olma riski
 
-### 9.6 Resilience 🔴
+### 10.6 Resilience 🔴
 - **Polly** / `Microsoft.Extensions.Http.Resilience`
   - Retry + **exponential backoff + jitter** (neden jitter şart)
   - **Circuit breaker** — closed/open/half-open durumları
@@ -1353,7 +1708,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Health check'ler ve dependency health
 - Chaos engineering (Simmy, Azure Chaos Studio)
 
-### 9.7 Dağıtık Sistem Kavramları 🔴
+### 10.7 Dağıtık Sistem Kavramları 🔴
 - **CAP teoremi** — pratikte PACELC ile birlikte düşünmek
 - Consistency modelleri: strong, eventual, causal, read-your-writes
 - Consensus: Raft ve Paxos'un temel fikri (detay değil, sezgi)
@@ -1367,15 +1722,15 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 10. Performans & Bellek
+## 11. Performans & Bellek
 
-### 10.1 Benchmarking 🔴
+### 11.1 Benchmarking 🔴
 - **BenchmarkDotNet** doğru kullanımı, `[MemoryDiagnoser]`, `[Params]`, baseline
 - Mikro-benchmark tuzakları: dead code elimination, JIT warm-up, ölçüm gürültüsü
 - "Ölçmeden optimize etme" prensibi
 - Profiling vs benchmarking farkı
 
-### 10.2 Bellek Yönetimi & GC 🔴
+### 11.2 Bellek Yönetimi & GC 🔴
 - Managed heap, **generation'lar** (Gen 0/1/2) ve neden generational
 - **Large Object Heap (LOH)** — 85 KB eşiği, fragmentation, `GCSettings.LargeObjectHeapCompactionMode`
 - Workstation vs **Server GC**; concurrent/background GC
@@ -1393,7 +1748,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Teşhis: `dotnet-counters`, `dotnet-dump` + SOS, dotMemory, PerfView, Visual Studio Diagnostic Tools
 - Container'da bellek limiti ve OOMKilled
 
-### 10.3 Allocation Azaltma 🔴
+### 11.3 Allocation Azaltma 🔴
 - Allocation'ın gerçek maliyeti (GC baskısı)
 - `Span<T>` / `Memory<T>` / `stackalloc`
 - `ArrayPool<T>`, `MemoryPool<T>`, `ObjectPool<T>` (`Microsoft.Extensions.ObjectPool`)
@@ -1404,7 +1759,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Boxing avı (interface çağrıları, `object` parametreler)
 - `System.IO.Pipelines` ile sıfır-kopya I/O
 
-### 10.4 Caching Stratejileri 🟡→🔴
+### 11.4 Caching Stratejileri 🟡→🔴
 - Cache katmanları: in-process (`IMemoryCache`) → distributed (Redis) → CDN → browser
 - **`HybridCache`** (.NET 9+) — L1+L2, stampede koruması, tag ile invalidation
 - Pattern'ler: cache-aside, read-through, write-through, write-behind, refresh-ahead
@@ -1416,7 +1771,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Consistent hashing (dağıtık cache'te)
 - Neyi cache'lememeli (kullanıcıya özel hassas veri, sık değişen veri)
 
-### 10.5 AOT, Trimming & Startup 🔴
+### 11.5 AOT, Trimming & Startup 🔴
 - **Native AOT** (.NET 10'da olgun): ~1 MB binary, çok hızlı cold start
 - AOT kısıtları: reflection, dynamic code, bazı kütüphaneler
 - Trimming ve `TrimMode`, trim warning'leri çözme
@@ -1425,7 +1780,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Startup süresini ölçme ve azaltma
 - Serverless/Function senaryosunda cold start
 
-### 10.6 Profiling & Diagnostics 🔴
+### 11.6 Profiling & Diagnostics 🔴
 - `dotnet-counters`, `dotnet-trace`, `dotnet-dump`, `dotnet-gcdump`, `dotnet-monitor`
 - EventSource / EventPipe, `System.Diagnostics.Metrics`
 - Visual Studio Profiler, PerfView, dotTrace, dotMemory
@@ -1436,9 +1791,9 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 11. Güvenlik
+## 12. Güvenlik
 
-### 11.1 OWASP Top 10 (.NET karşılıkları) 🟡→🔴
+### 12.1 OWASP Top 10 (.NET karşılıkları) 🟡→🔴
 1. **Broken Access Control** — resource-based authorization, IDOR koruması
 2. **Cryptographic Failures** — TLS, at-rest şifreleme, zayıf algoritmalardan kaçınma
 3. **Injection** — parametreli sorgu, EF Core'un koruması ve `FromSqlRaw` tuzağı; NoSQL injection; command injection
@@ -1450,7 +1805,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 9. **Logging & Monitoring Failures** — yetersiz audit trail
 10. **SSRF** — dış URL çağrılarında allowlist
 
-### 11.2 Authentication 🟡
+### 12.2 Authentication 🟡
 - Cookie authentication, `SameSite`, `Secure`, `HttpOnly`
 - **JWT**: yapı, imza (HS256 vs RS256), doğrulama adımları, `alg: none` saldırısı
 - Access + refresh token, rotation, reuse detection
@@ -1461,7 +1816,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - OAuth 2.0 / OIDC akışları ve hangisini ne zaman
 - Token storage: SPA'da localStorage neden riskli → BFF + HttpOnly cookie
 
-### 11.3 Authorization 🟡→🔴
+### 12.3 Authorization 🟡→🔴
 - Role vs Claim vs Policy
 - `IAuthorizationRequirement` + handler ile custom policy
 - Resource-based authorization
@@ -1469,7 +1824,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Multi-tenant izolasyonu ve tenant sızıntısı testleri
 - Yatay vs dikey yetki yükseltme (privilege escalation)
 
-### 11.4 Secrets Yönetimi 🟡
+### 12.4 Secrets Yönetimi 🟡
 - Kaynak kontrolüne secret koymama (ve kazayla koyduysan **rotate et**)
 - User Secrets (dev), environment variables, **Azure Key Vault**, HashiCorp Vault
 - Managed Identity ile secret'sız kimlik doğrulama (en iyi yaklaşım)
@@ -1477,7 +1832,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Secret scanning (GitHub secret scanning, gitleaks)
 - Secret rotation stratejisi
 
-### 11.5 Kriptografi 🔴
+### 12.5 Kriptografi 🔴
 - Simetrik (AES) vs asimetrik (RSA, ECDSA)
 - Hashing (SHA-256) vs password hashing (bcrypt, Argon2, PBKDF2) — **fark kritik**
 - HMAC ile mesaj bütünlüğü (webhook imzası)
@@ -1487,7 +1842,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - "Kendi kripton'u yazma" kuralı
 - Timing attack ve `CryptographicOperations.FixedTimeEquals`
 
-### 11.6 Supply Chain & Uygulama Güvenliği 🔴
+### 12.6 Supply Chain & Uygulama Güvenliği 🔴
 - NuGet paket güvenliği, typosquatting, paket imzalama
 - SBOM üretimi
 - Dependency pinning ve lock file
@@ -1499,9 +1854,9 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 12. Docker, Kubernetes & DevOps
+## 13. Docker, Kubernetes & DevOps
 
-### 12.1 Docker Temelleri 🟢
+### 13.1 Docker Temelleri 🟢
 - Image vs Container vs Registry; layer ve cache mantığı
 - `docker run` bayrakları: `-p`, `-v`, `-e`, `--network`, `--rm`
 - `docker ps/logs/exec/inspect/stats`
@@ -1510,7 +1865,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Registry: Docker Hub, GHCR, Azure Container Registry
 - Container ≠ VM — izolasyon modeli farkı
 
-### 12.2 .NET için Dockerfile 🟡
+### 13.2 .NET için Dockerfile 🟡
 - Base image seçimi: `sdk` (build) vs `aspnet`/`runtime` (çalıştırma)
 - **Multi-stage build** — SDK'yı final image'da bırakmama
 - Layer cache optimizasyonu: önce `.csproj` kopyala → `restore` → sonra kaynak kodu kopyala
@@ -1522,7 +1877,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - `dotnet publish /t:PublishContainer` ile Dockerfile'sız image üretimi
 - Image boyutu ve güvenlik yüzeyi optimizasyonu
 
-### 12.3 Docker Compose 🟡
+### 13.3 Docker Compose 🟡
 - Multi-service tanımı: API + PostgreSQL + Redis + Seq/Jaeger
 - `depends_on` + `healthcheck` ile başlangıç sırası
 - Network ve servis adıyla DNS çözümleme
@@ -1530,7 +1885,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Environment değişkenleri, `.env` dosyası, override dosyaları
 - Geliştirme ortamı olarak Compose — "tek komutla çalışan repo" hedefi
 
-### 12.4 Kubernetes 🔴
+### 13.4 Kubernetes 🔴
 - Temel nesneler: Pod, ReplicaSet, **Deployment**, Service, Ingress
 - ConfigMap ve Secret ile konfigürasyon enjeksiyonu
 - **Probe'lar:** liveness, readiness, startup — ve ASP.NET Core health check eşlemesi
@@ -1543,7 +1898,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Log ve metrik toplama
 - Azure Kubernetes Service (AKS), **Azure Container Apps** (daha basit alternatif)
 
-### 12.5 CI/CD 🟡
+### 13.5 CI/CD 🟡
 - Pipeline aşamaları: restore → build → test → analyze → publish → containerize → deploy
 - **GitHub Actions** ve **Azure Pipelines** YAML temelleri
 - Matrix build, caching, artifact yönetimi
@@ -1556,7 +1911,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Rollback planı
 - DORA metrikleri (deployment frequency, lead time, MTTR, change failure rate)
 
-### 12.6 Infrastructure as Code 🔴
+### 13.6 Infrastructure as Code 🔴
 - ARM template → **Bicep** (Azure-native)
 - **Terraform** (multi-cloud), state yönetimi
 - Pulumi (C# ile IaC)
@@ -1565,11 +1920,11 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 13. Azure Cloud
+## 14. Azure Cloud
 
 > Junior: portal kullanımı ve deploy. Mid: servis yapılandırma ve entegrasyon. Senior: mimari seçim, maliyet, dayanıklılık.
 
-### 13.1 App Service 🟡
+### 14.1 App Service 🟡
 - Web App deployment (ZIP deploy, GitHub Actions, Azure Pipelines, container)
 - Application Settings ve connection string'ler → `IConfiguration`'a nasıl akar
 - **Deployment slot** ve slot swap ile sıfır kesintili yayın; slot-specific settings
@@ -1578,7 +1933,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Managed Identity ile diğer servislere erişim
 - Kudu/SCM, log stream, diagnostic
 
-### 13.2 Azure SQL 🟡
+### 14.2 Azure SQL 🟡
 - Deployment seçenekleri: Single DB, Elastic Pool, Managed Instance, SQL Server on VM
 - DTU vs vCore, serverless tier ve auto-pause
 - Firewall, Private Endpoint, **Entra ID / Managed Identity ile şifresiz auth**
@@ -1586,7 +1941,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Query Performance Insight, otomatik tuning
 - Retry politikası (`EnableRetryOnFailure`) — geçici hatalar (transient fault)
 
-### 13.3 Cosmos DB 🟡
+### 14.3 Cosmos DB 🟡
 - API'ler: NoSQL(SQL), MongoDB, Cassandra, Gremlin, Table, PostgreSQL
 - **Partition key seçimi** — en kritik ve geri dönüşü zor karar (cardinality, hot partition)
 - RU/s ekonomisi: provisioned vs autoscale vs serverless; RU maliyetini ölçme
@@ -1597,7 +1952,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Global dağıtım ve multi-region write
 - Cosmos DB ne zaman **yanlış** seçim (ilişkisel sorgu ihtiyacı, maliyet)
 
-### 13.4 Storage 🟢→🟡
+### 14.4 Storage 🟢→🟡
 - Blob, File, Queue, Table storage
 - Blob tier: Hot / Cool / Cold / Archive ve maliyet
 - **SAS token** (user delegation SAS tercih edilir), stored access policy
@@ -1606,7 +1961,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Static website hosting, CDN / Azure Front Door
 - Event Grid ile blob event'leri
 
-### 13.5 Messaging 🟡
+### 14.5 Messaging 🟡
 - **Service Bus:** queue vs topic/subscription, session (ordering), dead-letter, scheduled message, duplicate detection, peek-lock vs receive-and-delete
 - **Event Hubs:** yüksek hacimli telemetri, Kafka uyumlu arayüz, partition & consumer group
 - **Event Grid:** olay yönlendirme, reaktif entegrasyon
@@ -1614,7 +1969,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Hangisi ne zaman: Service Bus (kurumsal mesajlaşma) vs Event Hubs (stream) vs Event Grid (event routing)
 - MassTransit ile Azure Service Bus kullanımı
 
-### 13.6 Azure Functions 🟡
+### 14.6 Azure Functions 🟡
 - Trigger'lar: HTTP, Timer, Blob, Queue, Service Bus, Event Hub, Cosmos Change Feed
 - Input/output binding'ler
 - **Isolated worker model** (modern, .NET 10 ile tek seçenek)
@@ -1623,7 +1978,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Function vs Container Apps vs App Service — karar kriterleri
 - Yerel geliştirme ve test
 
-### 13.7 Key Vault 🟡
+### 14.7 Key Vault 🟡
 - Secret, Key, Certificate ayrımı
 - **Managed Identity** ile erişim (connection string'siz)
 - `Azure.Extensions.AspNetCore.Configuration.Secrets` ile `IConfiguration` entegrasyonu
@@ -1631,7 +1986,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Secret rotation ve `IOptionsMonitor` ile yenileme
 - RBAC vs access policy
 
-### 13.8 Entra ID (Azure AD) 🟡
+### 14.8 Entra ID (Azure AD) 🟡
 - Tenant, app registration, service principal, enterprise app
 - Client credentials (servis-servis), authorization code + PKCE (kullanıcı)
 - On-behalf-of flow (API → API)
@@ -1641,7 +1996,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - B2C / External ID ile müşteri kimlik yönetimi
 - Conditional access, token ömrü
 
-### 13.9 Application Insights & İzleme 🟡
+### 14.9 Application Insights & İzleme 🟡
 - Telemetry türleri: Request, Dependency, Trace, Exception, Custom Event, Metric
 - Otomatik toplama vs custom telemetry (`TelemetryClient`)
 - **OpenTelemetry ile modern entegrasyon** (önerilen yol)
@@ -1652,14 +2007,14 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Log Analytics workspace ve merkezi loglama
 - Dashboard ve workbook
 
-### 13.10 Container Apps & AKS 🔴
+### 14.10 Container Apps & AKS 🔴
 - **Azure Container Apps** — serverless container, KEDA ile event-driven scaling, scale-to-zero, Dapr entegrasyonu
 - AKS — tam Kubernetes kontrolü, ne zaman gerekir
 - Container Registry, image build (ACR Tasks)
 - Container Apps vs AKS vs App Service vs Functions — **karar tablosu**
 - Ingress, revision, traffic splitting (canary)
 
-### 13.11 .NET Aspire 🟡
+### 14.11 .NET Aspire 🟡
 - Aspire nedir: cloud-native uygulamalar için orkestrasyon + servis keşfi + telemetri
 - AppHost projesi ve kaynak modeli (Postgres, Redis, RabbitMQ container'larını kod ile tanımlama)
 - Service defaults: OpenTelemetry, health check, resilience hazır gelir
@@ -1670,11 +2025,11 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 14. AI Engineering (.NET)
+## 15. AI Engineering (.NET)
 
 > .NET artık AI-first bir platform. 2026 mülakatlarında backend rollerinde bile bu bölüm soruluyor.
 
-### 14.1 LLM Temelleri 🟡
+### 15.1 LLM Temelleri 🟡
 - Token, context window, temperature, top-p, max tokens
 - Prompt engineering: system/user/assistant rolleri, few-shot, chain-of-thought
 - Model seçimi: yetenek / gecikme / maliyet üçgeni
@@ -1683,7 +2038,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Rate limit, retry, token maliyeti hesaplama
 - Güvenlik: **prompt injection**, jailbreak, veri sızıntısı
 
-### 14.2 Microsoft.Extensions.AI 🟡
+### 15.2 Microsoft.Extensions.AI 🟡
 - .NET'in birleşik AI soyutlama katmanı (`IChatClient`, `IEmbeddingGenerator`)
 - Provider bağımsızlığı (OpenAI, Azure OpenAI, Ollama, Anthropic, yerel model)
 - Middleware pipeline: logging, caching, telemetry, function invocation
@@ -1691,7 +2046,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **Function calling / tool use** — LLM'e C# metodu çağırtma
 - Structured output (JSON schema ile tip güvenli çıktı)
 
-### 14.3 Semantic Kernel 🟡
+### 15.3 Semantic Kernel 🟡
 - Kernel, plugin, function (semantic vs native)
 - Prompt template'leri ve Handlebars/Liquid
 - Planner ve otomatik fonksiyon çağırma
@@ -1700,7 +2055,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **Semantic Kernel Agents** ve multi-agent orkestrasyon
 - Semantic Kernel vs Microsoft.Extensions.AI — ne zaman hangisi
 
-### 14.4 Embeddings & Vector Search 🟡
+### 15.4 Embeddings & Vector Search 🟡
 - Embedding nedir, semantik benzerlik nasıl ölçülür
 - Similarity metrikleri: cosine, dot product, Euclidean
 - **Chunking stratejileri:** sabit boyut, overlap, semantic chunking, parent-child
@@ -1713,7 +2068,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - ANN index'leri: HNSW, IVFFlat — recall/latency trade-off
 - Metadata filtreleme ile hibrit sorgu
 
-### 14.5 RAG Pipeline 🔴
+### 15.5 RAG Pipeline 🔴
 - RAG neden gerekli (güncel/özel veri + kaynak gösterimi + maliyet)
 - **Ingestion:** yükle → parse → chunk → embed → store (+ metadata)
 - **Retrieval:** query embed → vector search → **hybrid search** (BM25 + vector) → **reranking**
@@ -1725,7 +2080,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Agentic RAG ve GraphRAG'e giriş
 - Maliyet ve gecikme optimizasyonu, embedding cache
 
-### 14.6 AI Agents 🔴
+### 15.6 AI Agents 🔴
 - Agent = LLM + tools + memory + loop
 - ReAct döngüsü (reason → act → observe)
 - Tool tasarımı: net açıklama, dar kapsam, deterministik dönüş
@@ -1737,7 +2092,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - MCP (Model Context Protocol) ile tool entegrasyonu
 - Agent'ların üretime alınması: timeout, maliyet limiti, idempotency
 
-### 14.7 ML.NET 🟡
+### 15.7 ML.NET 🟡
 - Klasik ML ne zaman LLM'den daha doğru araç (tabular veri, düşük gecikme, maliyet)
 - Senaryolar: regression, classification, clustering, anomaly detection, recommendation
 - AutoML ve Model Builder
@@ -1747,7 +2102,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - **ONNX** ile eğitilmiş model içe aktarma (PyTorch/TensorFlow → .NET)
 - Model versiyonlama ve yeniden eğitim
 
-### 14.8 AI Değerlendirme & Güvenlik 🔴
+### 15.8 AI Değerlendirme & Güvenlik 🔴
 - Eval-driven development — "prompt'u değiştirdim, iyi mi oldu?" sorusunu ölçmek
 - `Microsoft.Extensions.AI.Evaluation`
 - LLM-as-judge ve sınırları
@@ -1759,9 +2114,9 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 
 ---
 
-## 15. Sistem Tasarımı
+## 16. Sistem Tasarımı
 
-### 15.1 Ölçeklenebilirlik 🔴
+### 16.1 Ölçeklenebilirlik 🔴
 - Vertical vs horizontal scaling
 - **Stateless servis tasarımı** — neden ölçeklemenin ön koşulu
 - Session affinity (sticky session) ve sorunları
@@ -1771,14 +2126,14 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Asenkron işleme ile pik yükü tamponlama (queue ile load leveling)
 - Back-of-the-envelope hesaplama: QPS, storage, bandwidth, instance sayısı
 
-### 15.2 Ölçekte Caching 🔴
+### 16.2 Ölçekte Caching 🔴
 - Çok katmanlı cache mimarisi (browser → CDN → gateway → app → DB)
 - Cache hit ratio ölçümü ve iyileştirme
 - Invalidation stratejileri ve tag-based invalidation
 - Consistent hashing
 - Hot key problemi
 
-### 15.3 Rate Limiting & Kotalar 🔴
+### 16.3 Rate Limiting & Kotalar 🔴
 - Algoritmalar: fixed window, sliding window (log/counter), token bucket, leaky bucket
 - .NET `RateLimiter` API'leri
 - Dağıtık rate limiting (Redis + Lua ile atomik sayaç)
@@ -1786,7 +2141,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - `429` + `Retry-After` ve client tarafı backoff
 - Quota, throttling, fair usage
 
-### 15.4 Veri Bölümleme 🔴
+### 16.4 Veri Bölümleme 🔴
 - Partitioning vs sharding vs replication
 - Shard key seçimi ve resharding acısı
 - Hot partition problemi
@@ -1794,7 +2149,7 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Global ikincil index
 - Multi-region veri yerleşimi, veri egemenliği (data residency)
 
-### 15.5 Case Study'ler 🔴
+### 16.5 Case Study'ler 🔴
 Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçekleme → darboğaz → hata senaryoları.
 
 - **URL shortener** (hash üretimi, çakışma, okuma ağırlıklı yük, cache)
@@ -1810,9 +2165,9 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 
 ---
 
-## 16. Mülakat Süreci
+## 17. Mülakat Süreci
 
-### 16.1 Coding Interview 🟢→🔴
+### 17.1 Coding Interview 🟢→🔴
 - C# ile LeetCode refleksi: string, array, hash map, two pointers, sliding window, recursion, BFS/DFS
 - Klasik .NET soruları: FizzBuzz, string reverse, palindrome, anagram, fibonacci, en sık geçen eleman
 - LINQ ile çözme vs döngü ile çözme — hangisini ne zaman göstermeli
@@ -1820,7 +2175,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - Edge case listeleme alışkanlığı (null, boş, tek eleman, çok büyük, negatif, unicode)
 - Kodu test edilebilir yazma
 
-### 16.2 Live Coding / Pair Programming 🟡
+### 17.2 Live Coding / Pair Programming 🟡
 - **Sesli düşünme** — sessiz kalmak en büyük hata
 - Varsayımları açıkça söyleme ve soru sorma
 - Küçük adımlarla ilerleme, çalışan koddan başlama
@@ -1828,7 +2183,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - IDE hakimiyeti (kısayollar, refactoring araçları)
 - Hata yapınca panik yerine sistematik debug
 
-### 16.3 Behavioral / STAR 🟡
+### 17.3 Behavioral / STAR 🟡
 - **STAR:** Situation → Task → Action → Result (sayısal sonuçla)
 - Hazırlanması gereken hikayeler:
   - Zor bir production incident ve çözümü
@@ -1841,7 +2196,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - "Neden burası" — şirkete özel araştırma (ürün, teknoloji, ekip)
 - Sorulacak sorular listesi (ekip yapısı, code review kültürü, teknik borç, on-call)
 
-### 16.4 System Design Interview 🔴
+### 17.4 System Design Interview 🔴
 - **Yapı:**
   1. Gereksinim netleştirme (fonksiyonel + non-fonksiyonel)
   2. Ölçek tahmini (kullanıcı, QPS, veri, okuma/yazma oranı)
@@ -1855,7 +2210,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - Her seçimi **gerekçelendirme** ("Postgres seçtim çünkü...")
 - Bilmediğini kabul etme ve muhakemeyi gösterme
 
-### 16.5 Take-home Ödevleri 🟡
+### 17.5 Take-home Ödevleri 🟡
 - Zaman yönetimi ve **over-engineering tuzağı**
 - README'nin önemi: kurulum, mimari kararlar, varsayımlar, yapılmayanlar ve nedenleri
 - Test yazma (en çok fark yaratan tek şey)
@@ -1863,7 +2218,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - Temiz commit geçmişi
 - Kapsamı erken netleştirmek için soru sorma
 
-### 16.6 Mülakat Öncesi Checklist
+### 17.6 Mülakat Öncesi Checklist
 - [ ] CV'deki her teknolojiyi savunabiliyor muyum?
 - [ ] Son projemi 2 dakikada anlatabiliyor muyum (problem → çözüm → sonuç)?
 - [ ] En gurur duyduğum ve en çok pişman olduğum teknik karar?
@@ -1877,39 +2232,43 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 
 Günde 2-3 saat varsayımıyla. Kendi seviyene göre fazları atlayabilir veya hızlandırabilirsin.
 
-### Junior hedefi (~3 ay)
+### Junior hedefi (~3,5 ay)
 | Hafta | İçerik |
 |-------|--------|
-| 1-2 | Bölüm 0 (ön koşullar) + 1.1-1.4 (C# temel, OOP, collections, exception) |
-| 3-4 | 1.5-1.6 (delegate/event, LINQ) + 3.1, 3.4 temel async |
-| 5-6 | Bölüm 2 (platform: DI, configuration, middleware, logging) |
-| 7-8 | Bölüm 4.1-4.5 (REST, Web API, validation) |
-| 9-10 | Bölüm 5.2 (EF Core) + 6.1 (SQL temelleri) |
-| 11 | Bölüm 7.1-7.2 (unit test, mocking) |
-| 12 | Bölüm 12.1-12.3 (Docker) + tekrar + mock mülakat |
+| 1-2 | Bölüm 0 (ön koşullar) + 1.1-1.2 (program anatomisi, tip sistemi & bellek) |
+| 3-4 | 1.3-1.5 (OOP, collections, exception) |
+| 5 | 1.6-1.7 (delegate/event, LINQ) |
+| 6 | **Bölüm 2 temel kısmı** — 2.4 (`bin`/`obj`), 2.7 (`run` vs `publish`), 2.6 (exe nasıl oluşuyor) |
+| 7-8 | Bölüm 3 (platform: DI, configuration, middleware, logging) |
+| 9-10 | Bölüm 5.1-5.5 (REST, Web API, validation) |
+| 11-12 | Bölüm 6.2 (EF Core) + 7.1 (SQL temelleri) |
+| 13 | Bölüm 8.1-8.2 (unit test, mocking) |
+| 14 | Bölüm 13.1-13.3 (Docker) + tekrar + mock mülakat |
 
-### Mid hedefi (~5 ay, junior içeriği biliniyor varsayımıyla)
+### Mid hedefi (~5,5 ay, junior içeriği biliniyor varsayımıyla)
 | Hafta | İçerik |
 |-------|--------|
-| 1-2 | 1.7-1.8 (modern C#, Span) + 2 tekrar (Options, hosting, background service) |
-| 3-5 | **Bölüm 3 tamamı (multithreading)** — en yüksek getirili bölüm |
-| 6-8 | **Bölüm 4 tamamı (API)** — versioning, güvenlik, gRPC, GraphQL, SignalR |
-| 9-10 | Bölüm 5 (EF Core ileri, Dapper) + 6.2-6.5 (SQL Server, Postgres, Mongo, Redis) |
-| 11-12 | Bölüm 8.1-8.3 (SOLID, patterns, Clean Architecture) |
-| 13-14 | Bölüm 7 (test ileri, TestContainers) + 10.4 (caching) |
-| 15-16 | Bölüm 11 (güvenlik) + 12 (Docker/CI-CD) |
-| 17-18 | Bölüm 13 (Azure) |
-| 19-20 | Bölüm 14 (AI) + tekrar + mock mülakat |
+| 1-2 | 1.8-1.9 (modern C#, Span) + 1.10 (reflection, source generators) |
+| 3-4 | **Bölüm 2 tamamı** (Roslyn/IL, MSBuild, apphost, deployment modelleri, JIT) — lab'ları mutlaka yap |
+| 5-6 | Bölüm 3 tekrar (Options pattern, hosting, background service, filter) |
+| 7-9 | **Bölüm 4 tamamı (multithreading)** — en yüksek getirili bölüm |
+| 10-12 | **Bölüm 5 tamamı (API)** — versioning, güvenlik, gRPC, GraphQL, SignalR |
+| 13-14 | Bölüm 6 (EF Core ileri, Dapper) + 7.2-7.5 (SQL Server, Postgres, Mongo, Redis) |
+| 15-16 | Bölüm 9.1-9.3 (SOLID, patterns, Clean Architecture) |
+| 17-18 | Bölüm 8 (test ileri, TestContainers) + 11.4 (caching) |
+| 19-20 | Bölüm 12 (güvenlik) + 13 (Docker/CI-CD) |
+| 21-22 | Bölüm 14 (Azure) |
+| 23-24 | Bölüm 15 (AI) + tekrar + mock mülakat |
 
-### Senior hedefi (~6 ay)
+### Senior hedefi (~7 ay)
 Mid planına ek olarak:
 | Hafta | İçerik |
 |-------|--------|
-| +1-3 | Bölüm 8.4-8.7 (DDD, CQRS, vertical slice, modular monolith) |
-| +4-6 | Bölüm 9 (microservices, message broker, saga, outbox, resilience) |
-| +7-8 | Bölüm 10 (performans, GC, profiling, AOT) |
-| +9-10 | Bölüm 15 (system design, case study'ler) |
-| +11-12 | Bölüm 16 (mülakat simülasyonu, behavioral hazırlık) |
+| +1-3 | Bölüm 9.4-9.7 (DDD, CQRS, vertical slice, modular monolith) |
+| +4-6 | Bölüm 10 (microservices, message broker, saga, outbox, resilience) |
+| +7-9 | Bölüm 11 (performans, GC, profiling, AOT) — Bölüm 2.8-2.9 ile birlikte çalış |
+| +10-11 | Bölüm 16 (system design, case study'ler) |
+| +12-13 | Bölüm 17 (mülakat simülasyonu, behavioral hazırlık) |
 
 **Her hafta:** 1 gün tekrar + 1 gün kodlama pratiği. Her ayın sonunda kapalı kitap self-mock mülakat.
 
@@ -1921,7 +2280,9 @@ Mid planına ek olarak:
 | Kitap | Yazar | Seviye |
 |-------|-------|--------|
 | C# in Depth | Jon Skeet | 🟡 |
-| CLR via C# | Jeffrey Richter | 🔴 |
+| **CLR via C#** | Jeffrey Richter | 🔴 |
+| **Pro .NET Assemblies / .NET IL Assembler** | Serge Lidin | 🔴 |
+| **Writing High-Performance .NET Code** | Ben Watson | 🔴 |
 | Pro ASP.NET Core | Adam Freeman | 🟡 |
 | Concurrency in C# Cookbook | Stephen Cleary | 🟡🔴 |
 | Pro .NET Memory Management | Konrad Kokosa | 🔴 |
@@ -1943,6 +2304,18 @@ Mid planına ek olarak:
 - [.NET Blog](https://devblogs.microsoft.com/dotnet/)
 - [.NET Architecture e-books](https://learn.microsoft.com/dotnet/architecture/)
 - [C# dil sürüm notları](https://learn.microsoft.com/dotnet/csharp/whats-new/)
+
+### Derleme & Runtime İç Yapısı (Bölüm 2 için)
+- [sharplab.io](https://sharplab.io/) — C# → lowered C# / IL / JIT asm; **bu bölümün en önemli aracı**
+- [ILSpy](https://github.com/icsharpcode/ILSpy) — assembly decompiler
+- [MSBuild Structured Log Viewer](https://msbuildlog.com/) — `dotnet build -bl` çıktısını okumak için
+- [dotnet/runtime — Book of the Runtime (BOTR)](https://github.com/dotnet/runtime/tree/main/docs/design/coreclr/botr) — CLR'ın kendi iç dokümantasyonu
+- [.NET application publishing overview](https://learn.microsoft.com/dotnet/core/deploying/)
+- [Native AOT deployment](https://learn.microsoft.com/dotnet/core/deploying/native-aot/)
+- [Trim self-contained apps](https://learn.microsoft.com/dotnet/core/deploying/trimming/trim-self-contained)
+- [.NET host (apphost/hostfxr/hostpolicy)](https://github.com/dotnet/runtime/blob/main/docs/design/features/host-components.md)
+- [Performance improvements in .NET](https://devblogs.microsoft.com/dotnet/tag/performance/) — Stephen Toub'un yıllık serisi
+- [ECMA-335 CLI spesifikasyonu](https://ecma-international.org/publications-and-standards/standards/ecma-335/) — IL'in resmî tanımı
 
 ### Roadmap'ler
 - [milanm/DotNet-Developer-Roadmap](https://github.com/milanm/DotNet-Developer-Roadmap) — seviye bazlı kapsamlı .NET roadmap

@@ -14,22 +14,36 @@ Kendi seviyenize göre ne kadar derinlik beklendiğini görmek için [Seviye Mat
 | # | Bölüm | İçerik |
 |---|-------|--------|
 | 0 | Ön Koşullar | Git, HTTP/TLS, .NET CLI, algoritma & veri yapıları |
-| 1 | C# Dili | Temeller, OOP, collections, LINQ, modern C# (8→14), Span/Memory, source generators |
-| 2 | .NET Platform Temelleri | Runtime/CLR, generic host, **configuration & Options**, **DI**, **middleware pipeline**, filters, logging, background services |
-| 3 | Multithreading & Concurrency | Thread/ThreadPool, TPL, async internals, senkronizasyon primitifleri, concurrent collections, Parallel/PLINQ, Channels, cancellation, deadlock & memory model, distributed locking |
-| 4 | API Geliştirme | REST tasarımı, Web API, Minimal API/REPR, validation, versioning, OpenAPI, API güvenliği & rate limiting, **gRPC**, **GraphQL**, **SignalR/WebSockets**, HttpClientFactory, serialization, API performansı, BFF/gateway |
-| 5 | Veri Erişimi & ORM | ADO.NET, EF Core, Dapper, object mapping, repository/specification |
-| 6 | Veritabanları | İlişkisel temeller, SQL Server, PostgreSQL, MongoDB, Redis, sorgu optimizasyonu, transaction & isolation, migration, arama motorları |
-| 7 | Test | Unit, mocking, integration, TestContainers, E2E, performans, architecture testing |
-| 8 | Mimari & Tasarım | SOLID, design patterns, Clean Architecture, DDD, CQRS, vertical slice, modular monolith |
-| 9 | Microservices & Dağıtık | Message broker'lar, event-driven, outbox & saga, API gateway, resilience, CAP/observability |
-| 10 | Performans & Bellek | Benchmarking, GC, allocation azaltma, caching, AOT/trimming, profiling |
-| 11 | Güvenlik | OWASP Top 10, auth/authz, secrets, kriptografi, supply chain |
-| 12 | Docker, K8s & DevOps | Container, Dockerfile, Compose, Kubernetes, CI/CD, IaC |
-| 13 | Azure Cloud | App Service, Azure SQL, Cosmos, Storage, Service Bus, Functions, Key Vault, Entra ID, App Insights, Container Apps, .NET Aspire |
-| 14 | AI Engineering | LLM temelleri, Microsoft.Extensions.AI, Semantic Kernel, embeddings & vector search, RAG, agents, ML.NET, eval & safety |
-| 15 | Sistem Tasarımı | Ölçeklenebilirlik, caching, rate limiting, partitioning, case study'ler |
-| 16 | Mülakat Süreci | Coding, live coding, behavioral (STAR), system design, take-home |
+| 1 | C# Dili | **Program anatomisi** (entry point, erişim belirleyicileri), **tip sistemi & bellek modeli**, OOP, collections, LINQ, modern C# (8→14), Span/Memory, source generators |
+| 2 | **Derleme, Build & Çalıştırma** | Roslyn & lowering, **IL/metadata/assembly**, MSBuild, `bin`/`obj`, PDB, **`.exe` nasıl oluşuyor (apphost → hostfxr → CoreCLR)**, **`run` vs `build` vs `publish`**, deployment modelleri (FDD/SCD/single-file/trimmed/AOT), **JIT & tiered compilation** |
+| 3 | .NET Platform Servisleri | Sürüm ekosistemi, generic host, **configuration & Options**, **DI**, **middleware pipeline**, filters, logging, background services |
+| 4 | Multithreading & Concurrency | Thread/ThreadPool, TPL, async internals, senkronizasyon primitifleri, concurrent collections, Parallel/PLINQ, Channels, cancellation, deadlock & memory model, distributed locking |
+| 5 | API Geliştirme | REST tasarımı, Web API, Minimal API/REPR, validation, versioning, OpenAPI, API güvenliği & rate limiting, **gRPC**, **GraphQL**, **SignalR/WebSockets**, HttpClientFactory, serialization, API performansı, BFF/gateway |
+| 6 | Veri Erişimi & ORM | ADO.NET, EF Core, Dapper, object mapping, repository/specification |
+| 7 | Veritabanları | İlişkisel temeller, SQL Server, PostgreSQL, MongoDB, Redis, sorgu optimizasyonu, transaction & isolation, migration, arama motorları |
+| 8 | Test | Unit, mocking, integration, TestContainers, E2E, performans, architecture testing |
+| 9 | Mimari & Tasarım | SOLID, design patterns, Clean Architecture, DDD, CQRS, vertical slice, modular monolith |
+| 10 | Microservices & Dağıtık | Message broker'lar, event-driven, outbox & saga, API gateway, resilience, CAP/observability |
+| 11 | Performans & Bellek | Benchmarking, GC, allocation azaltma, caching, AOT/trimming, profiling |
+| 12 | Güvenlik | OWASP Top 10, auth/authz, secrets, kriptografi, supply chain |
+| 13 | Docker, K8s & DevOps | Container, Dockerfile, Compose, Kubernetes, CI/CD, IaC |
+| 14 | Azure Cloud | App Service, Azure SQL, Cosmos, Storage, Service Bus, Functions, Key Vault, Entra ID, App Insights, Container Apps, .NET Aspire |
+| 15 | AI Engineering | LLM temelleri, Microsoft.Extensions.AI, Semantic Kernel, embeddings & vector search, RAG, agents, ML.NET, eval & safety |
+| 16 | Sistem Tasarımı | Ölçeklenebilirlik, caching, rate limiting, partitioning, case study'ler |
+| 17 | Mülakat Süreci | Coding, live coding, behavioral (STAR), system design, take-home |
+
+### Bölüm 2 neden var?
+
+Çoğu roadmap'te olmayan ama mülakatta kıdemi ayıran sorular:
+
+- C# kodu derlenince ne oluyor? IL nedir, neden var?
+- `bin/` ve `obj/` içindeki dosyalar ne işe yarar?
+- Kod nasıl `.exe` oluyor? (Spoiler: **olmuyor** — senin kodun `.dll`, `.exe` ayrı bir native launcher)
+- `dotnet run` ile `dotnet publish` farkı ne, production'a hangisiyle çıkılır?
+- Uygulama başlarken apphost → hostfxr → hostpolicy → CoreCLR zincirinde ne oluyor?
+- JIT ne zaman devreye giriyor, tiered compilation nedir, Native AOT ne kazandırır/kaybettirir?
+
+Bu bölüm okunmak için değil **gözlemlenmek** için yazıldı — her başlıkta "aç ve bak" lab'ı var.
 
 ## Her konu için ne var?
 
