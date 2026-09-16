@@ -12,7 +12,7 @@
 
 | # | Bölüm | Odak |
 |---|-------|------|
-| 0 | [Ön Koşullar](#0-ön-koşullar) | Git, HTTP, CLI, algoritma |
+| 0 | [Ön Koşullar](#0-ön-koşullar) | Git, HTTP, CLI, **DSA & pattern kataloğu** |
 | 1 | [C# Dili](#1-c-dili) | Dilin kendisi, temelden ileriye |
 | 2 | [Derleme, Build & Çalıştırma](#2-derleme-build--çalıştırma) | Roslyn, IL, MSBuild, apphost, JIT, publish modelleri |
 | 3 | [.NET Platform Servisleri](#3-net-platform-servisleri) | Hosting, configuration, DI, middleware, logging |
@@ -21,15 +21,16 @@
 | 6 | [Veri Erişimi & ORM](#6-veri-erişimi--orm) | EF Core, Dapper, ADO.NET, mapping |
 | 7 | [Veritabanları](#7-veritabanları) | SQL Server, PostgreSQL, MongoDB, Redis |
 | 8 | [Test](#8-test) | Unit, integration, E2E, performance, architecture |
-| 9 | [Mimari & Tasarım](#9-mimari--tasarım) | SOLID, patterns, Clean Arch, DDD, CQRS |
+| 9 | [Mimari & Tasarım](#9-mimari--tasarım) | SOLID, patterns, Clean/Hexagonal/Onion, DDD, CQRS, **AI-driven development** |
 | 10 | [Microservices & Dağıtık Sistemler](#10-microservices--dağıtık-sistemler) | Message broker, saga, gateway, resilience |
-| 11 | [Performans & Bellek](#11-performans--bellek) | GC, allocation, benchmark, AOT |
-| 12 | [Güvenlik](#12-güvenlik) | OWASP, auth, secrets, kriptografi |
-| 13 | [Docker, Kubernetes & DevOps](#13-docker-kubernetes--devops) | Container, orchestration, CI/CD, IaC |
-| 14 | [Azure Cloud](#14-azure-cloud) | PaaS servisleri, Aspire |
-| 15 | [AI Engineering (.NET)](#15-ai-engineering-net) | Semantic Kernel, RAG, agents, ML.NET |
-| 16 | [Sistem Tasarımı](#16-sistem-tasarımı) | Scalability, case study'ler |
-| 17 | [Mülakat Süreci](#17-mülakat-süreci) | Coding, behavioral, system design |
+| 11 | [Observability](#11-observability-logging-metrics--tracing) | **Logging, metrics, distributed tracing, OpenTelemetry, APM** |
+| 12 | [Performans & Bellek](#12-performans--bellek) | GC, allocation, benchmark, AOT |
+| 13 | [Güvenlik](#13-güvenlik) | OWASP, secure coding, auth, secrets, kriptografi |
+| 14 | [Docker, Kubernetes & DevOps](#14-docker-kubernetes--devops) | Container, orchestration, CI/CD, IaC |
+| 15 | [Azure Cloud](#15-azure-cloud) | PaaS servisleri, Aspire |
+| 16 | [AI Engineering (.NET)](#16-ai-engineering-net) | Semantic Kernel, RAG, agents, ML.NET |
+| 17 | [Sistem Tasarımı](#17-sistem-tasarımı) | Scalability, case study'ler |
+| 18 | [Mülakat Süreci](#18-mülakat-süreci) | Coding, behavioral, system design |
 
 Ayrıca: [Seviye Matrisi](#seviye-matrisi) · [Repo Yapısı](#repo-yapısı) · [Çalışma Planı](#çalışma-planı) · [Kaynaklar](#kaynaklar)
 
@@ -63,7 +64,7 @@ Hangi seviyede hangi bölümlerin **hangi derinlikte** beklendiğinin özeti. M�
 
 | Bölüm | 🟢 Junior | 🟡 Mid | 🔴 Senior |
 |-------|----------|--------|-----------|
-| **0. Ön Koşullar** | Git, HTTP, CLI | + REST olgunluk, TLS | + DNS/CDN/ağ katmanı |
+| **0. Ön Koşullar & DSA** | Big-O, temel veri yapıları, kolay pattern'ler (two pointers, sliding window) | Orta pattern'ler (backtracking, heap, topological sort), DP temeli | DP ileri, sistem tasarımında DSA kullanımı, karmaşık pattern kombinasyonu |
 | **1. C# Dili** | Sözdizimi, tip sistemi, OOP, collections, LINQ temel | Delegate/event, modern C#, LINQ ileri | Span/Memory, source generator, expression tree |
 | **2. Derleme & Çalıştırma** | `bin`/`obj` ne, `run` vs `publish` | IL/metadata, apphost, deployment modelleri, MSBuild | JIT/tiered/PGO, AOT & trimming, assembly loading |
 | **3. Platform Servisleri** | DI nedir, appsettings, ILogger | Middleware yazma, Options pattern, hosting, background service | Host internals, startup performansı, modül tasarımı |
@@ -72,14 +73,15 @@ Hangi seviyede hangi bölümlerin **hangi derinlikte** beklendiğinin özeti. M�
 | **6. Veri Erişimi** | EF Core CRUD, migration | Tracking, N+1, Dapper, Fluent API | Sorgu planı, bulk ops, çoklu provider stratejisi |
 | **7. Veritabanları** | SELECT/JOIN, index nedir | Transaction, isolation, MongoDB, Redis | Sharding, replication, sorgu optimizasyonu |
 | **8. Test** | xUnit, AAA, mocking | Integration test, TestContainers, coverage | Test stratejisi, architecture test, performans testi |
-| **9. Mimari** | Katmanlı mimari | SOLID, design patterns, Clean Arch | DDD, CQRS, trade-off savunması |
+| **9. Mimari & AI-Driven Dev** | Katmanlı mimari, AI aracını temel seviyede kullanma | SOLID, design patterns, Clean/Hexagonal fark, agentic coding workflow | DDD, CQRS, mimari stil seçimi savunması, kurumsal AI tooling yapılandırması |
 | **10. Microservices** | — | Message broker temeli, Docker Compose | Saga, outbox, consistency, decomposition |
-| **11. Performans** | StringBuilder, ToList yeri | Caching, async I/O | GC tuning, BenchmarkDotNet, AOT, profiling |
-| **12. Güvenlik** | JWT kullanımı, HTTPS | OWASP Top 10, policy auth | Threat modeling, secrets rotation, supply chain |
-| **13. Docker/DevOps** | `docker run`, Dockerfile | Compose, multi-stage, CI pipeline | K8s, IaC, deployment stratejileri |
-| **14. Azure** | Portal, App Service deploy | Azure SQL, Storage, Key Vault, App Insights | Mimari seçimi, maliyet, Aspire, multi-region |
-| **15. AI** | LLM/prompt temel | OpenAI SDK, embedding, Semantic Kernel | RAG mimarisi, agent, eval, guardrail |
-| **16. System Design** | — | Temel case'ler | Full design interview |
+| **11. Observability** | Log seviyeleri, `ILogger` kullanımı | Structured logging, metrics, health check | OpenTelemetry mimarisi, tracing stratejisi, on-call/SLO |
+| **12. Performans** | StringBuilder, ToList yeri | Caching, async I/O | GC tuning, BenchmarkDotNet, AOT, profiling |
+| **13. Güvenlik** | JWT kullanımı, HTTPS, temel input validation | OWASP Top 10, policy auth, XSS/CSRF önleme | Threat modeling, secrets rotation, supply chain, güvenli SDLC |
+| **14. Docker/DevOps** | `docker run`, Dockerfile | Compose, multi-stage, CI pipeline | K8s, IaC, deployment stratejileri |
+| **15. Azure** | Portal, App Service deploy | Azure SQL, Storage, Key Vault, App Insights | Mimari seçimi, maliyet, Aspire, multi-region |
+| **16. AI Engineering** | LLM/prompt temel | OpenAI SDK, embedding, Semantic Kernel | RAG mimarisi, agent, eval, guardrail |
+| **17. System Design** | — | Temel case'ler | Full design interview |
 
 ---
 
@@ -94,7 +96,13 @@ dotnet-interview/
 │   ├── 01-git-workflow/
 │   ├── 02-http-and-web/
 │   ├── 03-dotnet-cli-tooling/
-│   └── 04-algorithms-datastructures/
+│   └── 04-dsa/                         # Data Structures & Algorithms
+│       ├── 01-complexity-analysis/
+│       ├── 02-data-structures/         # array→graph, .NET karşılıkları + gerçek dünya kullanımı
+│       ├── 03-pattern-catalog/         # 18 pattern: two pointers, sliding window, BFS/DFS...
+│       ├── 04-pattern-matching-guide/  # "problemde bunu görürsen, şu pattern'i kullan"
+│       ├── 05-dynamic-programming/     # knapsack, LCS, LIS, interval DP, state machine DP
+│       └── 06-leetcode-dotnet-practice/
 │
 ├── 01-csharp/
 │   ├── 01-program-anatomy/             # entry point, namespace, erişim belirleyicileri
@@ -198,7 +206,9 @@ dotnet-interview/
 │   ├── 04-ddd/
 │   ├── 05-cqrs-mediatr/
 │   ├── 06-vertical-slice/
-│   └── 07-modular-monolith/
+│   ├── 07-modular-monolith/
+│   ├── 08-architecture-styles-comparison/  # hexagonal vs onion vs clean vs SOA vs EDA vs serverless
+│   └── 09-ai-driven-development/           # agentic coding, Claude Code enterprise setup, RAG entegrasyonu
 │
 ├── 10-distributed/
 │   ├── 01-microservices-fundamentals/
@@ -209,7 +219,16 @@ dotnet-interview/
 │   ├── 06-resilience-polly/
 │   └── 07-distributed-concepts/        # CAP, consistency, consensus
 │
-├── 11-performance/
+├── 11-observability/
+│   ├── 01-three-pillars/               # log/metric/trace ne zaman hangisi
+│   ├── 02-structured-logging/
+│   ├── 03-metrics/                     # counter/gauge/histogram, RED/USE, Prometheus
+│   ├── 04-distributed-tracing/         # OpenTelemetry, span, W3C Trace Context
+│   ├── 05-dotnet-implementation/       # ActivitySource, AddOpenTelemetry
+│   ├── 06-apm-tools/                   # App Insights, Grafana LGTM, Datadog, Seq
+│   └── 07-production-diagnosis/        # belirti→metrik→hipotez→doğrulama, on-call
+│
+├── 12-performance/
 │   ├── 01-benchmarking/
 │   ├── 02-memory-gc/
 │   ├── 03-allocation-reduction/
@@ -217,15 +236,17 @@ dotnet-interview/
 │   ├── 05-aot-trimming/
 │   └── 06-profiling-diagnostics/
 │
-├── 12-security/
+├── 13-security/
 │   ├── 01-owasp-top10/
 │   ├── 02-authentication/
 │   ├── 03-authorization/
 │   ├── 04-secrets-management/
 │   ├── 05-cryptography/
-│   └── 06-supply-chain/
+│   ├── 06-supply-chain/
+│   ├── 07-vulnerability-reference-table/  # SQLi, XSS, CSRF, XXE, SSRF... → .NET önlemi
+│   └── 08-secure-coding-principles/       # input validation, output encoding, secure defaults
 │
-├── 13-devops/
+├── 14-devops/
 │   ├── 01-docker-basics/
 │   ├── 02-dockerfile-dotnet/
 │   ├── 03-docker-compose/
@@ -233,7 +254,7 @@ dotnet-interview/
 │   ├── 05-ci-cd/
 │   └── 06-iac/
 │
-├── 14-azure/
+├── 15-azure/
 │   ├── 01-app-service/
 │   ├── 02-azure-sql/
 │   ├── 03-cosmos-db/
@@ -246,7 +267,7 @@ dotnet-interview/
 │   ├── 10-container-apps-aks/
 │   └── 11-dotnet-aspire/
 │
-├── 15-ai/
+├── 16-ai/
 │   ├── 01-llm-fundamentals/
 │   ├── 02-microsoft-extensions-ai/
 │   ├── 03-semantic-kernel/
@@ -256,14 +277,14 @@ dotnet-interview/
 │   ├── 07-ml-net/
 │   └── 08-ai-evaluation-safety/
 │
-├── 16-system-design/
+├── 17-system-design/
 │   ├── 01-scalability/
 │   ├── 02-caching-at-scale/
 │   ├── 03-rate-limiting/
 │   ├── 04-data-partitioning/
 │   └── 05-case-studies/
 │
-└── 17-interview/
+└── 18-interview/
     ├── coding-challenges/
     ├── behavioral-questions.md
     ├── system-design-drills.md
@@ -320,13 +341,143 @@ Bunlar "konu" değil, geri kalan her şeyin üstüne kurulduğu zemin. Eksikse �
 - Debugging: breakpoint, conditional breakpoint, watch, immediate window
 - Analyzer'lar ve `.editorconfig`, StyleCop, `TreatWarningsAsErrors`
 
-### 0.4 Algoritma & Veri Yapıları 🟢→🟡
-- Big-O notasyonu (time & space)
-- Array, Linked List, Stack, Queue, Hash Table, Tree, Graph, Heap
-- Sorting (quick, merge, heap) ve searching (binary search)
-- Recursion, memoization, dynamic programming temeli
-- Two pointers, sliding window, prefix sum
-- C#'ta bunların karşılıkları (`List<T>`, `Dictionary<,>`, `SortedSet<T>`, `PriorityQueue<,>`)
+### 0.4 Karmaşıklık Analizi 🟢
+- **Big-O notasyonu:** time complexity ve space complexity — worst/average/best case ayrımı
+- Karmaşıklık sınıfları ve **büyüme sıralaması:** `O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) < O(n!)`
+- Amortized complexity (`List<T>.Add` neden ortalama O(1))
+- Recursion'da karmaşıklık: recurrence relation, Master theorem'e kısa bakış (`T(n) = 2T(n/2) + O(n)` → `O(n log n)`)
+- Space complexity'de **call stack**'in de sayıldığını unutmama (recursion derinliği = O(n) alan)
+- Nested loop'larda karmaşıklık okuma pratiği — mülakatta sesli yapılması gereken analiz
+
+**Hızlı referans tablosu — .NET koleksiyonları:**
+
+| Yapı | Erişim | Arama | Ekleme (son) | Ekleme (baş/orta) | Silme |
+|------|:------:|:-----:|:-------------:|:------------------:|:-----:|
+| `Array` | O(1) | O(n) | — | — | — |
+| `List<T>` | O(1) | O(n) | O(1)* | O(n) | O(n) |
+| `LinkedList<T>` | O(n) | O(n) | O(1) | O(1)** | O(1)** |
+| `Dictionary<K,V>` | — | O(1)*** | O(1)*** | — | O(1)*** |
+| `HashSet<T>` | — | O(1)*** | O(1)*** | — | O(1)*** |
+| `SortedDictionary<K,V>` | — | O(log n) | O(log n) | — | O(log n) |
+| `Queue<T>` | — | O(n) | O(1) enqueue | — | O(1) dequeue |
+| `Stack<T>` | — | O(n) | O(1) push | — | O(1) pop |
+| `PriorityQueue<TElement,TPriority>` | — | — | O(log n) | — | O(log n) peek+dequeue |
+
+<sub>* amortized, kapasite büyümesi hariç · ** node referansı elindeyse · *** amortized, hash collision worst-case O(n)</sub>
+
+### 0.5 Temel Veri Yapıları — Derinlemesine ve Gerçek Dünya Kullanımı 🟢→🟡
+
+Her yapı için: **nasıl çalışır → .NET karşılığı → ne zaman kullanılır → gerçek dünyada nerede kullanılır.**
+
+- **Array** — sabit boyut, bitişik bellek, cache-friendly (spatial locality). Gerçek dünya: sabit boyutlu buffer, matris/görüntü işleme, `Span<T>` ile allocation'sız dilimleme.
+- **Dynamic Array (`List<T>`)** — kapasite dolunca **2x büyüme** ve kopyalama; `Capacity` önceden belirtmenin (`new List<T>(n)`) neden performans kazandırdığı.
+- **Linked List** — singly vs doubly; node başına pointer overhead ve cache-unfriendly olması (array'e göre neden pratikte daha az kullanılır). Gerçek dünya: **LRU cache** implementasyonunun kalbi (doubly linked list + hash map kombinasyonu — klasik mülakat sorusu).
+- **Stack (LIFO)** — call stack'in kendisi, `Undo/Redo`, parantez/ifade doğrulama, **DFS**'in iteratif implementasyonu, backtracking, monotonic stack (aşağıda).
+- **Queue (FIFO)** — **BFS**'in temeli, job/task scheduling, mesaj kuyrukları ([Bölüm 10.2](#102-message-brokerlar-)'nin uygulama seviyesindeki karşılığı), `Channel<T>` ([Bölüm 4.8](#48-channels--pipelinelar-)).
+- **Deque (`Deque<T>` / iki ucu açık kuyruk)** — sliding window maksimum/minimum problemleri için monotonic deque.
+- **Hash Table (`Dictionary<K,V>` / `HashSet<T>`)** — hash function, collision resolution (chaining vs open addressing), **load factor** ve resize; `GetHashCode`/`Equals` sözleşmesinin bozulmasının sonucu (Bölüm 1.4'e çapraz referans). Gerçek dünya: **caching, deduplication, veritabanı index'lerinin bellek içi karşılığı, sayma/frekans problemleri, memoization tablosu.**
+- **Tree — Binary Tree / BST** — inorder/preorder/postorder traversal, BST invariant'ı, dengesizlik problemi (worst-case O(n) zincire dönüşme). Gerçek dünya: dosya sistemleri, DOM ağacı, karar ağaçları.
+- **Balanced Tree (AVL, Red-Black)** — neden dengeleme gerekir; **`SortedDictionary`/`SortedSet` iç yapısı** (red-black tree tabanlı) — garanti edilen O(log n).
+- **Heap (Binary Heap) / `PriorityQueue<TElement,TPriority>`** — min-heap vs max-heap, array ile temsil (`2i+1`, `2i+2`), `sift-up`/`sift-down`. Gerçek dünya: **görev önceliklendirme, Dijkstra/Prim algoritmaları, event scheduling, top-K problemleri, median tracking (two heaps pattern).**
+- **Trie (Prefix Tree)** — .NET'te yerleşik yok, kendin yazarsın (`Dictionary<char, Node>` çocuklu). Gerçek dünya: **autocomplete, spell-checker, IP routing (longest prefix match), kelime arama motorları.**
+- **Graph** — komşuluk listesi (`Dictionary<T, List<T>>`) vs komşuluk matrisi — hangisi ne zaman (yoğun/seyrek graf). Yönlü/yönsüz, ağırlıklı/ağırlıksız. Gerçek dünya: **sosyal ağlar, yol/harita servisleri, bağımlılık grafları (NuGet/npm), öneri motorları, network topolojisi.**
+- **Union-Find (Disjoint Set)** — .NET'te yerleşik yok; `path compression` + `union by rank` ile amortized O(1). Gerçek dünya: **Kruskal MST, bağlantı bileşenleri, arkadaşlık ağı gruplama, network connectivity kontrolü.**
+- **Bloom Filter** (kavramsal) — olasılıksal üyelik testi, false positive olabilir ama false negative olamaz. Gerçek dünya: **CDN cache miss önleme, veritabanı sorgu öncesi ön eleme (örn. Cassandra), URL güvenlik listeleri.**
+- **LRU Cache implementasyonu (klasik mülakat sorusu):** `Dictionary<K, Node>` (O(1) arama) + doubly linked list (O(1) en son kullanılanı öne alma / en eskiyi çıkarma). .NET'te hazır alternatif: `Microsoft.Extensions.Caching.Memory` ([Bölüm 12.4](#124-caching-stratejileri-)).
+
+### 0.6 Pattern Kataloğu — "Ne Zaman Hangi Pattern?" 🟡
+
+> Mülakatta fark yaratan asıl şey algoritma ezberlemek değil, **problem tanımındaki sinyalleri doğru pattern'e eşlemek**. Aşağıdaki 18 pattern, coding interview sorularının büyük çoğunluğunu kapsar.
+
+| # | Pattern | Ne zaman kullanılır (sinyal) | Karmaşıklık | Örnek problem |
+|---|---------|-------------------------------|:-----------:|----------------|
+| 1 | **Two Pointers** | Sıralı array/string, çift bulma, karşılaştırma | O(n) | İki toplamı X yapan çift, palindrome kontrolü |
+| 2 | **Sliding Window** | Alt-dizi/alt-string, "en uzun/en kısa/belirli koşullu" | O(n) | En uzun tekrarsız substring, K büyüklüğünde max toplam |
+| 3 | **Fast & Slow Pointers** | Linked list, döngü tespiti | O(n) | Linked list'te cycle var mı (Floyd's algorithm), ortanca eleman |
+| 4 | **Merge Intervals** | Aralıklar, çakışma, birleştirme | O(n log n) | Toplantı odası zamanlama, çakışan aralıkları birleştirme |
+| 5 | **Cyclic Sort** | `1..n` aralığında sayılar, in-place sıralama | O(n) | Eksik sayıyı bulma, yinelenen sayıyı bulma |
+| 6 | **In-place Linked List Reversal** | Linked list'i O(1) alanda tersine çevirme | O(n) | Listeyi ters çevir, K'li gruplar halinde ters çevir |
+| 7 | **BFS (Breadth-First Search)** | Ağırlıksız graf/ağaçta **en kısa yol**, seviye seviye işleme | O(V+E) | Ağaç seviye sırası, en kısa yol (ağırlıksız), kelime merdiveni |
+| 8 | **DFS (Depth-First Search)** | Tüm yolları/kombinasyonları keşfetme, bağlantılılık | O(V+E) | Ada sayısı, tüm yolları bulma, topolojik sıralama |
+| 9 | **Two Heaps** | Akan veride medyan/denge takibi | O(log n)/işlem | Veri akışının medyanı, IPO problemi |
+| 10 | **Subsets / Backtracking** | Tüm kombinasyon/permütasyon/alt küme | O(2ⁿ) veya O(n!) | Alt kümeler, permütasyonlar, N-Queens, Sudoku çözücü |
+| 11 | **Modified Binary Search** | Sıralı (veya kısmen sıralı) veride arama | O(log n) | Döndürülmüş sıralı dizide arama, en yakın eleman |
+| 12 | **Top K Elements** | "En büyük/küçük K eleman" | O(n log k) | K en sık kelime, K'ye en yakın nokta |
+| 13 | **K-way Merge** | Birden çok sıralı listeyi birleştirme | O(n log k) | K sıralı listeyi birleştirme, sıralı dizilerde K'inci küçük |
+| 14 | **Topological Sort** | Bağımlılık sıralaması (DAG) | O(V+E) | Ders sıralaması, build sistemi bağımlılık çözümü |
+| 15 | **Union-Find** | Dinamik bağlantılılık, gruplama | O(log n)/işlem | Arkadaş çevreleri, redundant bağlantı, MST (Kruskal) |
+| 16 | **Monotonic Stack/Queue** | "Bir sonraki daha büyük/küçük eleman" | O(n) | Daily temperatures, sliding window maximum, histogramda en büyük dikdörtgen |
+| 17 | **Prefix Sum / Difference Array** | Alt-dizi toplam sorguları (çoklu) | O(n) ön işleme, O(1) sorgu | Alt-dizi toplamı = hedef, aralık güncelleme |
+| 18 | **Dynamic Programming** | Optimal alt yapı + çakışan alt problemler, "en fazla/en az/kaç yol" | Değişken (genelde O(n) veya O(n²)) | Bkz. [0.8](#08-dinamik-programlama-derinlemesine-) |
+
+**Yardımcı pattern'ler:**
+- **Bit manipülasyonu:** XOR ile tekil eleman bulma, bitmask ile subset temsili, `n & (n-1)` ile en düşük bit'i sıfırlama
+- **Greedy:** yerel en iyi seçimin küresel en iyiye ulaştığı kanıtlanabilir durumlar (interval scheduling, Huffman coding)
+- **Divide & Conquer:** problemi bağımsız alt parçalara bölme + birleştirme (merge sort, quick sort, binary search'ün genellemesi)
+
+### 0.7 Problem → Pattern Eşleştirme Rehberi 🟡
+
+> Mülakatta ilk 60 saniyede doğru pattern'i seçmek için **soru metnindeki anahtar kelimeleri** tara.
+
+| Problemde görürsen... | Muhtemel pattern |
+|------------------------|-------------------|
+| "sıralı array/list" | Binary search, two pointers |
+| "alt-dizi / alt-string / pencere" + "en uzun/en kısa/maksimum toplam" | Sliding window |
+| "çift bul", "toplamı X olan iki eleman" | Two pointers (sıralıysa) veya hash map (sırasızsa) |
+| "linked list", "cycle/döngü var mı" | Fast & slow pointers |
+| "aralıklar", "çakışan", "birleştir" | Merge intervals |
+| "`1..n` arasında", "eksik/yinelenen sayı" | Cyclic sort veya XOR |
+| "tüm kombinasyonlar/permütasyonlar/alt kümeler" | Backtracking |
+| "en kısa yol" + "ağırlıksız graf" | BFS |
+| "en kısa yol" + "ağırlıklı graf" | Dijkstra (min-heap ile) |
+| "tüm yollar", "bağlı mı", "ada sayısı" | DFS |
+| "K en büyük/en küçük/en sık" | Heap (top-K pattern) |
+| "medyan", "akan veri" | Two heaps |
+| "bağımlılık sırası", "önce X sonra Y" | Topological sort |
+| "gruplar", "bağlantılı mı", "arkadaş çevresi" | Union-Find |
+| "bir sonraki daha büyük/küçük eleman" | Monotonic stack |
+| "alt-dizi toplamı = K" (çoklu sorgu) | Prefix sum + hash map |
+| "en fazla/en az yol/şekil sayısı", "maksimum/minimum X yaparak Y'ye ulaş" | Dynamic programming |
+| "en az sayıda... yaparak" + greedy kanıtlanabilirse | Greedy |
+| "in-place", "O(1) ekstra alan" | Two pointers, cyclic sort, bit manipülasyonu |
+| "K sıralı liste birleştir" | K-way merge (heap ile) |
+| "autocomplete", "önek arama" | Trie |
+| "LRU/LFU cache tasarla" | Hash map + doubly linked list |
+
+**Mülakat stratejisi (UMPIRE metodu):**
+1. **U**nderstand — soruyu kendi cümlelerinle tekrar et, edge case'leri sor (boş girdi? negatif sayı? tekrar eden eleman?)
+2. **M**atch — yukarıdaki tabloyla pattern eşleştir
+3. **P**lan — sözlü/pseudocode ile yaklaşımı anlat, **kodlamadan önce onay al**
+4. **I**mplement — kodu yaz, sesli düşünmeye devam et
+5. **R**eview — örnek girdiyle elle çalıştır (dry run)
+6. **E**valuate — zaman/alan karmaşıklığını söyle, iyileştirme fırsatı var mı tartış
+
+### 0.8 Dinamik Programlama Derinlemesine 🟡→🔴
+- **Ne zaman DP:** optimal alt yapı (optimal substructure) + çakışan alt problemler (overlapping subproblems) — ikisi de yoksa DP gerekmez
+- **Top-down (memoization)** vs **bottom-up (tabulation)** — hangisi ne zaman daha okunabilir/verimli
+- DP'nin **5 adımlı çözüm şablonu:**
+  1. State'i tanımla (hangi parametreler alt problemi belirler?)
+  2. Recurrence relation'ı yaz (state'ler arası ilişki)
+  3. Base case'leri belirle
+  4. Hesaplama sırasına karar ver (bottom-up için)
+  5. Alan optimizasyonu (2D → 1D array, rolling array)
+- **Klasik DP kalıpları:**
+  - **0/1 Knapsack** — her öğe bir kez kullanılabilir (subset sum, partition equal subset)
+  - **Unbounded Knapsack** — öğe tekrar kullanılabilir (coin change, rod cutting)
+  - **Longest Common Subsequence (LCS)** — iki dizi karşılaştırma ailesi (edit distance, longest common substring)
+  - **Longest Increasing Subsequence (LIS)** — O(n²) DP'den O(n log n) binary search'e optimizasyon
+  - **Matrix/Grid DP** — unique paths, minimum path sum (2D tabulation)
+  - **Palindrome partitioning / interval DP** — `dp[i][j]` = aralık bazlı alt problem
+  - **State machine DP** — hisse senedi alım-satım problemleri (elde/elde değil durumları)
+- Alan karmaşıklığı optimizasyonu: bir önceki satıra bağımlıysa tüm 2D tabloyu tutmaya gerek yok
+- DP'yi greedy'den ayırma: greedy'nin **kanıtlanması gerekir**, DP her zaman güvenli ama daha maliyetli
+
+### 0.9 .NET'te Pratik Yapma 🟢
+- LeetCode/HackerRank'te **C#** dilini seçip pratik yapmanın kendine has tuzakları: `Dictionary` vs `HashMap` sözdizimi farkı, `PriorityQueue<TElement,TPriority>`'nin min-heap olduğu (max-heap için negatif öncelik veya `Comparer<T>.Create` ile ters sıralama)
+- `Span<T>`/`stackalloc` ile allocation'sız çözümler yazma alışkanlığı (senior seviye ayırt edici)
+- Karmaşık veri yapılarını (Trie, Union-Find, LRU Cache) sıfırdan yazabilmek — bunlar genelde "hazır sınıf yok, sen yaz" sorularıdır
+- **`record` ile hızlı value-based veri modelleme** (graph node, interval, pair) — boilerplate'i azaltır
+- Test-driven pratik: her çözümü xUnit ile edge case'ler (boş girdi, tek eleman, tüm elemanlar eşit, çok büyük girdi) için test et
 
 ---
 
@@ -734,7 +885,7 @@ C# kaynak kod
   - Uzun ömürlü web API, container → FDD + chiseled image (küçük + güvenlik yaması kolay)
   - Serverless / Function / CLI aracı → Native AOT veya R2R (cold start kritik)
   - Kurulum gerektirmeyen masaüstü/araç dağıtımı → self-contained single-file
-- Docker ile ilişkisi: [Bölüm 13.2](#132-net-için-dockerfile-)
+- Docker ile ilişkisi: [Bölüm 13.2](#142-net-için-dockerfile-)
 
 **Lab:** Aynı "Hello World" API'yi FDD / SCD / single-file / trimmed / AOT olarak publish et. **Klasör boyutlarını ve ilk isteğe kadar geçen süreyi ölç**, tabloya dök. Fark seni şaşırtacak.
 
@@ -758,7 +909,7 @@ C# kaynak kod
   - Assembly version conflict ve binding redirect'in Core'daki karşılığı
 - **Type loading:** tip ilk kullanıldığında yüklenir; method table (vtable) kurulumu
 - **Static constructor ne zaman çalışır:** `beforefieldinit` semantiği — tam olarak ne zaman tetiklendiğinin garantisi (ince ama sevilen mülakat sorusu); thread-safety garantisi CLR tarafından verilir
-- Managed heap kurulumu ve GC başlangıcı (detay: [Bölüm 11.2](#112-bellek-yönetimi--gc-))
+- Managed heap kurulumu ve GC başlangıcı (detay: [Bölüm 11.2](#122-bellek-yönetimi--gc-))
 - **Uygulama sonlanması:** `Main` dönüşü, `Environment.Exit`, `ProcessExit` event'i, finalizer thread ve finalizer'ların **garantili çalışmaması**
 - Ortam değişkenleriyle runtime davranışını değiştirme: `DOTNET_TieredCompilation`, `DOTNET_TieredPGO`, `DOTNET_ReadyToRun`, `DOTNET_gcServer`
 
@@ -1503,7 +1654,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Alternatifler: Meilisearch, Typesense, Azure AI Search
 - PostgreSQL full-text search (`tsvector`) ve `pg_trgm` — ne zaman yeterli
 - CDC ile DB → search index senkronizasyonu
-- Hybrid search (keyword + vector) — [AI bölümü](#15-ai-engineering-net) ile kesişim
+- Hybrid search (keyword + vector) — [AI bölümü](#16-ai-engineering-net) ile kesişim
 
 ---
 
@@ -1640,6 +1791,87 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Monolith → microservice göç yolu (strangler fig)
 - **"Microservice'e ihtiyacın var mı?"** dürüst değerlendirme — mülakatta çok değerli bir cevap
 
+### 9.8 Mimari Stiller — Tam Karşılaştırma 🔴
+> "Clean, hexagonal, onion hep aynı şey mi?" — mülakatta çok sorulan, çoğu adayın **birbirine karıştırdığı** konu.
+
+- **Hexagonal (Ports & Adapters) — Alistair Cockburn:**
+  - Uygulama merkezde, dışarıyla **port** (interface) üzerinden konuşur
+  - **Adapter** = port'un somut implementasyonu (DB adapter, HTTP adapter, message queue adapter)
+  - "Primary/driving adapter" (dışarıdan içeri — controller) vs "secondary/driven adapter" (içeriden dışarı — repository)
+  - Görsel model: altıgen, her kenarı bir port/adapter çifti
+- **Onion Architecture — Jeffrey Palermo:**
+  - İç içe halkalar: Domain (çekirdek) → Domain Services → Application Services → Infrastructure/UI (dış halka)
+  - Kural: **dış katman iç katmana bağımlı olabilir, tersi asla**
+- **Clean Architecture — Robert C. Martin:**
+  - Onion'ın isimlendirilmiş hali: Entities → Use Cases → Interface Adapters → Frameworks & Drivers
+  - Ek vurgu: **Use Case** merkezli düşünme, framework'ün detay olması
+- **Ortak nokta (asıl mesaj):** Üçü de **aynı fikrin farklı isimlendirmeleri** — iş mantığını framework/DB/UI'dan izole etmek, bağımlılığın içe doğru akması. Fark sadece **vokabüler ve vurgu**: Hexagonal port/adapter dilini, Onion katman/halka dilini, Clean use-case dilini kullanır.
+- **N-Tier / Layered (klasik):** Presentation → Business → Data Access — bağımlılık kuralı yok (Presentation direkt Data Access'e bağımlı olabilir), en basit ama en az korumalı
+- **Microservices:** bağımsız deploy edilebilen, kendi veritabanına sahip, network üzerinden konuşan servisler ([Bölüm 10](#10-microservices--dağıtık-sistemler))
+- **Modular Monolith:** microservice'in **modülerlik disiplinini**, dağıtık sistemin **operasyonel karmaşıklığı olmadan** alması ([9.7](#97-modular-monolith-))
+- **SOA (Service-Oriented Architecture) vs Microservices:** SOA genelde **paylaşılan ESB** (Enterprise Service Bus) üzerinden ağır kontratlarla (SOAP/WSDL) konuşur, merkezi governance; Microservices hafif protokoller (REST/gRPC/event), **her servis kendi verisinin sahibi**, merkezi olmayan governance
+- **Event-Driven Architecture (EDA):** servisler event'ler yayınlar/dinler, senkron çağrı zinciri yerine **gevşek bağlı** (loosely coupled) iletişim ([Bölüm 10.3](#103-event-driven-architecture-))
+- **Serverless / FaaS mimarisi:** altyapı yönetimi yok, event-tetiklemeli, **scale-to-zero**, cold start maliyeti, stateless zorunluluğu ([Bölüm 14.6](#156-azure-functions-))
+- **Space-Based / Cell-Based Architecture:** aşırı yüksek ölçek için — veriyi bellekte tutan bağımsız "cell"lere yatay bölme, merkezi DB darboğazını ortadan kaldırma (Netflix/Amazon tarzı sistemlerde)
+- **Micro-frontend (kısa not):** microservice fikrinin frontend'e uygulanması — her takım kendi UI parçasını bağımsız deploy eder
+
+**Karar tablosu:**
+
+| Senaryo | Önerilen mimari |
+|---------|------------------|
+| Küçük CRUD servis, tek takım | Layered veya Vertical Slice — Clean Architecture'ın maliyeti fazla gelir |
+| Orta ölçek, tek deployment ama ileride bölünebilir olmalı | Modular Monolith |
+| Karmaşık domain, framework/DB'den bağımsız kalmak öncelik | Clean/Hexagonal/Onion (hangisini seçtiğin fark etmez — disiplin önemli) |
+| Çok takım, bağımsız deploy/scale ihtiyacı, farklı teknoloji seçimi gerekiyor | Microservices |
+| Yüksek hacimli, gevşek bağlı iş akışları (sipariş, bildirim, entegrasyon) | Event-Driven Architecture |
+| Düzensiz/patlamalı trafik, düşük operasyonel yük isteniyor | Serverless |
+| Aşırı yüksek ölçek (milyonlarca eşzamanlı kullanıcı) | Space-Based / Cell-Based |
+
+- **Mülakat perspektifi:** "Hangi mimariyi kullanırsın?" sorusuna **tek doğru cevap yok** — doğru cevap gereksinimi netleştirip trade-off'u gerekçelendirmek. "Her zaman microservice" veya "her zaman Clean Architecture" cevabı kırmızı bayraktır.
+
+### 9.9 AI-Destekli Geliştirme & Agentic Engineering 🟡→🔴
+> 2026 mülakatlarında artan sıklıkla soruluyor: "AI araçlarını nasıl kullanıyorsun, sadece kod mu üretiyorsun yoksa süreci mi yönetiyorsun?"
+
+- **"Vibe coding" vs AI-driven engineering — kritik fark:**
+  - Vibe coding: prompt yaz → kodu kopyala → çalışana kadar dene, kodu **anlamadan** kabul et
+  - AI-driven engineering: AI'ı bir **takım arkadaşı gibi yönet** — görevi tanımla, üretilen planı incele, diff'i satır satır oku, testle doğrula, mimari kararı **sen ver**
+  - Mülakatta "AI kod yazdı, ben review ettim" ile "AI ne yazdıysa kullandım" cevapları arasındaki fark — işe alım sinyali
+- **Prompt/Context Engineering:**
+  - Görevi net tanımlama: hedef, kısıtlar, kabul kriterleri, örnekler (few-shot)
+  - **Context'i doğru vermek** kod kalitesini prompt'tan daha çok etkiler — ilgili dosyalar, mevcut konvansiyonlar, test beklentisi
+  - Büyük görevi küçük, doğrulanabilir adımlara bölme (bir agent'a "uygulamayı yaz" değil, "şu endpoint'i şu testle yaz")
+  - Belirsizlik durumunda AI'ın soru sormasını istemek, varsayım yapmasını istememek
+- **Agentic Coding Workflow'ları:**
+  - **Plan → Act → Verify** döngüsü: önce plan onayı, sonra uygulama, sonra test/derleme ile doğrulama
+  - Otonom (agent kendi başına ilerler) vs denetimli (her adımda onay) mod — riske göre seçim
+  - Agent'a **araç (tool) erişimi** verme: dosya okuma/yazma, komut çalıştırma, web arama, MCP sunucuları — her aracın kapsamını bilinçli sınırlama
+  - **Subagent / multi-agent** deseni: planlayıcı agent + uygulayıcı agent + gözden geçiren agent ayrımı
+  - Uzun görevlerde **checkpoint** ve geri alınabilirlik (git commit'leri, worktree izolasyonu)
+- **Claude Code / AI coding assistant'ların kurumsal yapılandırması:**
+  - **`CLAUDE.md`** (veya eşdeğeri) ile proje konvansiyonlarını, build/test komutlarını, mimari kısıtları belgeleme — agent'ın her seferinde yeniden keşfetmesini önler
+  - **Custom skills / slash command'lar** ile tekrarlanan iş akışlarını (kod inceleme, deploy checklist, migration şablonu) standartlaştırma
+  - **MCP (Model Context Protocol)** sunucuları ile agent'ı iç sistemlere (Jira, veritabanı, CI/CD, dokümantasyon) bağlama
+  - **Permission mode / izin katmanları:** hangi komutların otomatik, hangilerinin onay gerektirdiğini tanımlama (özellikle `rm`, `git push --force`, prod deploy)
+  - **Hook'lar** ile otomatik davranış tetikleme (commit öncesi lint, PR açılınca otomatik test)
+  - Takım genelinde **paylaşılan konfigürasyon** — her geliştiricinin kendi promptunu yeniden icat etmemesi
+- **AI ile kod inceleme ve güvenlik:**
+  - AI'ın ürettiği kodu **insan gözden geçirmesi zorunlu** — özellikle güvenlik, veri erişimi, ödeme mantığı
+  - Agent'a **secrets/production erişimi** vermeme; prompt injection riski (agent bir dosyayı/web sayfasını okurken içine gömülü talimatları "kullanıcı komutu" gibi yorumlayabilir)
+  - Guardrail: agent'ın çalıştırabileceği komutları allowlist ile sınırlama, sandbox/container içinde çalıştırma
+  - Audit trail: agent'ın ne yaptığının (hangi dosyayı değiştirdi, hangi komutu çalıştırdı) loglanması
+- **SDLC'nin her adımında AI:**
+  - Kod üretimi, test üretimi (özellikle edge case keşfi), refactoring önerisi
+  - PR açıklaması üretimi, commit mesajı standardizasyonu
+  - Kod incelemesinde otomatik ilk geçiş (bug/güvenlik taraması) — insan incelemesinin **yerine değil, önüne**
+  - Dokümantasyon senkronizasyonu (kod değişince README/API doc'un otomatik güncellenmesi önerisi)
+  - Legacy kod anlama ve modernizasyon (büyük, dokümantasyonsuz codebase'i agent'a "haritalatma")
+- **AI özelliklerini ürüne entegre etme** (geliştirici pratiği olarak, ürün mühendisliği detayı [Bölüm 16](#16-ai-engineering-net)'da):
+  - **RAG / vector DB entegrasyonu** ne zaman gerekli: statik model bilgisinin ötesinde güncel/özel veriye ihtiyaç varsa
+  - **LLM çağrısını sağlamlaştırma:** retry, timeout, fallback model, maliyet/gecikme izleme — bir LLM çağrısı da bir **dış servis çağrısıdır**, [Bölüm 5.12](#512-http-client--dış-servis-entegrasyonu-) ile aynı disiplin geçerli
+  - **Agentic flow'ları üretime alma:** deterministik olmayan çıktı için test stratejisi (eval-driven development), maliyet limiti, sonsuz döngü koruması, insan onay noktası (human-in-the-loop)
+  - Model seçimi: her göreve en pahalı/en yetenekli modeli kullanmama — görev karmaşıklığına göre model yönlendirme (routing)
+- **Mülakat perspektifi:** "AI aracı kullanıyor musun?" sorusuna verilecek en güçlü cevap — hangi görevlerde kullandığın, nasıl doğruladığın, nerede **kullanmamayı seçtiğin** (kritik güvenlik kodu, performansı çok hassas bir algoritma) ve neden. "Her şeyi AI'a yaptırıyorum" ile "hiç kullanmıyorum" cevaplarının ikisi de zayıf sinyal.
+
 ---
 
 ## 10. Microservices & Dağıtık Sistemler
@@ -1717,20 +1949,103 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Clock skew, logical clock, vector clock (kavramsal)
 - Distributed tracing: **OpenTelemetry**, trace/span/baggage, W3C Trace Context
 - Correlation ID propagation
-- Observability üçlüsü: logs + metrics + traces; Prometheus, Grafana, Jaeger, Seq, Datadog
+- Observability üçlüsü: logs + metrics + traces (detay: [Bölüm 11](#11-observability-logging-metrics--tracing))
 - SLI / SLO / SLA ve error budget
 
 ---
 
-## 11. Performans & Bellek
+## 11. Observability: Logging, Metrics & Tracing
 
-### 11.1 Benchmarking 🔴
+> "Loglama zaten var, neden ayrı bölüm?" — çünkü **tek başına log yetmez.** Production'da "neden yavaş?" veya "neden hata veriyor?" sorusuna cevap vermek için üç sinyalin **birlikte** çalışması gerekir. Bu bölüm dağınık olarak [3.6](#36-logging-) (logging temeli) ve [10.7](#107-dağıtık-sistem-kavramları-)'de (tracing'e giriş) geçen konuları **tek bir tutarlı gözlemlenebilirlik stratejisine** birleştirir.
+
+### 11.1 Üç Sinyal ve Ne Zaman Hangisine Bakılır 🟡
+- **Log:** "Tam olarak ne oldu?" — ayrık olaylar, detaylı bağlam, en yüksek hacim/maliyet
+- **Metric:** "Şu an sistem nasıl?" — sayısal, zaman serisi, agregasyona uygun, düşük maliyetli, alerting için ideal
+- **Trace:** "Bu istek nereye gitti, hangi adımda yavaşladı?" — bir isteğin uçtan uca yolculuğu, dağıtık sistemlerde zorunlu
+- Üçünün **birbirini tamamladığı** senaryo: metric anomaliyi gösterir → trace hangi servisin/adımın sorumlu olduğunu bulur → log o adımın tam context'ini verir
+- **Monitoring vs Observability** farkı: monitoring önceden tanımlanmış soruları cevaplar ("CPU %80'i geçti mi?"); observability önceden **bilinmeyen** soruları cevaplayabilme kapasitesidir ("neden sadece Almanya'daki kullanıcılar hata alıyor?")
+- Gözlemlenebilirliğin maliyeti: veri hacmi, saklama, sorgu performansı — "her şeyi logla" stratejisinin sürdürülemezliği
+
+### 11.2 Structured Logging — Derinlemesine 🟡
+> Temel kavramlar [3.6](#36-logging-)'da; burada üretim ölçeğinde stratejiye odaklanıyoruz.
+
+- **Neden structured (yapılandırılmış) log zorunlu:** serbest metin log'u makine tarafından sorgulanamaz; `{UserId}` gibi template parametreleri log'u **sorgulanabilir veri**ye çevirir
+- Log seviyesi stratejisi: prod'da varsayılan seviye (Information/Warning), geçici olarak Debug'a çekme (dynamic log level, `IOptionsMonitor` ile runtime'da değiştirme)
+- **Correlation ID / Trace ID** ile logları bir isteğe bağlama — tek bir isteğin tüm servislerdeki tüm log satırlarını bulabilme
+- Log **enrichment**: ortam, versiyon, makine adı, kullanıcı/tenant bilgisi otomatik ekleme (Serilog `Enrich.With`)
+- **PII/hassas veri redaksiyonu** — loglama katmanında otomatik maskeleme (kredi kartı, TC kimlik, şifre alanları)
+- Log **sampling** — yüksek hacimli, tekrarlayan log'larda örnekleme (her hatayı değil, örneğin her 100. tekrar eden hatayı tam detayla logla)
+- **Log aggregation pipeline:** uygulama → (stdout/dosya) → collector (Fluent Bit, Vector, Filebeat) → merkezi depo (Elasticsearch, Loki, Seq) → sorgu/dashboard (Kibana, Grafana)
+- Container/Kubernetes ortamında logging: stdout'a yazma konvansiyonu, sidecar vs DaemonSet log toplama
+- Log retention politikası ve maliyet/uyumluluk (GDPR/KVKK) dengesi
+
+### 11.3 Metrics 🟡→🔴
+- **Metrik türleri:**
+  - **Counter** — sadece artan sayaç (toplam istek sayısı, hata sayısı)
+  - **Gauge** — anlık değer, artabilir/azalabilir (aktif bağlantı sayısı, kuyruk derinliği)
+  - **Histogram** — dağılım (latency bucket'ları, p50/p95/p99 hesaplama)
+  - **Summary** — histogram'a benzer, client-side quantile hesaplama
+- **`System.Diagnostics.Metrics`** (.NET'in yerleşik API'si): `Meter`, `Counter<T>`, `Histogram<T>`, `ObservableGauge<T>`
+- **RED metodu** (istek bazlı servisler için): **R**ate (istek/saniye), **E**rror (hata oranı), **D**uration (gecikme)
+- **USE metodu** (kaynak bazlı — CPU, disk, ağ için): **U**tilization, **S**aturation, **E**rrors
+- **Four Golden Signals** (Google SRE): latency, traffic, errors, saturation
+- ASP.NET Core'un yerleşik metrikleri (`Microsoft.AspNetCore.Hosting`, `Kestrel`, `Http.Client`) — otomatik gelen sinyaller
+- **Cardinality problemi:** her `UserId`'yi metrik etiketi (label/tag) yapmak metrik veritabanını patlatır — etiket seçiminde dikkat
+- Metrik toplama: **Prometheus** (pull-based, `/metrics` endpoint) vs **push-based** (StatsD, OTLP)
+- Dashboard: **Grafana** ile görselleştirme, PromQL sorgu temelleri
+- Alerting: eşik tabanlı vs anomali tabanlı; **alert fatigue** — çok fazla/az hassas alarmın sonucu
+
+### 11.4 Distributed Tracing 🔴
+- **Trace / Span / Baggage** kavram modeli: bir trace = bir isteğin yolculuğu; her span = bir işlem adımı (HTTP çağrısı, DB sorgusu, mesaj işleme)
+- Span hiyerarşisi: parent-child ilişkisi, bir servisteki bir işlem başka bir servisi çağırdığında span nasıl "devam eder"
+- **W3C Trace Context** standardı — `traceparent` / `tracestate` header'ları ile servisler arası context propagation
+- **OpenTelemetry (OTel)** — vendor-neutral, endüstri standardı:
+  - **API** (kod içinde `ActivitySource`/`Activity` ile span oluşturma — .NET'in yerleşik tracing API'si OTel ile uyumlu)
+  - **SDK** (sampling, processing, export mantığı)
+  - **Collector** — uygulamadan bağımsız, veriyi toplayıp işleyip istediğin backend'e yönlendiren ayrı süreç (vendor lock-in'i azaltır)
+  - **Exporter** — OTLP (OpenTelemetry Protocol) ile Jaeger, Zipkin, Tempo, Application Insights, Datadog'a gönderim
+- **Auto-instrumentation vs manual instrumentation:** ASP.NET Core, HttpClient, EF Core, SqlClient için otomatik span üretimi; kritik iş mantığı için manuel `Activity` ekleme
+- **Sampling stratejileri:** head-based (istek başında karar) vs tail-based (istek bitince, örneğin hatalıysa tut); oran bazlı (%1) vs adaptif
+- Trace'in log ve metric ile **korelasyonu**: trace ID'yi log satırına otomatik enjekte etme (yapılandırılmış logging ile entegrasyon)
+- Context propagation'ın kırılma noktaları: fire-and-forget task, background job, mesaj kuyruğu (mesajın header'ına context taşınmalı)
+
+### 11.5 .NET'te Uygulama 🟡
+- `ILogger<T>` + OpenTelemetry Logging entegrasyonu (tek pipeline, tek export)
+- `AddOpenTelemetry()` ile `WithTracing()`, `WithMetrics()`, `WithLogging()` kurulum şablonu
+- **.NET Aspire ile geliştirmede gözlemlenebilirlik** — service defaults otomatik OTel + Aspire Dashboard ile yerel trace/metric görüntüleme ([Bölüm 10.1](#101-microservice-temelleri-))
+- Health check'lerin observability ile ilişkisi ([Bölüm 3.7](#37-background-services--zamanlanmış-görevler-) ve [3.8](#38-ortamlar--deployment-konfigürasyonu-)) — health endpoint'i "servis ayakta mı" sorusuna cevap verir, observability "neden yavaş/hatalı" sorusuna
+- `Activity.Current`, custom tag ekleme (`activity?.SetTag(...)`)
+- Middleware'de request/response süresini metrik olarak yayınlama
+
+### 11.6 APM Araçları & Platform Seçimi 🟡→🔴
+- **Azure Application Insights** — Azure ekosisteminde entegre, KQL sorgu dili, Application Map ([Bölüm 15.9](#159-application-insights--izleme-))
+- **Grafana yığını (LGTM):** Loki (log) + Grafana (dashboard) + Tempo (trace) + Mimir/Prometheus (metric) — açık kaynak, self-hosted veya managed
+- **Datadog, New Relic, Dynatrace** — kurumsal SaaS APM, otomatik enstrümantasyon, ek maliyet
+- **Jaeger, Zipkin** — trace-odaklı, açık kaynak
+- **Seq** — .NET ekosisteminde yapılandırılmış log'a özel, geliştirici deneyimi güçlü
+- Seçim kriterleri: mevcut cloud sağlayıcı, ekip büyüklüğü, maliyet, vendor lock-in toleransı
+- **Maliyet yönetimi:** veri hacmi arttıkça APM faturası hızla büyür — sampling, retention süresi kısaltma, sadece kritik servislerde detaylı tracing
+
+### 11.7 Production Teşhis Metodolojisi 🔴
+- **Belirti → Metrik → Hipotez → Doğrulama → Düzeltme → Post-mortem** döngüsü ([Bölüm 12.6](#126-profiling--diagnostics-) ile aynı disiplin, burada gözlemlenebilirlik verisiyle başlar)
+- Dashboard'dan başlama: hangi metrik anomali gösteriyor (latency spike, error rate artışı, saturation)
+- Metrikten trace'e: anomalinin olduğu zaman aralığında örnek trace'leri inceleme
+- Trace'ten log'a: sorunlu span'in detaylı log context'ine inme
+- **On-call pratikleri:** runbook, alert'in "actionable" olması gerekliliği (alarm çalıyor ama ne yapılacağı belirsizse alarm işe yaramaz)
+- Post-mortem kültürü: blameless post-mortem, root cause analysis, aksiyon takibi
+- SLI/SLO/error budget'ın on-call kararlarına etkisi (error budget tükendiyse feature freeze)
+
+---
+
+## 12. Performans & Bellek
+
+### 12.1 Benchmarking 🔴
 - **BenchmarkDotNet** doğru kullanımı, `[MemoryDiagnoser]`, `[Params]`, baseline
 - Mikro-benchmark tuzakları: dead code elimination, JIT warm-up, ölçüm gürültüsü
 - "Ölçmeden optimize etme" prensibi
 - Profiling vs benchmarking farkı
 
-### 11.2 Bellek Yönetimi & GC 🔴
+### 12.2 Bellek Yönetimi & GC 🔴
 - Managed heap, **generation'lar** (Gen 0/1/2) ve neden generational
 - **Large Object Heap (LOH)** — 85 KB eşiği, fragmentation, `GCSettings.LargeObjectHeapCompactionMode`
 - Workstation vs **Server GC**; concurrent/background GC
@@ -1748,7 +2063,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Teşhis: `dotnet-counters`, `dotnet-dump` + SOS, dotMemory, PerfView, Visual Studio Diagnostic Tools
 - Container'da bellek limiti ve OOMKilled
 
-### 11.3 Allocation Azaltma 🔴
+### 12.3 Allocation Azaltma 🔴
 - Allocation'ın gerçek maliyeti (GC baskısı)
 - `Span<T>` / `Memory<T>` / `stackalloc`
 - `ArrayPool<T>`, `MemoryPool<T>`, `ObjectPool<T>` (`Microsoft.Extensions.ObjectPool`)
@@ -1759,7 +2074,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Boxing avı (interface çağrıları, `object` parametreler)
 - `System.IO.Pipelines` ile sıfır-kopya I/O
 
-### 11.4 Caching Stratejileri 🟡→🔴
+### 12.4 Caching Stratejileri 🟡→🔴
 - Cache katmanları: in-process (`IMemoryCache`) → distributed (Redis) → CDN → browser
 - **`HybridCache`** (.NET 9+) — L1+L2, stampede koruması, tag ile invalidation
 - Pattern'ler: cache-aside, read-through, write-through, write-behind, refresh-ahead
@@ -1771,7 +2086,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Consistent hashing (dağıtık cache'te)
 - Neyi cache'lememeli (kullanıcıya özel hassas veri, sık değişen veri)
 
-### 11.5 AOT, Trimming & Startup 🔴
+### 12.5 AOT, Trimming & Startup 🔴
 - **Native AOT** (.NET 10'da olgun): ~1 MB binary, çok hızlı cold start
 - AOT kısıtları: reflection, dynamic code, bazı kütüphaneler
 - Trimming ve `TrimMode`, trim warning'leri çözme
@@ -1780,7 +2095,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Startup süresini ölçme ve azaltma
 - Serverless/Function senaryosunda cold start
 
-### 11.6 Profiling & Diagnostics 🔴
+### 12.6 Profiling & Diagnostics 🔴
 - `dotnet-counters`, `dotnet-trace`, `dotnet-dump`, `dotnet-gcdump`, `dotnet-monitor`
 - EventSource / EventPipe, `System.Diagnostics.Metrics`
 - Visual Studio Profiler, PerfView, dotTrace, dotMemory
@@ -1791,21 +2106,43 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 
 ---
 
-## 12. Güvenlik
+## 13. Güvenlik
 
-### 12.1 OWASP Top 10 (.NET karşılıkları) 🟡→🔴
-1. **Broken Access Control** — resource-based authorization, IDOR koruması
-2. **Cryptographic Failures** — TLS, at-rest şifreleme, zayıf algoritmalardan kaçınma
-3. **Injection** — parametreli sorgu, EF Core'un koruması ve `FromSqlRaw` tuzağı; NoSQL injection; command injection
-4. **Insecure Design** — threat modeling (STRIDE)
-5. **Security Misconfiguration** — Development exception page'in prod'da açık kalması, default credential
-6. **Vulnerable Components** — `dotnet list package --vulnerable`, Dependabot, SCA
-7. **Identification & Authentication Failures** — brute force, weak password, session fixation
-8. **Software & Data Integrity Failures** — güvensiz deserialization, supply chain
-9. **Logging & Monitoring Failures** — yetersiz audit trail
-10. **SSRF** — dış URL çağrılarında allowlist
+### 13.1 OWASP Top 10 (.NET karşılıkları) 🟡→🔴
+> OWASP Top 10 (2021 listesi, en güncel referans). Her madde: **ne, nasıl oluşur, .NET'te nasıl engellenir.**
 
-### 12.2 Authentication 🟡
+1. **Broken Access Control** (en yaygın kategori)
+   - Nasıl oluşur: endpoint'i çağırabilen herkes, sahibi olmadığı kaynağa da erişebiliyor (IDOR — Insecure Direct Object Reference)
+   - .NET'te önlem: her kaynak erişiminde **resource-based authorization** (`IAuthorizationService.AuthorizeAsync(user, resource, policy)`); ID'yi doğrudan URL'den alıp sorgusuz kullanmama; `[Authorize]`'ı **her** endpoint'e varsayılan yapma (`FallbackPolicy`); CORS'u `AllowAnyOrigin` + credentials ile birleştirmeme
+2. **Cryptographic Failures**
+   - Nasıl oluşur: hassas veri düz metin taşınıyor/saklanıyor, zayıf/eski algoritma kullanılıyor
+   - .NET'te önlem: HTTPS zorunlu (`UseHsts`, `RequireHttps`), at-rest şifreleme (`Data Protection API` veya kolon seviyesi TDE), `MD5`/`SHA1`'i şifre hash'i için **hiç** kullanmama (bkz. [13.5](#135-kriptografi-))
+3. **Injection** (SQL, NoSQL, Command, LDAP)
+   - Nasıl oluşur: kullanıcı girdisi sorgu/komut string'ine **birleştiriliyor**
+   - .NET'te önlem: EF Core LINQ her zaman parametreli sorgu üretir (güvenli varsayılan); `FromSqlRaw` yerine `FromSqlInterpolated` (otomatik parametreleştirme); ham ADO.NET'te **her zaman** `SqlParameter`; MongoDB'de `BsonDocument` ile dinamik query builder'da kullanıcı girdisini operatör (`$where`) olarak yorumlatmama; `Process.Start` argümanlarını asla kullanıcı girdisinden birleştirmeme
+4. **Insecure Design**
+   - Nasıl oluşur: güvenlik gereksinimleri tasarım aşamasında hiç düşünülmemiş
+   - .NET'te önlem: **STRIDE** threat modeling (Spoofing, Tampering, Repudiation, Information disclosure, DoS, Elevation of privilege) tasarım review'unda zorunlu adım
+5. **Security Misconfiguration**
+   - Nasıl oluşur: `UseDeveloperExceptionPage()` prod'da açık kalmış, varsayılan admin şifresi değiştirilmemiş, gereksiz endpoint/port açık
+   - .NET'te önlem: ortama göre middleware dallanması (`app.Environment.IsDevelopment()`), güvenlik header middleware'i (aşağıda), gereksiz `Server` header'ını kapatma
+6. **Vulnerable & Outdated Components**
+   - Nasıl oluşur: bilinen CVE'si olan NuGet paketi/runtime sürümü kullanılıyor
+   - .NET'te önlem: `dotnet list package --vulnerable`, Dependabot/Renovate otomasyonu, düzenli SDK/runtime güncelleme takvimi
+7. **Identification & Authentication Failures**
+   - Nasıl oluşur: brute force'a karşı kilitleme yok, zayıf şifre politikası, session fixation
+   - .NET'te önlem: ASP.NET Core Identity `lockout` ayarları, rate limiting login endpoint'inde, `SignInManager` session yenileme (fixation önleme)
+8. **Software & Data Integrity Failures**
+   - Nasıl oluşur: güvensiz deserialization (`BinaryFormatter` — **kaldırıldı/yasaklı**), imzasız güncelleme paketleri, CI/CD tedarik zinciri saldırısı
+   - .NET'te önlem: `BinaryFormatter` **kesinlikle kullanılmaz**; `System.Text.Json` ile tip whitelisting; SBOM ve imza doğrulama ([13.6](#136-supply-chain--uygulama-güvenliği-))
+9. **Security Logging & Monitoring Failures**
+   - Nasıl oluşur: başarısız login denemeleri, yetki ihlalleri loglanmıyor → saldırı fark edilmiyor
+   - .NET'te önlem: audit log (kim, ne, ne zaman), [Bölüm 11](#11-observability-logging-metrics--tracing) ile entegre alerting
+10. **Server-Side Request Forgery (SSRF)**
+    - Nasıl oluşur: uygulama kullanıcının verdiği URL'ye sunucu tarafından istek atıyor (örn. "profil resmi URL'si"), saldırgan bunu iç ağa (`169.254.169.254` metadata endpoint'i gibi) yönlendiriyor
+    - .NET'te önlem: `HttpClient` ile dış çağrı yapan her yerde **allowlist** (izin verilen domain/IP aralığı), private IP aralıklarını (`10.x`, `172.16.x`, `192.168.x`, `169.254.x`) engelleme, redirect takibini kapatma
+
+### 13.2 Authentication 🟡
 - Cookie authentication, `SameSite`, `Secure`, `HttpOnly`
 - **JWT**: yapı, imza (HS256 vs RS256), doğrulama adımları, `alg: none` saldırısı
 - Access + refresh token, rotation, reuse detection
@@ -1816,7 +2153,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - OAuth 2.0 / OIDC akışları ve hangisini ne zaman
 - Token storage: SPA'da localStorage neden riskli → BFF + HttpOnly cookie
 
-### 12.3 Authorization 🟡→🔴
+### 13.3 Authorization 🟡→🔴
 - Role vs Claim vs Policy
 - `IAuthorizationRequirement` + handler ile custom policy
 - Resource-based authorization
@@ -1824,7 +2161,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Multi-tenant izolasyonu ve tenant sızıntısı testleri
 - Yatay vs dikey yetki yükseltme (privilege escalation)
 
-### 12.4 Secrets Yönetimi 🟡
+### 13.4 Secrets Yönetimi 🟡
 - Kaynak kontrolüne secret koymama (ve kazayla koyduysan **rotate et**)
 - User Secrets (dev), environment variables, **Azure Key Vault**, HashiCorp Vault
 - Managed Identity ile secret'sız kimlik doğrulama (en iyi yaklaşım)
@@ -1832,7 +2169,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Secret scanning (GitHub secret scanning, gitleaks)
 - Secret rotation stratejisi
 
-### 12.5 Kriptografi 🔴
+### 13.5 Kriptografi 🔴
 - Simetrik (AES) vs asimetrik (RSA, ECDSA)
 - Hashing (SHA-256) vs password hashing (bcrypt, Argon2, PBKDF2) — **fark kritik**
 - HMAC ile mesaj bütünlüğü (webhook imzası)
@@ -1842,7 +2179,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - "Kendi kripton'u yazma" kuralı
 - Timing attack ve `CryptographicOperations.FixedTimeEquals`
 
-### 12.6 Supply Chain & Uygulama Güvenliği 🔴
+### 13.6 Supply Chain & Uygulama Güvenliği 🔴
 - NuGet paket güvenliği, typosquatting, paket imzalama
 - SBOM üretimi
 - Dependency pinning ve lock file
@@ -1852,11 +2189,46 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Güvenlik header'ları ve CSP
 - Rate limiting, bot koruması, WAF
 
+### 13.7 Yaygın Güvenlik Açıkları — Referans Tablosu 🟡→🔴
+> OWASP Top 10'un ötesinde, mülakatlarda tek tek sorulan **spesifik zafiyet türleri** ve .NET'te somut önlemleri.
+
+| Açık | Nasıl oluşur | .NET'te nasıl engellenir |
+|------|--------------|---------------------------|
+| **SQL Injection** | Kullanıcı girdisi SQL string'ine birleştirilir | EF Core LINQ (otomatik parametreli), `SqlParameter`, asla string concatenation |
+| **XSS — Reflected/Stored/DOM** | Kullanıcı girdisi HTML'e escape edilmeden basılır | Razor **varsayılan olarak HTML-encode eder** (`@variable`); `Html.Raw()`'ı asla kullanıcı girdisiyle kullanma; API'lerde JSON çıktısı doğal olarak güvenli; **CSP header** ile inline script'i engelleme |
+| **CSRF (Cross-Site Request Forgery)** | Kullanıcının oturumu açıkken saldırgan sitesi onun adına istek gönderir | Razor Pages/MVC'de **`[ValidateAntiForgeryToken]`** + `asp-antiforgery`; API'lerde `SameSite=Strict/Lax` cookie + custom header kontrolü (JSON body'nin form'dan gönderilememesi doğal koruma sağlar) |
+| **XXE (XML External Entity)** | XML parser dış entity/DTD'yi işler, dosya okuma/SSRF'e izin verir | `XmlReaderSettings.DtdProcessing = DtdProcessing.Prohibit`; mümünse XML yerine JSON |
+| **Path Traversal / LFI** | Kullanıcı girdisiyle dosya yolu oluşturulur (`../../etc/passwd`) | `Path.GetFullPath` + beklenen kök dizin içinde olduğunu doğrulama; kullanıcıdan gelen dosya adını **asla doğrudan** `Path.Combine`'a güvenmeden kullanmama |
+| **Command Injection** | Kullanıcı girdisi shell komutuna birleştirilir | `Process.Start` ile argümanları **ayrı** `ArgumentList` elemanları olarak geçirme (shell yorumlamasını devre dışı bırakma), mümünse harici process çağırmaktan kaçınma |
+| **SSRF** | Sunucu, kullanıcı kontrolündeki URL'ye istek atar | Allowlist, private IP engelleme (bkz. [13.1](#131-owasp-top-10-net-karşılıkları-)) |
+| **Insecure Deserialization** | Güvenilmeyen veri deserialize edilirken kod çalıştırılabilir hale gelir | `BinaryFormatter`/`NetDataContractSerializer` **kullanma** (zaten .NET'te obsolete); `System.Text.Json` tip whitelisting; `TypeNameHandling.Auto` gibi ayarları (Newtonsoft.Json'da) asla açma |
+| **IDOR** | Yetki kontrolü olmadan ID ile doğrudan kaynağa erişim | Her sorguda "bu kaynak bu kullanıcıya ait mi" kontrolü, GUID kullanımı (tahmin edilemezlik) tek başına yeterli değil — **her zaman yetki kontrolü** |
+| **Open Redirect** | `?returnUrl=` gibi parametre doğrulanmadan `Redirect()`'e verilir | `Url.IsLocalUrl()` ile göreli/yerel URL doğrulaması; harici domain'e yönlendirmede allowlist |
+| **Clickjacking** | Sayfa başka bir sitede `<iframe>` içine gömülüp kullanıcı kandırılır | `X-Frame-Options: DENY` veya CSP `frame-ancestors 'none'` header'ı |
+| **Mass Assignment / Over-posting** | Kullanıcı, DTO'da olmayan alanları (örn. `IsAdmin`) body'ye ekleyip günceller | Entity'yi doğrudan model binding'e maruz bırakmama; ayrı DTO/Command modeli kullanma ([Bölüm 5.5](#55-validation--hata-yönetimi-)) |
+| **Race Condition / TOCTOU** | "Kontrol et → işlem yap" arasında başka bir istek araya girer (örn. bakiye kontrolü + çekim) | Veritabanı seviyesinde atomik işlem (`UPDATE ... WHERE balance >= amount`), optimistic concurrency, transaction isolation ([Bölüm 7.7](#77-transactionlar--isolation-)) |
+| **ReDoS (Regex DoS)** | Kullanıcı girdisiyle çalışan regex, catastrophic backtracking'e girer | Regex'e **timeout** (`RegexOptions`/`Regex(pattern, options, matchTimeout)`), kullanıcı girdisinden regex pattern'i asla türetmeme, `[GeneratedRegex]` ile derleme zamanı analiz |
+| **HTTP Response Splitting / Header Injection** | Kullanıcı girdisi HTTP header değerine CRLF ile enjekte edilir | ASP.NET Core header API'leri modern framework'te bunu otomatik engeller; yine de kullanıcı girdisini header'a koymadan önce doğrulama |
+| **Sensitive Data Exposure (loglarda/hata mesajlarında)** | Stack trace, connection string, token loglara/response'a sızar | Prod'da `UseExceptionHandler` + generic `ProblemDetails`; log enrichment'ta PII redaksiyonu ([Bölüm 11.2](#112-structured-logging--derinlemesine-)) |
+
+### 13.8 Güvenli Kod Yazma İlkeleri 🟡→🔴
+- **Input validation — allowlist > denylist:** "kötü karakterleri yasakla" değil, "izin verilen formatı tanımla" (regex ile katı format, `enum` ile sınırlı seçenek kümesi)
+- **Output encoding — context-aware:** HTML'e basarken HTML-encode, URL'ye koyarken URL-encode, JS'e koyarken JS-encode — Razor bunu otomatik yapar ama manuel string birleştirmede unutulur
+- **Defense in depth:** tek bir kontrole güvenmeme — hem client-side hem server-side validation, hem authentication hem authorization, hem WAF hem uygulama seviyesi kontrol
+- **Fail securely:** hata durumunda varsayılan olarak **erişimi reddet**, izin verme; exception fırlatıldığında yetki kontrolünün "geçti" sayılmaması
+- **Least privilege:** servis hesabına, connection string'e, API key'e ihtiyacından fazla yetki vermeme (DB kullanıcısına sadece gerekli tablolarda gerekli CRUD izni)
+- **Secure by default:** yeni bir endpoint/özellik varsayılan olarak **kilitli** başlamalı, bilinçli olarak açılmalı — `[AllowAnonymous]` istisna olmalı, kural değil
+- **Principle of least astonishment:** güvenlik davranışı kullanıcıyı/geliştiriciyi şaşırtmamalı — sessizce güvenlik açığı bırakan "kolay yol" API'leri sunmama
+- **Immutable/readonly veri modelleme** ile yanlışlıkla state mutasyonunun önüne geçme (thread-safety ile de kesişir, [Bölüm 4](#4-multithreading-concurrency--async))
+- **Security code review checklist** (PR'da özellikle bakılması gerekenler): yeni bir SQL/Mongo sorgusu var mı → parametreli mi? Yeni bir dış URL çağrısı var mı → SSRF riski? Yeni bir dosya işlemi var mı → path traversal riski? Yeni bir auth/authz kontrolü mü değişti → test edildi mi? Yeni bir dependency mi eklendi → bilinen CVE var mı?
+- **Threat modeling'i erken yapma:** özellik tasarım aşamasındayken "bu özelliği kim kötüye kullanabilir, nasıl?" sorusunu sorma — sonradan yama yapmaktan çok daha ucuz
+- **Security ile performansı dengeleme:** her request'te tam threat modeling maliyetli — riski yüksek yüzeylerde (auth, ödeme, dosya yükleme) derinlemesine, düşük riskli yüzeylerde standart kontrol yeterli
+
 ---
 
-## 13. Docker, Kubernetes & DevOps
+## 14. Docker, Kubernetes & DevOps
 
-### 13.1 Docker Temelleri 🟢
+### 14.1 Docker Temelleri 🟢
 - Image vs Container vs Registry; layer ve cache mantığı
 - `docker run` bayrakları: `-p`, `-v`, `-e`, `--network`, `--rm`
 - `docker ps/logs/exec/inspect/stats`
@@ -1865,7 +2237,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Registry: Docker Hub, GHCR, Azure Container Registry
 - Container ≠ VM — izolasyon modeli farkı
 
-### 13.2 .NET için Dockerfile 🟡
+### 14.2 .NET için Dockerfile 🟡
 - Base image seçimi: `sdk` (build) vs `aspnet`/`runtime` (çalıştırma)
 - **Multi-stage build** — SDK'yı final image'da bırakmama
 - Layer cache optimizasyonu: önce `.csproj` kopyala → `restore` → sonra kaynak kodu kopyala
@@ -1877,7 +2249,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - `dotnet publish /t:PublishContainer` ile Dockerfile'sız image üretimi
 - Image boyutu ve güvenlik yüzeyi optimizasyonu
 
-### 13.3 Docker Compose 🟡
+### 14.3 Docker Compose 🟡
 - Multi-service tanımı: API + PostgreSQL + Redis + Seq/Jaeger
 - `depends_on` + `healthcheck` ile başlangıç sırası
 - Network ve servis adıyla DNS çözümleme
@@ -1885,7 +2257,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Environment değişkenleri, `.env` dosyası, override dosyaları
 - Geliştirme ortamı olarak Compose — "tek komutla çalışan repo" hedefi
 
-### 13.4 Kubernetes 🔴
+### 14.4 Kubernetes 🔴
 - Temel nesneler: Pod, ReplicaSet, **Deployment**, Service, Ingress
 - ConfigMap ve Secret ile konfigürasyon enjeksiyonu
 - **Probe'lar:** liveness, readiness, startup — ve ASP.NET Core health check eşlemesi
@@ -1898,7 +2270,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Log ve metrik toplama
 - Azure Kubernetes Service (AKS), **Azure Container Apps** (daha basit alternatif)
 
-### 13.5 CI/CD 🟡
+### 14.5 CI/CD 🟡
 - Pipeline aşamaları: restore → build → test → analyze → publish → containerize → deploy
 - **GitHub Actions** ve **Azure Pipelines** YAML temelleri
 - Matrix build, caching, artifact yönetimi
@@ -1911,7 +2283,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Rollback planı
 - DORA metrikleri (deployment frequency, lead time, MTTR, change failure rate)
 
-### 13.6 Infrastructure as Code 🔴
+### 14.6 Infrastructure as Code 🔴
 - ARM template → **Bicep** (Azure-native)
 - **Terraform** (multi-cloud), state yönetimi
 - Pulumi (C# ile IaC)
@@ -1920,11 +2292,11 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 
 ---
 
-## 14. Azure Cloud
+## 15. Azure Cloud
 
 > Junior: portal kullanımı ve deploy. Mid: servis yapılandırma ve entegrasyon. Senior: mimari seçim, maliyet, dayanıklılık.
 
-### 14.1 App Service 🟡
+### 15.1 App Service 🟡
 - Web App deployment (ZIP deploy, GitHub Actions, Azure Pipelines, container)
 - Application Settings ve connection string'ler → `IConfiguration`'a nasıl akar
 - **Deployment slot** ve slot swap ile sıfır kesintili yayın; slot-specific settings
@@ -1933,7 +2305,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Managed Identity ile diğer servislere erişim
 - Kudu/SCM, log stream, diagnostic
 
-### 14.2 Azure SQL 🟡
+### 15.2 Azure SQL 🟡
 - Deployment seçenekleri: Single DB, Elastic Pool, Managed Instance, SQL Server on VM
 - DTU vs vCore, serverless tier ve auto-pause
 - Firewall, Private Endpoint, **Entra ID / Managed Identity ile şifresiz auth**
@@ -1941,7 +2313,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Query Performance Insight, otomatik tuning
 - Retry politikası (`EnableRetryOnFailure`) — geçici hatalar (transient fault)
 
-### 14.3 Cosmos DB 🟡
+### 15.3 Cosmos DB 🟡
 - API'ler: NoSQL(SQL), MongoDB, Cassandra, Gremlin, Table, PostgreSQL
 - **Partition key seçimi** — en kritik ve geri dönüşü zor karar (cardinality, hot partition)
 - RU/s ekonomisi: provisioned vs autoscale vs serverless; RU maliyetini ölçme
@@ -1952,7 +2324,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Global dağıtım ve multi-region write
 - Cosmos DB ne zaman **yanlış** seçim (ilişkisel sorgu ihtiyacı, maliyet)
 
-### 14.4 Storage 🟢→🟡
+### 15.4 Storage 🟢→🟡
 - Blob, File, Queue, Table storage
 - Blob tier: Hot / Cool / Cold / Archive ve maliyet
 - **SAS token** (user delegation SAS tercih edilir), stored access policy
@@ -1961,7 +2333,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Static website hosting, CDN / Azure Front Door
 - Event Grid ile blob event'leri
 
-### 14.5 Messaging 🟡
+### 15.5 Messaging 🟡
 - **Service Bus:** queue vs topic/subscription, session (ordering), dead-letter, scheduled message, duplicate detection, peek-lock vs receive-and-delete
 - **Event Hubs:** yüksek hacimli telemetri, Kafka uyumlu arayüz, partition & consumer group
 - **Event Grid:** olay yönlendirme, reaktif entegrasyon
@@ -1969,7 +2341,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Hangisi ne zaman: Service Bus (kurumsal mesajlaşma) vs Event Hubs (stream) vs Event Grid (event routing)
 - MassTransit ile Azure Service Bus kullanımı
 
-### 14.6 Azure Functions 🟡
+### 15.6 Azure Functions 🟡
 - Trigger'lar: HTTP, Timer, Blob, Queue, Service Bus, Event Hub, Cosmos Change Feed
 - Input/output binding'ler
 - **Isolated worker model** (modern, .NET 10 ile tek seçenek)
@@ -1978,7 +2350,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Function vs Container Apps vs App Service — karar kriterleri
 - Yerel geliştirme ve test
 
-### 14.7 Key Vault 🟡
+### 15.7 Key Vault 🟡
 - Secret, Key, Certificate ayrımı
 - **Managed Identity** ile erişim (connection string'siz)
 - `Azure.Extensions.AspNetCore.Configuration.Secrets` ile `IConfiguration` entegrasyonu
@@ -1986,7 +2358,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Secret rotation ve `IOptionsMonitor` ile yenileme
 - RBAC vs access policy
 
-### 14.8 Entra ID (Azure AD) 🟡
+### 15.8 Entra ID (Azure AD) 🟡
 - Tenant, app registration, service principal, enterprise app
 - Client credentials (servis-servis), authorization code + PKCE (kullanıcı)
 - On-behalf-of flow (API → API)
@@ -1996,7 +2368,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - B2C / External ID ile müşteri kimlik yönetimi
 - Conditional access, token ömrü
 
-### 14.9 Application Insights & İzleme 🟡
+### 15.9 Application Insights & İzleme 🟡
 - Telemetry türleri: Request, Dependency, Trace, Exception, Custom Event, Metric
 - Otomatik toplama vs custom telemetry (`TelemetryClient`)
 - **OpenTelemetry ile modern entegrasyon** (önerilen yol)
@@ -2007,14 +2379,14 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Log Analytics workspace ve merkezi loglama
 - Dashboard ve workbook
 
-### 14.10 Container Apps & AKS 🔴
+### 15.10 Container Apps & AKS 🔴
 - **Azure Container Apps** — serverless container, KEDA ile event-driven scaling, scale-to-zero, Dapr entegrasyonu
 - AKS — tam Kubernetes kontrolü, ne zaman gerekir
 - Container Registry, image build (ACR Tasks)
 - Container Apps vs AKS vs App Service vs Functions — **karar tablosu**
 - Ingress, revision, traffic splitting (canary)
 
-### 14.11 .NET Aspire 🟡
+### 15.11 .NET Aspire 🟡
 - Aspire nedir: cloud-native uygulamalar için orkestrasyon + servis keşfi + telemetri
 - AppHost projesi ve kaynak modeli (Postgres, Redis, RabbitMQ container'larını kod ile tanımlama)
 - Service defaults: OpenTelemetry, health check, resilience hazır gelir
@@ -2025,11 +2397,11 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 
 ---
 
-## 15. AI Engineering (.NET)
+## 16. AI Engineering (.NET)
 
 > .NET artık AI-first bir platform. 2026 mülakatlarında backend rollerinde bile bu bölüm soruluyor.
 
-### 15.1 LLM Temelleri 🟡
+### 16.1 LLM Temelleri 🟡
 - Token, context window, temperature, top-p, max tokens
 - Prompt engineering: system/user/assistant rolleri, few-shot, chain-of-thought
 - Model seçimi: yetenek / gecikme / maliyet üçgeni
@@ -2038,7 +2410,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Rate limit, retry, token maliyeti hesaplama
 - Güvenlik: **prompt injection**, jailbreak, veri sızıntısı
 
-### 15.2 Microsoft.Extensions.AI 🟡
+### 16.2 Microsoft.Extensions.AI 🟡
 - .NET'in birleşik AI soyutlama katmanı (`IChatClient`, `IEmbeddingGenerator`)
 - Provider bağımsızlığı (OpenAI, Azure OpenAI, Ollama, Anthropic, yerel model)
 - Middleware pipeline: logging, caching, telemetry, function invocation
@@ -2046,7 +2418,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - **Function calling / tool use** — LLM'e C# metodu çağırtma
 - Structured output (JSON schema ile tip güvenli çıktı)
 
-### 15.3 Semantic Kernel 🟡
+### 16.3 Semantic Kernel 🟡
 - Kernel, plugin, function (semantic vs native)
 - Prompt template'leri ve Handlebars/Liquid
 - Planner ve otomatik fonksiyon çağırma
@@ -2055,7 +2427,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - **Semantic Kernel Agents** ve multi-agent orkestrasyon
 - Semantic Kernel vs Microsoft.Extensions.AI — ne zaman hangisi
 
-### 15.4 Embeddings & Vector Search 🟡
+### 16.4 Embeddings & Vector Search 🟡
 - Embedding nedir, semantik benzerlik nasıl ölçülür
 - Similarity metrikleri: cosine, dot product, Euclidean
 - **Chunking stratejileri:** sabit boyut, overlap, semantic chunking, parent-child
@@ -2068,7 +2440,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - ANN index'leri: HNSW, IVFFlat — recall/latency trade-off
 - Metadata filtreleme ile hibrit sorgu
 
-### 15.5 RAG Pipeline 🔴
+### 16.5 RAG Pipeline 🔴
 - RAG neden gerekli (güncel/özel veri + kaynak gösterimi + maliyet)
 - **Ingestion:** yükle → parse → chunk → embed → store (+ metadata)
 - **Retrieval:** query embed → vector search → **hybrid search** (BM25 + vector) → **reranking**
@@ -2080,7 +2452,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Agentic RAG ve GraphRAG'e giriş
 - Maliyet ve gecikme optimizasyonu, embedding cache
 
-### 15.6 AI Agents 🔴
+### 16.6 AI Agents 🔴
 - Agent = LLM + tools + memory + loop
 - ReAct döngüsü (reason → act → observe)
 - Tool tasarımı: net açıklama, dar kapsam, deterministik dönüş
@@ -2092,7 +2464,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - MCP (Model Context Protocol) ile tool entegrasyonu
 - Agent'ların üretime alınması: timeout, maliyet limiti, idempotency
 
-### 15.7 ML.NET 🟡
+### 16.7 ML.NET 🟡
 - Klasik ML ne zaman LLM'den daha doğru araç (tabular veri, düşük gecikme, maliyet)
 - Senaryolar: regression, classification, clustering, anomaly detection, recommendation
 - AutoML ve Model Builder
@@ -2102,7 +2474,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - **ONNX** ile eğitilmiş model içe aktarma (PyTorch/TensorFlow → .NET)
 - Model versiyonlama ve yeniden eğitim
 
-### 15.8 AI Değerlendirme & Güvenlik 🔴
+### 16.8 AI Değerlendirme & Güvenlik 🔴
 - Eval-driven development — "prompt'u değiştirdim, iyi mi oldu?" sorusunu ölçmek
 - `Microsoft.Extensions.AI.Evaluation`
 - LLM-as-judge ve sınırları
@@ -2114,9 +2486,9 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 
 ---
 
-## 16. Sistem Tasarımı
+## 17. Sistem Tasarımı
 
-### 16.1 Ölçeklenebilirlik 🔴
+### 17.1 Ölçeklenebilirlik 🔴
 - Vertical vs horizontal scaling
 - **Stateless servis tasarımı** — neden ölçeklemenin ön koşulu
 - Session affinity (sticky session) ve sorunları
@@ -2126,14 +2498,14 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Asenkron işleme ile pik yükü tamponlama (queue ile load leveling)
 - Back-of-the-envelope hesaplama: QPS, storage, bandwidth, instance sayısı
 
-### 16.2 Ölçekte Caching 🔴
+### 17.2 Ölçekte Caching 🔴
 - Çok katmanlı cache mimarisi (browser → CDN → gateway → app → DB)
 - Cache hit ratio ölçümü ve iyileştirme
 - Invalidation stratejileri ve tag-based invalidation
 - Consistent hashing
 - Hot key problemi
 
-### 16.3 Rate Limiting & Kotalar 🔴
+### 17.3 Rate Limiting & Kotalar 🔴
 - Algoritmalar: fixed window, sliding window (log/counter), token bucket, leaky bucket
 - .NET `RateLimiter` API'leri
 - Dağıtık rate limiting (Redis + Lua ile atomik sayaç)
@@ -2141,7 +2513,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - `429` + `Retry-After` ve client tarafı backoff
 - Quota, throttling, fair usage
 
-### 16.4 Veri Bölümleme 🔴
+### 17.4 Veri Bölümleme 🔴
 - Partitioning vs sharding vs replication
 - Shard key seçimi ve resharding acısı
 - Hot partition problemi
@@ -2149,7 +2521,7 @@ Bu bölümün `src/` klasöründe yapılacaklar — **okumak değil, görmek**:
 - Global ikincil index
 - Multi-region veri yerleşimi, veri egemenliği (data residency)
 
-### 16.5 Case Study'ler 🔴
+### 17.5 Case Study'ler 🔴
 Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçekleme → darboğaz → hata senaryoları.
 
 - **URL shortener** (hash üretimi, çakışma, okuma ağırlıklı yük, cache)
@@ -2165,9 +2537,9 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 
 ---
 
-## 17. Mülakat Süreci
+## 18. Mülakat Süreci
 
-### 17.1 Coding Interview 🟢→🔴
+### 18.1 Coding Interview 🟢→🔴
 - C# ile LeetCode refleksi: string, array, hash map, two pointers, sliding window, recursion, BFS/DFS
 - Klasik .NET soruları: FizzBuzz, string reverse, palindrome, anagram, fibonacci, en sık geçen eleman
 - LINQ ile çözme vs döngü ile çözme — hangisini ne zaman göstermeli
@@ -2175,7 +2547,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - Edge case listeleme alışkanlığı (null, boş, tek eleman, çok büyük, negatif, unicode)
 - Kodu test edilebilir yazma
 
-### 17.2 Live Coding / Pair Programming 🟡
+### 18.2 Live Coding / Pair Programming 🟡
 - **Sesli düşünme** — sessiz kalmak en büyük hata
 - Varsayımları açıkça söyleme ve soru sorma
 - Küçük adımlarla ilerleme, çalışan koddan başlama
@@ -2183,7 +2555,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - IDE hakimiyeti (kısayollar, refactoring araçları)
 - Hata yapınca panik yerine sistematik debug
 
-### 17.3 Behavioral / STAR 🟡
+### 18.3 Behavioral / STAR 🟡
 - **STAR:** Situation → Task → Action → Result (sayısal sonuçla)
 - Hazırlanması gereken hikayeler:
   - Zor bir production incident ve çözümü
@@ -2196,7 +2568,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - "Neden burası" — şirkete özel araştırma (ürün, teknoloji, ekip)
 - Sorulacak sorular listesi (ekip yapısı, code review kültürü, teknik borç, on-call)
 
-### 17.4 System Design Interview 🔴
+### 18.4 System Design Interview 🔴
 - **Yapı:**
   1. Gereksinim netleştirme (fonksiyonel + non-fonksiyonel)
   2. Ölçek tahmini (kullanıcı, QPS, veri, okuma/yazma oranı)
@@ -2210,7 +2582,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - Her seçimi **gerekçelendirme** ("Postgres seçtim çünkü...")
 - Bilmediğini kabul etme ve muhakemeyi gösterme
 
-### 17.5 Take-home Ödevleri 🟡
+### 18.5 Take-home Ödevleri 🟡
 - Zaman yönetimi ve **over-engineering tuzağı**
 - README'nin önemi: kurulum, mimari kararlar, varsayımlar, yapılmayanlar ve nedenleri
 - Test yazma (en çok fark yaratan tek şey)
@@ -2218,7 +2590,7 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 - Temiz commit geçmişi
 - Kapsamı erken netleştirmek için soru sorma
 
-### 17.6 Mülakat Öncesi Checklist
+### 18.6 Mülakat Öncesi Checklist
 - [ ] CV'deki her teknolojiyi savunabiliyor muyum?
 - [ ] Son projemi 2 dakikada anlatabiliyor muyum (problem → çözüm → sonuç)?
 - [ ] En gurur duyduğum ve en çok pişman olduğum teknik karar?
@@ -2232,43 +2604,49 @@ Her biri için: gereksinim analizi → API tasarımı → veri modeli → ölçe
 
 Günde 2-3 saat varsayımıyla. Kendi seviyene göre fazları atlayabilir veya hızlandırabilirsin.
 
-### Junior hedefi (~3,5 ay)
+### Junior hedefi (~4 ay)
 | Hafta | İçerik |
 |-------|--------|
-| 1-2 | Bölüm 0 (ön koşullar) + 1.1-1.2 (program anatomisi, tip sistemi & bellek) |
-| 3-4 | 1.3-1.5 (OOP, collections, exception) |
-| 5 | 1.6-1.7 (delegate/event, LINQ) |
-| 6 | **Bölüm 2 temel kısmı** — 2.4 (`bin`/`obj`), 2.7 (`run` vs `publish`), 2.6 (exe nasıl oluşuyor) |
-| 7-8 | Bölüm 3 (platform: DI, configuration, middleware, logging) |
-| 9-10 | Bölüm 5.1-5.5 (REST, Web API, validation) |
-| 11-12 | Bölüm 6.2 (EF Core) + 7.1 (SQL temelleri) |
-| 13 | Bölüm 8.1-8.2 (unit test, mocking) |
-| 14 | Bölüm 13.1-13.3 (Docker) + tekrar + mock mülakat |
+| 1 | 0.1-0.3 (Git, HTTP, CLI) |
+| 2-3 | **0.4-0.7 (DSA: veri yapıları + pattern kataloğu + eşleştirme rehberi)** — her hafta 5-10 LeetCode Easy |
+| 4-5 | 1.1-1.2 (program anatomisi, tip sistemi & bellek) |
+| 6-7 | 1.3-1.5 (OOP, collections, exception) |
+| 8 | 1.6-1.7 (delegate/event, LINQ) |
+| 9 | **Bölüm 2 temel kısmı** — 2.4 (`bin`/`obj`), 2.7 (`run` vs `publish`), 2.6 (exe nasıl oluşuyor) |
+| 10-11 | Bölüm 3 (platform: DI, configuration, middleware, logging) |
+| 12-13 | Bölüm 5.1-5.5 (REST, Web API, validation) |
+| 14-15 | Bölüm 6.2 (EF Core) + 7.1 (SQL temelleri) |
+| 16 | Bölüm 8.1-8.2 (unit test, mocking) |
+| 17 | Bölüm 14.1-14.3 (Docker) + tekrar + mock mülakat |
 
-### Mid hedefi (~5,5 ay, junior içeriği biliniyor varsayımıyla)
+### Mid hedefi (~6 ay, junior içeriği biliniyor varsayımıyla)
 | Hafta | İçerik |
 |-------|--------|
-| 1-2 | 1.8-1.9 (modern C#, Span) + 1.10 (reflection, source generators) |
-| 3-4 | **Bölüm 2 tamamı** (Roslyn/IL, MSBuild, apphost, deployment modelleri, JIT) — lab'ları mutlaka yap |
-| 5-6 | Bölüm 3 tekrar (Options pattern, hosting, background service, filter) |
-| 7-9 | **Bölüm 4 tamamı (multithreading)** — en yüksek getirili bölüm |
-| 10-12 | **Bölüm 5 tamamı (API)** — versioning, güvenlik, gRPC, GraphQL, SignalR |
-| 13-14 | Bölüm 6 (EF Core ileri, Dapper) + 7.2-7.5 (SQL Server, Postgres, Mongo, Redis) |
-| 15-16 | Bölüm 9.1-9.3 (SOLID, patterns, Clean Architecture) |
-| 17-18 | Bölüm 8 (test ileri, TestContainers) + 11.4 (caching) |
-| 19-20 | Bölüm 12 (güvenlik) + 13 (Docker/CI-CD) |
-| 21-22 | Bölüm 14 (Azure) |
-| 23-24 | Bölüm 15 (AI) + tekrar + mock mülakat |
+| 1-2 | **0.8 (Dinamik Programlama) + Medium seviye pattern pratiği** (backtracking, heap, topological sort, union-find) |
+| 3-4 | 1.8-1.9 (modern C#, Span) + 1.10 (reflection, source generators) |
+| 5-6 | **Bölüm 2 tamamı** (Roslyn/IL, MSBuild, apphost, deployment modelleri, JIT) — lab'ları mutlaka yap |
+| 7-8 | Bölüm 3 tekrar (Options pattern, hosting, background service, filter) |
+| 9-11 | **Bölüm 4 tamamı (multithreading)** — en yüksek getirili bölüm |
+| 12-14 | **Bölüm 5 tamamı (API)** — versioning, güvenlik, gRPC, GraphQL, SignalR |
+| 15-16 | Bölüm 6 (EF Core ileri, Dapper) + 7.2-7.5 (SQL Server, Postgres, Mongo, Redis) |
+| 17-18 | Bölüm 9.1-9.3 + **9.8 (mimari stiller karşılaştırması)** |
+| 19-20 | Bölüm 8 (test ileri, TestContainers) + 12.4 (caching) |
+| 21-22 | **Bölüm 11 (Observability — logging/metrics/tracing, OpenTelemetry)** |
+| 23-24 | Bölüm 13 (güvenlik: OWASP, secure coding) + 14 (Docker/CI-CD) |
+| 25-26 | Bölüm 15 (Azure) |
+| 27 | Bölüm 16 (AI Engineering) + **9.9 (AI-driven development)** + tekrar + mock mülakat |
 
-### Senior hedefi (~7 ay)
+### Senior hedefi (~7,5 ay)
 Mid planına ek olarak:
 | Hafta | İçerik |
 |-------|--------|
-| +1-3 | Bölüm 9.4-9.7 (DDD, CQRS, vertical slice, modular monolith) |
-| +4-6 | Bölüm 10 (microservices, message broker, saga, outbox, resilience) |
-| +7-9 | Bölüm 11 (performans, GC, profiling, AOT) — Bölüm 2.8-2.9 ile birlikte çalış |
-| +10-11 | Bölüm 16 (system design, case study'ler) |
-| +12-13 | Bölüm 17 (mülakat simülasyonu, behavioral hazırlık) |
+| +1-2 | **DSA ileri:** karmaşık pattern kombinasyonları, sistem tasarımında DSA kullanımı (LRU cache, rate limiter veri yapısı) |
+| +3-5 | Bölüm 9.4-9.7 (DDD, CQRS, vertical slice, modular monolith) |
+| +6-8 | Bölüm 10 (microservices, message broker, saga, outbox, resilience) |
+| +9-11 | Bölüm 12 (performans, GC, profiling, AOT) — Bölüm 2.8-2.9 ile birlikte çalış |
+| +12-13 | Bölüm 11.7 (production teşhis metodolojisi) + on-call/SLO derinleşme |
+| +14-15 | Bölüm 17 (system design, case study'ler) |
+| +16-17 | Bölüm 18 (mülakat simülasyonu, behavioral hazırlık) |
 
 **Her hafta:** 1 gün tekrar + 1 gün kodlama pratiği. Her ayın sonunda kapalı kitap self-mock mülakat.
 
@@ -2296,6 +2674,14 @@ Mid planına ek olarak:
 | SQL Performance Explained | Markus Winand | 🟡 |
 | Release It! | Michael Nygard | 🔴 |
 | The Pragmatic Programmer | Hunt & Thomas | Hepsi |
+| **Grokking Algorithms** | Aditya Bhargava | 🟢 |
+| **Cracking the Coding Interview** | Gayle Laakmann McDowell | 🟢🟡 |
+| **Elements of Programming Interviews** | Aziz, Lee, Prakash | 🟡🔴 |
+| **Software Engineering at Google** | Winters, Manshreck, Tornhill | 🟡🔴 |
+| **Building Secure & Reliable Systems** | Google SRE/Security teams | 🔴 |
+| **Distributed Tracing in Practice** | Austin Parker vd. | 🔴 |
+| **Fundamentals of Software Architecture** | Mark Richards, Neal Ford | 🟡🔴 |
+| **Software Architecture: The Hard Parts** | Ford, Richards, Sadalage, Dehghani | 🔴 |
 
 ### Resmî Dokümantasyon
 - [Microsoft Learn — .NET](https://learn.microsoft.com/dotnet/)
@@ -2316,6 +2702,27 @@ Mid planına ek olarak:
 - [.NET host (apphost/hostfxr/hostpolicy)](https://github.com/dotnet/runtime/blob/main/docs/design/features/host-components.md)
 - [Performance improvements in .NET](https://devblogs.microsoft.com/dotnet/tag/performance/) — Stephen Toub'un yıllık serisi
 - [ECMA-335 CLI spesifikasyonu](https://ecma-international.org/publications-and-standards/standards/ecma-335/) — IL'in resmî tanımı
+
+### DSA & Pattern Pratiği (Bölüm 0 için)
+- [NeetCode.io](https://neetcode.io/) — pattern bazlı, "Blind 75" / "NeetCode 150" listeleri
+- [LeetCode](https://leetcode.com/) — pattern etiketiyle filtreleme (Two Pointers, DP, Graph...)
+- [AlgoMonster](https://algo.monster/) — pattern-first öğretim yaklaşımı
+- [VisuAlgo](https://visualgo.net/) — veri yapısı/algoritma görselleştirme
+- [Big-O Cheat Sheet](https://www.bigocheatsheet.com/)
+
+### Observability (Bölüm 11 için)
+- [OpenTelemetry .NET dokümantasyonu](https://opentelemetry.io/docs/languages/net/)
+- [Microsoft Learn — .NET Observability](https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel)
+- [Google SRE Book](https://sre.google/sre-book/table-of-contents/) — SLI/SLO/error budget, on-call kültürü
+- [Grafana LGTM stack dokümantasyonu](https://grafana.com/docs/)
+- [Seq dokümantasyonu](https://docs.datalust.co/docs)
+
+### Mimari & AI-Driven Development (Bölüm 9 için)
+- [Milan Jovanović — Architecture içerikleri](https://www.milanjovanovic.tech/)
+- [ThoughtWorks Technology Radar](https://www.thoughtworks.com/radar) — mimari trend takibi
+- [Anthropic — Claude Code dokümantasyonu](https://docs.claude.com/claude-code) — enterprise kurulum, MCP, hooks, subagents
+- [Anthropic — Building Effective Agents](https://www.anthropic.com/research/building-effective-agents)
+- [Martin Fowler — bliki](https://martinfowler.com/bliki/) — mimari kavramlar (CQRS, microservices, patterns)
 
 ### Roadmap'ler
 - [milanm/DotNet-Developer-Roadmap](https://github.com/milanm/DotNet-Developer-Roadmap) — seviye bazlı kapsamlı .NET roadmap
