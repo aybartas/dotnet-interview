@@ -25,6 +25,17 @@ Roadmap junior konulardan senior konulara **sıralı** ilerler. Aynı alan (veri
 
 Her seviye bir **capstone** projesiyle biter (görev yönetimi API'si → e-ticaret platformu → dağıtık sipariş platformu + AI destek agent'ı).
 
+### Azure sertifika hedefleri
+
+İki sertifika roadmap'e gömülü — ilgili modüller sınavın alanlarına birebir eşlenmiş durumda:
+
+| Sertifika | Modül | Kapsam |
+|-----------|-------|--------|
+| **AZ-900** — Azure Fundamentals | [J13](./ROADMAP.md#j13-cloud--azurea-giriş) | Cloud kavramları (%25-30) · Azure mimarisi & servisleri (%35-40) · yönetişim, maliyet & monitoring (%30-35) |
+| **AI-200** — Azure AI Cloud Developer Associate | [M15](./ROADMAP.md#m15-azure-ile-uygulama-geliştirme) (+ [M16](./ROADMAP.md#m16-ai-engineering-uygulama-geliştirme)) | Container çözümleri (%20-25) · veri servisleri & vector search (%25-35) · servis entegrasyonu (%20-25) · güvenlik/izleme/teşhis (%20-25) |
+
+AZ-204 31 Temmuz 2026'da emekliye ayrıldı; geliştirici yolu artık AI-200. Müfredatlar tarihli olarak güncellenir — sınav öncesi resmî study guide'ı kontrol edin ([kaynaklar](./ROADMAP.md#kaynaklar)).
+
 ## Her konu için ne var?
 
 ```

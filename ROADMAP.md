@@ -136,7 +136,7 @@ Her konunun `README.md`'si şu şablonu izler:
 | [J10](#j10-test-temelleri) | Test Temelleri | xUnit v3, mocking, test edilebilir kod, ilk integration test |
 | [J11](#j11-güvenlik--kimlik-temelleri) | Güvenlik & Kimlik Temelleri | AuthN/AuthZ, JWT, OAuth/OIDC'ye giriş, temel web açıkları |
 | [J12](#j12-docker-temelleri) | Docker Temelleri | Container, Dockerfile, Compose |
-| [J13](#j13-cloud--azurea-giriş) | Cloud & Azure'a Giriş | Cloud kavramları, App Service, Blob, ilk CI |
+| [J13](#j13-cloud--azurea-giriş) | Cloud & Azure'a Giriş | **AZ-900 kapsamı:** cloud kavramları, Azure mimarisi & servisleri, yönetişim/maliyet/monitoring + App Service, Blob, ilk CI |
 | [J14](#j14-ai-ile-çalışmaya-giriş) | AI ile Çalışmaya Giriş | LLM temelleri, AI asistanı kullanımı, ilk `IChatClient` |
 | [🏁](#junior-capstone-görev-yönetimi-apisi) | **Junior Capstone** | Görev yönetimi API'si — uçtan uca |
 
@@ -158,7 +158,7 @@ Her konunun `README.md`'si şu şablonu izler:
 | [M12](#m12-mesajlaşma--message-brokerlar) | Mesajlaşma & Message Broker'lar | RabbitMQ, Service Bus, Kafka'ya giriş, kütüphaneler |
 | [M13](#m13-observability) | Observability | Structured logging, metrics, OpenTelemetry tracing |
 | [M14](#m14-devops-cicd-container--kubernetes-temelleri) | DevOps | CI/CD, container ileri, Kubernetes temeli, Aspire |
-| [M15](#m15-azure-ile-uygulama-geliştirme) | Azure ile Uygulama Geliştirme | Managed Identity, compute, veri servisleri, izleme |
+| [M15](#m15-azure-ile-uygulama-geliştirme) | Azure ile Uygulama Geliştirme | **AI-200 kapsamı:** Managed Identity, ACR & container teşhisi, compute, veri servisleri & vector search, Event Grid, izleme |
 | [M16](#m16-ai-engineering-uygulama-geliştirme) | AI Engineering: Uygulama Geliştirme | M.E.AI, RAG, vector search, **MCP**, Foundry |
 | [🏁](#mid-capstone-e-ticaret-katalog--sipariş-platformu) | **Mid Capstone** | E-ticaret katalog & sipariş platformu |
 
@@ -1021,38 +1021,114 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### J13. Cloud & Azure'a Giriş
 
-> 📁 `01-junior/13-azure-basics/` · ⏱ ~1.5 hafta · Önkoşul: J12
-> Azure servislerinin derinlemesine kullanımı → M15; mimari → S8.
+> 📁 `01-junior/13-azure-basics/` · ⏱ ~2.5 hafta · Önkoşul: J12
+> 📜 **Sertifika hedefi: AZ-900 (Microsoft Azure Fundamentals).** İlk üç konu sınavın üç alanına birebir karşılık gelir:
+> J13.1 → *Describe cloud concepts* (%25-30) · J13.2 → *Describe Azure architecture and services* (%35-40) · J13.3 → *Describe Azure management and governance* (%30-35).
+> AZ-900 bir **genişlik** sınavıdır: VM, VNet, ExpressRoute gibi bir .NET geliştiricisinin günlük işinde kullanmadığı konular da sorulur — bunlar aşağıda *(AZ-900 kapsamı)* notuyla işaretlendi. Son üç konu ise sınavda olmayan ama senin ihtiyacın olan **pratik**tir.
+> Azure servislerinin geliştirici derinliği → M15 (AI-200); çözüm mimarisi → S8.3 (AZ-305).
 
-#### J13.1 Cloud Kavramları · `01-cloud-concepts`
-- IaaS, PaaS, SaaS, serverless — örneklerle
-- Azure hiyerarşisi: tenant → subscription → resource group → resource; region, availability zone
-- Maliyet modeli: kullandıkça öde, free tier, **bütçe alarmı (ilk iş!)**
+#### J13.1 Cloud Kavramları · `01-cloud-concepts` ⭐
+- **Cloud computing nedir:** paylaşılan kaynak havuzu, self-servis, ölçülen kullanım
+- **Shared responsibility model** ⭐ — hangi katman kimin sorumluluğunda; IaaS → PaaS → SaaS geçişinde sorumluluğun sağlayıcıya kayması; **müşterinin her modelde kendi verisi, kimlikleri ve yapılandırmasından sorumlu olduğu**, fiziksel veri merkezinin her modelde Microsoft'ta kaldığı
+- **Deployment modelleri:** public, private, **hybrid**, multicloud; hangisi ne zaman (veri egemenliği, eski sistem, maliyet)
+- **Hizmet modelleri:** IaaS, PaaS, SaaS + **her biri için kullanım senaryosu** ⭐; **serverless**'ın nereye düştüğü
+- **Maliyet modeli:** **CapEx vs OpEx** ⭐, tüketim bazlı (consumption-based) fiyatlandırma, sabit fiyatla karşılaştırma, free tier
+- **Cloud'un faydaları — sınavın sevdiği taksonomi** ⭐
+
+  | Fayda | Ne demek |
+  |-------|----------|
+  | **High availability** | Hedeflenen çalışma süresini (SLA) sağlayacak yedeklilik |
+  | **Scalability** | Kapasiteyi artırma: **vertical** (daha güçlü makine) vs **horizontal** (daha fazla makine) |
+  | **Elasticity** | Yüke göre **otomatik** büyüyüp küçülme |
+  | **Reliability** | Arıza anında hizmeti sürdürme (bölge/zone yedekliliği) |
+  | **Predictability** | Performans ve maliyetin öngörülebilirliği (Well-Architected ile ilişkisi → S8.3) |
+  | **Security & governance** | Merkezi politika, uyumluluk, denetim |
+  | **Manageability** | Portal/CLI/şablonla yönetim ve otomasyon |
+
+- **Azure hiyerarşisi** ⭐: tenant → **management group** → subscription → resource group → resource; politikanın ve erişimin yukarıdan **miras** alınması
 - Araçlar: Azure Portal, Azure CLI (`az`), Azure Developer CLI (`azd`)
-- Shared responsibility model
-- 🛠 **Kod:** `az` CLI ile resource group oluşturan, kaynakları listeleyen ve temizleyen script; bütçe alarmı kurulum adımları.
+- **Bütçe alarmı kurmak (ilk iş!)** — öğrenirken fatura şoku yaşamamak için
+- 🛠 **Kod:** `az` CLI ile resource group oluşturan, kaynakları listeleyen ve **tamamını temizleyen** script; bütçe + maliyet alarmı kurulumu; aynı iş yükünü IaaS (VM) ve PaaS (App Service) olarak fiyat hesaplayıcıda karşılaştıran not.
 
-#### J13.2 App Service'e İlk Deploy · `02-app-service-deploy`
+#### J13.2 Azure Mimarisi & Temel Servisler · `02-azure-architecture-services`
+> *(Büyük kısmı AZ-900 kapsamı — geliştirici olarak hepsini kullanmayacaksın ama sınavda ve mimari konuşmalarında geçer.)*
+
+- **Fiziksel yapı:** datacenter → **availability zone** → region → **region pair** (eşleştirilmiş bölge, sıralı güncelleme ve yedeklilik) → **sovereign region** (Azure Government, Azure China)
+- Bölge seçim kriterleri: gecikme, **veri ikametgâhı (data residency)**, servis uygunluğu, maliyet farkı
+- **Compute servisleri** *(AZ-900 kapsamı)*
+  - **Virtual Machines** (IaaS), **VM Scale Sets**, availability set
+  - **Azure Virtual Desktop**
+  - Container seçenekleri: Container Instances, **Container Apps**, **AKS** (geliştirici derinliği → M15.2, S8.1)
+  - **Azure Functions** (serverless) ve App Service
+  - Karar sezgisi: "ne kadar kontrol, ne kadar sorumluluk?"
+- **Ağ servisleri** *(AZ-900 kapsamı — derinlemesine ağ → J1.2, S8.3)*
+  - **Virtual Network (VNet)**, subnet, **VNet peering**
+  - Azure DNS, private DNS zone
+  - **VPN Gateway** (şifreli internet üzerinden) vs **ExpressRoute** (özel bağlantı) — fark ve ne zaman
+  - Public vs private endpoint; NSG ile trafik filtreleme
+  - Load Balancer, Application Gateway, Front Door — hangisi hangi katmanda (L4/L7 → J1.2)
+- **Storage servisleri**
+  - Storage account türleri; **blob, file, queue, table**
+  - **Yedeklilik (redundancy)** ⭐: **LRS** (tek datacenter), **ZRS** (zone'lar arası), **GRS** (bölgeler arası), **GZRS** — hangi arıza senaryosunu kurtarır
+  - Access tier: Hot / Cool / Cold / Archive (derinlemesine → M15.4)
+  - **Veri taşıma araçları:** AzCopy, Azure Storage Explorer, **Azure Migrate**, **Data Box**
+- **Kimlik, erişim & güvenlik** ⭐ *(geliştirici derinliği → M9, M15.1)*
+  - **Microsoft Entra ID** (eski Azure AD), tenant, kullanıcı, grup, **service principal**; Entra Domain Services
+  - **Authentication vs authorization** farkı ⭐
+  - **SSO**, **MFA**, passwordless/passkey, **conditional access**
+  - **Azure RBAC** — rol atamasının kapsam (scope) hiyerarşisinden miras alınması
+  - **Zero Trust** ilkeleri ("asla güvenme, her zaman doğrula") ve **defense in depth** katmanları
+  - **Microsoft Defender for Cloud** — güvenlik puanı ve öneriler
+- 🛠 **Kod:** `az` CLI ile VNet + subnet oluşturup içine bir VM ve bir App Service (VNet entegrasyonlu) koyan, NSG ile erişimi kısıtlayan script; aynı storage account'u LRS ve GZRS olarak oluşturup fiyat farkını raporlayan not; RBAC ile bir kullanıcıya yalnızca tek resource group üzerinde Reader yetkisi verme.
+
+#### J13.3 Yönetişim, Maliyet & Monitoring · `03-governance-cost-monitoring`
+> *(AZ-900'ün üçüncü alanı. Buradaki araçların çoğunu geliştirici olarak da kullanırsın.)*
+
+- **Maliyet yönetimi** ⭐
+  - Maliyeti etkileyen faktörler: kaynak tipi, bölge, trafik (egress), ölçek, rezervasyon
+  - **Pricing Calculator** ve **TCO Calculator** — ikisinin farkı
+  - **Microsoft Cost Management:** maliyet analizi, bütçe, alarm, öneri
+  - **Tag'ler** ⭐ — maliyeti takım/ortam/proje bazında ayırmanın tek pratik yolu
+  - Tasarruf yolları: reserved instance, savings plan, spot VM, dev/test fiyatlandırması, **kullanılmayan kaynağı silmek**
+- **Yönetişim & uyumluluk** ⭐
+  - **Azure Policy** — izin verilen SKU/bölge, zorunlu tag gibi kuralları **önleyici** olarak uygulama; initiative (policy set); uyumluluk raporu
+  - **Resource lock** (`CanNotDelete`, `ReadOnly`) — production kaynağını kazara silmeye karşı
+  - Management group ile politikayı subscription üstünde uygulama ve miras
+  - **Microsoft Purview** — veri yönetişimi, veri kataloğu, sınıflandırma
+  - Azure Blueprint'in yerini alan **deployment stack** / landing zone fikri (→ S8.3)
+- **Dağıtım & yönetim araçları**
+  - **Azure Portal**, **Cloud Shell**, **Azure CLI**, **Azure PowerShell** — hangisi ne zaman
+  - **Infrastructure as Code**: **ARM template** (JSON) ve **Bicep** (declarative, okunabilir) — derinlemesine → S8.2
+  - **Azure Resource Manager (ARM)** — tüm isteklerin geçtiği kontrol düzlemi; idempotent dağıtım
+  - **Azure Arc** — Azure dışındaki (on-prem, başka cloud) sunucu ve Kubernetes'i Azure'dan yönetmek
+- **Monitoring & sağlık**
+  - **Azure Monitor** şemsiyesi: metrik, log, alert; **Log Analytics workspace** ve **KQL**'e ilk bakış (derinlemesine → M13, M15.6)
+  - **Application Insights** — uygulama telemetrisi (derinlemesine → M15.6)
+  - **Azure Advisor** — maliyet/güvenlik/performans/güvenilirlik önerileri
+  - **Azure Service Health** — Azure kaynaklı kesintiler; kendi uygulamanın hatasıyla platform kesintisini ayırt etmek
+- 🛠 **Kod:** Zorunlu `env` ve `owner` tag'i olmayan kaynağın oluşturulmasını **engelleyen** Azure Policy; production resource group'una `CanNotDelete` lock koyup silme denemesinin reddedildiğini gösterme; Cost Management'ta tag bazlı maliyet raporu; Advisor önerilerini `az` CLI ile listeleyen script.
+
+#### J13.4 App Service'e İlk Deploy · `04-app-service-deploy`
 - App Service plan ve web app ilişkisi
 - Deploy yolları: `az webapp up`, ZIP deploy, GitHub Actions
 - Application Settings → `IConfiguration`'a environment variable olarak akması
 - Log stream ile canlı log izleme
 - 🛠 **Kod:** Todo API'yi App Service'e deploy et; connection string'i App Settings'ten ver.
 
-#### J13.3 Blob Storage Temelleri · `03-blob-storage`
+#### J13.5 Blob Storage Temelleri · `05-blob-storage`
 - Storage account, container, blob; access tier'lara giriş
 - `Azure.Storage.Blobs` SDK ile upload/download/stream
 - Yerel geliştirme için **Azurite** emülatörü
 - SAS token'a giriş — neden public container yerine
 - 🛠 **Kod:** Dosya yükleme/indirme API'si — yerelde Azurite, Azure'da gerçek storage.
 
-#### J13.4 GitHub Actions ile İlk CI · `04-first-ci`
+#### J13.6 GitHub Actions ile İlk CI · `06-first-ci`
 - Workflow, job, step, runner kavramları
 - `actions/setup-dotnet` → restore → build → test
 - Pull request'te otomatik test ve branch koruma kuralı
 - 🛠 **Kod:** Junior capstone için build + test pipeline'ı.
 
-🎯 **Mülakat:** "IaaS, PaaS, SaaS farkı?" · "App Service'te connection string nereye konur?" · "CI nedir, neden PR'da test çalıştırılır?"
+🎯 **Mülakat:** "IaaS, PaaS, SaaS farkı, her birine örnek ver" ⭐ · "Shared responsibility model — şifre politikası kimin sorumluluğunda?" ⭐ · "CapEx ile OpEx farkı?" · "Vertical ile horizontal scaling farkı; elasticity ne ekler?" ⭐ · "Availability zone ile region pair farkı?" · "LRS, ZRS, GRS hangi arıza senaryosunu kurtarır?" ⭐ · "VPN Gateway ile ExpressRoute farkı?" · "Authentication ile authorization farkı?" · "Azure Policy ile RBAC farkı nedir?" ⭐ · "Resource lock ne işe yarar?" · "Pricing Calculator ile TCO Calculator farkı?" · "Azure Advisor ile Service Health farkı?" · "App Service'te connection string nereye konur?" · "CI nedir, neden PR'da test çalıştırılır?"
 
 ---
 
@@ -1117,7 +1193,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ## Seviye 2 — Mid
 
 > **Hedef:** Production'da yaşayan servisleri tasarlamak, güvenceye almak, ölçmek ve hata ayıklamak. "Nasıl kullanılır"dan **"nasıl çalışır ve ne zaman bozulur"**a geçiş.
-> **Süre:** ~10 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `02-mid/` · **Önkoşul:** Junior capstone
+> **Süre:** ~11 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `02-mid/` · **Önkoşul:** Junior capstone
 > Mid mülakatlarında her cevaba **"neden?"** ve **"production'da ne olur?"** soruları eklenir.
 
 ---
@@ -2236,7 +2312,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### M14. DevOps: CI/CD, Container & Kubernetes Temelleri
 
-> 📁 `02-mid/14-devops/` · ⏱ ~2 hafta · Önkoşul: J12, J13.4
+> 📁 `02-mid/14-devops/` · ⏱ ~2 hafta · Önkoşul: J12, J13.6
 > İleri Kubernetes, IaC ve platform mühendisliği → S8.
 
 #### M14.1 CI/CD Pipeline'ları · `01-ci-cd`
@@ -2287,9 +2363,18 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### M15. Azure ile Uygulama Geliştirme
 
-> 📁 `02-mid/15-azure-development/` · ⏱ ~3 hafta · Önkoşul: J13, M9
-> Sertifika notu: **AZ-204 31 Temmuz 2026'da emekliye ayrıldı**; geliştirici yolu artık **AI-200 (Azure AI Cloud Developer Associate)**. Bu modül + M16 bu sınavın kapsamıyla büyük ölçüde örtüşür.
-> Azure çözüm mimarisi, Well-Architected Framework ve maliyet → S8.3.
+> 📁 `02-mid/15-azure-development/` · ⏱ ~4 hafta · Önkoşul: J13, M9
+> 📜 **Sertifika hedefi: AI-200 (Azure AI Cloud Developer Associate / *Developing AI Cloud Solutions on Azure*).** **AZ-204 31 Temmuz 2026'da emekliye ayrıldı**; .NET geliştiricisinin Azure associate yolu artık bu sınav. Dört alanın roadmap karşılığı:
+>
+> | AI-200 alanı | Ağırlık | Roadmap |
+> |---|---|---|
+> | Develop containerized solutions on Azure | %20-25 | **M15.2** (+ J12 Docker, S8.1 AKS) |
+> | Develop AI solutions by using Azure data management services | %25-35 | **M15.4** (+ M6 Postgres, M8 Redis/NoSQL, M16.4 vector) |
+> | Connect to and consume Azure services | %20-25 | **M15.3** (Functions), **M15.5** (Event Grid), **M15.6** (Service Bus) |
+> | Secure, monitor, and troubleshoot Azure solutions | %20-25 | **M15.1** (Key Vault), **M15.8** (App Configuration), **M15.7** + M13 (OpenTelemetry, KQL) |
+>
+> Not: sınavın en ağır alanı **veri servisleri + vector search**; resmî study guide'da bu alanın ağırlığı iki yerde farklı yazıyor (%30-35 ve %25-30), sınav öncesi [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200)'ı kontrol et.
+> Azure çözüm mimarisi, Well-Architected Framework ve maliyet → S8.3 (AZ-305).
 
 #### M15.1 Azure'da Kimlik: Managed Identity, Entra ID & Key Vault · `01-identity-keyvault`
 - **Managed Identity** ⭐ — system-assigned vs user-assigned; connection string'siz ve secret'sız bağlantı
@@ -2300,7 +2385,29 @@ Her konunun `README.md`'si şu şablonu izler:
 - Workload identity federation (GitHub Actions, AKS)
 - 🛠 **Kod:** API'nin Azure SQL, Storage ve Key Vault'a **hiç secret kullanmadan** managed identity ile bağlanması; yerelde aynı kodun geliştirici kimliğiyle çalışması.
 
-#### M15.2 Compute Seçenekleri: App Service, Functions, Container Apps · `02-compute`
+#### M15.2 Container Registry & Container Dağıtımı · `02-container-registry-deploy` ⭐
+> AI-200'ün ilk alanı (*Develop containerized solutions*, %20-25) buraya düşer. Docker temelleri → J12; AKS derinliği → S8.1.
+
+- **Azure Container Registry (ACR)**
+  - Registry oluşturma ve SKU'lar (Basic / Standard / Premium — hangisi geo-replication, private endpoint, content trust veriyor)
+  - **Image build, store ve versiyonlama** ⭐: tag stratejisi (`:1.4.2`, `:sha-abc123`, neden `:latest` production'da kullanılmaz), **digest ile sabitleme** (immutable deploy)
+  - **ACR Tasks** — bulutta build: `az acr build` (yerel Docker'a ihtiyaç duymadan), multi-step task, **base image güncellendiğinde otomatik yeniden build** (güvenlik yaması zinciri)
+  - Image temizliği: retention policy, `az acr repository delete`; maliyet
+  - **Kimlik:** admin user yerine **managed identity / RBAC** ile pull (`AcrPull` rolü) ⭐
+  - Image tarama (Defender for Containers) ve imzalama
+- **Container'ı Azure'da çalıştırma**
+  - **App Service for Containers:** image'ı ACR'dan çekme, **app settings ile environment variable ve secret geçirme** (Key Vault referansı ile → M15.1), health check, slot
+  - **Container Apps:** environment kavramı, **revision yönetimi** ve trafik bölme (canary), ingress, secret'lar, Dapr; **KEDA ile event-driven ölçekleme** ve scale-to-zero (detay → M15.3)
+  - **AKS:** `Deployment`/`Service`/`Ingress` manifest'leriyle workload dağıtma, `kubectl apply`, ConfigMap/Secret, resource request/limit (derinlemesine → S8.1)
+  - Container Apps vs AKS vs App Service for Containers — **karar tablosu** (→ M15.3)
+- **Container teşhisi** ⭐ — AI-200'ün açıkça ölçtüğü beceri
+  - **Log'lar:** Container Apps log stream ve Log Analytics (`ContainerAppConsoleLogs_CL`), `kubectl logs` (+ `--previous` ile çökmüş container)
+  - **Event'ler:** `kubectl describe pod` / `kubectl get events` — `ImagePullBackOff`, `CrashLoopBackOff`, `OOMKilled`, probe hatası
+  - **Uçtan uca bağlantı kontrolü:** ingress → servis → container; DNS çözümleme, port eşleşmesi, NSG/private endpoint engeli, `kubectl exec` ile içeriden test
+  - Yaygın hata kalıpları: yanlış registry kimliği, eksik environment variable, `0.0.0.0` yerine `localhost` dinlemek, container'ın beklenen portu açmaması
+- 🛠 **Kod:** API image'ını `az acr build` ile ACR'da derleyip (yerel Docker olmadan) digest ile Container Apps'e deploy eden pipeline; yeni revision'a **%10 trafik** verip metriklere bakarak tamamlama; sonra bilerek bozuk bir deploy (yanlış env var + yanlış port) yapıp `ImagePullBackOff`/`CrashLoopBackOff` ve probe hatalarını log + event üzerinden teşhis etme alıştırması; aynı image'ı App Service for Containers'a managed identity ile çekme.
+
+#### M15.3 Compute Seçenekleri: App Service, Functions, Container Apps · `03-compute`
 - **App Service:** deployment slot ve swap, autoscale, health check, Always On
 - **Azure Functions:** isolated worker model, trigger ve binding'ler, **Flex Consumption** planı (hızlı ölçek, VNet, scale-to-zero), **Durable Functions** (orchestrator, activity, entity; fan-out/fan-in, human interaction)
 - **Azure Container Apps:** KEDA ile event-driven ölçekleme, scale-to-zero, revision ve trafik bölme, Dapr, Container Apps Jobs, serverless GPU
@@ -2308,33 +2415,50 @@ Her konunun `README.md`'si şu şablonu izler:
 - **Karar tablosu** ⭐ — App Service vs Functions vs Container Apps vs AKS
 - 🛠 **Kod:** Aynı arka plan işinin Functions (Service Bus trigger) ve Container Apps (KEDA ile Service Bus ölçekleme) versiyonları; soğuk başlangıç ve maliyet notları.
 
-#### M15.3 Veri Servisleri: Azure SQL, Cosmos DB, PostgreSQL, Managed Redis · `03-data-services`
+#### M15.4 Veri Servisleri: Azure SQL, Cosmos DB, PostgreSQL, Managed Redis · `04-data-services` ⭐
 - **Azure SQL:** single DB, elastic pool, serverless (auto-pause); Entra ile şifresiz auth; transient fault retry; `VECTOR` tipi
 - **Azure Database for PostgreSQL Flexible Server:** pgvector, Entra auth, read replica, PgBouncer
-- **Cosmos DB:**
+- **Cosmos DB for NoSQL** — AI-200'ün en ağırlıklı servisi
   - **Partition key seçimi** ⭐ — en kritik ve geri dönüşü en zor karar (cardinality, hot partition)
-  - RU/s ekonomisi: provisioned, autoscale, serverless
-  - **Consistency level'lar:** Strong, Bounded Staleness, Session (varsayılan), Consistent Prefix, Eventual
-  - Indexing policy, **Change Feed**, TTL, vector search
-  - Cosmos DB for MongoDB (vCore) ve Cosmos DB for PostgreSQL seçenekleri
+  - SDK ile bağlanma ve sorgulama; `CosmosClient` **singleton** kuralı, direct vs gateway mod, bulk execution
+  - **RU/s ekonomisi:** provisioned, autoscale, serverless; sorgu RU maliyetini `RequestCharge` ile ölçmek
+  - **RU'yu düşürmek için ayar** ⭐: **indexing policy**'yi daraltmak (gereksiz yola index koymamak, composite index), projection ile az alan çekmek, cross-partition sorgudan kaçınmak
+  - **Consistency level'lar:** Strong, Bounded Staleness, Session (varsayılan), Consistent Prefix, Eventual — **gevşek seviyenin RU'yu ve gecikmeyi düşürmesi** (okuma maliyeti Strong'da iki katına çıkar)
+  - **Vector search** ⭐: vector embedding policy, `VectorDistance()` ile benzerlik sorgusu, DiskANN/quantized flat index, metadata filtresiyle birlikte kullanım, hybrid search (→ M16.4)
+  - **Change feed processor** ⭐: yeni/güncellenen dokümanları yakalama, lease container, checkpoint ve yeniden başlatmada kaldığı yerden devam; **embedding'leri güncel tutmak** için kanonik kullanım
+  - TTL; Cosmos DB for MongoDB (vCore) ve Cosmos DB for PostgreSQL seçenekleri
   - Cosmos DB ne zaman **yanlış** seçim
+- **PostgreSQL'de vector iş yükü (pgvector) — AI-200'ün özellikle ölçtüğü kısım** ⭐
+  - Şema ve index tasarımı: **HNSW vs IVFFlat** seçimi, `lists`/`m`/`ef_construction` parametreleri, index oluşturma süresi
+  - **pgvector hesaplama maliyetini düşürmek:** boyut indirgeme, **`halfvec`/quantization** ile bellek düşürme, `ef_search` ile recall/gecikme dengesi, index'in belleğe sığması
+  - **Compute/bellek/storage boyutlandırma:** vector index'in RAM'e sığmaması durumunda diske taşma ve gecikme patlaması; IOPS ve storage tier etkisi
+  - **RAG retrieval'da metadata filtresi** ile birlikte vector arama (filtre öncesi/sonrası seçimi ve recall etkisi)
 - **Azure Managed Redis** — Azure Cache for Redis'in halefi
-- 🛠 **Kod:** Sipariş verisini Cosmos DB'de iki farklı partition key ile modelleyip RU maliyetlerini ölçme; Change Feed ile okuma modeli güncelleme.
+  - Cache: TTL, **expiration ve invalidation** stratejisi (→ M8.4), eviction policy
+  - **Vector set / vector index** ile benzerlik araması; ne zaman Redis'te vector tutmak mantıklı (düşük gecikme, kısa ömürlü index)
+  - Tier seçimi ve bellek/maliyet dengesi
+- 🛠 **Kod:** Sipariş verisini Cosmos DB'de iki farklı partition key ile modelleyip **RU maliyetlerini `RequestCharge` ile ölçme**; indexing policy'yi daraltıp aynı sorgunun RU'sunun düştüğünü kanıtlama; Change Feed processor ile ürün açıklaması değişince embedding'i yeniden üretip vector store'u güncelleyen worker; aynı doküman setini Cosmos vector search, pgvector (HNSW) ve Managed Redis'te indeksleyip **recall / gecikme / maliyet** tablosu çıkarma; pgvector index'ini belleğe sığmayacak kadar büyütüp gecikme farkını gözlemleme.
 
-#### M15.4 Storage & Event Grid · `04-storage-events`
+#### M15.5 Storage & Event Grid · `05-storage-events`
 - Blob tier'ları (Hot/Cool/Cold/Archive) ve lifecycle policy
 - **User delegation SAS** (account key'li SAS yerine)
 - Queue Storage, Table Storage — basit ve ucuz seçenekler
-- **Event Grid** ile blob olaylarına tepki
+- **Event Grid derinlemesine** ⭐ — AI-200'ün *Connect to and consume Azure services* alanında ölçülür
+  - Kavramlar: **topic** (system / custom / partner), **event subscription**, event handler; CloudEvents şeması
+  - **Custom event** yayınlama: kendi uygulamandan `EventGridPublisherClient` ile olay gönderme
+  - **Filtreleme** ⭐: subject prefix/suffix, event type, **advanced filter** (payload alanına göre) — gereksiz tüketimi ve maliyeti kesmek
+  - **Teslim ve dayanıklılık:** retry policy ve exponential backoff, TTL, **dead-letter** hedefi (storage), teslim garantisi (at-least-once → idempotent handler zorunluluğu)
+  - Webhook handler doğrulaması (validation handshake), managed identity ile teslim
+  - Event Grid vs Service Bus vs Event Hubs ayrımı (→ M15.6)
 - Front Door / CDN ile statik içerik
-- 🛠 **Kod:** Yüklenen görseli Event Grid tetiklemesiyle küçük resme dönüştüren akış.
+- 🛠 **Kod:** Yüklenen görseli Event Grid tetiklemesiyle küçük resme dönüştüren akış; kendi uygulamasından custom event yayınlayıp **advanced filter** ile yalnızca `amount > 1000` olan siparişleri bir handler'a yönlendirme; handler'ı bilerek hata döndürecek şekilde yazıp retry'ları ve sonunda dead-letter storage'a düşüşü gözlemleme.
 
-#### M15.5 Azure Mesajlaşma Servisleri Karşılaştırması · `05-messaging-services`
+#### M15.6 Azure Mesajlaşma Servisleri Karşılaştırması · `06-messaging-services`
 - **Service Bus** (kurumsal mesajlaşma, transaction, session) vs **Event Hubs** (yüksek hacimli stream, Kafka uyumlu) vs **Event Grid** (reaktif olay yönlendirme) vs **Storage Queue** (basit, ucuz) ⭐
 - Hangisi ne zaman — karar tablosu ve maliyet
 - 🛠 **Kod:** Aynı olayı dört servise gönderen ve tüketim modellerini karşılaştıran demo.
 
-#### M15.6 Application Insights & Azure Monitor · `06-monitoring`
+#### M15.7 Application Insights & Azure Monitor · `07-monitoring`
 - **Azure Monitor OpenTelemetry Distro** (`UseAzureMonitor()`) — önerilen modern yol
 - Telemetri türleri: request, dependency, trace, exception, custom event/metric
 - **KQL temelleri:** `requests | where ... | summarize ... | render`
@@ -2343,13 +2467,13 @@ Her konunun `README.md`'si şu şablonu izler:
 - Sampling ve **maliyet kontrolü**
 - 🛠 **Kod:** Capstone'u Application Insights'a bağla; en yavaş 5 endpoint ve hata oranı için KQL sorguları + alert.
 
-#### M15.7 API Management & App Configuration · `07-apim-app-config`
+#### M15.8 API Management & App Configuration · `08-apim-app-config`
 - **API Management:** policy'ler (rate limit, JWT doğrulama, dönüşüm), ürün ve abonelik, geliştirici portalı
 - APIM'i **AI gateway** olarak kullanmak: LLM token limitleri, yük dağıtımı, semantic cache
 - **App Configuration:** merkezi config, Key Vault referansları, **feature flag**'ler ve dinamik yenileme
 - 🛠 **Kod:** APIM arkasında JWT doğrulamalı ve rate limit'li API; App Configuration feature flag'iyle yeni özelliği kademeli açma.
 
-🎯 **Mülakat:** "Managed identity nedir, secret'sız nasıl bağlanırsın?" ⭐ · "Functions mı, Container Apps mı, App Service mi?" · "Cosmos DB'de partition key nasıl seçilir?" · "Cosmos consistency level'ları?" · "Service Bus, Event Hubs, Event Grid farkı?" · "`DefaultAzureCredential` production'da neden dikkat ister?"
+🎯 **Mülakat:** "Managed identity nedir, secret'sız nasıl bağlanırsın?" ⭐ · "Functions mı, Container Apps mı, App Service mi?" · "ACR'dan image çekerken admin user yerine ne kullanılır?" · "`CrashLoopBackOff` gören bir container'ı nasıl teşhis edersin?" ⭐ · "Container Apps'te canary deploy nasıl yapılır?" · "Cosmos DB'de partition key nasıl seçilir?" ⭐ · "Cosmos consistency level'ları; Strong seçmenin RU'ya etkisi ne?" · "Cosmos'ta bir sorgunun RU maliyetini nasıl düşürürsün?" ⭐ · "Change feed ne işe yarar, embedding'leri güncel tutmak için nasıl kullanılır?" · "pgvector'da HNSW ile IVFFlat arasında nasıl seçersin?" ⭐ · "Vector index belleğe sığmazsa ne olur?" · "Event Grid'de advanced filter ne işe yarar, dead-letter nasıl kurulur?" · "Service Bus, Event Hubs, Event Grid farkı?" · "`DefaultAzureCredential` production'da neden dikkat ister?"
 
 ---
 
@@ -3749,7 +3873,7 @@ dotnet-interview/
 
 Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalarda paralel DSA modülü** var. Zaten bir seviyedeysen modüllerin 🎯 sorularıyla kendini test et; rahat cevapladığın modülleri hızlı geç.
 
-### 🟢 Junior (~29 hafta)
+### 🟢 Junior (~30 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
@@ -3763,10 +3887,10 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | 19-20 | J9 EF Core | D11 — Easy tekrar |
 | 21-22 | J10 Test + J12 Docker | D11 |
 | 23-24 | J11 Güvenlik & Kimlik | D11 |
-| 25-26 | J13 Azure + J14 AI | D11 |
-| 27-29 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
+| 25-27 | **J13 Cloud & Azure** (AZ-900 kapsamı) + J14 AI | D11 |
+| 28-30 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
 
-### 🟡 Mid (~45 hafta)
+### 🟡 Mid (~46 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
@@ -3784,9 +3908,9 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | 31-32 | M12 Mesajlaşma (**RabbitMQ** derinlemesine) | D11 — Medium |
 | 33-34 | M13 Observability | D11 |
 | 35-36 | M14 DevOps | D11 |
-| 37-39 | M15 Azure | D11 |
-| 40-42 | M16 AI Engineering | D11 |
-| 43-45 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
+| 37-40 | **M15 Azure** (AI-200 kapsamı) | D11 |
+| 41-43 | M16 AI Engineering | D11 |
+| 44-46 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
 
 ### 🔴 Senior (~35 hafta)
 
@@ -3834,7 +3958,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | AI protokolleri | **MCP C# SDK** 1.x kararlı; **A2A** protokolü Linux Foundation altında | M16.6, S9.3 |
 | Azure AI | Azure AI Foundry → **Microsoft Foundry** (Ocak 2026); Anthropic Claude modelleri katalogda; Foundry Agent Service'te hosted agent'lar | M16.7, S9.7 |
 | Azure servisleri | Azure Cache for Redis → **Azure Managed Redis**; Functions **Flex Consumption**; Container Apps serverless GPU; Azure SQL `VECTOR` tipi GA | M15 |
-| Sertifikalar | **AZ-204 → AI-200** (31 Temmuz 2026); **AI-102 → AI-103**; mimari için AZ-305 | M15, M16.7, S8 |
+| Sertifikalar | Giriş: **AZ-900** (3 alan: kavramlar %25-30, mimari & servisler %35-40, yönetişim %30-35). Geliştirici: **AZ-204 → AI-200** (31 Temmuz 2026; 4 alan: container %20-25, veri servisleri & vector %25-35, servis entegrasyonu %20-25, güvenlik/izleme %20-25). Ayrıca **AI-102 → AI-103**; mimari için AZ-305 | J13, M15, M16.7, S8 |
 | Veritabanları | **PostgreSQL 18** (async I/O, `uuidv7()`, virtual generated columns); **Redis 8** AGPLv3 ile yeniden açık kaynak + **Valkey** forku; MongoDB 8.x Community'de search/vector search; MongoDB EF Core provider'da vector search | J8.6, M6.4, M8 |
 | Mesajlaşma | **RabbitMQ 4.x:** classic queue mirroring 4.0'da kaldırıldı (quorum queue dayanıklı varsayılan seçim), quorum queue'larda `delivery-limit` varsayılanı **20**; **Khepri** metadata store 4.2'den itibaren yeni kurulumlarda varsayılan ve Raft metrik adları değişti; 4.3'te transient classic queue'lar varsayılan olarak kapatıldı ve `delivery-count`/`acquired-count` ayrıldı | M12.2 |
 | Kimlik | **OAuth 2.1 + RFC 9700**: her yerde PKCE, implicit/ROPC yok; DPoP ve PAR yaygınlaşıyor; **Keycloak 26**: passkeys, DPoP, FAPI 2.0, organizations; Azure AD B2C → Entra External ID | J11.3, M9 |
@@ -3847,6 +3971,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 - [Microsoft Agent Framework 1.0](https://visualstudiomagazine.com/articles/2026/04/06/microsoft-ships-production-ready-agent-framework-1-0-for-net-and-python.aspx) · [MCP C# SDK](https://csharp.sdk.modelcontextprotocol.io/)
 - [Microsoft Foundry yeniden adlandırma](https://www.directionsonmicrosoft.com/reports/foundry-gets-new-name-anthropic-models/) · [What's new in Microsoft Foundry (Build 2026)](https://devblogs.microsoft.com/foundry/whats-new-in-microsoft-foundry-build-2026/)
 - [Aspire 13 multi-language support](https://www.infoq.com/news/2025/11/dotnet-aspire-13-release/)
+- **Resmî study guide'lar:** [AZ-900](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900) (20 Temmuz 2026) · [AI-200](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200) (7 Ekim 2026) · [Azure AI Cloud Developer Associate sertifika sayfası](https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-cloud-developer-associate/) · [ücretsiz practice assessment'lar](https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications)
 - [AZ-204 → AI-200 geçişi](https://examinotion.com/blog/az-204-retirement-ai-200-migration-guide) · [AI-103 study guide](https://tutorialsdojo.com/ai-103-azure-ai-app-and-agent-developer-associate-study-guide/)
 - [MediatR & MassTransit lisans değişikliği](https://www.milanjovanovic.tech/blog/mediatr-and-masstransit-going-commerical-what-this-means-for-you)
 - [PostgreSQL 18 yenilikleri](https://neon.com/postgresql/postgresql-18-new-features) · [Redis 8 AGPLv3](https://alternativeto.net/news/2025/5/redis-goes-open-source-again-with-the-launch-of-redis-8-under-the-agplv3-license) · [MongoDB EF Core provider: vector search](https://devblogs.microsoft.com/dotnet/mongodb-efcore-provider-queryable-encryption-vector-search/)
@@ -3901,6 +4026,13 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 - [OAuth 2.1](https://oauth.net/2.1/) · [OpenID Connect](https://openid.net/developers/how-connect-works/) · [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
 - [Model Context Protocol](https://modelcontextprotocol.io/) · [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk) · [A2A Protocol](https://github.com/a2aproject/A2A)
 - [OpenTelemetry .NET](https://opentelemetry.io/docs/languages/net/)
+
+### Azure Sertifikaları (J13 → AZ-900, M15 → AI-200)
+- **AZ-900 — Azure Fundamentals:** [resmî study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900) · [ücretsiz learning path'ler](https://learn.microsoft.com/en-us/training/courses/az-900t00) · [guided project: tag & lock ile kaynak koruma / maliyet guardrail](https://learn.microsoft.com/en-us/training/paths/introduction-cloud-infrastructure-apply-azure-skills-guided-projects/)
+- **AI-200 — Azure AI Cloud Developer Associate:** [resmî study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200) · [sertifika sayfası](https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-cloud-developer-associate/) · [AI-200T00 kursu](https://learn.microsoft.com/en-us/training/courses/ai-200t00) · [Cosmos DB ile AI çözümleri learning path](https://learn.microsoft.com/en-us/training/paths/develop-ai-solutions-azure-cosmos-db/) · [backend servis entegrasyonu learning path](https://learn.microsoft.com/en-us/training/paths/integrate-backend-services-ai-solutions/)
+- [Ücretsiz practice assessment'lar](https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications) — sınav öncesi kapalı kitap deneme
+- [Vector search için Azure servisi seçimi](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/vector-search) · [AI iş yükleri için veri platformu (WAF)](https://learn.microsoft.com/en-us/azure/well-architected/ai/data-platform)
+- ⚠️ Sınav müfredatları değişiyor: resmî study guide'lar tarihli ("skills measured as of ...") — **sınava girmeden önce mutlaka kontrol et.**
 
 ### Derleme & Runtime İç Yapısı (M2, S1)
 - [sharplab.io](https://sharplab.io/) — C# → lowered C# / IL / JIT asm
