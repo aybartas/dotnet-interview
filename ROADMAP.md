@@ -125,7 +125,7 @@ Her konunun `README.md`'si şu şablonu izler:
 | ID | Modül | Odak |
 |----|-------|------|
 | [J1](#j1-geliştirici-temelleri) | Geliştirici Temelleri | Git, **ağ temelleri (OSI, TCP/UDP)**, HTTP/DNS/TLS, .NET CLI & SDK, debugging |
-| [J2](#j2-c-temelleri) | C# Temelleri | Program anatomisi, tip sistemi, OOP, exception, günlük modern C# |
+| [J2](#j2-c-temelleri) | C# Temelleri | Program anatomisi, tip sistemi, **OOP ilkeleri & nesne ilişkileri**, **property/constructor/eşitlik/kopyalama**, exception, günlük modern C# |
 | [J3](#j3-collections-delegates--linq) | Collections, Delegates & LINQ | Koleksiyonlar, generics, lambda, LINQ temel |
 | [J4](#j4-async-programlamaya-giriş) | Async Programlamaya Giriş | Thread/Task kavramı, `async`/`await`, cancellation |
 | [J5](#j5-build--run-temelleri) | Build & Run Temelleri | C# → IL → native, `bin`/`obj`, `run` vs `publish` |
@@ -154,7 +154,7 @@ Her konunun `README.md`'si şu şablonu izler:
 | [M8](#m8-nosql--caching) | NoSQL & Caching | NoSQL modelleme, MongoDB, Redis, caching, arama |
 | [M9](#m9-kimlik--erişim-yönetimi-oauth-oidc-keycloak) | Kimlik & Erişim Yönetimi | OAuth 2.1, OIDC, **Keycloak**, policy authz, BFF |
 | [M10](#m10-test-stratejisi) | Test Stratejisi | Integration, Testcontainers, snapshot/contract, E2E |
-| [M11](#m11-mimari--tasarım-temelleri) | Mimari & Tasarım Temelleri | SOLID, pattern'ler, Clean/Hexagonal, vertical slice, CQRS |
+| [M11](#m11-mimari--tasarım-temelleri) | Mimari & Tasarım Temelleri | SOLID, **coupling/cohesion**, pattern'ler, Clean/Hexagonal, vertical slice, CQRS |
 | [M12](#m12-mesajlaşma--message-brokerlar) | Mesajlaşma & Message Broker'lar | RabbitMQ, Service Bus, Kafka'ya giriş, kütüphaneler |
 | [M13](#m13-observability) | Observability | Structured logging, metrics, OpenTelemetry tracing |
 | [M14](#m14-devops-cicd-container--kubernetes-temelleri) | DevOps | CI/CD, container ileri, Kubernetes temeli, Aspire |
@@ -210,7 +210,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ## Seviye 1 — Junior
 
 > **Hedef:** Çalışan, test edilmiş, veritabanına bağlı bir CRUD API'yi tek başına yazmak, container'a koymak ve buluta deploy etmek.
-> **Süre:** ~6 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `01-junior/`
+> **Süre:** ~7 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `01-junior/`
 > **Bu seviyede "neden"i bilmek yeterli; "nasıl çalışıyor"un derin kısmı Mid'de gelir.**
 
 ---
@@ -301,7 +301,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### J2. C# Temelleri
 
-> 📁 `01-junior/02-csharp-fundamentals/` · ⏱ ~3 hafta · Önkoşul: J1
+> 📁 `01-junior/02-csharp-fundamentals/` · ⏱ ~3.5 hafta · Önkoşul: J1
 > Mülakatın ilk teknik turu çoğunlukla buradan gelir. Yüzeysel tanım değil, **örnekle açıklama** beklenir.
 
 #### J2.1 Program Anatomisi · `01-program-anatomy`
@@ -362,18 +362,68 @@ Her konunun `README.md`'si şu şablonu izler:
 - `enum`, `[Flags]`, `Enum.TryParse`
 - 🛠 **Kod:** Value/reference kopyalama davranışını, boxing'i ve mutable struct tuzağını gösteren deneyler; `BenchmarkDotNet`'e geçmeden `Stopwatch` ile boxing maliyetinin kaba ölçümü.
 
-#### J2.3 OOP · `03-oop`
-- Encapsulation, Inheritance, Polymorphism, Abstraction — tanım değil, **örnekle**
-- `abstract class` vs `interface` — karar tablosu ⭐
-- `virtual`, `override`, `new` (method hiding), `sealed`
-- Overloading (derleme zamanı) vs overriding (runtime)
-- Interface default implementation (C# 8+), explicit interface implementation
-- **Composition over inheritance** — neden ve nasıl refactor edilir
-- Constructor zinciri (`this(...)`, `base(...)`), object initializer
-- `Equals`, `GetHashCode`, `ToString` — **birlikte override kuralı** ⭐
-- `IEquatable<T>`, `IComparable<T>`, `IComparer<T>`
-- **Extension method'lar** ⭐ — `static class` + `this` parametresi kuralı; çözümleme (resolution) sırası ve `using` gerekliliği; ne zaman extension, ne zaman inheritance/wrapper; **LINQ'in tamamı extension method'dur** (C# 14 extension members → M1.1)
-- **Operator overloading** — `+`, `==`/`!=` (ikisi birlikte), `implicit`/`explicit` conversion operatörü; `==` override edildiğinde `Equals`/`GetHashCode` ile tutarlılık zorunluluğu
+#### J2.3 OOP Temelleri · `03-oop` ⭐
+> Mülakatların en çok soru üretilen başlığı. "Dört ilkeyi say" değil, **kendi kodundan örnek verebilmek** beklenir.
+
+- **Dört ilke — tanım değil, örnekle:**
+  - **Encapsulation:** veriyi ve onu değiştiren davranışı birlikte tutmak, geçersiz duruma düşmeyi engellemek (uygulaması → J2.4 property)
+  - **Abstraction:** "ne yaptığını" açığa çıkarıp "nasıl yaptığını" saklamak
+  - **Inheritance:** "is-a" ilişkisi; ne zaman doğru araç, ne zaman tuzak
+  - **Polymorphism:** aynı arayüzle farklı davranış
+- **Polimorfizmin iki türü** ⭐
+  - **Compile-time / static** (early binding): **overloading**, generic'ler, operator overloading
+  - **Runtime / dynamic** (late binding): **overriding** — `virtual`/`abstract` + vtable üzerinden çözümleme
+- `abstract class` vs `interface` — **karar tablosu** ⭐; C# 8+ default implementation sonrası fark ne kaldı (durum/alan tutabilme, tek kalıtım kısıtı, constructor, erişim belirleyicileri)
+- `virtual`, `override`, `new` (**method hiding**), `sealed` — `new` ile `override` arasındaki davranış farkını base tipten çağırarak gösterme ⭐
+- `abstract` üye: gövdesi yok, türetilmiş sınıf uygulamak zorunda; abstract sınıf **örneklenemez ama constructor'ı olabilir** (türetilmiş sınıf çağırır)
+- Interface default implementation (C# 8+), **explicit interface implementation** (iki interface'in aynı imzalı üyesi — "diamond" benzeri çakışmanın çözümü)
+- Upcasting / downcasting; `is`, `as`, pattern matching ile güvenli tip kontrolü
+- **Nesne ilişkileri — ownership ve yaşam süresi** ⭐
+
+  | İlişki | Anlam | Yaşam süresi | Örnek |
+  |--------|-------|--------------|-------|
+  | **Inheritance** | "is-a" | — | `SavingsAccount` : `Account` |
+  | **Association** | "uses-a", sahiplik yok | Bağımsız | `Order` ↔ `Courier` |
+  | **Aggregation** | zayıf "has-a" | Parça bütünden **uzun yaşayabilir** | `Team` ve `Employee` |
+  | **Composition** | güçlü "has-a" | Parça bütünle **birlikte ölür** | `Order` ve `OrderLine` |
+
+  - DDD'de aggregate sınırının bu ayrımdan beslenmesi (→ S5.1)
+- **Composition over inheritance** ⭐ — neden (kırılgan taban sınıf / fragile base class problemi, derin hiyerarşinin bakım maliyeti, tek kalıtım kısıtı) ve nasıl refactor edilir
+- **Coupling & cohesion** ⭐ — "gevşek bağlılık, yüksek uyum" ne demek, nasıl ölçülür (bir sınıfı değiştirince kaç yer etkileniyor?); `new` ile somut tipe bağlanmanın maliyeti ve interface ile gevşetilmesi
+- **SOLID'e giriş** — beş prensibin adı ve bir cümlelik özeti; özellikle SRP ve DIP'i örnekleyebilmek (tamamı ve refactor hikâyeleri → M11.1)
+- `struct`'ın OOP kısıtları: sınıftan **kalıtım alamaz** (örtük olarak `ValueType`'tan türer), interface uygulayabilir, `sealed` gibi davranır
+- `static` sınıf ve üyeler ne zaman uygun — "her şeyi static yapma" eleştirisi ve test edilebilirliğe etkisi
+- 🛠 **Kod:** Ödeme yöntemleri (kredi kartı, havale, cüzdan) üzerinden **inheritance → composition** refactor'u ve her adımda testlerin yeşil kalması; `new` ile `override` edilmiş iki metodun base referans üzerinden çağrıldığında farklı davrandığını gösteren demo; aynı domain'i (takım/çalışan, sipariş/sipariş kalemi) aggregation ve composition olarak modelleyip yaşam süresi farkını testle kanıtlama.
+
+#### J2.4 Sınıf Üyeleri & Nesne Semantiği · `04-class-members` ⭐
+> OOP ilkelerinin C#'taki somut karşılıkları: property, constructor, eşitlik, kopyalama. Mülakatın "ince detay" soruları buradan gelir.
+
+- **Property vs field** ⭐ — en temel encapsulation aracı
+  - Public field neden kullanılmaz: doğrulama yapılamaz, salt okunur yapılamaz, sonradan property'ye çevirmek **binary breaking change**'dir (kütüphane yazarken kritik)
+  - Auto-property ve derleyicinin ürettiği backing field (lowering → M2.1)
+  - `get`/`set`/**`init`**-only; **private setter**; salt okunur (`=> _x`) **computed property**
+  - Property'de doğrulama ve invariant koruma; C# 14 **`field` keyword** ile backing field yazmadan doğrulama (→ M1.1)
+  - **`required` members** ve object initializer ile zorunlu alan garantisi
+  - Property vs metot: property ucuz ve yan etkisiz olmalı; pahalı iş yapan şey metot olmalı
+  - Static property, `readonly` field ile `{ get; }` property farkı
+- **Constructor çeşitleri ve başlatma sırası** ⭐
+  - Default (derleyicinin ürettiği), parameterized, `static`, **`private`** (singleton / static factory method deseni), copy constructor
+  - Constructor zinciri: `this(...)`, `base(...)`; primary constructor (→ J2.6)
+  - **Başlatma sırası** ⭐ — klasik "ince" mülakat sorusu:
+    1. Alanlar varsayılan değere (0/null) ayarlanır
+    2. **Field initializer'lar en türetilmiş sınıftan tabana doğru** çalışır
+    3. **Constructor gövdeleri tabandan türetilmişe doğru** çalışır
+  - **Constructor'dan `virtual` metot çağırmanın tehlikesi** ⭐ (analyzer kuralı **CA2214**) — base constructor çalışırken türetilmiş sınıfın constructor gövdesi **henüz çalışmamıştır**; override edilen metot yarım kurulmuş nesneyi (varsayılan değerli alanları) görür
+  - Static constructor ne zaman çalışır, thread-safety garantisi, exception fırlatırsa tipin kullanılamaz hale gelmesi
+  - Object initializer ve `with` (→ J2.6) ile nesne kurma yolları
+- **Eşitlik ve hash** ⭐
+  - `Equals`, `GetHashCode`, `ToString` — **birlikte override kuralı**: eşit nesneler aynı hash'i vermek zorundadır
+  - Referans eşitliği vs değer eşitliği; `==` ile `Equals` farkı ve `ReferenceEquals`
+  - `IEquatable<T>` (boxing'siz eşitlik), `IComparable<T>`, `IComparer<T>`
+  - **Mutable key tuzağı:** `Dictionary`/`HashSet`'e eklendikten sonra hash'i değişen nesne bulunamaz hale gelir (→ J3.1)
+  - `record`'un bunları otomatik üretmesi (→ J2.6)
+- **Extension method'lar** ⭐ — `static class` + `this` parametresi kuralı; çözümleme (resolution) sırası ve `using` gerekliliği; örnek metodun her zaman önce geldiği; ne zaman extension, ne zaman inheritance/wrapper; **LINQ'in tamamı extension method'dur** (C# 14 extension members → M1.1)
+- **Operator overloading** — `+`, `==`/`!=` (ikisi **birlikte** tanımlanmak zorunda), `implicit`/`explicit` conversion operatörü; `==` tanımlandığında `Equals`/`GetHashCode` ile tutarlılık zorunluluğu
 - **Indexer** (`public T this[int index]`) — koleksiyon benzeri API tasarımı, çok parametreli indexer
 - **Shallow copy vs deep copy** ⭐
   - `object.MemberwiseClone()` **shallow**'dur: iç referans tipler paylaşılır → kopyayı değiştirmek orijinali etkiler
@@ -383,10 +433,10 @@ Her konunun `README.md`'si şu şablonu izler:
 - Optional parametreler (varsayılan değerler) ve **named arguments**; optional parametre ile overload'ın karışması, varsayılan değerin **çağıran assembly'ye derlenmesi** (versiyonlama tuzağı — `const` ile aynı mantık)
 - Anonim tipler ve ne zaman `record`/tuple tercih edilmeli
 - Nested (iç içe) sınıflar — ne zaman anlamlı
-- Object yaşam döngüsü ve `IDisposable`'a giriş (`using`)
-- 🛠 **Kod:** Ödeme yöntemleri (kredi kartı, havale, cüzdan) üzerinden inheritance → composition refactor'u; `Equals`/`GetHashCode` yanlış override edilince `HashSet`'in bozulduğu demo; iç içe nesne içeren bir sipariş modelinde shallow copy'nin orijinali bozduğunu, deep copy'nin bozmadığını kanıtlayan test; `Money` value object'inde operator overloading + indexer'lı küçük bir koleksiyon tipi.
+- Object yaşam döngüsü ve `IDisposable`'a giriş (`using`) (dispose pattern → M1.5)
+- 🛠 **Kod:** Public field'lı bir modeli property'ye çevirip doğrulama ekleyen refactor; **başlatma sırasını ekrana basan** base/derived sınıf çifti ve constructor'dan virtual metot çağrısının `null`/0 gördüğünü kanıtlayan demo (CA2214 uyarısıyla birlikte); `Equals`/`GetHashCode` yanlış override edilince `HashSet`'in bozulduğu ve mutable key'in kaybolduğu testler; iç içe nesne içeren sipariş modelinde shallow copy'nin orijinali bozduğunu, deep copy'nin bozmadığını kanıtlayan test; `Money` value object'inde operator overloading + indexer'lı küçük bir koleksiyon tipi.
 
-#### J2.4 Exception Handling · `04-exception-handling`
+#### J2.5 Exception Handling · `05-exception-handling`
 - `try` / `catch` / `finally`, `using` / `await using`
 - Exception hiyerarşisi; custom exception ne zaman gerekli
 - Exception filter (`catch (X ex) when (...)`)
@@ -397,7 +447,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Exception vs `Result` dönüşü — kavramsal giriş (→ M11.6)
 - 🛠 **Kod:** `throw` vs `throw ex` stack trace karşılaştırması, exception filter örneği, custom domain exception hiyerarşisi.
 
-#### J2.5 Günlük Modern C# · `05-everyday-modern-csharp`
+#### J2.6 Günlük Modern C# · `06-everyday-modern-csharp`
 > 2026'da junior bir geliştiricinin her gün yazdığı sözdizimi. Sürüm sürüm tarihçe ve ileri özellikler → M1.1.
 
 - **Records:** `record`, `record struct`, positional records, `with` expression, value-based equality
@@ -412,7 +462,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - C# 14 ile gelen ve günlük kodda görülen: `field` keyword (backing field'sız property doğrulaması), null-conditional assignment (`customer?.Name = "x"`)
 - 🛠 **Kod:** Aynı sipariş domain modelini "C# 7 tarzı" ve "C# 14 tarzı" iki versiyonda yaz; satır sayısını ve okunabilirliği karşılaştır.
 
-🎯 **Mülakat:** "Value type ile reference type farkı?" · "`struct` ne zaman tercih edilir?" · "Boxing nedir, ne zaman olur?" · "String neden immutable?" · "`abstract class` vs `interface`?" · "`throw` vs `throw ex`?" · "`record` ile `class` farkı?" · "`Equals` override edince neden `GetHashCode` de override edilmeli?" · "Shallow copy ile deep copy farkı, C#'ta nasıl yapılır?" ⭐ · "Extension method nasıl yazılır, ne zaman kullanılır?"
+🎯 **Mülakat:** "Value type ile reference type farkı?" · "`struct` ne zaman tercih edilir?" · "Boxing nedir, ne zaman olur?" · "String neden immutable?" · "OOP'un dört ilkesini kendi kodundan örnekle anlat" ⭐ · "`abstract class` vs `interface` — C# 8 default implementation'dan sonra fark ne kaldı?" ⭐ · "Compile-time ve runtime polimorfizm farkı?" · "`override` ile `new` (method hiding) farkı?" ⭐ · "Aggregation ile composition farkı?" · "Coupling ve cohesion nedir?" · "Neden public field yerine property kullanılır?" ⭐ · "Field initializer'lar ve constructor'lar hangi sırayla çalışır?" ⭐ · "Constructor'dan virtual metot çağırmak neden tehlikeli?" ⭐ · "`Equals` override edince neden `GetHashCode` de override edilmeli?" · "Shallow copy ile deep copy farkı, C#'ta nasıl yapılır?" ⭐ · "Extension method nasıl yazılır, ne zaman kullanılır?" · "`throw` vs `throw ex`?" · "`record` ile `class` farkı?"
 
 ---
 
@@ -1978,6 +2028,12 @@ Her konunun `README.md`'si şu şablonu izler:
 - **I**nterface Segregation — şişman interface'i bölmek
 - **D**ependency Inversion — DI ile ilişkisi ve farkı ⭐
 - DRY, KISS, YAGNI, Law of Demeter, composition over inheritance, separation of concerns
+- **Coupling & cohesion derinlemesine** ⭐ (giriş → J2.3)
+  - Coupling türleri: content, common, control, stamp, data coupling — en gevşekten en sıkıya
+  - **Temporal coupling** (çağrı sırası zorunluluğu) ve **temporal decoupling** (mesajlaşma → M12.1)
+  - Afferent/efferent coupling, instability metriği; `NetArchTest`/ArchUnitNET ile sınır testleri (→ M10)
+  - Yüksek cohesion'ın pratikte görünümü: birlikte değişen kodun birlikte durması (vertical slice ile bağlantı → M11.4)
+- **Connascence** — "iki kod parçası niçin birlikte değişmek zorunda" sorusunu coupling'den daha ince taneli anlatan model (isim, tip, anlam, konum, sıra, zamanlama)
 - SOLID'in aşırı uygulanması: gereksiz soyutlama, "interface her şeye" eleştirisi
 - 🛠 **Kod:** Her prensip için **kötü → iyi** refactor hikayesi; her adımda testlerin yeşil kaldığı commit serisi.
 
@@ -3693,22 +3749,22 @@ dotnet-interview/
 
 Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalarda paralel DSA modülü** var. Zaten bir seviyedeysen modüllerin 🎯 sorularıyla kendini test et; rahat cevapladığın modülleri hızlı geç.
 
-### 🟢 Junior (~28 hafta)
+### 🟢 Junior (~29 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
 | 1-2 | J1 Geliştirici Temelleri (Git, **ağ temelleri**, HTTP, CLI) | D1 |
-| 3-5 | J2 C# Temelleri | D2 |
-| 6-7 | J3 Collections, Delegates & LINQ | D2 |
-| 8-9 | J4 Async + J5 Build & Run | D5 |
-| 10-11 | J6 ASP.NET Core Temelleri | D5 |
-| 12-14 | J7 Web API Temelleri | D3 (ağaç, heap) |
-| 15-17 | **J8 Veritabanı Temelleri** | D3 |
-| 18-19 | J9 EF Core | D11 — Easy tekrar |
-| 20-21 | J10 Test + J12 Docker | D11 |
-| 22-23 | J11 Güvenlik & Kimlik | D11 |
-| 24-25 | J13 Azure + J14 AI | D11 |
-| 26-28 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
+| 3-6 | **J2 C# Temelleri** (OOP ve sınıf üyeleri dahil) | D2 |
+| 7-8 | J3 Collections, Delegates & LINQ | D2 |
+| 9-10 | J4 Async + J5 Build & Run | D5 |
+| 11-12 | J6 ASP.NET Core Temelleri | D5 |
+| 13-15 | J7 Web API Temelleri | D3 (ağaç, heap) |
+| 16-18 | **J8 Veritabanı Temelleri** | D3 |
+| 19-20 | J9 EF Core | D11 — Easy tekrar |
+| 21-22 | J10 Test + J12 Docker | D11 |
+| 23-24 | J11 Güvenlik & Kimlik | D11 |
+| 25-26 | J13 Azure + J14 AI | D11 |
+| 27-29 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
 
 ### 🟡 Mid (~45 hafta)
 
@@ -3768,7 +3824,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 |------|------------|------------|
 | .NET sürümleri | **.NET 10 LTS** (Kasım 2025 → Kasım 2028) güncel üretim sürümü; **.NET 11 STS** Kasım 2026 (runtime async, C# 15 union tipleri, OpenAPI 3.2, Zstandard) | J1.4, M1.1, M4.3 |
 | Destek politikası | STS desteği **24 aya** çıktı; **.NET 8 ve .NET 9 aynı gün, 10 Kasım 2026'da** destek dışı kalıyor → .NET 10'a geçiş gündemde | J1.4, S5.6 |
-| C# 14 | Extension members, `field` keyword, null-conditional assignment, implicit span dönüşümleri | J2.5, M1.1 |
+| C# 14 | Extension members, `field` keyword, null-conditional assignment, implicit span dönüşümleri | J2.6, M1.1 |
 | SDK & araçlar | File-based apps (`dotnet run app.cs`), `.slnx`, `dotnet test`'te Microsoft.Testing.Platform, xUnit v3 | J1.4, J10.1 |
 | ASP.NET Core 10 | Varsayılan OpenAPI 3.1, Minimal API yerleşik validation, Server-Sent Events, Identity'de passkey | J7, J11.1, M5.7 |
 | EF Core 10 | Named query filters, complex type → JSON, SQL Server vector search, `LeftJoin`/`RightJoin` | M7, M16.4 |
