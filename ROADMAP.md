@@ -124,7 +124,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 | ID | Modül | Odak |
 |----|-------|------|
-| [J1](#j1-geliştirici-temelleri) | Geliştirici Temelleri | Git, HTTP/DNS/TLS, .NET CLI & SDK, debugging |
+| [J1](#j1-geliştirici-temelleri) | Geliştirici Temelleri | Git, **ağ temelleri (OSI, TCP/UDP)**, HTTP/DNS/TLS, .NET CLI & SDK, debugging |
 | [J2](#j2-c-temelleri) | C# Temelleri | Program anatomisi, tip sistemi, OOP, exception, günlük modern C# |
 | [J3](#j3-collections-delegates--linq) | Collections, Delegates & LINQ | Koleksiyonlar, generics, lambda, LINQ temel |
 | [J4](#j4-async-programlamaya-giriş) | Async Programlamaya Giriş | Thread/Task kavramı, `async`/`await`, cancellation |
@@ -148,7 +148,7 @@ Her konunun `README.md`'si şu şablonu izler:
 | [M2](#m2-build-runtime--deployment) | Build, Runtime & Deployment | Roslyn, IL, MSBuild, apphost, deployment modelleri |
 | [M3](#m3-aspnet-core-derinlemesine) | ASP.NET Core Derinlemesine | Host, Options, DI, middleware, filter, background service |
 | [M4](#m4-concurrency--async-derinlemesine) | Concurrency & Async Derinlemesine | ThreadPool, TPL, async internals, senkronizasyon, Channels |
-| [M5](#m5-api-tasarımı--protokoller) | API Tasarımı & Protokoller | REST ileri, versioning, gRPC, GraphQL, SignalR, resilience |
+| [M5](#m5-api-tasarımı--protokoller) | API Tasarımı & Protokoller | REST ileri, versioning, gRPC, GraphQL, SignalR, resilience, **HTTP/2-3 & transport** |
 | [M6](#m6-sql--postgresql-derinlemesine) | SQL & PostgreSQL Derinlemesine | İleri SQL, index/plan, isolation/locking, PostgreSQL, migration |
 | [M7](#m7-ef-core-derinlemesine--veri-erişim-desenleri) | EF Core Derinlemesine & Veri Erişim Desenleri | EF performansı, ileri modelleme, Dapper, mapping |
 | [M8](#m8-nosql--caching) | NoSQL & Caching | NoSQL modelleme, MongoDB, Redis, caching, arama |
@@ -217,8 +217,8 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### J1. Geliştirici Temelleri
 
-> 📁 `01-junior/01-dev-foundations/` · ⏱ ~1 hafta · Önkoşul: —
-> Kod yazmadan önceki zemin: versiyon kontrolü, web'in nasıl çalıştığı ve .NET araç zinciri.
+> 📁 `01-junior/01-dev-foundations/` · ⏱ ~1.5 hafta · Önkoşul: —
+> Kod yazmadan önceki zemin: versiyon kontrolü, ağın ve web'in nasıl çalıştığı ve .NET araç zinciri.
 
 #### J1.1 Git & Versiyon Kontrolü · `01-git`
 - Commit, branch, `merge` vs `rebase` ⭐, fast-forward vs merge commit
@@ -230,8 +230,40 @@ Her konunun `README.md`'si şu şablonu izler:
 - .NET için `.gitignore` (`bin/`, `obj/`, `*.user`, `.vs/`)
 - 🛠 **Kod:** Script ile oluşturulan örnek repo üzerinde merge/rebase conflict senaryosu + `git bisect` ile hatayı getiren commit'i bulma alıştırması.
 
-#### J1.2 Web Nasıl Çalışır: HTTP, DNS, TLS · `02-how-the-web-works`
-- "Tarayıcıya URL yazınca ne olur?" ⭐ — URL anatomisi → DNS çözümleme → TCP bağlantısı → TLS handshake → HTTP isteği → yanıt
+#### J1.2 Ağ Temelleri: OSI, TCP/UDP & Socket · `02-network-fundamentals` ⭐
+> HTTP'nin altında ne olduğunu bilmeden "neden bu istek yavaş?" veya "socket exhaustion nedir?" sorularına cevap verilemez. Backend mülakatlarının klasik ısınma turu.
+
+- **Katmanlı model:** OSI 7 katman (Physical → Data Link → Network → Transport → Session → Presentation → Application) ve pratikte kullanılan **TCP/IP 4 katman** modeliyle eşlemesi
+  - Backend geliştiricinin gerçekten ilgilendiği katmanlar: **L3 (IP), L4 (TCP/UDP), L7 (HTTP)** — yedi katmanı ezberlemek değil, hangi sorunun hangi katmanda çözüldüğünü bilmek önemli
+  - Encapsulation: her katmanın üst katmanın verisini kendi header'ıyla sarması
+- **L3 — IP:** IPv4 vs IPv6, subnet/CIDR (`/24`), private IP aralıkları (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`), loopback (`127.0.0.1`), NAT, routing ve `traceroute`'un ne gösterdiği
+- **Port kavramı:** well-known portlar (80, 443, 5432, 6379, 5672), kayıtlı portlar, **ephemeral port aralığı**; bir portu neden iki process dinleyemez
+- **L4 — TCP vs UDP** ⭐
+
+  | | TCP | UDP |
+  |---|-----|-----|
+  | Bağlantı | Connection-oriented (handshake) | Connectionless |
+  | Güvenilirlik | Garantili teslim, sıra korunur | Garanti yok, sıra yok |
+  | Hız / overhead | Daha yavaş, header 20+ byte | Hızlı, header 8 byte |
+  | Akış kontrolü | Flow + congestion control | Yok |
+  | Kullanım | HTTP/1.1-2, SQL, SMTP, SSH | DNS, video/ses, oyun, **QUIC → HTTP/3** |
+
+- **TCP three-way handshake** ⭐: `SYN` → `SYN-ACK` → `ACK`; bağlantı kurmanın **1 RTT** maliyeti (TLS ile toplam maliyet → J1.3)
+- Bağlantı kapatma: `FIN`/`ACK` dörtlüsü, **`TIME_WAIT`** durumu ve neden ~2×MSL bekler
+- TCP güvenilirlik mekanizmaları (kavramsal): sequence number, ACK, retransmission, **sliding window**, flow control (receive window), **congestion control** (slow start, congestion avoidance)
+- Head-of-line blocking'in TCP seviyesindeki kökeni — HTTP/2 ve HTTP/3'ün neden farklı davrandığının temeli (→ M5.11)
+- **Socket:** endpoint = IP + port + protokol; server akışı (`bind` → `listen` → `accept`) vs client akışı (`connect`)
+  - .NET karşılıkları: `Socket`, `TcpListener`/`TcpClient`, `UdpClient`; `NetworkStream`
+  - **Ephemeral port exhaustion** ⭐ — çok sayıda kısa ömürlü bağlantı + `TIME_WAIT` birikmesi; .NET'teki `HttpClient` socket exhaustion probleminin ağ katmanındaki sebebi budur (→ J7.5, M5.9)
+  - Connection reuse / keep-alive neden bu kadar önemli
+- Performans kavramları: **latency vs bandwidth vs throughput**, RTT, MTU ve paket parçalanması, bufferbloat (kısa not)
+- **L4 vs L7 load balancer** — hangisi neyi görebilir (L4 IP/port, L7 header/path/cookie) (→ S6.5)
+- Güvenlik duvarı, security group, port açma/kapama mantığı; "bağlantı neden timeout oluyor" teşhisi
+- **Teşhis araç kutusu:** `ping`, `traceroute`/`tracert`, `nslookup`/`dig`, `netstat`/`ss -tanp`, `telnet`/`nc` ile port testi, `curl -v`, Wireshark / `tcpdump`
+- 🛠 **Kod:** `TcpListener` ile satır tabanlı echo server + `TcpClient` istemcisi; aynı protokolün `UdpClient` versiyonu ve paket kaybı farkının gözlemi; yüzlerce kısa ömürlü bağlantı açan bir istemciyle `ss -tan | grep TIME_WAIT` sayacının artışını izleme; Wireshark/`tcpdump` ile three-way handshake'i yakalama.
+
+#### J1.3 Web Nasıl Çalışır: HTTP, DNS, TLS · `03-how-the-web-works`
+- "Tarayıcıya URL yazınca ne olur?" ⭐ — URL anatomisi → DNS çözümleme → TCP bağlantısı (→ J1.2) → TLS handshake → HTTP isteği → yanıt
 - **HTTP anatomisi:** method, path, query, header, body, status code
 - Method semantiği: safe (GET, HEAD) ve **idempotent** (GET, PUT, DELETE) metodlar ⭐
 - Status code aileleri: 1xx, 2xx, 3xx (redirect), 4xx (istemci hatası), 5xx (sunucu hatası)
@@ -243,7 +275,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Proxy, reverse proxy, load balancer, CDN — kavram düzeyinde
 - 🛠 **Kod:** Gelen ham isteği (method, header, body) loglayan küçük bir Kestrel uygulaması + `curl -v` ile TLS/header inceleme + `.http` dosyasıyla istek koleksiyonu.
 
-#### J1.3 .NET Ekosistemi & CLI · `03-dotnet-ecosystem-cli`
+#### J1.4 .NET Ekosistemi & CLI · `04-dotnet-ecosystem-cli`
 - .NET Framework → .NET Core → birleşik .NET (5+) tarihçesi; .NET Standard'ın rolü ve neden geri plana düştüğü
 - **SDK vs Runtime vs Target Framework Moniker** (`net10.0`, `net10.0-windows`) ⭐
 - Sürüm politikası: her Kasım yeni sürüm; çift sayılar **LTS (3 yıl)**, tek sayılar **STS (24 ay)** — .NET 10 LTS, .NET 11 STS
@@ -254,7 +286,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - **File-based apps (.NET 10):** `dotnet run app.cs` — `.csproj` olmadan tek dosya; `#:package`, `#:sdk Microsoft.NET.Sdk.Web`, `#:property` direktifleri; büyüyünce projeye dönüştürme
 - 🛠 **Kod:** Aynı küçük uygulamayı (a) file-based app, (b) console projesi, (c) solution + class library + test projesi olarak üç farklı şekilde kur.
 
-#### J1.4 IDE, Debugging & Kod Kalitesi Araçları · `04-ide-debugging`
+#### J1.5 IDE, Debugging & Kod Kalitesi Araçları · `05-ide-debugging`
 - Visual Studio, JetBrains Rider, VS Code + C# Dev Kit — farkları
 - Breakpoint, conditional breakpoint, tracepoint, watch, immediate window, call stack, step into/over/out
 - Exception ayarları: "first-chance exception"da durmak
@@ -263,7 +295,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Nullable uyarılarını okumak ve ciddiye almak
 - 🛠 **Kod:** Bilerek hatalar yerleştirilmiş bir program — her hatayı debugger ile bulma alıştırması + örnek `.editorconfig` ve analyzer kuralları.
 
-🎯 **Mülakat:** "Merge ile rebase farkı?" · "Tarayıcıya URL yazınca neler olur?" · "SDK ile runtime farkı nedir?" · "LTS ile STS arasındaki fark?" · "Hangi HTTP metodları idempotent?"
+🎯 **Mülakat:** "Merge ile rebase farkı?" · "OSI modeli nedir, backend geliştirici hangi katmanlarla ilgilenir?" · "TCP ile UDP farkı, UDP ne zaman tercih edilir?" ⭐ · "Three-way handshake'i anlat" · "`TIME_WAIT` nedir, neden birikir?" · "Tarayıcıya URL yazınca neler olur?" · "SDK ile runtime farkı nedir?" · "LTS ile STS arasındaki fark?" · "Hangi HTTP metodları idempotent?"
 
 ---
 
@@ -340,8 +372,19 @@ Her konunun `README.md`'si şu şablonu izler:
 - Constructor zinciri (`this(...)`, `base(...)`), object initializer
 - `Equals`, `GetHashCode`, `ToString` — **birlikte override kuralı** ⭐
 - `IEquatable<T>`, `IComparable<T>`, `IComparer<T>`
+- **Extension method'lar** ⭐ — `static class` + `this` parametresi kuralı; çözümleme (resolution) sırası ve `using` gerekliliği; ne zaman extension, ne zaman inheritance/wrapper; **LINQ'in tamamı extension method'dur** (C# 14 extension members → M1.1)
+- **Operator overloading** — `+`, `==`/`!=` (ikisi birlikte), `implicit`/`explicit` conversion operatörü; `==` override edildiğinde `Equals`/`GetHashCode` ile tutarlılık zorunluluğu
+- **Indexer** (`public T this[int index]`) — koleksiyon benzeri API tasarımı, çok parametreli indexer
+- **Shallow copy vs deep copy** ⭐
+  - `object.MemberwiseClone()` **shallow**'dur: iç referans tipler paylaşılır → kopyayı değiştirmek orijinali etkiler
+  - **`ICloneable` neden önerilmez:** `Clone()` `object` döner (cast gerekir) ve shallow mı deep mi olduğunu sözleşmede belirtmez — Microsoft public API'de kullanılmamasını önerir
+  - Deep copy yolları: elle kopyalama (açık ve hızlı), copy constructor, JSON round-trip (kolay ama yavaş ve tip kısıtlı)
+  - **`record` ile `with` de shallow'dur** — iç içe record'da referans paylaşılır; bilinmesi gereken tuzak
+- Optional parametreler (varsayılan değerler) ve **named arguments**; optional parametre ile overload'ın karışması, varsayılan değerin **çağıran assembly'ye derlenmesi** (versiyonlama tuzağı — `const` ile aynı mantık)
+- Anonim tipler ve ne zaman `record`/tuple tercih edilmeli
+- Nested (iç içe) sınıflar — ne zaman anlamlı
 - Object yaşam döngüsü ve `IDisposable`'a giriş (`using`)
-- 🛠 **Kod:** Ödeme yöntemleri (kredi kartı, havale, cüzdan) üzerinden inheritance → composition refactor'u; `Equals`/`GetHashCode` yanlış override edilince `HashSet`'in bozulduğu demo.
+- 🛠 **Kod:** Ödeme yöntemleri (kredi kartı, havale, cüzdan) üzerinden inheritance → composition refactor'u; `Equals`/`GetHashCode` yanlış override edilince `HashSet`'in bozulduğu demo; iç içe nesne içeren bir sipariş modelinde shallow copy'nin orijinali bozduğunu, deep copy'nin bozmadığını kanıtlayan test; `Money` value object'inde operator overloading + indexer'lı küçük bir koleksiyon tipi.
 
 #### J2.4 Exception Handling · `04-exception-handling`
 - `try` / `catch` / `finally`, `using` / `await using`
@@ -369,7 +412,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - C# 14 ile gelen ve günlük kodda görülen: `field` keyword (backing field'sız property doğrulaması), null-conditional assignment (`customer?.Name = "x"`)
 - 🛠 **Kod:** Aynı sipariş domain modelini "C# 7 tarzı" ve "C# 14 tarzı" iki versiyonda yaz; satır sayısını ve okunabilirliği karşılaştır.
 
-🎯 **Mülakat:** "Value type ile reference type farkı?" · "`struct` ne zaman tercih edilir?" · "Boxing nedir, ne zaman olur?" · "String neden immutable?" · "`abstract class` vs `interface`?" · "`throw` vs `throw ex`?" · "`record` ile `class` farkı?" · "`Equals` override edince neden `GetHashCode` de override edilmeli?"
+🎯 **Mülakat:** "Value type ile reference type farkı?" · "`struct` ne zaman tercih edilir?" · "Boxing nedir, ne zaman olur?" · "String neden immutable?" · "`abstract class` vs `interface`?" · "`throw` vs `throw ex`?" · "`record` ile `class` farkı?" · "`Equals` override edince neden `GetHashCode` de override edilmeli?" · "Shallow copy ile deep copy farkı, C#'ta nasıl yapılır?" ⭐ · "Extension method nasıl yazılır, ne zaman kullanılır?"
 
 ---
 
@@ -454,7 +497,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### J5. Build & Run Temelleri
 
-> 📁 `01-junior/05-build-run-basics/` · ⏱ ~1 hafta · Önkoşul: J1.3
+> 📁 `01-junior/05-build-run-basics/` · ⏱ ~1 hafta · Önkoşul: J1.4
 > "Kod derlenince ne oluyor?" sorusunun junior cevabı. Roslyn, IL, apphost ve deployment modellerinin derin hali → M2.
 
 #### J5.1 C# → IL → Native: Büyük Resim · `01-big-picture`
@@ -663,7 +706,24 @@ Her konunun `README.md`'si şu şablonu izler:
 - `UNION` vs `UNION ALL`
 - CTE (`WITH`) ile okunabilir sorgu
 - Window function'lara giriş: `ROW_NUMBER()`, `RANK()`, `SUM() OVER (PARTITION BY ...)` (derin hali → M6.1)
-- View
+- **`DELETE` vs `TRUNCATE` vs `DROP`** ⭐
+
+  | | `DELETE` | `TRUNCATE` | `DROP` |
+  |---|---------|-----------|-------|
+  | Türü | DML | DDL | DDL |
+  | `WHERE` ile filtre | ✅ | ❌ (tamamı) | ❌ |
+  | Tablo yapısı kalır | ✅ | ✅ | ❌ (tablo yok olur) |
+  | Satır tetikleyicileri (trigger) | çalışır | **çalışmaz** ⭐ | — |
+  | Identity/sequence sıfırlanır | hayır | genelde evet | — |
+  | Hız (büyük tabloda) | yavaş (satır satır loglar) | çok hızlı | çok hızlı |
+
+  - **Rollback motora bağlıdır** ⭐: PostgreSQL'de `TRUNCATE` transaction'a dahildir (`BEGIN; TRUNCATE; ROLLBACK;` veriyi geri getirir); MySQL'de DDL implicit commit yapar — "TRUNCATE geri alınamaz" ezberi yanlıştır, "hangi veritabanı?" diye sorulmalı
+  - Başka tablo FK ile referans veriyorsa `TRUNCATE` reddedilir (referans veren tablolar boş olsa bile)
+- **View, stored procedure, function, trigger** — kavramsal giriş (derin hali ve trade-off'lar → M6.1)
+  - View: sorguya isim vermek; materialized view ile farkı
+  - **Stored procedure vs function:** procedure çıkış parametresi alabilir ve DML yapabilir; function genelde değer döndürmeye odaklıdır ve sorgu içinde kullanılabilir (kesin kurallar veritabanına göre değişir)
+  - **Trigger:** satır değiştiğinde otomatik çalışan kod — audit/denormalizasyon için kullanılır ama **gizli yan etki** yarattığı için tartışmalıdır
+  - "İş mantığı veritabanında mı uygulamada mı?" tartışmasına giriş
 - Klasik mülakat sorguları: "N'inci en yüksek maaş", "duplicate kayıtları bul ve sil", "hiç sipariş vermemiş müşteriler", "her kategorinin en pahalı ürünü"
 - 🛠 **Kod:** J8.1 şeması + seed data üzerinde kolaydan zora 40 SQL alıştırması ve cevap anahtarı; Npgsql ile alıştırmaları çalıştırıp sonucu doğrulayan küçük bir .NET test runner'ı.
 
@@ -731,7 +791,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Identifier büyük/küçük harf tuzağı (`"OrderId"` vs `orderid`) → EF Core ile snake_case (`EFCore.NamingConventions`)
 - 🛠 **Kod:** Compose ile PostgreSQL + pgAdmin; şema/seed/backup/restore script'leri; Npgsql ile bağlanıp CRUD yapan console uygulaması.
 
-🎯 **Mülakat:** "ACID nedir, her harfi örnekle anlat" · "Index nasıl çalışır, neden her kolona index konmaz?" · "Composite index'te kolon sırası neden önemli?" · "`INNER JOIN` ile `LEFT JOIN` farkı?" · "`WHERE` ile `HAVING` farkı?" · "3NF nedir?" · "Dirty read, phantom read nedir?" · "SQL mi NoSQL mi — neye göre seçersin?" · "Para için neden `float` kullanılmaz?"
+🎯 **Mülakat:** "ACID nedir, her harfi örnekle anlat" · "Index nasıl çalışır, neden her kolona index konmaz?" · "Composite index'te kolon sırası neden önemli?" · "`INNER JOIN` ile `LEFT JOIN` farkı?" · "`WHERE` ile `HAVING` farkı?" · "`DELETE`, `TRUNCATE` ve `DROP` farkı?" ⭐ · "3NF nedir?" · "Dirty read, phantom read nedir?" · "SQL mi NoSQL mi — neye göre seçersin?" · "Para için neden `float` kullanılmaz?" · "`SELECT` sorgusunun mantıksal çalışma sırası nedir?"
 
 ---
 
@@ -1386,7 +1446,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### M5. API Tasarımı & Protokoller
 
-> 📁 `02-mid/05-api-design/` · ⏱ ~3 hafta · Önkoşul: J7, M3
+> 📁 `02-mid/05-api-design/` · ⏱ ~3.5 hafta · Önkoşul: J7, M3
 > Bir API'yi tasarlayabilmek, evrimleştirebilmek ve doğru protokolü seçebilmek. Gateway/BFF ve ölçekte API → S6.5, S10.
 
 #### M5.1 REST Tasarımı Derinlemesine · `01-rest-advanced`
@@ -1485,7 +1545,26 @@ Her konunun `README.md`'si şu şablonu izler:
 - **.NET 11:** cross-origin unsafe isteklerin otomatik reddi (yerleşik CSRF koruması)
 - 🛠 **Kod:** Kullanıcı bazlı token bucket + anonim kullanıcılar için IP bazlı fixed window; yük testinde `429` davranışı.
 
-🎯 **Mülakat:** "Offset yerine cursor pagination neden?" · "POST'u nasıl idempotent yaparsın?" · "API'yi breaking change olmadan nasıl evrimleştirirsin?" · "REST mi gRPC mi GraphQL mi?" · "GraphQL'de N+1 nasıl çözülür?" · "SignalR'ı birden fazla instance'a nasıl ölçeklersin?" · "Retry neden jitter ister?" · "Circuit breaker nasıl çalışır?"
+#### M5.11 Protokol & Transport Derinlemesine · `11-protocols-transport` ⭐
+> J1.2'deki TCP/UDP ve J1.3'teki HTTP temelinin üzerine: protokol sürümleri arasındaki gerçek farklar ve bunların .NET'teki sonuçları. "Neden HTTP/3?" ve "socket exhaustion neden olur?" sorularının tam cevabı.
+
+- **HTTP/1.1:** persistent connection, keep-alive, pipelining'in neden pratikte başarısız olduğu; **tarayıcı başına domain bağlantı limiti** ve bunun doğurduğu "domain sharding" / "sprite" hack'leri
+- **HTTP/2:** tek bağlantı üzerinde **multiplexing** (stream'ler), binary framing, **HPACK** header sıkıştırma, server push (neden terk edildi); **TCP seviyesinde head-of-line blocking devam eder** ⭐ — paket kaybında tüm stream'ler beklemek zorundadır
+- **HTTP/3 & QUIC:** UDP üzerine kurulu, **stream başına bağımsız teslim** → HOL blocking çözülür; TLS 1.3'ün protokole gömülü olması; **0-RTT / 1-RTT bağlantı kurulumu**, connection migration (ağ değişince bağlantının kopmaması); .NET'te HTTP/3 desteği ve Kestrel'de etkinleştirme (→ M3.7)
+- **Protokol seçim tablosu:** HTTP/1.1 (uyumluluk, basit araçlar), HTTP/2 (gRPC, çok sayıda paralel istek), HTTP/3 (mobil/kayıplı ağ, yüksek gecikme)
+- **TLS derinlemesine:** handshake adımları ve **RTT maliyeti** (TLS 1.2 → 2 RTT, TLS 1.3 → 1 RTT), cipher suite, ALPN ile protokol seçimi, SNI; **session resumption** ve ticket; sertifika zinciri doğrulama, OCSP/CRL, sertifika pinning (ve riskleri)
+- **mTLS (mutual TLS)** — servisler arası kimlik doğrulama; .NET'te client certificate ile `HttpClient` ve Kestrel tarafında doğrulama (→ S6.5 service mesh, S7)
+- **Bağlantı yönetimi .NET'te** ⭐
+  - `SocketsHttpHandler`: `MaxConnectionsPerServer`, `PooledConnectionLifetime`, `PooledConnectionIdleTimeout`, `ConnectTimeout`
+  - **Socket exhaustion'ın tam zinciri:** `new HttpClient()` her seferinde → her biri yeni bağlantı havuzu → kapanan bağlantılar `TIME_WAIT`'te birikir → ephemeral port tükenir (→ J1.2, M5.9)
+  - Ters problem: `HttpClient`'ı singleton tutup `PooledConnectionLifetime` ayarlamamak → **DNS değişikliklerinin görülmemesi**
+  - .NET'te DNS çözümleme ve cache davranışı
+- **Gecikme bütçesi düşünmek:** DNS + TCP + TLS + sunucu işleme + aktarım; bir isteğin nerede zaman harcadığını `curl -w` ve tracing ile ayrıştırma (→ M13)
+- Compression: gzip vs Brotli vs **Zstandard (.NET 11)**; `Accept-Encoding` müzakeresi; **BREACH** riski nedeniyle hassas yanıtlarda dikkat
+- L4 vs L7 load balancer'ın protokole etkisi: HTTP/2 bağlantılarının tek bağlantıda kalması nedeniyle **gRPC'de yük dağılımı problemi** ve çözümleri (client-side LB, proxy, `MaxConnectionsPerServer`)
+- 🛠 **Kod:** Aynı API'yi HTTP/1.1, HTTP/2 ve HTTP/3 üzerinden çağırıp 100 paralel istekte süre/bağlantı sayısı karşılaştırması (`SocketsHttpHandler` + `ss` ile bağlantı gözlemi); `new HttpClient()` ile `IHttpClientFactory` kullanımının ephemeral port tüketimini yan yana ölçen deney; `curl -w` ile DNS/TCP/TLS/TTFB kırılımı; mTLS ile korunan bir endpoint ve sertifikasız istemcinin reddedilmesi.
+
+🎯 **Mülakat:** "Offset yerine cursor pagination neden?" · "POST'u nasıl idempotent yaparsın?" · "API'yi breaking change olmadan nasıl evrimleştirirsin?" · "REST mi gRPC mi GraphQL mi?" · "GraphQL'de N+1 nasıl çözülür?" · "SignalR'ı birden fazla instance'a nasıl ölçeklersin?" · "HTTP/2 ile HTTP/3 farkı, HTTP/3 neden UDP üzerine kuruldu?" ⭐ · "HTTP/2'de head-of-line blocking çözüldü mü?" · "Socket exhaustion neden olur, nasıl önlenir?" ⭐ · "Retry neden jitter ister?" · "Circuit breaker nasıl çalışır?"
 
 ---
 
@@ -1502,7 +1581,14 @@ Her konunun `README.md`'si şu şablonu izler:
 - `LATERAL` join, `DISTINCT ON`, `RETURNING`
 - Klasik problemler: top-N per group, gaps & islands, deduplication, pivot
 - **Set-based düşünme vs satır satır (cursor/döngü)** ⭐
-- 🛠 **Kod:** 25 ileri seviye SQL problemi (top-N per group, running total, hiyerarşi, gaps & islands) + çözümleri + sonuçları doğrulayan .NET test runner'ı.
+- **Programatik SQL: stored procedure, function, trigger** ⭐
+  - PostgreSQL'de `FUNCTION` vs `PROCEDURE` (procedure transaction kontrolü yapabilir), `plpgsql`; SQL Server'da stored procedure, scalar vs **table-valued function** (scalar UDF'in satır başına çalışıp planı bozması)
+  - .NET'ten çağırma: EF Core `FromSql`/`ExecuteSql`, Dapper ile `CommandType.StoredProcedure`, table-valued parameter (→ M7.3)
+  - **Trigger'ın gerçek maliyeti:** gizli yan etki (kodu okuyan geliştirici göremez), hata ayıklama zorluğu, recursive/zincirleme trigger, toplu işlemde performans, `TRUNCATE`'te çalışmaması
+  - **"İş mantığı nerede yaşamalı?"** ⭐ — veritabanında (performans, tek giriş noktası, eski sistemler) vs uygulamada (test edilebilirlik, versiyonlama, taşınabilirlik, code review); kurumsal .NET dünyasında hâlâ canlı bir tartışma ve mülakat sorusu
+  - Stored procedure'ün versiyonlanması: migration'a dahil etme zorunluluğu (→ M6.6)
+  - Ne zaman meşru: ağır veri işleme (satır trafiğini azaltma), batch ETL, güvenlik sınırı (kullanıcıya tabloya değil procedure'e yetki verme)
+- 🛠 **Kod:** 25 ileri seviye SQL problemi (top-N per group, running total, hiyerarşi, gaps & islands) + çözümleri + sonuçları doğrulayan .NET test runner'ı; aynı iş kuralını (stok düşme) bir kez trigger ile bir kez uygulama katmanında yazıp test edilebilirlik ve hata ayıklama deneyimini karşılaştırma.
 
 #### M6.2 Index Stratejisi & Execution Plan · `02-indexing-execution-plans` ⭐
 - **Plan okuma:** `EXPLAIN (ANALYZE, BUFFERS)` — Seq Scan, Index Scan, Index Only Scan, Bitmap Heap Scan
@@ -1692,15 +1778,23 @@ Her konunun `README.md`'si şu şablonu izler:
   | JSON + Query Engine | Doküman saklama ve sorgulama (Redis 8'de yerleşik) |
   | Vector Set | Embedding benzerlik araması (Redis 8) |
 
-- **StackExchange.Redis:** `ConnectionMultiplexer` **singleton** kuralı ⭐, `IDatabase`, pipelining, async
-- Key tasarımı (`app:entity:id`), TTL
-- **Eviction policy'leri** (`allkeys-lru`, `allkeys-lfu`, `volatile-ttl`, `noeviction`) ⭐
-- Persistence: RDB vs AOF trade-off'u
-- Atomiklik: `MULTI`/`EXEC`, **Lua script**
-- Pub/Sub vs Streams
+- **StackExchange.Redis:** `ConnectionMultiplexer` **singleton** kuralı ⭐, `IDatabase`, async, `CommandFlags`
+- Key tasarımı (`app:entity:id`), namespace konvansiyonu, key boyutunun bellek maliyeti
+- **`KEYS` vs `SCAN`** ⭐ — `KEYS *` tüm sunucuyu **bloklar** (tek thread'li model!) ve production'da asla kullanılmaz; `SCAN` cursor tabanlı, artımlı ve bloklamaz; `HSCAN`/`SSCAN`/`ZSCAN`; `SCAN`'in garantisi (aynı anahtarı iki kez görebilir, baştan sona var olan anahtarı kaçırmaz)
+- **TTL ve süre sonu (expiration) semantiği:** `EXPIRE`/`SETEX`/`PERSIST`; **lazy expiration** (erişimde silme) + **active expiration** (arka plan örnekleme) — "TTL geçti ama bellek düşmedi" sorusunun cevabı
+- **Eviction policy'leri** (`allkeys-lru`, `allkeys-lfu`, `volatile-ttl`, `volatile-random`, `noeviction`) ⭐ — `maxmemory` ile birlikte; cache için `allkeys-lru`/`lfu`, kuyruk/kalıcı veri için `noeviction`
+- Persistence: RDB (snapshot) vs AOF (append-only) vs ikisi birlikte; `fsync` politikası ve veri kaybı penceresi
+- **Pipelining vs transaction vs Lua — üçü farklı şeydir** ⭐
+  - **Pipelining:** ağ gidiş-dönüşünü (RTT) azaltma → **throughput** için; araya başka istemcinin komutu girebilir, atomiklik yoktur
+  - **`MULTI`/`EXEC`:** komutlar kuyruklanır ve araya girilmeden çalışır → **atomiklik** için; **rollback yoktur** (bir komut hata verirse diğerleri yine çalışır), `WATCH` ile optimistic locking
+  - **Lua script / Redis Functions:** sunucu tarafında atomik çalışan mantık — "oku-karar ver-yaz" gerektiren işlemler (rate limiter, stok düşme) için tek doğru yol
+- **Pub/Sub vs Streams** — Pub/Sub ateşle-unut (abone yoksa mesaj kaybolur, kalıcılık yok), Streams kalıcı log + consumer group + ack
+- **Keyspace notifications** — key değişiminde event yayınlama (`notify-keyspace-events`); cache invalidation ve "key süresi doldu" tetikleyicisi için; **güvenilir teslim garantisi yoktur** (Pub/Sub üzerine kurulu), kritik akışlarda Streams tercih edilir
+- **Client-side caching (RESP3 tracking)** — sunucunun istemciye "bu key değişti" bildirimi göndermesi; çok katmanlı cache'te L1 (in-process) tutarlılığını sağlamanın Redis-native yolu (→ M8.4 `HybridCache`/FusionCache backplane)
+- Dağıtık kilit: `SET key value NX PX` deseni ve **Redlock tartışması** — tek node'da yeterli, çoklu node'da garanti iddiası eleştirilir (→ S3.4)
 - Replication, Sentinel, Cluster'a giriş (→ S4.6)
 - **2026 durumu:** Redis 8 AGPLv3 ile yeniden açık kaynak; **Valkey** (Linux Foundation forku, AWS/Google destekli); Azure'da **Azure Managed Redis** (Azure Cache for Redis emekliye ayrılıyor); Microsoft'un .NET ile yazılmış Redis uyumlu sunucusu **Garnet**
-- 🛠 **Kod:** Leaderboard (sorted set), Lua script ile atomik rate limiter, session store, Redis Streams ile consumer group'lu iş kuyruğu, HyperLogLog ile tekil ziyaretçi sayımı.
+- 🛠 **Kod:** Leaderboard (sorted set), Lua script ile atomik rate limiter, session store, Redis Streams ile consumer group'lu iş kuyruğu, HyperLogLog ile tekil ziyaretçi sayımı; 100k key'li bir veritabanında `KEYS *` ile `SCAN`'in sunucu üzerindeki etkisini (`SLOWLOG`, latency) karşılaştırma; `MULTI`/`EXEC`'in rollback yapmadığını kanıtlayan test.
 
 #### M8.4 Caching Stratejileri · `04-caching-strategies` ⭐
 - Cache katmanları: tarayıcı → CDN → output cache → in-process (`IMemoryCache`) → distributed (Redis) → DB
@@ -1723,7 +1817,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Hybrid search (keyword + vector) → M16.4
 - 🛠 **Kod:** Ürün arama — PostgreSQL FTS versiyonu ve Elasticsearch versiyonu (Türkçe analyzer, facet, typo toleransı) + sonuç kalitesi karşılaştırması.
 
-🎯 **Mülakat:** "MongoDB'de embed mi reference mı — neye göre?" · "ESR kuralı nedir?" · "Redis tek thread'li ise nasıl bu kadar hızlı?" · "Eviction policy nasıl seçilir?" · "Cache stampede nedir, nasıl önlenir?" · "Cache invalidation stratejin ne?" · "`HybridCache` ne çözdü?" · "Redis mi Valkey mi?"
+🎯 **Mülakat:** "MongoDB'de embed mi reference mı — neye göre?" · "ESR kuralı nedir?" · "Redis tek thread'li ise nasıl bu kadar hızlı?" · "Production'da `KEYS *` neden kullanılmaz, alternatifi ne?" ⭐ · "Pipelining ile `MULTI`/`EXEC` farkı?" ⭐ · "Redis transaction'ı rollback yapar mı?" · "Eviction policy nasıl seçilir?" · "Cache stampede nedir, nasıl önlenir?" · "Cache invalidation stratejin ne?" · "`HybridCache` ne çözdü?" · "Redis mi Valkey mi?"
 
 ---
 
@@ -1954,13 +2048,43 @@ Her konunun `README.md`'si şu şablonu izler:
 - **Dual write problemi**'ne giriş (çözümü outbox → S6.3)
 - 🛠 **Kod:** Önce `Channel<T>` ile in-process kavramsal simülasyon (duplicate, retry, DLQ), sonra aynı akışın gerçek broker ile hali.
 
-#### M12.2 RabbitMQ · `02-rabbitmq`
-- AMQP modeli: **exchange** (direct, topic, fanout, headers), binding, queue
-- **Quorum queue** (dayanıklı varsayılan tercih) vs classic queue; RabbitMQ Streams
-- Ack/nack, prefetch (QoS), publisher confirms
-- **Dead-letter exchange**, TTL ile gecikmeli retry
-- `RabbitMQ.Client` 7.x (tamamen async API)
-- 🛠 **Kod:** Sipariş olaylarını topic exchange ile birden fazla servise dağıtan sistem; DLX ile retry + dead-letter akışı.
+#### M12.2 RabbitMQ · `02-rabbitmq` ⭐
+- **AMQP 0-9-1 modeli:** producer → **exchange** → binding → queue → consumer; broker neden "akıllı", istemci neden "aptal" (Kafka'nın tersi)
+- **Exchange tipleri** ⭐
+
+  | Tip | Yönlendirme | Kullanım |
+  |-----|-------------|----------|
+  | `direct` | routing key **tam eşleşme** | İş kuyruğu, belirli bir tüketiciye yönlendirme |
+  | `fanout` | routing key yok sayılır, **tüm** bağlı kuyruklara | Broadcast, cache invalidation |
+  | `topic` | noktalı key + wildcard: `*` bir kelime, `#` sıfır veya daha fazla | `order.created.tr` gibi hiyerarşik olaylar |
+  | `headers` | routing key yerine **header** eşleşmesi (`x-match: all/any`) | Çok kriterli yönlendirme (nadir) |
+
+  - **Alternate exchange** — eşleşmeyen mesajın sessizce kaybolması yerine yakalanması
+  - Default (nameless) exchange ve kuyruk adıyla yönlendirme
+- **Connection ve channel modeli** ⭐ — connection TCP bağlantısıdır (pahalı, uygulama ömrü boyunca paylaşılır), **channel** ise onun üzerindeki hafif mantıksal kanaldır; **channel thread-safe değildir** → thread/consumer başına ayrı channel, connection'ı paylaş
+- **Kuyruk tipleri:**
+  - **Quorum queue** — Raft tabanlı replikasyon, dayanıklı iş yükleri için **varsayılan tercih**; tek sayıda replika (3 veya 5) ile çoğunluk; Raft log'u bellek + disk tuttuğu için çok derin kuyrukta bellek maliyeti yüksek
+    - **`delivery-limit`** ⭐ — 4.0'dan itibaren varsayılan **20**; limit aşılınca mesaj dead-letter edilir, DLX yoksa **düşer** → bu yüzden her quorum queue'ya bir dead-letter yapılandırması önerilir. `-1` ile kapatılabilir ama önerilmez. 4.3'ten itibaren `acquired-count` ve `delivery-count` ayrı sayılır; limite yalnızca `delivery-count` bakar
+    - `basic.reject` sayacı artırır, `basic.nack` artırmaz — poison message davranışını belirleyen ayrım
+  - **Classic queue** — tek replika; **classic queue mirroring 4.0'da tamamen kaldırıldı** (mirror policy'leri artık etkisiz); transient (non-durable) non-exclusive classic queue'lar 4.3'ten itibaren varsayılan olarak bildirilemiyor
+  - **Lazy queue** — mesajları diskte tutarak bellek tasarrufu; quorum queue'lar büyük ölçüde yerini aldı (tarihsel bilgi olarak bilinmeli)
+  - **Stream** — append-only log, tekrar okunabilir (replay), çok tüketicili; RabbitMQ'nun Kafka'ya en yakın yapısı
+- **Teslim güvenliği:** `ack`/`nack`/`reject` (+ `requeue`), **prefetch (QoS)** ile tüketici başına eşzamanlı mesaj sınırı — prefetch çok yüksekse tek tüketici kuyruğu kilitler, çok düşükse throughput düşer; **publisher confirms** (asenkron onay) ve neden `tx` yerine tercih edilir
+- **Dead-lettering:** DLX + DLQ; `x-dead-letter-exchange`, red nedeni header'ları; **TTL + DLX ile gecikmeli retry** (ping-pong deseni) vs **Delayed Message Exchange plugin** — hangisi ne zaman
+- **Clustering & yüksek erişilebilirlik:** node'lar, disk vs RAM node, **metadata store Khepri** (Raft tabanlı; 4.2'den itibaren yeni kurulumlarda varsayılan, yükseltilen node'lar eski store'da kalır — `khepri_db` feature flag'i ile geçiş), network partition davranışı (`pause_minority`), quorum queue'ların partition'da nasıl davrandığı
+- **Federation vs Shovel** ⭐ — iki bölge/veri merkezi arasında mesaj taşımanın iki yolu
+
+  | | Federation | Shovel |
+  |---|-----------|--------|
+  | Model | Downstream broker, upstream exchange/queue'ya **abone olur** | Kaynak kuyruktan okur, hedefe **publish eder** (point-to-point) |
+  | Bağlılık | Gevşek; kopma sonrası kendini toparlar | Daha açık/kontrollü, tek yönlü akış |
+  | Tipik kullanım | Sürekli, hub-and-spoke çok bölgeli topoloji | Tek seferlik göç, kuyruk boşaltma, köprüleme |
+
+- **Akış kontrolü (back pressure):** bellek ve disk alarmları (`vm_memory_high_watermark`, `disk_free_limit`) — alarm tetiklendiğinde publisher'ların bloklanması; "mesajlar birikti, publish donuyor" teşhisi
+- Sanal host (vhost), kullanıcı/permission modeli, policy ile kuyruk ayarı yönetimi
+- **İzleme:** Management UI, Prometheus plugin, bakılacak metrikler (queue depth, unacked, consumer utilisation, redelivery oranı); **4.2'de Raft metrik adları değişti** — dashboard'ların güncellenmesi gerekir
+- `RabbitMQ.Client` 7.x — tamamen **async API**; publisher confirm ve consumer örüntüleri
+- 🛠 **Kod:** Sipariş olaylarını topic exchange ile birden fazla servise dağıtan sistem (`order.created.*` binding'leri); DLX + TTL ile artan gecikmeli retry ve son durakta DLQ; publisher confirms ile "mesaj gerçekten yazıldı mı" kanıtı; prefetch değerini 1 / 10 / 1000 yapıp throughput ve adil dağıtım farkını ölçme; Compose ile 3 node'lu cluster + quorum queue üzerinde bir node'u düşürüp mesaj kaybı olmadığını gösterme; iki broker arasında shovel ile kuyruk taşıma.
 
 #### M12.3 Azure Service Bus · `03-azure-service-bus`
 - Queue vs topic/subscription; subscription filtreleri
@@ -1988,7 +2112,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Ham SDK ile çalışmak — ne zaman yeterli
 - 🛠 **Kod:** Aynı consumer'ın ham `RabbitMQ.Client`, MassTransit v8 ve Wolverine ile yazılıp karşılaştırılması (kod miktarı, retry/DLQ yapılandırması, test edilebilirlik).
 
-🎯 **Mülakat:** "At-least-once teslimatta duplicate mesajları nasıl ele alırsın?" ⭐ · "Queue ile topic farkı?" · "Kafka mı RabbitMQ mı?" · "Poison message nedir?" · "Mesaj sırasını nasıl garanti edersin?" · "Command ile event farkı?"
+🎯 **Mülakat:** "At-least-once teslimatta duplicate mesajları nasıl ele alırsın?" ⭐ · "Queue ile topic farkı?" · "RabbitMQ exchange tipleri nedir, `topic` ile `direct` farkı?" ⭐ · "Quorum queue ile classic queue farkı, hangisini seçersin?" · "Prefetch değeri neyi etkiler?" · "Gecikmeli retry'ı RabbitMQ'da nasıl yaparsın?" · "Federation ile shovel farkı?" · "Connection mı channel mı paylaşılır?" · "Kafka mı RabbitMQ mı?" · "Poison message nedir?" · "Mesaj sırasını nasıl garanti edersin?" · "Command ile event farkı?"
 
 ---
 
@@ -3569,24 +3693,24 @@ dotnet-interview/
 
 Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalarda paralel DSA modülü** var. Zaten bir seviyedeysen modüllerin 🎯 sorularıyla kendini test et; rahat cevapladığın modülleri hızlı geç.
 
-### 🟢 Junior (~27 hafta)
+### 🟢 Junior (~28 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
-| 1 | J1 Geliştirici Temelleri | D1 |
-| 2-4 | J2 C# Temelleri | D2 |
-| 5-6 | J3 Collections, Delegates & LINQ | D2 |
-| 7-8 | J4 Async + J5 Build & Run | D5 |
-| 9-10 | J6 ASP.NET Core Temelleri | D5 |
-| 11-13 | J7 Web API Temelleri | D3 (ağaç, heap) |
-| 14-16 | **J8 Veritabanı Temelleri** | D3 |
-| 17-18 | J9 EF Core | D11 — Easy tekrar |
-| 19-20 | J10 Test + J12 Docker | D11 |
-| 21-22 | J11 Güvenlik & Kimlik | D11 |
-| 23-24 | J13 Azure + J14 AI | D11 |
-| 25-27 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
+| 1-2 | J1 Geliştirici Temelleri (Git, **ağ temelleri**, HTTP, CLI) | D1 |
+| 3-5 | J2 C# Temelleri | D2 |
+| 6-7 | J3 Collections, Delegates & LINQ | D2 |
+| 8-9 | J4 Async + J5 Build & Run | D5 |
+| 10-11 | J6 ASP.NET Core Temelleri | D5 |
+| 12-14 | J7 Web API Temelleri | D3 (ağaç, heap) |
+| 15-17 | **J8 Veritabanı Temelleri** | D3 |
+| 18-19 | J9 EF Core | D11 — Easy tekrar |
+| 20-21 | J10 Test + J12 Docker | D11 |
+| 22-23 | J11 Güvenlik & Kimlik | D11 |
+| 24-25 | J13 Azure + J14 AI | D11 |
+| 26-28 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
 
-### 🟡 Mid (~44 hafta)
+### 🟡 Mid (~45 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
@@ -3594,19 +3718,19 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | 3-4 | M2 Build, Runtime & Deployment | D4 |
 | 5-7 | M3 ASP.NET Core Derinlemesine | D6 |
 | 8-10 | **M4 Concurrency & Async** — en yüksek getirili modül | D6 |
-| 11-13 | M5 API Tasarımı | D7 |
-| 14-16 | **M6 SQL & PostgreSQL** | D7 |
-| 17-18 | M7 EF Core Derinlemesine | D8 |
-| 19-21 | **M8 NoSQL & Caching** (MongoDB, Redis) | D8 |
-| 22-24 | **M9 Kimlik: OAuth, OIDC, Keycloak** | D9 (temel) |
-| 25-26 | M10 Test Stratejisi | D9 |
-| 27-29 | M11 Mimari & Tasarım | D9 |
-| 30-31 | M12 Mesajlaşma | D11 — Medium |
-| 32-33 | M13 Observability | D11 |
-| 34-35 | M14 DevOps | D11 |
-| 36-38 | M15 Azure | D11 |
-| 39-41 | M16 AI Engineering | D11 |
-| 42-44 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
+| 11-14 | M5 API Tasarımı & Protokoller (**HTTP/2-3, transport** dahil) | D7 |
+| 15-17 | **M6 SQL & PostgreSQL** | D7 |
+| 18-19 | M7 EF Core Derinlemesine | D8 |
+| 20-22 | **M8 NoSQL & Caching** (MongoDB, Redis) | D8 |
+| 23-25 | **M9 Kimlik: OAuth, OIDC, Keycloak** | D9 (temel) |
+| 26-27 | M10 Test Stratejisi | D9 |
+| 28-30 | M11 Mimari & Tasarım | D9 |
+| 31-32 | M12 Mesajlaşma (**RabbitMQ** derinlemesine) | D11 — Medium |
+| 33-34 | M13 Observability | D11 |
+| 35-36 | M14 DevOps | D11 |
+| 37-39 | M15 Azure | D11 |
+| 40-42 | M16 AI Engineering | D11 |
+| 43-45 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
 
 ### 🔴 Senior (~35 hafta)
 
@@ -3642,10 +3766,10 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 
 | Alan | Değişiklik | Roadmap'te |
 |------|------------|------------|
-| .NET sürümleri | **.NET 10 LTS** (Kasım 2025 → Kasım 2028) güncel üretim sürümü; **.NET 11 STS** Kasım 2026 (runtime async, C# 15 union tipleri, OpenAPI 3.2, Zstandard) | J1.3, M1.1, M4.3 |
-| Destek politikası | STS desteği **24 aya** çıktı; **.NET 8 ve .NET 9 aynı gün, 10 Kasım 2026'da** destek dışı kalıyor → .NET 10'a geçiş gündemde | J1.3, S5.6 |
+| .NET sürümleri | **.NET 10 LTS** (Kasım 2025 → Kasım 2028) güncel üretim sürümü; **.NET 11 STS** Kasım 2026 (runtime async, C# 15 union tipleri, OpenAPI 3.2, Zstandard) | J1.4, M1.1, M4.3 |
+| Destek politikası | STS desteği **24 aya** çıktı; **.NET 8 ve .NET 9 aynı gün, 10 Kasım 2026'da** destek dışı kalıyor → .NET 10'a geçiş gündemde | J1.4, S5.6 |
 | C# 14 | Extension members, `field` keyword, null-conditional assignment, implicit span dönüşümleri | J2.5, M1.1 |
-| SDK & araçlar | File-based apps (`dotnet run app.cs`), `.slnx`, `dotnet test`'te Microsoft.Testing.Platform, xUnit v3 | J1.3, J10.1 |
+| SDK & araçlar | File-based apps (`dotnet run app.cs`), `.slnx`, `dotnet test`'te Microsoft.Testing.Platform, xUnit v3 | J1.4, J10.1 |
 | ASP.NET Core 10 | Varsayılan OpenAPI 3.1, Minimal API yerleşik validation, Server-Sent Events, Identity'de passkey | J7, J11.1, M5.7 |
 | EF Core 10 | Named query filters, complex type → JSON, SQL Server vector search, `LeftJoin`/`RightJoin` | M7, M16.4 |
 | Lisans değişiklikleri | **MediatR** (v13+), **AutoMapper** (v15+), **MassTransit** (v9), **FluentAssertions** (v8) ticari lisansa geçti → alternatifleri bilmek gerekiyor | J10.1, M7.4, M11.5, M12.5 |
@@ -3656,6 +3780,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | Azure servisleri | Azure Cache for Redis → **Azure Managed Redis**; Functions **Flex Consumption**; Container Apps serverless GPU; Azure SQL `VECTOR` tipi GA | M15 |
 | Sertifikalar | **AZ-204 → AI-200** (31 Temmuz 2026); **AI-102 → AI-103**; mimari için AZ-305 | M15, M16.7, S8 |
 | Veritabanları | **PostgreSQL 18** (async I/O, `uuidv7()`, virtual generated columns); **Redis 8** AGPLv3 ile yeniden açık kaynak + **Valkey** forku; MongoDB 8.x Community'de search/vector search; MongoDB EF Core provider'da vector search | J8.6, M6.4, M8 |
+| Mesajlaşma | **RabbitMQ 4.x:** classic queue mirroring 4.0'da kaldırıldı (quorum queue dayanıklı varsayılan seçim), quorum queue'larda `delivery-limit` varsayılanı **20**; **Khepri** metadata store 4.2'den itibaren yeni kurulumlarda varsayılan ve Raft metrik adları değişti; 4.3'te transient classic queue'lar varsayılan olarak kapatıldı ve `delivery-count`/`acquired-count` ayrıldı | M12.2 |
 | Kimlik | **OAuth 2.1 + RFC 9700**: her yerde PKCE, implicit/ROPC yok; DPoP ve PAR yaygınlaşıyor; **Keycloak 26**: passkeys, DPoP, FAPI 2.0, organizations; Azure AD B2C → Entra External ID | J11.3, M9 |
 | Güvenlik | **OWASP Top 10:2025** — yeni: A03 Software Supply Chain Failures, A10 Mishandling of Exceptional Conditions; .NET 10'da post-quantum kriptografi | S7.1, S7.4 |
 
@@ -3669,6 +3794,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 - [AZ-204 → AI-200 geçişi](https://examinotion.com/blog/az-204-retirement-ai-200-migration-guide) · [AI-103 study guide](https://tutorialsdojo.com/ai-103-azure-ai-app-and-agent-developer-associate-study-guide/)
 - [MediatR & MassTransit lisans değişikliği](https://www.milanjovanovic.tech/blog/mediatr-and-masstransit-going-commerical-what-this-means-for-you)
 - [PostgreSQL 18 yenilikleri](https://neon.com/postgresql/postgresql-18-new-features) · [Redis 8 AGPLv3](https://alternativeto.net/news/2025/5/redis-goes-open-source-again-with-the-launch-of-redis-8-under-the-agplv3-license) · [MongoDB EF Core provider: vector search](https://devblogs.microsoft.com/dotnet/mongodb-efcore-provider-queryable-encryption-vector-search/)
+- [RabbitMQ 4.2.0 release notes](https://github.com/rabbitmq/rabbitmq-server/blob/main/release-notes/4.2.0.md) · [RabbitMQ 4.3 highlights](https://www.rabbitmq.com/blog/2026/04/23/rabbitmq-4.3-release) · [Khepri'nin varsayılan olma yol haritası](https://www.rabbitmq.com/blog/2025/09/01/6-khepri-default) · [Quorum queues dokümantasyonu](https://www.rabbitmq.com/docs/quorum-queues)
 - [Keycloak 26.6 release](https://www.keycloak.org/2026/04/keycloak-2660-released) · [RFC 9700 — OAuth 2.0 Security BCP](https://datatracker.ietf.org/doc/rfc9700/)
 - [OWASP Top 10:2025](https://owasp.org/Top10/2025/0x00_2025-Introduction/)
 
@@ -3686,6 +3812,8 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | Writing High-Performance .NET Code | Ben Watson | 🔴 S2 |
 | Concurrency in C# Cookbook | Stephen Cleary | 🟡🔴 M4, S3 |
 | Pro ASP.NET Core | Adam Freeman | 🟢🟡 J6, J7, M3 |
+| **Computer Networking: A Top-Down Approach** | Kurose & Ross | 🟢🟡 J1.2, M5.11 |
+| High Performance Browser Networking (ücretsiz) | Ilya Grigorik | 🟡 J1.2, J1.3, M5.11 |
 | SQL Performance Explained / *Use The Index, Luke* | Markus Winand | 🟢🟡 J8.3, M6.2 |
 | PostgreSQL 14 Internals (ücretsiz) | Egor Rogov | 🟡🔴 M6.4, S4.1 |
 | Database Internals | Alex Petrov | 🔴 S4.1 |
@@ -3727,10 +3855,18 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 - [Performance Improvements in .NET](https://devblogs.microsoft.com/dotnet/tag/performance/) — Stephen Toub'un yıllık serisi
 - [ECMA-335 CLI spesifikasyonu](https://ecma-international.org/publications-and-standards/standards/ecma-335/)
 
+### Ağ & Protokoller (J1.2, J1.3, M5)
+- [High Performance Browser Networking](https://hpbn.co/) — TCP, TLS, HTTP/2, QUIC; ücretsiz ve hâlâ en iyi kaynak
+- [MDN — HTTP](https://developer.mozilla.org/docs/Web/HTTP) · [HTTP/3 açıklaması (ücretsiz kitap)](https://http3-explained.haxx.se/)
+- [Cloudflare Learning Center](https://www.cloudflare.com/learning/) — DNS, TLS, DDoS, CDN kavramları
+- [.NET ağ API'leri](https://learn.microsoft.com/dotnet/fundamentals/networking/) · [`SocketsHttpHandler` ve bağlantı havuzu](https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient-guidelines)
+
 ### Veri (J8, M6, M8, S4)
 - [Use The Index, Luke](https://use-the-index-luke.com/) — index'lerin en iyi ücretsiz anlatımı
 - [The Internals of PostgreSQL](https://www.interdb.jp/pg/)
 - [MongoDB University](https://learn.mongodb.com/)
+- [Redis dokümantasyonu](https://redis.io/docs/latest/) — veri tipleri, `SCAN`, keyspace notifications, client-side caching
+- [RabbitMQ dokümantasyonu](https://www.rabbitmq.com/docs) — quorum queues, federation, shovel, akış kontrolü
 - [Jepsen analizleri](https://jepsen.io/analyses) — dağıtık veritabanlarının tutarlılık testleri
 
 ### DSA & Pattern Pratiği (D1–D11)
