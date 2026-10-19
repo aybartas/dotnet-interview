@@ -217,7 +217,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### J1. Geliştirici Temelleri
 
-> 📁 `01-junior/01-dev-foundations/` · ⏱ ~1.5 hafta · Önkoşul: —
+> 📁 `01-junior/01-dev-foundations/` · ⏱ ~2 hafta · Önkoşul: —
 > Kod yazmadan önceki zemin: versiyon kontrolü, ağın ve web'in nasıl çalıştığı ve .NET araç zinciri.
 
 #### J1.1 Git & Versiyon Kontrolü · `01-git`
@@ -1025,6 +1025,7 @@ Her konunun `README.md`'si şu şablonu izler:
 > 📜 **Sertifika hedefi: AZ-900 (Microsoft Azure Fundamentals).** İlk üç konu sınavın üç alanına birebir karşılık gelir:
 > J13.1 → *Describe cloud concepts* (%25-30) · J13.2 → *Describe Azure architecture and services* (%35-40) · J13.3 → *Describe Azure management and governance* (%30-35).
 > AZ-900 bir **genişlik** sınavıdır: VM, VNet, ExpressRoute gibi bir .NET geliştiricisinin günlük işinde kullanmadığı konular da sorulur — bunlar aşağıda *(AZ-900 kapsamı)* notuyla işaretlendi. Son üç konu ise sınavda olmayan ama senin ihtiyacın olan **pratik**tir.
+> Kategori notu: **J13.6 (CI)** Azure'a değil DevOps'a aittir; capstone'un pipeline'a ihtiyaç duyması için burada duruyor, derinliği → M14.
 > Azure servislerinin geliştirici derinliği → M15 (AI-200); çözüm mimarisi → S8.3 (AZ-305).
 
 #### J13.1 Cloud Kavramları · `01-cloud-concepts` ⭐
@@ -1574,6 +1575,8 @@ Her konunun `README.md`'si şu şablonu izler:
 
 > 📁 `02-mid/05-api-design/` · ⏱ ~3.5 hafta · Önkoşul: J7, M3
 > Bir API'yi tasarlayabilmek, evrimleştirebilmek ve doğru protokolü seçebilmek. Gateway/BFF ve ölçekte API → S6.5, S10.
+> Modülün en büyüğü; üç blok hâlinde okunur: **tasarım & evrim** (M5.1-M5.4) · **protokol seçimi** (M5.5-M5.7) · **taşıma, serialization & sertleştirme** (M5.8-M5.11).
+> Zaman kısıtlıysa M5.1, M5.2 ve M5.9 mülakatta en çok karşılığı olanlar.
 
 #### M5.1 REST Tasarımı Derinlemesine · `01-rest-advanced`
 - REST kısıtları; **Richardson Maturity Model** (Level 0 → 3 / HATEOAS)
@@ -2128,9 +2131,17 @@ Her konunun `README.md`'si şu şablonu izler:
 - **Hexagonal / Ports & Adapters** (Alistair Cockburn): port = interface, adapter = implementasyon; driving (controller) vs driven (repository) adapter
 - **Onion Architecture** (Jeffrey Palermo): iç içe halkalar, dış katman içe bağımlı olabilir, tersi asla
 - **Asıl mesaj** ⭐ — üçü de **aynı fikrin farklı isimlendirmesi**: iş mantığını framework/DB/UI'dan izole etmek. Fark vokabülerde: Hexagonal port/adapter, Onion halka, Clean use-case dilini kullanır.
-- Katmanları ayrı proje mi, klasör mü yapmalı
+- **Hexagonal'in test avantajı** ⭐ — çekirdeği hiç adapter ayağa kaldırmadan, port'lara test double vererek test etmek; "DB'siz, HTTP'siz test" bu mimarinin asıl getirisi
+- **İş mantığını organize etmenin üç yolu (Fowler)** ⭐ — mimariyi seçmeden önce sorulacak soru
+  - **Transaction Script** — istek başına prosedürel akış; CRUD ağırlıklı, kuralı az işte **dürüst ve doğru** tercih
+  - **Table Module** — tablo başına bir sınıf (klasik DataSet dünyası)
+  - **Domain Model** — davranışı olan zengin nesneler; karmaşık kural ve invariant varsa (→ S5.1 DDD)
+  - Clean/Hexagonal/Onion asıl olarak **Domain Model**'i korumak için vardır; Transaction Script yazıyorsan bu törene çoğu zaman ihtiyaç yoktur
+- **Screaming Architecture** — klasör yapısı domain'i mi ("Siparişler", "Ödeme") yoksa framework'ü mü ("Controllers", "Services", "Repositories") haykırıyor (→ M11.4)
+- **.NET'te pratik yerleşim:** `Domain` / `Application` / `Infrastructure` / `Web` projeleri; **interface'ler hangi katmanda tanımlanır** (DIP gereği ihtiyacı duyan katmanda, implementasyon Infrastructure'da); `Web`'in `Infrastructure`'a yalnızca **composition root**'ta dokunması; kuralı derleme zamanında zorlamak (→ S5.5 architecture testleri)
+- Katmanları ayrı proje mi, klasör mü yapmalı — proje sınırı kuralı derleyiciye zorlatır, klasör sınırı disipline bırakır
 - **Trade-off:** küçük CRUD serviste fazla tören; karmaşık domain'de kurtarıcı
-- 🛠 **Kod:** Aynı "sipariş ver" use case'inin N-tier ve Clean Architecture versiyonları; DB'yi PostgreSQL'den MongoDB'ye değiştirmenin iki versiyondaki maliyeti.
+- 🛠 **Kod:** Aynı "sipariş ver" use case'inin üç versiyonu — Transaction Script, N-tier ve Clean Architecture; DB'yi PostgreSQL'den MongoDB'ye değiştirmenin her birindeki maliyeti ölçme; Clean versiyonda çekirdeği in-memory port'larla (DB/HTTP olmadan) test eden suite.
 
 #### M11.4 Vertical Slice Architecture · `04-vertical-slice`
 - Katman yerine **özellik (feature)** bazlı organizasyon
@@ -2158,7 +2169,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Exception tabanlı akışın performans ve okunabilirlik maliyeti
 - 🛠 **Kod:** Aynı use case'in exception tabanlı ve Result tabanlı versiyonları; hataların HTTP yanıtına tutarlı eşlenmesi.
 
-🎯 **Mülakat:** "SOLID'i örnekle anlat" · "Dependency Inversion ile Dependency Injection farkı?" · "Clean, Hexagonal ve Onion aynı şey mi?" ⭐ · "Clean Architecture mı Vertical Slice mı?" · "CQRS ile Event Sourcing farkı?" · "MediatR'ı neden kullanırsın / kullanmazsın?" · "Exception mı Result mı?"
+🎯 **Mülakat:** "SOLID'i örnekle anlat" · "Dependency Inversion ile Dependency Injection farkı?" · "Clean, Hexagonal ve Onion aynı şey mi?" ⭐ · "Hexagonal mimarinin test tarafındaki getirisi nedir?" · "Bu iş için Transaction Script mi Domain Model mi — neye göre karar verirsin?" ⭐ · "Clean Architecture'da interface'i hangi katmana koyarsın, neden?" ⭐ · "Clean Architecture mı Vertical Slice mı?" · "CQRS ile Event Sourcing farkı?" · "MediatR'ı neden kullanırsın / kullanmazsın?" · "Exception mı Result mı?"
 
 ---
 
@@ -2454,8 +2465,10 @@ Her konunun `README.md`'si şu şablonu izler:
 - 🛠 **Kod:** Yüklenen görseli Event Grid tetiklemesiyle küçük resme dönüştüren akış; kendi uygulamasından custom event yayınlayıp **advanced filter** ile yalnızca `amount > 1000` olan siparişleri bir handler'a yönlendirme; handler'ı bilerek hata döndürecek şekilde yazıp retry'ları ve sonunda dead-letter storage'a düşüşü gözlemleme.
 
 #### M15.6 Azure Mesajlaşma Servisleri Karşılaştırması · `06-messaging-services`
-- **Service Bus** (kurumsal mesajlaşma, transaction, session) vs **Event Hubs** (yüksek hacimli stream, Kafka uyumlu) vs **Event Grid** (reaktif olay yönlendirme) vs **Storage Queue** (basit, ucuz) ⭐
-- Hangisi ne zaman — karar tablosu ve maliyet
+> Servislerin **mekaniği** M12'de öğrenildi (Service Bus → M12.3, Event Grid → M15.5); bu konu bir **seçim** konusudur.
+- **Service Bus** (kurumsal mesajlaşma, transaction, session → M12.3) vs **Event Hubs** (yüksek hacimli stream, Kafka uyumlu) vs **Event Grid** (reaktif olay yönlendirme → M15.5) vs **Storage Queue** (basit, ucuz) ⭐
+- Hangisi ne zaman — karar tablosu, teslim garantileri ve maliyet
+- Yanlış seçimin bedeli: Event Grid'i kuyruk gibi, Service Bus'ı stream gibi kullanmaya çalışmak
 - 🛠 **Kod:** Aynı olayı dört servise gönderen ve tüketim modellerini karşılaştıran demo.
 
 #### M15.7 Application Insights & Azure Monitor · `07-monitoring`
@@ -2867,6 +2880,7 @@ Her konunun `README.md`'si şu şablonu izler:
   - Aggregate tasarım kuralları: küçük tut, diğer aggregate'lere ID ile referans ver, bir transaction'da bir aggregate
   - Domain Event, Domain Service, Factory, Repository (DDD anlamında)
 - Anemic vs rich domain model; invariant'ların domain'de korunması
+- **Domain Model mi Transaction Script mi** ⭐ (→ M11.3) — DDD'nin bedeli ve ne zaman ödenmeye değer; **strategic DDD (bounded context, ubiquitous language) tactical DDD olmadan da değerlidir**
 - Domain event → integration event dönüşümü
 - EF Core ile DDD: private setter, backing field, owned/complex type, value object eşleme
 - Event Storming ile modelleme
