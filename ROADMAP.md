@@ -157,7 +157,7 @@ Her konunun `README.md`'si şu şablonu izler:
 | [M11](#m11-mimari--tasarım-temelleri) | Mimari & Tasarım Temelleri | SOLID, **coupling/cohesion**, pattern'ler, Clean/Hexagonal, vertical slice, CQRS |
 | [M12](#m12-mesajlaşma--message-brokerlar) | Mesajlaşma & Message Broker'lar | RabbitMQ, Service Bus, Kafka'ya giriş, kütüphaneler |
 | [M13](#m13-observability) | Observability | Structured logging, metrics, OpenTelemetry tracing |
-| [M14](#m14-devops-cicd-container--kubernetes-temelleri) | DevOps | CI/CD, container ileri, Kubernetes temeli, Aspire |
+| [M14](#m14-devops-cicd-container--kubernetes-temelleri) | DevOps | CI/CD, container ileri (BuildKit, sertleştirme), **Kubernetes temelleri + workload/storage**, Aspire |
 | [M15](#m15-azure-ile-uygulama-geliştirme) | Azure ile Uygulama Geliştirme | **AI-200 kapsamı:** Managed Identity, ACR & container teşhisi, compute, veri servisleri & vector search, Event Grid, izleme |
 | [M16](#m16-ai-engineering-uygulama-geliştirme) | AI Engineering: Uygulama Geliştirme | M.E.AI, RAG, vector search, **MCP**, Foundry |
 | [🏁](#mid-capstone-e-ticaret-katalog--sipariş-platformu) | **Mid Capstone** | E-ticaret katalog & sipariş platformu |
@@ -994,18 +994,27 @@ Her konunun `README.md`'si şu şablonu izler:
 - Container ≠ VM — izolasyon modeli farkı
 - Image, container, registry; layer ve layer cache
 - `docker run` bayrakları (`-p`, `-v`, `-e`, `--name`, `--rm`, `-d`); `ps`, `logs`, `exec`, `inspect`, `stop`, `rm`
-- Volume vs bind mount; bridge network ve container'lar arası iletişim
-- Registry'ler: Docker Hub, GitHub Container Registry, Azure Container Registry
-- 🛠 **Kod:** PostgreSQL, Redis ve MongoDB'yi `docker run` ile ayağa kaldırıp volume ile veri kalıcılığını test eden script'ler.
+- Volume vs bind mount; named volume'un yaşam döngüsü
+- **Ağ modları:** `bridge` (varsayılan, container'lar arası DNS), `host`, `none`; kullanıcı tanımlı network neden gerekli
+- Registry'ler: Docker Hub (ve **anonim pull rate limit**'i), GitHub Container Registry, Azure Container Registry (→ M15.2)
+- Disk yönetimi: `docker system df` / `prune` — dangling image ve volume'ların diski doldurması
+- 🛠 **Kod:** PostgreSQL, Redis ve MongoDB'yi `docker run` ile ayağa kaldırıp volume ile veri kalıcılığını test eden script'ler; aynı iki container'ı önce varsayılan bridge'de sonra kullanıcı tanımlı network'te konuşturup DNS farkını gözlemleme.
 
-#### J12.2 .NET için Dockerfile · `02-dockerfile-dotnet`
-- Base image: `sdk` (build) vs `aspnet`/`runtime` (çalıştırma)
+#### J12.2 .NET için Dockerfile · `02-dockerfile-dotnet` ⭐
+- Base image: `sdk` (build) vs `aspnet`/`runtime` (çalıştırma); base image'ı **digest ile sabitleme** (tekrarlanabilir build)
 - **Multi-stage build** ⭐ — SDK'yı final image'a taşımamak
-- Layer cache: önce `.csproj` kopyala → `restore` → sonra kaynak kodu
-- `.dockerignore` (`bin/`, `obj/`, `.git`)
+- Layer cache: önce `.csproj` kopyala → `restore` → sonra kaynak kodu (BuildKit cache mount ile daha iyisi → M14.2)
+- **`ENTRYPOINT` vs `CMD`** ⭐ — en sık sorulan Dockerfile sorusu
+  - `ENTRYPOINT` sabit çalıştırılabilir, `CMD` **üzerine yazılabilen** varsayılan argüman; `docker run <image> <arg>` CMD'yi ezer, ENTRYPOINT'i ezmez (`--entrypoint` gerekir)
+  - Tipik kalıp: `ENTRYPOINT ["dotnet","App.dll"]` + `CMD` ile varsayılan argümanlar
+  - **Exec form (`["..."]`) vs shell form** ⭐ — shell form'da uygulama `sh -c`'nin alt süreci olur, **SIGTERM uygulamaya ulaşmaz** → graceful shutdown çalışmaz (Kubernetes'te asıl sorun → M14.4)
+- **`COPY` vs `ADD`** ⭐ — varsayılan `COPY`; `ADD` URL indirir ve tar arşivini otomatik açar, bu yüzden build'i **tekrarlanamaz** ve sürprizli hale getirir
+- **`HEALTHCHECK`** instruction — süreç ayakta mı değil, **uygulama çalışıyor mu** sorusunu cevaplar; art arda sıfır dışı çıkış kodu container'ı `unhealthy` yapar; Dockerfile `HEALTHCHECK` vs Compose `healthcheck` (→ J12.3) vs Kubernetes probe (→ M14.4) ilişkisi
+- `EXPOSE`'un gerçekte ne yaptığı ⭐ — **port açmaz**, yalnızca dokümantasyondur; yayınlamak için `-p` gerekir
+- `WORKDIR`, `ARG` vs `ENV`; **secret'ı `ENV`/layer'a gömmemek** (build secret → M14.2)
 - Non-root kullanıcı (`USER $APP_UID`)
 - `dotnet publish /t:PublishContainer` ile Dockerfile'sız image
-- 🛠 **Kod:** Todo API için tek aşamalı (kötü) ve multi-stage (iyi) Dockerfile; image boyutu ve build süresi karşılaştırması.
+- 🛠 **Kod:** Todo API için tek aşamalı (kötü) ve multi-stage (iyi) Dockerfile; image boyutu ve build süresi karşılaştırması; aynı image'ı shell form ve exec form `ENTRYPOINT` ile çalıştırıp `docker stop` sonrası uygulamanın SIGTERM alıp almadığını loglardan kanıtlama.
 
 #### J12.3 Docker Compose ile Geliştirme Ortamı · `03-docker-compose`
 - Çok servisli tanım: API + PostgreSQL + Redis + pgAdmin
@@ -1015,7 +1024,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Hedef: "tek komutla çalışan repo"
 - 🛠 **Kod:** `docker compose up` ile API + DB + cache'in birlikte kalktığı, sağlık kontrollü geliştirme ortamı.
 
-🎯 **Mülakat:** "Container ile VM farkı?" · "Multi-stage build neden?" · "Container içindeki uygulama `localhost:5432`'ye neden bağlanamaz?" · "Volume ne işe yarar?"
+🎯 **Mülakat:** "Container ile VM farkı?" · "Multi-stage build neden?" · "`ENTRYPOINT` ile `CMD` farkı?" ⭐ · "`COPY` ile `ADD` farkı, hangisini kullanırsın?" ⭐ · "Shell form `ENTRYPOINT` neden graceful shutdown'ı bozar?" · "`EXPOSE` portu açar mı?" · "Container içindeki uygulama `localhost:5432`'ye neden bağlanamaz?" · "Volume ne işe yarar?" · "Image layer cache'ini bozmamak için Dockerfile'ı nasıl sıralarsın?"
 
 ---
 
@@ -2323,8 +2332,8 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### M14. DevOps: CI/CD, Container & Kubernetes Temelleri
 
-> 📁 `02-mid/14-devops/` · ⏱ ~2 hafta · Önkoşul: J12, J13.6
-> İleri Kubernetes, IaC ve platform mühendisliği → S8.
+> 📁 `02-mid/14-devops/` · ⏱ ~3 hafta · Önkoşul: J12, J13.6
+> Docker temelleri J12'de; burada **container'ı production'a hazırlamak** (BuildKit, image sertleştirme) ve **Kubernetes'i çalıştırmak** var. İleri Kubernetes (HPA/KEDA, Helm, GitOps, NetworkPolicy), IaC ve platform mühendisliği → S8.
 
 #### M14.1 CI/CD Pipeline'ları · `01-ci-cd`
 - Aşamalar: restore → build → test → analiz → publish → containerize → deploy
@@ -2341,23 +2350,73 @@ Her konunun `README.md`'si şu şablonu izler:
 #### M14.2 Container Derinlemesine · `02-containers-advanced`
 - Image varyantları: Debian, Alpine, **chiseled** (Ubuntu, distroless benzeri), Native AOT image
 - Image boyutu ve saldırı yüzeyi; **image tarama** (Trivy, Defender for Containers), SBOM
-- Multi-arch build (amd64/arm64)
+- **BuildKit & `docker buildx`** ⭐ — modern varsayılan builder; aşamaları paralel yürütme, atlanabilen kullanılmayan aşamalar
+  - **Cache mount:** `RUN --mount=type=cache,target=/root/.nuget/packages dotnet restore` ile NuGet paketlerini build'ler arasında saklamak; `# syntax=docker/dockerfile:1` satırı zorunlu; çok projeli solution'da kazanç büyük
+  - **Tuzak:** cache mount **yerel builder'da** yaşar, final image'a girmez → **hosted CI runner'da her çalıştırmada kaybolur**; GitHub Actions cache backend'i ile `--cache-to`/`--cache-from` export/import gerekir
+  - Windows container'larda `RUN --mount` desteklenmez
+  - **Build secret:** `--mount=type=secret` ile özel NuGet feed PAT'ini layer'a gömmeden kullanma (`ARG`/`ENV` ile geçirmek image geçmişine sızdırır)
+- Multi-arch build (`buildx` ile amd64/arm64)
 - Container'da .NET: CPU/bellek limitlerine duyarlılık, GC ayarları (`DOTNET_GCHeapHardLimit`), DATAS
 - `dotnet publish /t:PublishContainer` ileri kullanım
 - Rootless çalışma, read-only filesystem
 - 🛠 **Kod:** Aynı API'nin dört image varyantı: boyut, CVE sayısı (Trivy), başlangıç süresi ve bellek tablosu.
 
-#### M14.3 Kubernetes Temelleri · `03-kubernetes-basics`
-- Mimari: control plane, node, kubelet
-- Temel nesneler: Pod, ReplicaSet, **Deployment**, Service, Ingress (ve Gateway API'ye giriş)
-- ConfigMap ve Secret ile konfigürasyon
-- **Probe'lar:** liveness, readiness, startup ⭐ — ASP.NET Core health check eşlemesi
-- Resource request/limit, QoS sınıfı, **OOMKilled**
-- **Graceful shutdown:** SIGTERM, `terminationGracePeriodSeconds`, preStop hook
-- `kubectl` temelleri; yerel cluster (kind, k3d, Docker Desktop)
-- 🛠 **Kod:** Capstone API'sinin Deployment + Service + Ingress + ConfigMap + Secret manifest'leri; kind üzerinde rolling update ve probe davranışı gözlemi.
+#### M14.3 Kubernetes Temelleri · `03-kubernetes-basics` ⭐
+- **Mimari:** control plane (API server, scheduler, controller manager, etcd), node, kubelet, kube-proxy
+- **Declarative model:** istenen durum (desired state) vs mevcut durum, reconciliation loop; `kubectl apply` ve idempotency
+- **Namespace** — mantıksal izolasyon, ortam/takım ayrımı; `ResourceQuota` ve `LimitRange` ile kota
+- **Label, selector & annotation** ⭐ — Service'in Pod'ları nasıl bulduğu label selector ile olur; annotation metadata içindir, seçim için kullanılmaz
+- **Pod** — en küçük dağıtım birimi, çok container'lı Pod ne zaman anlamlı
+- **ReplicaSet → Deployment** — rolling update, `maxSurge`/`maxUnavailable`, `kubectl rollout status` / `undo`
+- **Service tipleri** ⭐
+  - **ClusterIP** (varsayılan, cluster içi)
+  - **NodePort** (her node'da sabit port)
+  - **LoadBalancer** (cloud yük dengeleyici)
+  - **ExternalName** (DNS CNAME)
+  - **Headless** (`clusterIP: None`) — Pod IP'lerini doğrudan döner, StatefulSet'in stabil DNS'inin temeli (→ M14.4)
+- **Ingress** ve **Gateway API**'ye giriş (derinlemesine → S8.1)
+- **ConfigMap ve Secret** ile konfigürasyon; Secret'ın varsayılan olarak yalnızca base64 olduğu (şifreleme değil) ⭐ — gerçek secret yönetimi → S8.1
+- `kubectl` temelleri ve **teşhis**: `get`, `describe`, `logs` (+ `--previous`), `get events`, `port-forward`, `exec`
+- Yerel cluster: kind, k3d, Docker Desktop; sürüm penceresi — proje aynı anda yalnızca **son üç minor sürümü** destekler (2026'da 1.35-1.37 hattı)
+- 🛠 **Kod:** Capstone API'sinin Deployment + Service + Ingress + ConfigMap + Secret manifest'leri; kind üzerinde rolling update ve `rollout undo`; Service tiplerini tek tek deneyip hangisinin nereden erişilebildiğini tabloya dökme.
 
-#### M14.4 Aspire ile Orkestrasyon · `04-aspire`
+#### M14.4 Kubernetes Workload'ları, Storage & Yaşam Döngüsü · `04-kubernetes-workloads` ⭐
+> Deployment her şey değildir: durumlu servisler, batch işler ve node başına ajanlar farklı nesneler ister. Mülakatta "StatefulSet ile Deployment farkı?" klasik sorudur.
+
+- **Workload nesneleri — hangisi ne zaman** ⭐
+
+  | Nesne | Ne yapar | Tipik kullanım |
+  |-------|----------|----------------|
+  | **Deployment** | Stateless, birbirinin yerine geçebilen replikalar | Web API, worker |
+  | **StatefulSet** | Sıralı ve **kalıcı kimlik** (`web-0`, `web-1`), Pod başına kendi PVC'si, headless Service ile stabil DNS | PostgreSQL, Kafka, Redis |
+  | **DaemonSet** | Her node'da (veya seçili node'larda) bir Pod | Log toplayıcı, metrik ajanı, CNI |
+  | **Job** | Pod'u **tamamlanana kadar** çalıştırır, hata olursa yeniden dener | Migration, batch hesaplama |
+  | **CronJob** | Zamanlanmış Job üretir (cron sözdizimi) | Gece raporu, yedekleme |
+
+  - StatefulSet'in `volumeClaimTemplates`'i ile her Pod'un kendi kalıcı diskini alması ve yeniden zamanlamada korunması
+  - Job'da `completions`/`parallelism`/`backoffLimit`; CronJob'da `concurrencyPolicy` ve kaçırılan çalıştırma
+  - **EF Core migration'ı Kubernetes'te nasıl çalıştırmalı:** uygulama startup'ında mı, **Job/init container** ile mi (çoklu replikada yarış riski → M6.6)
+- **Kalıcı depolama** ⭐
+  - **PersistentVolume (PV)** = cluster'daki depolama, **PersistentVolumeClaim (PVC)** = kullanıcının boyut ve erişim modu talebi
+  - **StorageClass** ile **dinamik provisioning** (cloud disk otomatik oluşsun)
+  - **Access mode'lar:** `ReadWriteOnce` (tek node), `ReadOnlyMany`, `ReadWriteMany` — çoğu cloud blok diski yalnızca RWO verir, bu yüzden "iki Pod aynı diske yazsın" beklentisi çöker ⭐
+  - **Reclaim policy:** `Retain` (veri kalır, elle temizlenir) vs `Delete` (PVC silinince disk de gider) — production'da yanlış seçimin bedeli
+  - `emptyDir`, `configMap`/`secret` volume; ephemeral vs kalıcı
+- **Pod yaşam döngüsü & container türleri**
+  - **Init container** — ana container'lardan önce sırayla çalışır ve biter (migration, bekleme)
+  - **Sidecar container** — K8s **1.33'te stable**; `initContainers` içinde `restartPolicy: Always` ile tanımlanır, ana container'larla birlikte yaşar ve **onlar bittikten sonra** SIGTERM alır; Pod seviyesindeki `restartPolicy`'yi yok sayar
+  - **Probe'lar:** liveness, readiness, startup ⭐ — ASP.NET Core health check eşlemesi (`/health/live`, `/health/ready` → M3.7); yanlış liveness probe'un sağlıklı Pod'u sürekli öldürmesi
+  - **Graceful shutdown:** SIGTERM → `terminationGracePeriodSeconds` → SIGKILL; `preStop` hook; exec form `ENTRYPOINT` zorunluluğu (→ J12.2) ve `IHostApplicationLifetime` (→ M3.1)
+  - Restart policy ve `CrashLoopBackOff`'un backoff mantığı
+- **Resource yönetimi & zamanlama**
+  - Resource `requests`/`limits`, **QoS sınıfları** (Guaranteed / Burstable / BestEffort), **OOMKilled** ⭐; CPU throttling
+  - .NET'in container limitlerine duyarlılığı (→ M14.2)
+  - Zamanlamaya giriş: `nodeSelector`, **taint & toleration**, node/pod **affinity & anti-affinity**, topology spread (derinlemesine → S8.1)
+  - **PodDisruptionBudget** — node bakımında kaç replikanın aynı anda düşebileceği
+- **CRD & Operator** kavramına giriş — Kubernetes API'sini kendi tipinle genişletmek; operator pattern'in "reconciliation loop" fikri (→ S8.6)
+- 🛠 **Kod:** PostgreSQL'i StatefulSet + PVC ile ayağa kaldırıp Pod'u silip verinin kaldığını kanıtlama; EF Core migration'ını Job olarak çalıştırıp uygulama Deployment'ının ona `initContainer` ile beklemesi; bilerek yanlış ayarlanmış liveness probe ile sağlıklı Pod'un öldürülmesini gözlemleyip düzeltme; bellek limiti düşük bir Pod'u `OOMKilled` yapıp `describe` çıktısından teşhis; `concurrencyPolicy: Forbid` olan bir CronJob ile üst üste binen çalıştırmaları engelleme.
+
+#### M14.5 Aspire ile Orkestrasyon · `05-aspire`
 - **Aspire** (13 sürümüyle ".NET" öneki kalktı, polyglot oldu — Python, JavaScript/TypeScript da birinci sınıf)
 - **AppHost:** kaynak modeli (PostgreSQL, Redis, RabbitMQ, Kafka, Keycloak, Ollama container'larını kodla tanımlama), referanslar ve servis keşfi
 - **Service defaults:** OpenTelemetry, health check, resilience, service discovery hazır
@@ -2368,7 +2427,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Docker Compose'a göre avantaj/dezavantaj
 - 🛠 **Kod:** Mid capstone'un AppHost'u — tüm bağımlılıklar tek `aspire run` ile; `azd up` ile Container Apps'e deploy.
 
-🎯 **Mülakat:** "CI ile CD farkı?" · "Pipeline'da secret'ları nasıl yönetirsin?" · "Liveness ile readiness probe farkı?" · "Pod neden OOMKilled olur?" · "Kubernetes'te graceful shutdown nasıl sağlanır?" · "Aspire ne çözüyor, Docker Compose'dan farkı ne?"
+🎯 **Mülakat:** "CI ile CD farkı?" · "Pipeline'da secret'ları nasıl yönetirsin?" · "BuildKit cache mount CI'da neden işe yaramaz?" · "Deployment ile StatefulSet farkı, hangisini ne zaman?" ⭐ · "DaemonSet ne için kullanılır?" · "Job ile CronJob farkı?" · "PV, PVC ve StorageClass ilişkisi nedir?" ⭐ · "İki Pod aynı diske yazabilir mi?" (access mode) · "Reclaim policy `Delete` seçmenin riski ne?" · "Liveness ile readiness probe farkı?" ⭐ · "Yanlış liveness probe ne yapar?" · "Init container ile sidecar farkı?" · "Pod neden OOMKilled olur?" · "Kubernetes'te graceful shutdown nasıl sağlanır?" ⭐ · "Service tiplerini say, headless Service ne işe yarar?" ⭐ · "Kubernetes Secret gerçekten güvenli mi?" · "Aspire ne çözüyor, Docker Compose'dan farkı ne?"
 
 ---
 
@@ -3904,7 +3963,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | 25-27 | **J13 Cloud & Azure** (AZ-900 kapsamı) + J14 AI | D11 |
 | 28-30 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
 
-### 🟡 Mid (~46 hafta)
+### 🟡 Mid (~47 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
@@ -3921,10 +3980,10 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | 28-30 | M11 Mimari & Tasarım | D9 |
 | 31-32 | M12 Mesajlaşma (**RabbitMQ** derinlemesine) | D11 — Medium |
 | 33-34 | M13 Observability | D11 |
-| 35-36 | M14 DevOps | D11 |
-| 37-40 | **M15 Azure** (AI-200 kapsamı) | D11 |
-| 41-43 | M16 AI Engineering | D11 |
-| 44-46 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
+| 35-37 | **M14 DevOps** (container ileri + Kubernetes) | D11 |
+| 38-41 | **M15 Azure** (AI-200 kapsamı) | D11 |
+| 42-44 | M16 AI Engineering | D11 |
+| 45-47 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
 
 ### 🔴 Senior (~35 hafta)
 
@@ -3967,7 +4026,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | ASP.NET Core 10 | Varsayılan OpenAPI 3.1, Minimal API yerleşik validation, Server-Sent Events, Identity'de passkey | J7, J11.1, M5.7 |
 | EF Core 10 | Named query filters, complex type → JSON, SQL Server vector search, `LeftJoin`/`RightJoin` | M7, M16.4 |
 | Lisans değişiklikleri | **MediatR** (v13+), **AutoMapper** (v15+), **MassTransit** (v9), **FluentAssertions** (v8) ticari lisansa geçti → alternatifleri bilmek gerekiyor | J10.1, M7.4, M11.5, M12.5 |
-| Aspire | **Aspire 13:** ".NET" öneki kalktı, polyglot (Python, JS/TS AppHost), AI agent'lar için MCP desteği | M14.4 |
+| Aspire | **Aspire 13:** ".NET" öneki kalktı, polyglot (Python, JS/TS AppHost), AI agent'lar için MCP desteği | M14.5 |
 | .NET'te AI | **Microsoft Agent Framework 1.0** (Nisan 2026) — Semantic Kernel + AutoGen birleşimi; SK destekte, AutoGen bakım modunda | S9.1 |
 | AI protokolleri | **MCP C# SDK** 1.x kararlı; **A2A** protokolü Linux Foundation altında | M16.6, S9.3 |
 | Azure AI | Azure AI Foundry → **Microsoft Foundry** (Ocak 2026); Anthropic Claude modelleri katalogda; Foundry Agent Service'te hosted agent'lar | M16.7, S9.7 |
