@@ -1,0 +1,36 @@
+{
+  // VS Code + C# Dev Kit (veya C# eklentisi) için örnek debug yapılandırmaları. F5 ile seçip başlatın.
+  // Rider / Visual Studio'da bu dosya gerekmez: projeyi "Startup Project" yapıp Debug (F5) yeterlidir.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debugger egzersizi (numara sorar)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build debugging-exercises",
+      "program": "${workspaceFolder}/debugging-exercises/bin/Debug/net10.0/DebuggingExercises.dll",
+      "args": ["${input:exerciseNumber}"],
+      "cwd": "${workspaceFolder}/debugging-exercises",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Analyzers & nullable demo",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build analyzers-nullable",
+      "program": "${workspaceFolder}/analyzers-nullable/bin/Debug/net10.0/AnalyzersNullable.dll",
+      "cwd": "${workspaceFolder}/analyzers-nullable",
+      "console": "integratedTerminal"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "exerciseNumber",
+      "type": "pickString",
+      "description": "Hangi egzersiz?",
+      "options": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+      "default": "1"
+    }
+  ]
+}

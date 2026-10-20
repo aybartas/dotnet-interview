@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- (b) Klasik console PROJESİ. Ortak ayarlar (net10.0, Nullable, ImplicitUsings) kökteki Directory.Build.props'tan gelir;
+       burada sadece bu projeye özel olanlar yazılır. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Junior.DevFoundations.DotnetEcosystemCli.ConsoleApp</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Bilerek hatalı programlar. Hatalar DERLEME hatası değil, ÇALIŞMA ZAMANI/MANTIK hatalarıdır:
+       derleyici sessizdir, debugger ile bulmanız beklenir. Çözümler: ../../SOLUTIONS.md (önce kendiniz deneyin!) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Junior.DevFoundations.IdeDebugging.Exercises</RootNamespace>
+    <!-- Debugger'ın değişkenleri doğru göstermesi için optimizasyon KAPALI olmalı (Debug yapılandırması varsayılanı).
+         Egzersiz 9 Release ile farkı gösterir (dotnet run -c Release, sonra 9 numaralı egzersiz). -->
+  </PropertyGroup>
+
+</Project>

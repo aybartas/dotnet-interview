@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Nullable referans tipleri + Roslyn analyzer + .editorconfig deneyi.
+       Bu proje BİLEREK uyarı üretir:  dotnet build   → uyarılar listelenir (derleme başarılı)
+                                        dotnet build -p:TreatWarningsAsErrors=true → derleme BAŞARISIZ
+                                        dotnet build -p:WarningsAsErrors=nullable  → yalnızca null uyarıları hata (pratik orta yol) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Junior.DevFoundations.IdeDebugging.AnalyzersNullable</RootNamespace>
+
+    <!-- .NET analyzer'ları (CA kuralları) SDK ile gelir. AnalysisMode: Default < Recommended < All (daha çok kural açar, gürültü artar).
+         Deneyin: -p:AnalysisMode=Recommended  →  CA1805, CA1720... gibi ek uyarılar. Kural bazında ince ayar .editorconfig'dedir. -->
+    <AnalysisMode>Default</AnalysisMode>
+
+    <!-- IDE0xxx stil kuralları varsayılanda sadece IDE'de görünür; bu ayar onları DERLEMEDE de çalıştırır
+         (CI'da stil ihlalini yakalamak için şarttır). -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- IDE0005 (kullanılmayan using) derlemede yalnızca XML doc üretimi açıkken raporlanır (bilinen bir kısıt).
+         CS1591 (public üyede XML yorum yok) gürültüsünü kapatıyoruz. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+</Project>
