@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Junior.CSharpFundamentals.TypeSystemMemory.ConstEmbedding.Lib</RootNamespace>
+  </PropertyGroup>
+
+</Project>
