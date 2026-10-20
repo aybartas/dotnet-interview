@@ -124,8 +124,8 @@ Her konunun `README.md`'si şu şablonu izler:
 
 | ID | Modül | Odak |
 |----|-------|------|
-| [J1](#j1-geliştirici-temelleri) | Geliştirici Temelleri | Git, HTTP/DNS/TLS, .NET CLI & SDK, debugging |
-| [J2](#j2-c-temelleri) | C# Temelleri | Program anatomisi, tip sistemi, OOP, exception, günlük modern C# |
+| [J1](#j1-geliştirici-temelleri) | Geliştirici Temelleri | Git, **ağ temelleri (OSI, TCP/UDP)**, HTTP/DNS/TLS, .NET CLI & SDK, debugging |
+| [J2](#j2-c-temelleri) | C# Temelleri | Program anatomisi, tip sistemi, **OOP ilkeleri & nesne ilişkileri**, **property/constructor/eşitlik/kopyalama**, exception, günlük modern C# |
 | [J3](#j3-collections-delegates--linq) | Collections, Delegates & LINQ | Koleksiyonlar, generics, lambda, LINQ temel |
 | [J4](#j4-async-programlamaya-giriş) | Async Programlamaya Giriş | Thread/Task kavramı, `async`/`await`, cancellation |
 | [J5](#j5-build--run-temelleri) | Build & Run Temelleri | C# → IL → native, `bin`/`obj`, `run` vs `publish` |
@@ -136,7 +136,7 @@ Her konunun `README.md`'si şu şablonu izler:
 | [J10](#j10-test-temelleri) | Test Temelleri | xUnit v3, mocking, test edilebilir kod, ilk integration test |
 | [J11](#j11-güvenlik--kimlik-temelleri) | Güvenlik & Kimlik Temelleri | AuthN/AuthZ, JWT, OAuth/OIDC'ye giriş, temel web açıkları |
 | [J12](#j12-docker-temelleri) | Docker Temelleri | Container, Dockerfile, Compose |
-| [J13](#j13-cloud--azurea-giriş) | Cloud & Azure'a Giriş | Cloud kavramları, App Service, Blob, ilk CI |
+| [J13](#j13-cloud--azurea-giriş) | Cloud & Azure'a Giriş | **AZ-900 kapsamı:** cloud kavramları, Azure mimarisi & servisleri, yönetişim/maliyet/monitoring + App Service, Blob, ilk CI |
 | [J14](#j14-ai-ile-çalışmaya-giriş) | AI ile Çalışmaya Giriş | LLM temelleri, AI asistanı kullanımı, ilk `IChatClient` |
 | [🏁](#junior-capstone-görev-yönetimi-apisi) | **Junior Capstone** | Görev yönetimi API'si — uçtan uca |
 
@@ -148,17 +148,17 @@ Her konunun `README.md`'si şu şablonu izler:
 | [M2](#m2-build-runtime--deployment) | Build, Runtime & Deployment | Roslyn, IL, MSBuild, apphost, deployment modelleri |
 | [M3](#m3-aspnet-core-derinlemesine) | ASP.NET Core Derinlemesine | Host, Options, DI, middleware, filter, background service |
 | [M4](#m4-concurrency--async-derinlemesine) | Concurrency & Async Derinlemesine | ThreadPool, TPL, async internals, senkronizasyon, Channels |
-| [M5](#m5-api-tasarımı--protokoller) | API Tasarımı & Protokoller | REST ileri, versioning, gRPC, GraphQL, SignalR, resilience |
+| [M5](#m5-api-tasarımı--protokoller) | API Tasarımı & Protokoller | REST ileri, versioning, gRPC, GraphQL, SignalR, resilience, **HTTP/2-3 & transport** |
 | [M6](#m6-sql--postgresql-derinlemesine) | SQL & PostgreSQL Derinlemesine | İleri SQL, index/plan, isolation/locking, PostgreSQL, migration |
 | [M7](#m7-ef-core-derinlemesine--veri-erişim-desenleri) | EF Core Derinlemesine & Veri Erişim Desenleri | EF performansı, ileri modelleme, Dapper, mapping |
 | [M8](#m8-nosql--caching) | NoSQL & Caching | NoSQL modelleme, MongoDB, Redis, caching, arama |
 | [M9](#m9-kimlik--erişim-yönetimi-oauth-oidc-keycloak) | Kimlik & Erişim Yönetimi | OAuth 2.1, OIDC, **Keycloak**, policy authz, BFF |
 | [M10](#m10-test-stratejisi) | Test Stratejisi | Integration, Testcontainers, snapshot/contract, E2E |
-| [M11](#m11-mimari--tasarım-temelleri) | Mimari & Tasarım Temelleri | SOLID, pattern'ler, Clean/Hexagonal, vertical slice, CQRS |
+| [M11](#m11-mimari--tasarım-temelleri) | Mimari & Tasarım Temelleri | SOLID, **coupling/cohesion**, pattern'ler, Clean/Hexagonal, vertical slice, CQRS |
 | [M12](#m12-mesajlaşma--message-brokerlar) | Mesajlaşma & Message Broker'lar | RabbitMQ, Service Bus, Kafka'ya giriş, kütüphaneler |
 | [M13](#m13-observability) | Observability | Structured logging, metrics, OpenTelemetry tracing |
-| [M14](#m14-devops-cicd-container--kubernetes-temelleri) | DevOps | CI/CD, container ileri, Kubernetes temeli, Aspire |
-| [M15](#m15-azure-ile-uygulama-geliştirme) | Azure ile Uygulama Geliştirme | Managed Identity, compute, veri servisleri, izleme |
+| [M14](#m14-devops-cicd-container--kubernetes-temelleri) | DevOps | CI/CD, container ileri (BuildKit, sertleştirme), **Kubernetes temelleri + workload/storage**, Aspire |
+| [M15](#m15-azure-ile-uygulama-geliştirme) | Azure ile Uygulama Geliştirme | **AI-200 kapsamı:** Managed Identity, ACR & container teşhisi, compute, veri servisleri & vector search, Event Grid, izleme |
 | [M16](#m16-ai-engineering-uygulama-geliştirme) | AI Engineering: Uygulama Geliştirme | M.E.AI, RAG, vector search, **MCP**, Foundry |
 | [🏁](#mid-capstone-e-ticaret-katalog--sipariş-platformu) | **Mid Capstone** | E-ticaret katalog & sipariş platformu |
 
@@ -210,15 +210,15 @@ Her konunun `README.md`'si şu şablonu izler:
 ## Seviye 1 — Junior
 
 > **Hedef:** Çalışan, test edilmiş, veritabanına bağlı bir CRUD API'yi tek başına yazmak, container'a koymak ve buluta deploy etmek.
-> **Süre:** ~6 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `01-junior/`
+> **Süre:** ~7 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `01-junior/`
 > **Bu seviyede "neden"i bilmek yeterli; "nasıl çalışıyor"un derin kısmı Mid'de gelir.**
 
 ---
 
 ### J1. Geliştirici Temelleri
 
-> 📁 `01-junior/01-dev-foundations/` · ⏱ ~1 hafta · Önkoşul: —
-> Kod yazmadan önceki zemin: versiyon kontrolü, web'in nasıl çalıştığı ve .NET araç zinciri.
+> 📁 `01-junior/01-dev-foundations/` · ⏱ ~2 hafta · Önkoşul: —
+> Kod yazmadan önceki zemin: versiyon kontrolü, ağın ve web'in nasıl çalıştığı ve .NET araç zinciri.
 
 #### J1.1 Git & Versiyon Kontrolü · `01-git`
 - Commit, branch, `merge` vs `rebase` ⭐, fast-forward vs merge commit
@@ -230,8 +230,40 @@ Her konunun `README.md`'si şu şablonu izler:
 - .NET için `.gitignore` (`bin/`, `obj/`, `*.user`, `.vs/`)
 - 🛠 **Kod:** Script ile oluşturulan örnek repo üzerinde merge/rebase conflict senaryosu + `git bisect` ile hatayı getiren commit'i bulma alıştırması.
 
-#### J1.2 Web Nasıl Çalışır: HTTP, DNS, TLS · `02-how-the-web-works`
-- "Tarayıcıya URL yazınca ne olur?" ⭐ — URL anatomisi → DNS çözümleme → TCP bağlantısı → TLS handshake → HTTP isteği → yanıt
+#### J1.2 Ağ Temelleri: OSI, TCP/UDP & Socket · `02-network-fundamentals` ⭐
+> HTTP'nin altında ne olduğunu bilmeden "neden bu istek yavaş?" veya "socket exhaustion nedir?" sorularına cevap verilemez. Backend mülakatlarının klasik ısınma turu.
+
+- **Katmanlı model:** OSI 7 katman (Physical → Data Link → Network → Transport → Session → Presentation → Application) ve pratikte kullanılan **TCP/IP 4 katman** modeliyle eşlemesi
+  - Backend geliştiricinin gerçekten ilgilendiği katmanlar: **L3 (IP), L4 (TCP/UDP), L7 (HTTP)** — yedi katmanı ezberlemek değil, hangi sorunun hangi katmanda çözüldüğünü bilmek önemli
+  - Encapsulation: her katmanın üst katmanın verisini kendi header'ıyla sarması
+- **L3 — IP:** IPv4 vs IPv6, subnet/CIDR (`/24`), private IP aralıkları (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`), loopback (`127.0.0.1`), NAT, routing ve `traceroute`'un ne gösterdiği
+- **Port kavramı:** well-known portlar (80, 443, 5432, 6379, 5672), kayıtlı portlar, **ephemeral port aralığı**; bir portu neden iki process dinleyemez
+- **L4 — TCP vs UDP** ⭐
+
+  | | TCP | UDP |
+  |---|-----|-----|
+  | Bağlantı | Connection-oriented (handshake) | Connectionless |
+  | Güvenilirlik | Garantili teslim, sıra korunur | Garanti yok, sıra yok |
+  | Hız / overhead | Daha yavaş, header 20+ byte | Hızlı, header 8 byte |
+  | Akış kontrolü | Flow + congestion control | Yok |
+  | Kullanım | HTTP/1.1-2, SQL, SMTP, SSH | DNS, video/ses, oyun, **QUIC → HTTP/3** |
+
+- **TCP three-way handshake** ⭐: `SYN` → `SYN-ACK` → `ACK`; bağlantı kurmanın **1 RTT** maliyeti (TLS ile toplam maliyet → J1.3)
+- Bağlantı kapatma: `FIN`/`ACK` dörtlüsü, **`TIME_WAIT`** durumu ve neden ~2×MSL bekler
+- TCP güvenilirlik mekanizmaları (kavramsal): sequence number, ACK, retransmission, **sliding window**, flow control (receive window), **congestion control** (slow start, congestion avoidance)
+- Head-of-line blocking'in TCP seviyesindeki kökeni — HTTP/2 ve HTTP/3'ün neden farklı davrandığının temeli (→ M5.11)
+- **Socket:** endpoint = IP + port + protokol; server akışı (`bind` → `listen` → `accept`) vs client akışı (`connect`)
+  - .NET karşılıkları: `Socket`, `TcpListener`/`TcpClient`, `UdpClient`; `NetworkStream`
+  - **Ephemeral port exhaustion** ⭐ — çok sayıda kısa ömürlü bağlantı + `TIME_WAIT` birikmesi; .NET'teki `HttpClient` socket exhaustion probleminin ağ katmanındaki sebebi budur (→ J7.5, M5.9)
+  - Connection reuse / keep-alive neden bu kadar önemli
+- Performans kavramları: **latency vs bandwidth vs throughput**, RTT, MTU ve paket parçalanması, bufferbloat (kısa not)
+- **L4 vs L7 load balancer** — hangisi neyi görebilir (L4 IP/port, L7 header/path/cookie) (→ S6.5)
+- Güvenlik duvarı, security group, port açma/kapama mantığı; "bağlantı neden timeout oluyor" teşhisi
+- **Teşhis araç kutusu:** `ping`, `traceroute`/`tracert`, `nslookup`/`dig`, `netstat`/`ss -tanp`, `telnet`/`nc` ile port testi, `curl -v`, Wireshark / `tcpdump`
+- 🛠 **Kod:** `TcpListener` ile satır tabanlı echo server + `TcpClient` istemcisi; aynı protokolün `UdpClient` versiyonu ve paket kaybı farkının gözlemi; yüzlerce kısa ömürlü bağlantı açan bir istemciyle `ss -tan | grep TIME_WAIT` sayacının artışını izleme; Wireshark/`tcpdump` ile three-way handshake'i yakalama.
+
+#### J1.3 Web Nasıl Çalışır: HTTP, DNS, TLS · `03-how-the-web-works`
+- "Tarayıcıya URL yazınca ne olur?" ⭐ — URL anatomisi → DNS çözümleme → TCP bağlantısı (→ J1.2) → TLS handshake → HTTP isteği → yanıt
 - **HTTP anatomisi:** method, path, query, header, body, status code
 - Method semantiği: safe (GET, HEAD) ve **idempotent** (GET, PUT, DELETE) metodlar ⭐
 - Status code aileleri: 1xx, 2xx, 3xx (redirect), 4xx (istemci hatası), 5xx (sunucu hatası)
@@ -243,7 +275,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Proxy, reverse proxy, load balancer, CDN — kavram düzeyinde
 - 🛠 **Kod:** Gelen ham isteği (method, header, body) loglayan küçük bir Kestrel uygulaması + `curl -v` ile TLS/header inceleme + `.http` dosyasıyla istek koleksiyonu.
 
-#### J1.3 .NET Ekosistemi & CLI · `03-dotnet-ecosystem-cli`
+#### J1.4 .NET Ekosistemi & CLI · `04-dotnet-ecosystem-cli`
 - .NET Framework → .NET Core → birleşik .NET (5+) tarihçesi; .NET Standard'ın rolü ve neden geri plana düştüğü
 - **SDK vs Runtime vs Target Framework Moniker** (`net10.0`, `net10.0-windows`) ⭐
 - Sürüm politikası: her Kasım yeni sürüm; çift sayılar **LTS (3 yıl)**, tek sayılar **STS (24 ay)** — .NET 10 LTS, .NET 11 STS
@@ -254,7 +286,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - **File-based apps (.NET 10):** `dotnet run app.cs` — `.csproj` olmadan tek dosya; `#:package`, `#:sdk Microsoft.NET.Sdk.Web`, `#:property` direktifleri; büyüyünce projeye dönüştürme
 - 🛠 **Kod:** Aynı küçük uygulamayı (a) file-based app, (b) console projesi, (c) solution + class library + test projesi olarak üç farklı şekilde kur.
 
-#### J1.4 IDE, Debugging & Kod Kalitesi Araçları · `04-ide-debugging`
+#### J1.5 IDE, Debugging & Kod Kalitesi Araçları · `05-ide-debugging`
 - Visual Studio, JetBrains Rider, VS Code + C# Dev Kit — farkları
 - Breakpoint, conditional breakpoint, tracepoint, watch, immediate window, call stack, step into/over/out
 - Exception ayarları: "first-chance exception"da durmak
@@ -263,13 +295,13 @@ Her konunun `README.md`'si şu şablonu izler:
 - Nullable uyarılarını okumak ve ciddiye almak
 - 🛠 **Kod:** Bilerek hatalar yerleştirilmiş bir program — her hatayı debugger ile bulma alıştırması + örnek `.editorconfig` ve analyzer kuralları.
 
-🎯 **Mülakat:** "Merge ile rebase farkı?" · "Tarayıcıya URL yazınca neler olur?" · "SDK ile runtime farkı nedir?" · "LTS ile STS arasındaki fark?" · "Hangi HTTP metodları idempotent?"
+🎯 **Mülakat:** "Merge ile rebase farkı?" · "OSI modeli nedir, backend geliştirici hangi katmanlarla ilgilenir?" · "TCP ile UDP farkı, UDP ne zaman tercih edilir?" ⭐ · "Three-way handshake'i anlat" · "`TIME_WAIT` nedir, neden birikir?" · "Tarayıcıya URL yazınca neler olur?" · "SDK ile runtime farkı nedir?" · "LTS ile STS arasındaki fark?" · "Hangi HTTP metodları idempotent?"
 
 ---
 
 ### J2. C# Temelleri
 
-> 📁 `01-junior/02-csharp-fundamentals/` · ⏱ ~3 hafta · Önkoşul: J1
+> 📁 `01-junior/02-csharp-fundamentals/` · ⏱ ~3.5 hafta · Önkoşul: J1
 > Mülakatın ilk teknik turu çoğunlukla buradan gelir. Yüzeysel tanım değil, **örnekle açıklama** beklenir.
 
 #### J2.1 Program Anatomisi · `01-program-anatomy`
@@ -330,20 +362,81 @@ Her konunun `README.md`'si şu şablonu izler:
 - `enum`, `[Flags]`, `Enum.TryParse`
 - 🛠 **Kod:** Value/reference kopyalama davranışını, boxing'i ve mutable struct tuzağını gösteren deneyler; `BenchmarkDotNet`'e geçmeden `Stopwatch` ile boxing maliyetinin kaba ölçümü.
 
-#### J2.3 OOP · `03-oop`
-- Encapsulation, Inheritance, Polymorphism, Abstraction — tanım değil, **örnekle**
-- `abstract class` vs `interface` — karar tablosu ⭐
-- `virtual`, `override`, `new` (method hiding), `sealed`
-- Overloading (derleme zamanı) vs overriding (runtime)
-- Interface default implementation (C# 8+), explicit interface implementation
-- **Composition over inheritance** — neden ve nasıl refactor edilir
-- Constructor zinciri (`this(...)`, `base(...)`), object initializer
-- `Equals`, `GetHashCode`, `ToString` — **birlikte override kuralı** ⭐
-- `IEquatable<T>`, `IComparable<T>`, `IComparer<T>`
-- Object yaşam döngüsü ve `IDisposable`'a giriş (`using`)
-- 🛠 **Kod:** Ödeme yöntemleri (kredi kartı, havale, cüzdan) üzerinden inheritance → composition refactor'u; `Equals`/`GetHashCode` yanlış override edilince `HashSet`'in bozulduğu demo.
+#### J2.3 OOP Temelleri · `03-oop` ⭐
+> Mülakatların en çok soru üretilen başlığı. "Dört ilkeyi say" değil, **kendi kodundan örnek verebilmek** beklenir.
 
-#### J2.4 Exception Handling · `04-exception-handling`
+- **Dört ilke — tanım değil, örnekle:**
+  - **Encapsulation:** veriyi ve onu değiştiren davranışı birlikte tutmak, geçersiz duruma düşmeyi engellemek (uygulaması → J2.4 property)
+  - **Abstraction:** "ne yaptığını" açığa çıkarıp "nasıl yaptığını" saklamak
+  - **Inheritance:** "is-a" ilişkisi; ne zaman doğru araç, ne zaman tuzak
+  - **Polymorphism:** aynı arayüzle farklı davranış
+- **Polimorfizmin iki türü** ⭐
+  - **Compile-time / static** (early binding): **overloading**, generic'ler, operator overloading
+  - **Runtime / dynamic** (late binding): **overriding** — `virtual`/`abstract` + vtable üzerinden çözümleme
+- `abstract class` vs `interface` — **karar tablosu** ⭐; C# 8+ default implementation sonrası fark ne kaldı (durum/alan tutabilme, tek kalıtım kısıtı, constructor, erişim belirleyicileri)
+- `virtual`, `override`, `new` (**method hiding**), `sealed` — `new` ile `override` arasındaki davranış farkını base tipten çağırarak gösterme ⭐
+- `abstract` üye: gövdesi yok, türetilmiş sınıf uygulamak zorunda; abstract sınıf **örneklenemez ama constructor'ı olabilir** (türetilmiş sınıf çağırır)
+- Interface default implementation (C# 8+), **explicit interface implementation** (iki interface'in aynı imzalı üyesi — "diamond" benzeri çakışmanın çözümü)
+- Upcasting / downcasting; `is`, `as`, pattern matching ile güvenli tip kontrolü
+- **Nesne ilişkileri — ownership ve yaşam süresi** ⭐
+
+  | İlişki | Anlam | Yaşam süresi | Örnek |
+  |--------|-------|--------------|-------|
+  | **Inheritance** | "is-a" | — | `SavingsAccount` : `Account` |
+  | **Association** | "uses-a", sahiplik yok | Bağımsız | `Order` ↔ `Courier` |
+  | **Aggregation** | zayıf "has-a" | Parça bütünden **uzun yaşayabilir** | `Team` ve `Employee` |
+  | **Composition** | güçlü "has-a" | Parça bütünle **birlikte ölür** | `Order` ve `OrderLine` |
+
+  - DDD'de aggregate sınırının bu ayrımdan beslenmesi (→ S5.1)
+- **Composition over inheritance** ⭐ — neden (kırılgan taban sınıf / fragile base class problemi, derin hiyerarşinin bakım maliyeti, tek kalıtım kısıtı) ve nasıl refactor edilir
+- **Coupling & cohesion** ⭐ — "gevşek bağlılık, yüksek uyum" ne demek, nasıl ölçülür (bir sınıfı değiştirince kaç yer etkileniyor?); `new` ile somut tipe bağlanmanın maliyeti ve interface ile gevşetilmesi
+- **SOLID'e giriş** — beş prensibin adı ve bir cümlelik özeti; özellikle SRP ve DIP'i örnekleyebilmek (tamamı ve refactor hikâyeleri → M11.1)
+- `struct`'ın OOP kısıtları: sınıftan **kalıtım alamaz** (örtük olarak `ValueType`'tan türer), interface uygulayabilir, `sealed` gibi davranır
+- `static` sınıf ve üyeler ne zaman uygun — "her şeyi static yapma" eleştirisi ve test edilebilirliğe etkisi
+- 🛠 **Kod:** Ödeme yöntemleri (kredi kartı, havale, cüzdan) üzerinden **inheritance → composition** refactor'u ve her adımda testlerin yeşil kalması; `new` ile `override` edilmiş iki metodun base referans üzerinden çağrıldığında farklı davrandığını gösteren demo; aynı domain'i (takım/çalışan, sipariş/sipariş kalemi) aggregation ve composition olarak modelleyip yaşam süresi farkını testle kanıtlama.
+
+#### J2.4 Sınıf Üyeleri & Nesne Semantiği · `04-class-members` ⭐
+> OOP ilkelerinin C#'taki somut karşılıkları: property, constructor, eşitlik, kopyalama. Mülakatın "ince detay" soruları buradan gelir.
+
+- **Property vs field** ⭐ — en temel encapsulation aracı
+  - Public field neden kullanılmaz: doğrulama yapılamaz, salt okunur yapılamaz, sonradan property'ye çevirmek **binary breaking change**'dir (kütüphane yazarken kritik)
+  - Auto-property ve derleyicinin ürettiği backing field (lowering → M2.1)
+  - `get`/`set`/**`init`**-only; **private setter**; salt okunur (`=> _x`) **computed property**
+  - Property'de doğrulama ve invariant koruma; C# 14 **`field` keyword** ile backing field yazmadan doğrulama (→ M1.1)
+  - **`required` members** ve object initializer ile zorunlu alan garantisi
+  - Property vs metot: property ucuz ve yan etkisiz olmalı; pahalı iş yapan şey metot olmalı
+  - Static property, `readonly` field ile `{ get; }` property farkı
+- **Constructor çeşitleri ve başlatma sırası** ⭐
+  - Default (derleyicinin ürettiği), parameterized, `static`, **`private`** (singleton / static factory method deseni), copy constructor
+  - Constructor zinciri: `this(...)`, `base(...)`; primary constructor (→ J2.6)
+  - **Başlatma sırası** ⭐ — klasik "ince" mülakat sorusu:
+    1. Alanlar varsayılan değere (0/null) ayarlanır
+    2. **Field initializer'lar en türetilmiş sınıftan tabana doğru** çalışır
+    3. **Constructor gövdeleri tabandan türetilmişe doğru** çalışır
+  - **Constructor'dan `virtual` metot çağırmanın tehlikesi** ⭐ (analyzer kuralı **CA2214**) — base constructor çalışırken türetilmiş sınıfın constructor gövdesi **henüz çalışmamıştır**; override edilen metot yarım kurulmuş nesneyi (varsayılan değerli alanları) görür
+  - Static constructor ne zaman çalışır, thread-safety garantisi, exception fırlatırsa tipin kullanılamaz hale gelmesi
+  - Object initializer ve `with` (→ J2.6) ile nesne kurma yolları
+- **Eşitlik ve hash** ⭐
+  - `Equals`, `GetHashCode`, `ToString` — **birlikte override kuralı**: eşit nesneler aynı hash'i vermek zorundadır
+  - Referans eşitliği vs değer eşitliği; `==` ile `Equals` farkı ve `ReferenceEquals`
+  - `IEquatable<T>` (boxing'siz eşitlik), `IComparable<T>`, `IComparer<T>`
+  - **Mutable key tuzağı:** `Dictionary`/`HashSet`'e eklendikten sonra hash'i değişen nesne bulunamaz hale gelir (→ J3.1)
+  - `record`'un bunları otomatik üretmesi (→ J2.6)
+- **Extension method'lar** ⭐ — `static class` + `this` parametresi kuralı; çözümleme (resolution) sırası ve `using` gerekliliği; örnek metodun her zaman önce geldiği; ne zaman extension, ne zaman inheritance/wrapper; **LINQ'in tamamı extension method'dur** (C# 14 extension members → M1.1)
+- **Operator overloading** — `+`, `==`/`!=` (ikisi **birlikte** tanımlanmak zorunda), `implicit`/`explicit` conversion operatörü; `==` tanımlandığında `Equals`/`GetHashCode` ile tutarlılık zorunluluğu
+- **Indexer** (`public T this[int index]`) — koleksiyon benzeri API tasarımı, çok parametreli indexer
+- **Shallow copy vs deep copy** ⭐
+  - `object.MemberwiseClone()` **shallow**'dur: iç referans tipler paylaşılır → kopyayı değiştirmek orijinali etkiler
+  - **`ICloneable` neden önerilmez:** `Clone()` `object` döner (cast gerekir) ve shallow mı deep mi olduğunu sözleşmede belirtmez — Microsoft public API'de kullanılmamasını önerir
+  - Deep copy yolları: elle kopyalama (açık ve hızlı), copy constructor, JSON round-trip (kolay ama yavaş ve tip kısıtlı)
+  - **`record` ile `with` de shallow'dur** — iç içe record'da referans paylaşılır; bilinmesi gereken tuzak
+- Optional parametreler (varsayılan değerler) ve **named arguments**; optional parametre ile overload'ın karışması, varsayılan değerin **çağıran assembly'ye derlenmesi** (versiyonlama tuzağı — `const` ile aynı mantık)
+- Anonim tipler ve ne zaman `record`/tuple tercih edilmeli
+- Nested (iç içe) sınıflar — ne zaman anlamlı
+- Object yaşam döngüsü ve `IDisposable`'a giriş (`using`) (dispose pattern → M1.5)
+- 🛠 **Kod:** Public field'lı bir modeli property'ye çevirip doğrulama ekleyen refactor; **başlatma sırasını ekrana basan** base/derived sınıf çifti ve constructor'dan virtual metot çağrısının `null`/0 gördüğünü kanıtlayan demo (CA2214 uyarısıyla birlikte); `Equals`/`GetHashCode` yanlış override edilince `HashSet`'in bozulduğu ve mutable key'in kaybolduğu testler; iç içe nesne içeren sipariş modelinde shallow copy'nin orijinali bozduğunu, deep copy'nin bozmadığını kanıtlayan test; `Money` value object'inde operator overloading + indexer'lı küçük bir koleksiyon tipi.
+
+#### J2.5 Exception Handling · `05-exception-handling`
 - `try` / `catch` / `finally`, `using` / `await using`
 - Exception hiyerarşisi; custom exception ne zaman gerekli
 - Exception filter (`catch (X ex) when (...)`)
@@ -354,7 +447,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Exception vs `Result` dönüşü — kavramsal giriş (→ M11.6)
 - 🛠 **Kod:** `throw` vs `throw ex` stack trace karşılaştırması, exception filter örneği, custom domain exception hiyerarşisi.
 
-#### J2.5 Günlük Modern C# · `05-everyday-modern-csharp`
+#### J2.6 Günlük Modern C# · `06-everyday-modern-csharp`
 > 2026'da junior bir geliştiricinin her gün yazdığı sözdizimi. Sürüm sürüm tarihçe ve ileri özellikler → M1.1.
 
 - **Records:** `record`, `record struct`, positional records, `with` expression, value-based equality
@@ -369,7 +462,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - C# 14 ile gelen ve günlük kodda görülen: `field` keyword (backing field'sız property doğrulaması), null-conditional assignment (`customer?.Name = "x"`)
 - 🛠 **Kod:** Aynı sipariş domain modelini "C# 7 tarzı" ve "C# 14 tarzı" iki versiyonda yaz; satır sayısını ve okunabilirliği karşılaştır.
 
-🎯 **Mülakat:** "Value type ile reference type farkı?" · "`struct` ne zaman tercih edilir?" · "Boxing nedir, ne zaman olur?" · "String neden immutable?" · "`abstract class` vs `interface`?" · "`throw` vs `throw ex`?" · "`record` ile `class` farkı?" · "`Equals` override edince neden `GetHashCode` de override edilmeli?"
+🎯 **Mülakat:** "Value type ile reference type farkı?" · "`struct` ne zaman tercih edilir?" · "Boxing nedir, ne zaman olur?" · "String neden immutable?" · "OOP'un dört ilkesini kendi kodundan örnekle anlat" ⭐ · "`abstract class` vs `interface` — C# 8 default implementation'dan sonra fark ne kaldı?" ⭐ · "Compile-time ve runtime polimorfizm farkı?" · "`override` ile `new` (method hiding) farkı?" ⭐ · "Aggregation ile composition farkı?" · "Coupling ve cohesion nedir?" · "Neden public field yerine property kullanılır?" ⭐ · "Field initializer'lar ve constructor'lar hangi sırayla çalışır?" ⭐ · "Constructor'dan virtual metot çağırmak neden tehlikeli?" ⭐ · "`Equals` override edince neden `GetHashCode` de override edilmeli?" · "Shallow copy ile deep copy farkı, C#'ta nasıl yapılır?" ⭐ · "Extension method nasıl yazılır, ne zaman kullanılır?" · "`throw` vs `throw ex`?" · "`record` ile `class` farkı?"
 
 ---
 
@@ -454,7 +547,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### J5. Build & Run Temelleri
 
-> 📁 `01-junior/05-build-run-basics/` · ⏱ ~1 hafta · Önkoşul: J1.3
+> 📁 `01-junior/05-build-run-basics/` · ⏱ ~1 hafta · Önkoşul: J1.4
 > "Kod derlenince ne oluyor?" sorusunun junior cevabı. Roslyn, IL, apphost ve deployment modellerinin derin hali → M2.
 
 #### J5.1 C# → IL → Native: Büyük Resim · `01-big-picture`
@@ -663,7 +756,24 @@ Her konunun `README.md`'si şu şablonu izler:
 - `UNION` vs `UNION ALL`
 - CTE (`WITH`) ile okunabilir sorgu
 - Window function'lara giriş: `ROW_NUMBER()`, `RANK()`, `SUM() OVER (PARTITION BY ...)` (derin hali → M6.1)
-- View
+- **`DELETE` vs `TRUNCATE` vs `DROP`** ⭐
+
+  | | `DELETE` | `TRUNCATE` | `DROP` |
+  |---|---------|-----------|-------|
+  | Türü | DML | DDL | DDL |
+  | `WHERE` ile filtre | ✅ | ❌ (tamamı) | ❌ |
+  | Tablo yapısı kalır | ✅ | ✅ | ❌ (tablo yok olur) |
+  | Satır tetikleyicileri (trigger) | çalışır | **çalışmaz** ⭐ | — |
+  | Identity/sequence sıfırlanır | hayır | genelde evet | — |
+  | Hız (büyük tabloda) | yavaş (satır satır loglar) | çok hızlı | çok hızlı |
+
+  - **Rollback motora bağlıdır** ⭐: PostgreSQL'de `TRUNCATE` transaction'a dahildir (`BEGIN; TRUNCATE; ROLLBACK;` veriyi geri getirir); MySQL'de DDL implicit commit yapar — "TRUNCATE geri alınamaz" ezberi yanlıştır, "hangi veritabanı?" diye sorulmalı
+  - Başka tablo FK ile referans veriyorsa `TRUNCATE` reddedilir (referans veren tablolar boş olsa bile)
+- **View, stored procedure, function, trigger** — kavramsal giriş (derin hali ve trade-off'lar → M6.1)
+  - View: sorguya isim vermek; materialized view ile farkı
+  - **Stored procedure vs function:** procedure çıkış parametresi alabilir ve DML yapabilir; function genelde değer döndürmeye odaklıdır ve sorgu içinde kullanılabilir (kesin kurallar veritabanına göre değişir)
+  - **Trigger:** satır değiştiğinde otomatik çalışan kod — audit/denormalizasyon için kullanılır ama **gizli yan etki** yarattığı için tartışmalıdır
+  - "İş mantığı veritabanında mı uygulamada mı?" tartışmasına giriş
 - Klasik mülakat sorguları: "N'inci en yüksek maaş", "duplicate kayıtları bul ve sil", "hiç sipariş vermemiş müşteriler", "her kategorinin en pahalı ürünü"
 - 🛠 **Kod:** J8.1 şeması + seed data üzerinde kolaydan zora 40 SQL alıştırması ve cevap anahtarı; Npgsql ile alıştırmaları çalıştırıp sonucu doğrulayan küçük bir .NET test runner'ı.
 
@@ -731,7 +841,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Identifier büyük/küçük harf tuzağı (`"OrderId"` vs `orderid`) → EF Core ile snake_case (`EFCore.NamingConventions`)
 - 🛠 **Kod:** Compose ile PostgreSQL + pgAdmin; şema/seed/backup/restore script'leri; Npgsql ile bağlanıp CRUD yapan console uygulaması.
 
-🎯 **Mülakat:** "ACID nedir, her harfi örnekle anlat" · "Index nasıl çalışır, neden her kolona index konmaz?" · "Composite index'te kolon sırası neden önemli?" · "`INNER JOIN` ile `LEFT JOIN` farkı?" · "`WHERE` ile `HAVING` farkı?" · "3NF nedir?" · "Dirty read, phantom read nedir?" · "SQL mi NoSQL mi — neye göre seçersin?" · "Para için neden `float` kullanılmaz?"
+🎯 **Mülakat:** "ACID nedir, her harfi örnekle anlat" · "Index nasıl çalışır, neden her kolona index konmaz?" · "Composite index'te kolon sırası neden önemli?" · "`INNER JOIN` ile `LEFT JOIN` farkı?" · "`WHERE` ile `HAVING` farkı?" · "`DELETE`, `TRUNCATE` ve `DROP` farkı?" ⭐ · "3NF nedir?" · "Dirty read, phantom read nedir?" · "SQL mi NoSQL mi — neye göre seçersin?" · "Para için neden `float` kullanılmaz?" · "`SELECT` sorgusunun mantıksal çalışma sırası nedir?"
 
 ---
 
@@ -884,18 +994,27 @@ Her konunun `README.md`'si şu şablonu izler:
 - Container ≠ VM — izolasyon modeli farkı
 - Image, container, registry; layer ve layer cache
 - `docker run` bayrakları (`-p`, `-v`, `-e`, `--name`, `--rm`, `-d`); `ps`, `logs`, `exec`, `inspect`, `stop`, `rm`
-- Volume vs bind mount; bridge network ve container'lar arası iletişim
-- Registry'ler: Docker Hub, GitHub Container Registry, Azure Container Registry
-- 🛠 **Kod:** PostgreSQL, Redis ve MongoDB'yi `docker run` ile ayağa kaldırıp volume ile veri kalıcılığını test eden script'ler.
+- Volume vs bind mount; named volume'un yaşam döngüsü
+- **Ağ modları:** `bridge` (varsayılan, container'lar arası DNS), `host`, `none`; kullanıcı tanımlı network neden gerekli
+- Registry'ler: Docker Hub (ve **anonim pull rate limit**'i), GitHub Container Registry, Azure Container Registry (→ M15.2)
+- Disk yönetimi: `docker system df` / `prune` — dangling image ve volume'ların diski doldurması
+- 🛠 **Kod:** PostgreSQL, Redis ve MongoDB'yi `docker run` ile ayağa kaldırıp volume ile veri kalıcılığını test eden script'ler; aynı iki container'ı önce varsayılan bridge'de sonra kullanıcı tanımlı network'te konuşturup DNS farkını gözlemleme.
 
-#### J12.2 .NET için Dockerfile · `02-dockerfile-dotnet`
-- Base image: `sdk` (build) vs `aspnet`/`runtime` (çalıştırma)
+#### J12.2 .NET için Dockerfile · `02-dockerfile-dotnet` ⭐
+- Base image: `sdk` (build) vs `aspnet`/`runtime` (çalıştırma); base image'ı **digest ile sabitleme** (tekrarlanabilir build)
 - **Multi-stage build** ⭐ — SDK'yı final image'a taşımamak
-- Layer cache: önce `.csproj` kopyala → `restore` → sonra kaynak kodu
-- `.dockerignore` (`bin/`, `obj/`, `.git`)
+- Layer cache: önce `.csproj` kopyala → `restore` → sonra kaynak kodu (BuildKit cache mount ile daha iyisi → M14.2)
+- **`ENTRYPOINT` vs `CMD`** ⭐ — en sık sorulan Dockerfile sorusu
+  - `ENTRYPOINT` sabit çalıştırılabilir, `CMD` **üzerine yazılabilen** varsayılan argüman; `docker run <image> <arg>` CMD'yi ezer, ENTRYPOINT'i ezmez (`--entrypoint` gerekir)
+  - Tipik kalıp: `ENTRYPOINT ["dotnet","App.dll"]` + `CMD` ile varsayılan argümanlar
+  - **Exec form (`["..."]`) vs shell form** ⭐ — shell form'da uygulama `sh -c`'nin alt süreci olur, **SIGTERM uygulamaya ulaşmaz** → graceful shutdown çalışmaz (Kubernetes'te asıl sorun → M14.4)
+- **`COPY` vs `ADD`** ⭐ — varsayılan `COPY`; `ADD` URL indirir ve tar arşivini otomatik açar, bu yüzden build'i **tekrarlanamaz** ve sürprizli hale getirir
+- **`HEALTHCHECK`** instruction — süreç ayakta mı değil, **uygulama çalışıyor mu** sorusunu cevaplar; art arda sıfır dışı çıkış kodu container'ı `unhealthy` yapar; Dockerfile `HEALTHCHECK` vs Compose `healthcheck` (→ J12.3) vs Kubernetes probe (→ M14.4) ilişkisi
+- `EXPOSE`'un gerçekte ne yaptığı ⭐ — **port açmaz**, yalnızca dokümantasyondur; yayınlamak için `-p` gerekir
+- `WORKDIR`, `ARG` vs `ENV`; **secret'ı `ENV`/layer'a gömmemek** (build secret → M14.2)
 - Non-root kullanıcı (`USER $APP_UID`)
 - `dotnet publish /t:PublishContainer` ile Dockerfile'sız image
-- 🛠 **Kod:** Todo API için tek aşamalı (kötü) ve multi-stage (iyi) Dockerfile; image boyutu ve build süresi karşılaştırması.
+- 🛠 **Kod:** Todo API için tek aşamalı (kötü) ve multi-stage (iyi) Dockerfile; image boyutu ve build süresi karşılaştırması; aynı image'ı shell form ve exec form `ENTRYPOINT` ile çalıştırıp `docker stop` sonrası uygulamanın SIGTERM alıp almadığını loglardan kanıtlama.
 
 #### J12.3 Docker Compose ile Geliştirme Ortamı · `03-docker-compose`
 - Çok servisli tanım: API + PostgreSQL + Redis + pgAdmin
@@ -905,44 +1024,121 @@ Her konunun `README.md`'si şu şablonu izler:
 - Hedef: "tek komutla çalışan repo"
 - 🛠 **Kod:** `docker compose up` ile API + DB + cache'in birlikte kalktığı, sağlık kontrollü geliştirme ortamı.
 
-🎯 **Mülakat:** "Container ile VM farkı?" · "Multi-stage build neden?" · "Container içindeki uygulama `localhost:5432`'ye neden bağlanamaz?" · "Volume ne işe yarar?"
+🎯 **Mülakat:** "Container ile VM farkı?" · "Multi-stage build neden?" · "`ENTRYPOINT` ile `CMD` farkı?" ⭐ · "`COPY` ile `ADD` farkı, hangisini kullanırsın?" ⭐ · "Shell form `ENTRYPOINT` neden graceful shutdown'ı bozar?" · "`EXPOSE` portu açar mı?" · "Container içindeki uygulama `localhost:5432`'ye neden bağlanamaz?" · "Volume ne işe yarar?" · "Image layer cache'ini bozmamak için Dockerfile'ı nasıl sıralarsın?"
 
 ---
 
 ### J13. Cloud & Azure'a Giriş
 
-> 📁 `01-junior/13-azure-basics/` · ⏱ ~1.5 hafta · Önkoşul: J12
-> Azure servislerinin derinlemesine kullanımı → M15; mimari → S8.
+> 📁 `01-junior/13-azure-basics/` · ⏱ ~2.5 hafta · Önkoşul: J12
+> 📜 **Sertifika hedefi: AZ-900 (Microsoft Azure Fundamentals).** İlk üç konu sınavın üç alanına birebir karşılık gelir:
+> J13.1 → *Describe cloud concepts* (%25-30) · J13.2 → *Describe Azure architecture and services* (%35-40) · J13.3 → *Describe Azure management and governance* (%30-35).
+> AZ-900 bir **genişlik** sınavıdır: VM, VNet, ExpressRoute gibi bir .NET geliştiricisinin günlük işinde kullanmadığı konular da sorulur — bunlar aşağıda *(AZ-900 kapsamı)* notuyla işaretlendi. Son üç konu ise sınavda olmayan ama senin ihtiyacın olan **pratik**tir.
+> Kategori notu: **J13.6 (CI)** Azure'a değil DevOps'a aittir; capstone'un pipeline'a ihtiyaç duyması için burada duruyor, derinliği → M14.
+> Azure servislerinin geliştirici derinliği → M15 (AI-200); çözüm mimarisi → S8.3 (AZ-305).
 
-#### J13.1 Cloud Kavramları · `01-cloud-concepts`
-- IaaS, PaaS, SaaS, serverless — örneklerle
-- Azure hiyerarşisi: tenant → subscription → resource group → resource; region, availability zone
-- Maliyet modeli: kullandıkça öde, free tier, **bütçe alarmı (ilk iş!)**
+#### J13.1 Cloud Kavramları · `01-cloud-concepts` ⭐
+- **Cloud computing nedir:** paylaşılan kaynak havuzu, self-servis, ölçülen kullanım
+- **Shared responsibility model** ⭐ — hangi katman kimin sorumluluğunda; IaaS → PaaS → SaaS geçişinde sorumluluğun sağlayıcıya kayması; **müşterinin her modelde kendi verisi, kimlikleri ve yapılandırmasından sorumlu olduğu**, fiziksel veri merkezinin her modelde Microsoft'ta kaldığı
+- **Deployment modelleri:** public, private, **hybrid**, multicloud; hangisi ne zaman (veri egemenliği, eski sistem, maliyet)
+- **Hizmet modelleri:** IaaS, PaaS, SaaS + **her biri için kullanım senaryosu** ⭐; **serverless**'ın nereye düştüğü
+- **Maliyet modeli:** **CapEx vs OpEx** ⭐, tüketim bazlı (consumption-based) fiyatlandırma, sabit fiyatla karşılaştırma, free tier
+- **Cloud'un faydaları — sınavın sevdiği taksonomi** ⭐
+
+  | Fayda | Ne demek |
+  |-------|----------|
+  | **High availability** | Hedeflenen çalışma süresini (SLA) sağlayacak yedeklilik |
+  | **Scalability** | Kapasiteyi artırma: **vertical** (daha güçlü makine) vs **horizontal** (daha fazla makine) |
+  | **Elasticity** | Yüke göre **otomatik** büyüyüp küçülme |
+  | **Reliability** | Arıza anında hizmeti sürdürme (bölge/zone yedekliliği) |
+  | **Predictability** | Performans ve maliyetin öngörülebilirliği (Well-Architected ile ilişkisi → S8.3) |
+  | **Security & governance** | Merkezi politika, uyumluluk, denetim |
+  | **Manageability** | Portal/CLI/şablonla yönetim ve otomasyon |
+
+- **Azure hiyerarşisi** ⭐: tenant → **management group** → subscription → resource group → resource; politikanın ve erişimin yukarıdan **miras** alınması
 - Araçlar: Azure Portal, Azure CLI (`az`), Azure Developer CLI (`azd`)
-- Shared responsibility model
-- 🛠 **Kod:** `az` CLI ile resource group oluşturan, kaynakları listeleyen ve temizleyen script; bütçe alarmı kurulum adımları.
+- **Bütçe alarmı kurmak (ilk iş!)** — öğrenirken fatura şoku yaşamamak için
+- 🛠 **Kod:** `az` CLI ile resource group oluşturan, kaynakları listeleyen ve **tamamını temizleyen** script; bütçe + maliyet alarmı kurulumu; aynı iş yükünü IaaS (VM) ve PaaS (App Service) olarak fiyat hesaplayıcıda karşılaştıran not.
 
-#### J13.2 App Service'e İlk Deploy · `02-app-service-deploy`
+#### J13.2 Azure Mimarisi & Temel Servisler · `02-azure-architecture-services`
+> *(Büyük kısmı AZ-900 kapsamı — geliştirici olarak hepsini kullanmayacaksın ama sınavda ve mimari konuşmalarında geçer.)*
+
+- **Fiziksel yapı:** datacenter → **availability zone** → region → **region pair** (eşleştirilmiş bölge, sıralı güncelleme ve yedeklilik) → **sovereign region** (Azure Government, Azure China)
+- Bölge seçim kriterleri: gecikme, **veri ikametgâhı (data residency)**, servis uygunluğu, maliyet farkı
+- **Compute servisleri** *(AZ-900 kapsamı)*
+  - **Virtual Machines** (IaaS), **VM Scale Sets**, availability set
+  - **Azure Virtual Desktop**
+  - Container seçenekleri: Container Instances, **Container Apps**, **AKS** (geliştirici derinliği → M15.2, S8.1)
+  - **Azure Functions** (serverless) ve App Service
+  - Karar sezgisi: "ne kadar kontrol, ne kadar sorumluluk?"
+- **Ağ servisleri** *(AZ-900 kapsamı — derinlemesine ağ → J1.2, S8.3)*
+  - **Virtual Network (VNet)**, subnet, **VNet peering**
+  - Azure DNS, private DNS zone
+  - **VPN Gateway** (şifreli internet üzerinden) vs **ExpressRoute** (özel bağlantı) — fark ve ne zaman
+  - Public vs private endpoint; NSG ile trafik filtreleme
+  - Load Balancer, Application Gateway, Front Door — hangisi hangi katmanda (L4/L7 → J1.2)
+- **Storage servisleri**
+  - Storage account türleri; **blob, file, queue, table**
+  - **Yedeklilik (redundancy)** ⭐: **LRS** (tek datacenter), **ZRS** (zone'lar arası), **GRS** (bölgeler arası), **GZRS** — hangi arıza senaryosunu kurtarır
+  - Access tier: Hot / Cool / Cold / Archive (derinlemesine → M15.4)
+  - **Veri taşıma araçları:** AzCopy, Azure Storage Explorer, **Azure Migrate**, **Data Box**
+- **Kimlik, erişim & güvenlik** ⭐ *(geliştirici derinliği → M9, M15.1)*
+  - **Microsoft Entra ID** (eski Azure AD), tenant, kullanıcı, grup, **service principal**; Entra Domain Services
+  - **Authentication vs authorization** farkı ⭐
+  - **SSO**, **MFA**, passwordless/passkey, **conditional access**
+  - **Azure RBAC** — rol atamasının kapsam (scope) hiyerarşisinden miras alınması
+  - **Zero Trust** ilkeleri ("asla güvenme, her zaman doğrula") ve **defense in depth** katmanları
+  - **Microsoft Defender for Cloud** — güvenlik puanı ve öneriler
+- 🛠 **Kod:** `az` CLI ile VNet + subnet oluşturup içine bir VM ve bir App Service (VNet entegrasyonlu) koyan, NSG ile erişimi kısıtlayan script; aynı storage account'u LRS ve GZRS olarak oluşturup fiyat farkını raporlayan not; RBAC ile bir kullanıcıya yalnızca tek resource group üzerinde Reader yetkisi verme.
+
+#### J13.3 Yönetişim, Maliyet & Monitoring · `03-governance-cost-monitoring`
+> *(AZ-900'ün üçüncü alanı. Buradaki araçların çoğunu geliştirici olarak da kullanırsın.)*
+
+- **Maliyet yönetimi** ⭐
+  - Maliyeti etkileyen faktörler: kaynak tipi, bölge, trafik (egress), ölçek, rezervasyon
+  - **Pricing Calculator** ve **TCO Calculator** — ikisinin farkı
+  - **Microsoft Cost Management:** maliyet analizi, bütçe, alarm, öneri
+  - **Tag'ler** ⭐ — maliyeti takım/ortam/proje bazında ayırmanın tek pratik yolu
+  - Tasarruf yolları: reserved instance, savings plan, spot VM, dev/test fiyatlandırması, **kullanılmayan kaynağı silmek**
+- **Yönetişim & uyumluluk** ⭐
+  - **Azure Policy** — izin verilen SKU/bölge, zorunlu tag gibi kuralları **önleyici** olarak uygulama; initiative (policy set); uyumluluk raporu
+  - **Resource lock** (`CanNotDelete`, `ReadOnly`) — production kaynağını kazara silmeye karşı
+  - Management group ile politikayı subscription üstünde uygulama ve miras
+  - **Microsoft Purview** — veri yönetişimi, veri kataloğu, sınıflandırma
+  - Azure Blueprint'in yerini alan **deployment stack** / landing zone fikri (→ S8.3)
+- **Dağıtım & yönetim araçları**
+  - **Azure Portal**, **Cloud Shell**, **Azure CLI**, **Azure PowerShell** — hangisi ne zaman
+  - **Infrastructure as Code**: **ARM template** (JSON) ve **Bicep** (declarative, okunabilir) — derinlemesine → S8.2
+  - **Azure Resource Manager (ARM)** — tüm isteklerin geçtiği kontrol düzlemi; idempotent dağıtım
+  - **Azure Arc** — Azure dışındaki (on-prem, başka cloud) sunucu ve Kubernetes'i Azure'dan yönetmek
+- **Monitoring & sağlık**
+  - **Azure Monitor** şemsiyesi: metrik, log, alert; **Log Analytics workspace** ve **KQL**'e ilk bakış (derinlemesine → M13, M15.6)
+  - **Application Insights** — uygulama telemetrisi (derinlemesine → M15.6)
+  - **Azure Advisor** — maliyet/güvenlik/performans/güvenilirlik önerileri
+  - **Azure Service Health** — Azure kaynaklı kesintiler; kendi uygulamanın hatasıyla platform kesintisini ayırt etmek
+- 🛠 **Kod:** Zorunlu `env` ve `owner` tag'i olmayan kaynağın oluşturulmasını **engelleyen** Azure Policy; production resource group'una `CanNotDelete` lock koyup silme denemesinin reddedildiğini gösterme; Cost Management'ta tag bazlı maliyet raporu; Advisor önerilerini `az` CLI ile listeleyen script.
+
+#### J13.4 App Service'e İlk Deploy · `04-app-service-deploy`
 - App Service plan ve web app ilişkisi
 - Deploy yolları: `az webapp up`, ZIP deploy, GitHub Actions
 - Application Settings → `IConfiguration`'a environment variable olarak akması
 - Log stream ile canlı log izleme
 - 🛠 **Kod:** Todo API'yi App Service'e deploy et; connection string'i App Settings'ten ver.
 
-#### J13.3 Blob Storage Temelleri · `03-blob-storage`
+#### J13.5 Blob Storage Temelleri · `05-blob-storage`
 - Storage account, container, blob; access tier'lara giriş
 - `Azure.Storage.Blobs` SDK ile upload/download/stream
 - Yerel geliştirme için **Azurite** emülatörü
 - SAS token'a giriş — neden public container yerine
 - 🛠 **Kod:** Dosya yükleme/indirme API'si — yerelde Azurite, Azure'da gerçek storage.
 
-#### J13.4 GitHub Actions ile İlk CI · `04-first-ci`
+#### J13.6 GitHub Actions ile İlk CI · `06-first-ci`
 - Workflow, job, step, runner kavramları
 - `actions/setup-dotnet` → restore → build → test
 - Pull request'te otomatik test ve branch koruma kuralı
 - 🛠 **Kod:** Junior capstone için build + test pipeline'ı.
 
-🎯 **Mülakat:** "IaaS, PaaS, SaaS farkı?" · "App Service'te connection string nereye konur?" · "CI nedir, neden PR'da test çalıştırılır?"
+🎯 **Mülakat:** "IaaS, PaaS, SaaS farkı, her birine örnek ver" ⭐ · "Shared responsibility model — şifre politikası kimin sorumluluğunda?" ⭐ · "CapEx ile OpEx farkı?" · "Vertical ile horizontal scaling farkı; elasticity ne ekler?" ⭐ · "Availability zone ile region pair farkı?" · "LRS, ZRS, GRS hangi arıza senaryosunu kurtarır?" ⭐ · "VPN Gateway ile ExpressRoute farkı?" · "Authentication ile authorization farkı?" · "Azure Policy ile RBAC farkı nedir?" ⭐ · "Resource lock ne işe yarar?" · "Pricing Calculator ile TCO Calculator farkı?" · "Azure Advisor ile Service Health farkı?" · "App Service'te connection string nereye konur?" · "CI nedir, neden PR'da test çalıştırılır?"
 
 ---
 
@@ -1007,7 +1203,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ## Seviye 2 — Mid
 
 > **Hedef:** Production'da yaşayan servisleri tasarlamak, güvenceye almak, ölçmek ve hata ayıklamak. "Nasıl kullanılır"dan **"nasıl çalışır ve ne zaman bozulur"**a geçiş.
-> **Süre:** ~10 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `02-mid/` · **Önkoşul:** Junior capstone
+> **Süre:** ~11 ay (günde 2-3 saat, DSA dahil) · **Klasör:** `02-mid/` · **Önkoşul:** Junior capstone
 > Mid mülakatlarında her cevaba **"neden?"** ve **"production'da ne olur?"** soruları eklenir.
 
 ---
@@ -1386,8 +1582,10 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### M5. API Tasarımı & Protokoller
 
-> 📁 `02-mid/05-api-design/` · ⏱ ~3 hafta · Önkoşul: J7, M3
+> 📁 `02-mid/05-api-design/` · ⏱ ~3.5 hafta · Önkoşul: J7, M3
 > Bir API'yi tasarlayabilmek, evrimleştirebilmek ve doğru protokolü seçebilmek. Gateway/BFF ve ölçekte API → S6.5, S10.
+> Modülün en büyüğü; üç blok hâlinde okunur: **tasarım & evrim** (M5.1-M5.4) · **protokol seçimi** (M5.5-M5.7) · **taşıma, serialization & sertleştirme** (M5.8-M5.11).
+> Zaman kısıtlıysa M5.1, M5.2 ve M5.9 mülakatta en çok karşılığı olanlar.
 
 #### M5.1 REST Tasarımı Derinlemesine · `01-rest-advanced`
 - REST kısıtları; **Richardson Maturity Model** (Level 0 → 3 / HATEOAS)
@@ -1485,7 +1683,26 @@ Her konunun `README.md`'si şu şablonu izler:
 - **.NET 11:** cross-origin unsafe isteklerin otomatik reddi (yerleşik CSRF koruması)
 - 🛠 **Kod:** Kullanıcı bazlı token bucket + anonim kullanıcılar için IP bazlı fixed window; yük testinde `429` davranışı.
 
-🎯 **Mülakat:** "Offset yerine cursor pagination neden?" · "POST'u nasıl idempotent yaparsın?" · "API'yi breaking change olmadan nasıl evrimleştirirsin?" · "REST mi gRPC mi GraphQL mi?" · "GraphQL'de N+1 nasıl çözülür?" · "SignalR'ı birden fazla instance'a nasıl ölçeklersin?" · "Retry neden jitter ister?" · "Circuit breaker nasıl çalışır?"
+#### M5.11 Protokol & Transport Derinlemesine · `11-protocols-transport` ⭐
+> J1.2'deki TCP/UDP ve J1.3'teki HTTP temelinin üzerine: protokol sürümleri arasındaki gerçek farklar ve bunların .NET'teki sonuçları. "Neden HTTP/3?" ve "socket exhaustion neden olur?" sorularının tam cevabı.
+
+- **HTTP/1.1:** persistent connection, keep-alive, pipelining'in neden pratikte başarısız olduğu; **tarayıcı başına domain bağlantı limiti** ve bunun doğurduğu "domain sharding" / "sprite" hack'leri
+- **HTTP/2:** tek bağlantı üzerinde **multiplexing** (stream'ler), binary framing, **HPACK** header sıkıştırma, server push (neden terk edildi); **TCP seviyesinde head-of-line blocking devam eder** ⭐ — paket kaybında tüm stream'ler beklemek zorundadır
+- **HTTP/3 & QUIC:** UDP üzerine kurulu, **stream başına bağımsız teslim** → HOL blocking çözülür; TLS 1.3'ün protokole gömülü olması; **0-RTT / 1-RTT bağlantı kurulumu**, connection migration (ağ değişince bağlantının kopmaması); .NET'te HTTP/3 desteği ve Kestrel'de etkinleştirme (→ M3.7)
+- **Protokol seçim tablosu:** HTTP/1.1 (uyumluluk, basit araçlar), HTTP/2 (gRPC, çok sayıda paralel istek), HTTP/3 (mobil/kayıplı ağ, yüksek gecikme)
+- **TLS derinlemesine:** handshake adımları ve **RTT maliyeti** (TLS 1.2 → 2 RTT, TLS 1.3 → 1 RTT), cipher suite, ALPN ile protokol seçimi, SNI; **session resumption** ve ticket; sertifika zinciri doğrulama, OCSP/CRL, sertifika pinning (ve riskleri)
+- **mTLS (mutual TLS)** — servisler arası kimlik doğrulama; .NET'te client certificate ile `HttpClient` ve Kestrel tarafında doğrulama (→ S6.5 service mesh, S7)
+- **Bağlantı yönetimi .NET'te** ⭐
+  - `SocketsHttpHandler`: `MaxConnectionsPerServer`, `PooledConnectionLifetime`, `PooledConnectionIdleTimeout`, `ConnectTimeout`
+  - **Socket exhaustion'ın tam zinciri:** `new HttpClient()` her seferinde → her biri yeni bağlantı havuzu → kapanan bağlantılar `TIME_WAIT`'te birikir → ephemeral port tükenir (→ J1.2, M5.9)
+  - Ters problem: `HttpClient`'ı singleton tutup `PooledConnectionLifetime` ayarlamamak → **DNS değişikliklerinin görülmemesi**
+  - .NET'te DNS çözümleme ve cache davranışı
+- **Gecikme bütçesi düşünmek:** DNS + TCP + TLS + sunucu işleme + aktarım; bir isteğin nerede zaman harcadığını `curl -w` ve tracing ile ayrıştırma (→ M13)
+- Compression: gzip vs Brotli vs **Zstandard (.NET 11)**; `Accept-Encoding` müzakeresi; **BREACH** riski nedeniyle hassas yanıtlarda dikkat
+- L4 vs L7 load balancer'ın protokole etkisi: HTTP/2 bağlantılarının tek bağlantıda kalması nedeniyle **gRPC'de yük dağılımı problemi** ve çözümleri (client-side LB, proxy, `MaxConnectionsPerServer`)
+- 🛠 **Kod:** Aynı API'yi HTTP/1.1, HTTP/2 ve HTTP/3 üzerinden çağırıp 100 paralel istekte süre/bağlantı sayısı karşılaştırması (`SocketsHttpHandler` + `ss` ile bağlantı gözlemi); `new HttpClient()` ile `IHttpClientFactory` kullanımının ephemeral port tüketimini yan yana ölçen deney; `curl -w` ile DNS/TCP/TLS/TTFB kırılımı; mTLS ile korunan bir endpoint ve sertifikasız istemcinin reddedilmesi.
+
+🎯 **Mülakat:** "Offset yerine cursor pagination neden?" · "POST'u nasıl idempotent yaparsın?" · "API'yi breaking change olmadan nasıl evrimleştirirsin?" · "REST mi gRPC mi GraphQL mi?" · "GraphQL'de N+1 nasıl çözülür?" · "SignalR'ı birden fazla instance'a nasıl ölçeklersin?" · "HTTP/2 ile HTTP/3 farkı, HTTP/3 neden UDP üzerine kuruldu?" ⭐ · "HTTP/2'de head-of-line blocking çözüldü mü?" · "Socket exhaustion neden olur, nasıl önlenir?" ⭐ · "Retry neden jitter ister?" · "Circuit breaker nasıl çalışır?"
 
 ---
 
@@ -1502,7 +1719,14 @@ Her konunun `README.md`'si şu şablonu izler:
 - `LATERAL` join, `DISTINCT ON`, `RETURNING`
 - Klasik problemler: top-N per group, gaps & islands, deduplication, pivot
 - **Set-based düşünme vs satır satır (cursor/döngü)** ⭐
-- 🛠 **Kod:** 25 ileri seviye SQL problemi (top-N per group, running total, hiyerarşi, gaps & islands) + çözümleri + sonuçları doğrulayan .NET test runner'ı.
+- **Programatik SQL: stored procedure, function, trigger** ⭐
+  - PostgreSQL'de `FUNCTION` vs `PROCEDURE` (procedure transaction kontrolü yapabilir), `plpgsql`; SQL Server'da stored procedure, scalar vs **table-valued function** (scalar UDF'in satır başına çalışıp planı bozması)
+  - .NET'ten çağırma: EF Core `FromSql`/`ExecuteSql`, Dapper ile `CommandType.StoredProcedure`, table-valued parameter (→ M7.3)
+  - **Trigger'ın gerçek maliyeti:** gizli yan etki (kodu okuyan geliştirici göremez), hata ayıklama zorluğu, recursive/zincirleme trigger, toplu işlemde performans, `TRUNCATE`'te çalışmaması
+  - **"İş mantığı nerede yaşamalı?"** ⭐ — veritabanında (performans, tek giriş noktası, eski sistemler) vs uygulamada (test edilebilirlik, versiyonlama, taşınabilirlik, code review); kurumsal .NET dünyasında hâlâ canlı bir tartışma ve mülakat sorusu
+  - Stored procedure'ün versiyonlanması: migration'a dahil etme zorunluluğu (→ M6.6)
+  - Ne zaman meşru: ağır veri işleme (satır trafiğini azaltma), batch ETL, güvenlik sınırı (kullanıcıya tabloya değil procedure'e yetki verme)
+- 🛠 **Kod:** 25 ileri seviye SQL problemi (top-N per group, running total, hiyerarşi, gaps & islands) + çözümleri + sonuçları doğrulayan .NET test runner'ı; aynı iş kuralını (stok düşme) bir kez trigger ile bir kez uygulama katmanında yazıp test edilebilirlik ve hata ayıklama deneyimini karşılaştırma.
 
 #### M6.2 Index Stratejisi & Execution Plan · `02-indexing-execution-plans` ⭐
 - **Plan okuma:** `EXPLAIN (ANALYZE, BUFFERS)` — Seq Scan, Index Scan, Index Only Scan, Bitmap Heap Scan
@@ -1692,15 +1916,23 @@ Her konunun `README.md`'si şu şablonu izler:
   | JSON + Query Engine | Doküman saklama ve sorgulama (Redis 8'de yerleşik) |
   | Vector Set | Embedding benzerlik araması (Redis 8) |
 
-- **StackExchange.Redis:** `ConnectionMultiplexer` **singleton** kuralı ⭐, `IDatabase`, pipelining, async
-- Key tasarımı (`app:entity:id`), TTL
-- **Eviction policy'leri** (`allkeys-lru`, `allkeys-lfu`, `volatile-ttl`, `noeviction`) ⭐
-- Persistence: RDB vs AOF trade-off'u
-- Atomiklik: `MULTI`/`EXEC`, **Lua script**
-- Pub/Sub vs Streams
+- **StackExchange.Redis:** `ConnectionMultiplexer` **singleton** kuralı ⭐, `IDatabase`, async, `CommandFlags`
+- Key tasarımı (`app:entity:id`), namespace konvansiyonu, key boyutunun bellek maliyeti
+- **`KEYS` vs `SCAN`** ⭐ — `KEYS *` tüm sunucuyu **bloklar** (tek thread'li model!) ve production'da asla kullanılmaz; `SCAN` cursor tabanlı, artımlı ve bloklamaz; `HSCAN`/`SSCAN`/`ZSCAN`; `SCAN`'in garantisi (aynı anahtarı iki kez görebilir, baştan sona var olan anahtarı kaçırmaz)
+- **TTL ve süre sonu (expiration) semantiği:** `EXPIRE`/`SETEX`/`PERSIST`; **lazy expiration** (erişimde silme) + **active expiration** (arka plan örnekleme) — "TTL geçti ama bellek düşmedi" sorusunun cevabı
+- **Eviction policy'leri** (`allkeys-lru`, `allkeys-lfu`, `volatile-ttl`, `volatile-random`, `noeviction`) ⭐ — `maxmemory` ile birlikte; cache için `allkeys-lru`/`lfu`, kuyruk/kalıcı veri için `noeviction`
+- Persistence: RDB (snapshot) vs AOF (append-only) vs ikisi birlikte; `fsync` politikası ve veri kaybı penceresi
+- **Pipelining vs transaction vs Lua — üçü farklı şeydir** ⭐
+  - **Pipelining:** ağ gidiş-dönüşünü (RTT) azaltma → **throughput** için; araya başka istemcinin komutu girebilir, atomiklik yoktur
+  - **`MULTI`/`EXEC`:** komutlar kuyruklanır ve araya girilmeden çalışır → **atomiklik** için; **rollback yoktur** (bir komut hata verirse diğerleri yine çalışır), `WATCH` ile optimistic locking
+  - **Lua script / Redis Functions:** sunucu tarafında atomik çalışan mantık — "oku-karar ver-yaz" gerektiren işlemler (rate limiter, stok düşme) için tek doğru yol
+- **Pub/Sub vs Streams** — Pub/Sub ateşle-unut (abone yoksa mesaj kaybolur, kalıcılık yok), Streams kalıcı log + consumer group + ack
+- **Keyspace notifications** — key değişiminde event yayınlama (`notify-keyspace-events`); cache invalidation ve "key süresi doldu" tetikleyicisi için; **güvenilir teslim garantisi yoktur** (Pub/Sub üzerine kurulu), kritik akışlarda Streams tercih edilir
+- **Client-side caching (RESP3 tracking)** — sunucunun istemciye "bu key değişti" bildirimi göndermesi; çok katmanlı cache'te L1 (in-process) tutarlılığını sağlamanın Redis-native yolu (→ M8.4 `HybridCache`/FusionCache backplane)
+- Dağıtık kilit: `SET key value NX PX` deseni ve **Redlock tartışması** — tek node'da yeterli, çoklu node'da garanti iddiası eleştirilir (→ S3.4)
 - Replication, Sentinel, Cluster'a giriş (→ S4.6)
 - **2026 durumu:** Redis 8 AGPLv3 ile yeniden açık kaynak; **Valkey** (Linux Foundation forku, AWS/Google destekli); Azure'da **Azure Managed Redis** (Azure Cache for Redis emekliye ayrılıyor); Microsoft'un .NET ile yazılmış Redis uyumlu sunucusu **Garnet**
-- 🛠 **Kod:** Leaderboard (sorted set), Lua script ile atomik rate limiter, session store, Redis Streams ile consumer group'lu iş kuyruğu, HyperLogLog ile tekil ziyaretçi sayımı.
+- 🛠 **Kod:** Leaderboard (sorted set), Lua script ile atomik rate limiter, session store, Redis Streams ile consumer group'lu iş kuyruğu, HyperLogLog ile tekil ziyaretçi sayımı; 100k key'li bir veritabanında `KEYS *` ile `SCAN`'in sunucu üzerindeki etkisini (`SLOWLOG`, latency) karşılaştırma; `MULTI`/`EXEC`'in rollback yapmadığını kanıtlayan test.
 
 #### M8.4 Caching Stratejileri · `04-caching-strategies` ⭐
 - Cache katmanları: tarayıcı → CDN → output cache → in-process (`IMemoryCache`) → distributed (Redis) → DB
@@ -1723,7 +1955,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Hybrid search (keyword + vector) → M16.4
 - 🛠 **Kod:** Ürün arama — PostgreSQL FTS versiyonu ve Elasticsearch versiyonu (Türkçe analyzer, facet, typo toleransı) + sonuç kalitesi karşılaştırması.
 
-🎯 **Mülakat:** "MongoDB'de embed mi reference mı — neye göre?" · "ESR kuralı nedir?" · "Redis tek thread'li ise nasıl bu kadar hızlı?" · "Eviction policy nasıl seçilir?" · "Cache stampede nedir, nasıl önlenir?" · "Cache invalidation stratejin ne?" · "`HybridCache` ne çözdü?" · "Redis mi Valkey mi?"
+🎯 **Mülakat:** "MongoDB'de embed mi reference mı — neye göre?" · "ESR kuralı nedir?" · "Redis tek thread'li ise nasıl bu kadar hızlı?" · "Production'da `KEYS *` neden kullanılmaz, alternatifi ne?" ⭐ · "Pipelining ile `MULTI`/`EXEC` farkı?" ⭐ · "Redis transaction'ı rollback yapar mı?" · "Eviction policy nasıl seçilir?" · "Cache stampede nedir, nasıl önlenir?" · "Cache invalidation stratejin ne?" · "`HybridCache` ne çözdü?" · "Redis mi Valkey mi?"
 
 ---
 
@@ -1884,6 +2116,12 @@ Her konunun `README.md`'si şu şablonu izler:
 - **I**nterface Segregation — şişman interface'i bölmek
 - **D**ependency Inversion — DI ile ilişkisi ve farkı ⭐
 - DRY, KISS, YAGNI, Law of Demeter, composition over inheritance, separation of concerns
+- **Coupling & cohesion derinlemesine** ⭐ (giriş → J2.3)
+  - Coupling türleri: content, common, control, stamp, data coupling — en gevşekten en sıkıya
+  - **Temporal coupling** (çağrı sırası zorunluluğu) ve **temporal decoupling** (mesajlaşma → M12.1)
+  - Afferent/efferent coupling, instability metriği; `NetArchTest`/ArchUnitNET ile sınır testleri (→ M10)
+  - Yüksek cohesion'ın pratikte görünümü: birlikte değişen kodun birlikte durması (vertical slice ile bağlantı → M11.4)
+- **Connascence** — "iki kod parçası niçin birlikte değişmek zorunda" sorusunu coupling'den daha ince taneli anlatan model (isim, tip, anlam, konum, sıra, zamanlama)
 - SOLID'in aşırı uygulanması: gereksiz soyutlama, "interface her şeye" eleştirisi
 - 🛠 **Kod:** Her prensip için **kötü → iyi** refactor hikayesi; her adımda testlerin yeşil kaldığı commit serisi.
 
@@ -1902,9 +2140,17 @@ Her konunun `README.md`'si şu şablonu izler:
 - **Hexagonal / Ports & Adapters** (Alistair Cockburn): port = interface, adapter = implementasyon; driving (controller) vs driven (repository) adapter
 - **Onion Architecture** (Jeffrey Palermo): iç içe halkalar, dış katman içe bağımlı olabilir, tersi asla
 - **Asıl mesaj** ⭐ — üçü de **aynı fikrin farklı isimlendirmesi**: iş mantığını framework/DB/UI'dan izole etmek. Fark vokabülerde: Hexagonal port/adapter, Onion halka, Clean use-case dilini kullanır.
-- Katmanları ayrı proje mi, klasör mü yapmalı
+- **Hexagonal'in test avantajı** ⭐ — çekirdeği hiç adapter ayağa kaldırmadan, port'lara test double vererek test etmek; "DB'siz, HTTP'siz test" bu mimarinin asıl getirisi
+- **İş mantığını organize etmenin üç yolu (Fowler)** ⭐ — mimariyi seçmeden önce sorulacak soru
+  - **Transaction Script** — istek başına prosedürel akış; CRUD ağırlıklı, kuralı az işte **dürüst ve doğru** tercih
+  - **Table Module** — tablo başına bir sınıf (klasik DataSet dünyası)
+  - **Domain Model** — davranışı olan zengin nesneler; karmaşık kural ve invariant varsa (→ S5.1 DDD)
+  - Clean/Hexagonal/Onion asıl olarak **Domain Model**'i korumak için vardır; Transaction Script yazıyorsan bu törene çoğu zaman ihtiyaç yoktur
+- **Screaming Architecture** — klasör yapısı domain'i mi ("Siparişler", "Ödeme") yoksa framework'ü mü ("Controllers", "Services", "Repositories") haykırıyor (→ M11.4)
+- **.NET'te pratik yerleşim:** `Domain` / `Application` / `Infrastructure` / `Web` projeleri; **interface'ler hangi katmanda tanımlanır** (DIP gereği ihtiyacı duyan katmanda, implementasyon Infrastructure'da); `Web`'in `Infrastructure`'a yalnızca **composition root**'ta dokunması; kuralı derleme zamanında zorlamak (→ S5.5 architecture testleri)
+- Katmanları ayrı proje mi, klasör mü yapmalı — proje sınırı kuralı derleyiciye zorlatır, klasör sınırı disipline bırakır
 - **Trade-off:** küçük CRUD serviste fazla tören; karmaşık domain'de kurtarıcı
-- 🛠 **Kod:** Aynı "sipariş ver" use case'inin N-tier ve Clean Architecture versiyonları; DB'yi PostgreSQL'den MongoDB'ye değiştirmenin iki versiyondaki maliyeti.
+- 🛠 **Kod:** Aynı "sipariş ver" use case'inin üç versiyonu — Transaction Script, N-tier ve Clean Architecture; DB'yi PostgreSQL'den MongoDB'ye değiştirmenin her birindeki maliyeti ölçme; Clean versiyonda çekirdeği in-memory port'larla (DB/HTTP olmadan) test eden suite.
 
 #### M11.4 Vertical Slice Architecture · `04-vertical-slice`
 - Katman yerine **özellik (feature)** bazlı organizasyon
@@ -1932,7 +2178,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Exception tabanlı akışın performans ve okunabilirlik maliyeti
 - 🛠 **Kod:** Aynı use case'in exception tabanlı ve Result tabanlı versiyonları; hataların HTTP yanıtına tutarlı eşlenmesi.
 
-🎯 **Mülakat:** "SOLID'i örnekle anlat" · "Dependency Inversion ile Dependency Injection farkı?" · "Clean, Hexagonal ve Onion aynı şey mi?" ⭐ · "Clean Architecture mı Vertical Slice mı?" · "CQRS ile Event Sourcing farkı?" · "MediatR'ı neden kullanırsın / kullanmazsın?" · "Exception mı Result mı?"
+🎯 **Mülakat:** "SOLID'i örnekle anlat" · "Dependency Inversion ile Dependency Injection farkı?" · "Clean, Hexagonal ve Onion aynı şey mi?" ⭐ · "Hexagonal mimarinin test tarafındaki getirisi nedir?" · "Bu iş için Transaction Script mi Domain Model mi — neye göre karar verirsin?" ⭐ · "Clean Architecture'da interface'i hangi katmana koyarsın, neden?" ⭐ · "Clean Architecture mı Vertical Slice mı?" · "CQRS ile Event Sourcing farkı?" · "MediatR'ı neden kullanırsın / kullanmazsın?" · "Exception mı Result mı?"
 
 ---
 
@@ -1954,13 +2200,43 @@ Her konunun `README.md`'si şu şablonu izler:
 - **Dual write problemi**'ne giriş (çözümü outbox → S6.3)
 - 🛠 **Kod:** Önce `Channel<T>` ile in-process kavramsal simülasyon (duplicate, retry, DLQ), sonra aynı akışın gerçek broker ile hali.
 
-#### M12.2 RabbitMQ · `02-rabbitmq`
-- AMQP modeli: **exchange** (direct, topic, fanout, headers), binding, queue
-- **Quorum queue** (dayanıklı varsayılan tercih) vs classic queue; RabbitMQ Streams
-- Ack/nack, prefetch (QoS), publisher confirms
-- **Dead-letter exchange**, TTL ile gecikmeli retry
-- `RabbitMQ.Client` 7.x (tamamen async API)
-- 🛠 **Kod:** Sipariş olaylarını topic exchange ile birden fazla servise dağıtan sistem; DLX ile retry + dead-letter akışı.
+#### M12.2 RabbitMQ · `02-rabbitmq` ⭐
+- **AMQP 0-9-1 modeli:** producer → **exchange** → binding → queue → consumer; broker neden "akıllı", istemci neden "aptal" (Kafka'nın tersi)
+- **Exchange tipleri** ⭐
+
+  | Tip | Yönlendirme | Kullanım |
+  |-----|-------------|----------|
+  | `direct` | routing key **tam eşleşme** | İş kuyruğu, belirli bir tüketiciye yönlendirme |
+  | `fanout` | routing key yok sayılır, **tüm** bağlı kuyruklara | Broadcast, cache invalidation |
+  | `topic` | noktalı key + wildcard: `*` bir kelime, `#` sıfır veya daha fazla | `order.created.tr` gibi hiyerarşik olaylar |
+  | `headers` | routing key yerine **header** eşleşmesi (`x-match: all/any`) | Çok kriterli yönlendirme (nadir) |
+
+  - **Alternate exchange** — eşleşmeyen mesajın sessizce kaybolması yerine yakalanması
+  - Default (nameless) exchange ve kuyruk adıyla yönlendirme
+- **Connection ve channel modeli** ⭐ — connection TCP bağlantısıdır (pahalı, uygulama ömrü boyunca paylaşılır), **channel** ise onun üzerindeki hafif mantıksal kanaldır; **channel thread-safe değildir** → thread/consumer başına ayrı channel, connection'ı paylaş
+- **Kuyruk tipleri:**
+  - **Quorum queue** — Raft tabanlı replikasyon, dayanıklı iş yükleri için **varsayılan tercih**; tek sayıda replika (3 veya 5) ile çoğunluk; Raft log'u bellek + disk tuttuğu için çok derin kuyrukta bellek maliyeti yüksek
+    - **`delivery-limit`** ⭐ — 4.0'dan itibaren varsayılan **20**; limit aşılınca mesaj dead-letter edilir, DLX yoksa **düşer** → bu yüzden her quorum queue'ya bir dead-letter yapılandırması önerilir. `-1` ile kapatılabilir ama önerilmez. 4.3'ten itibaren `acquired-count` ve `delivery-count` ayrı sayılır; limite yalnızca `delivery-count` bakar
+    - `basic.reject` sayacı artırır, `basic.nack` artırmaz — poison message davranışını belirleyen ayrım
+  - **Classic queue** — tek replika; **classic queue mirroring 4.0'da tamamen kaldırıldı** (mirror policy'leri artık etkisiz); transient (non-durable) non-exclusive classic queue'lar 4.3'ten itibaren varsayılan olarak bildirilemiyor
+  - **Lazy queue** — mesajları diskte tutarak bellek tasarrufu; quorum queue'lar büyük ölçüde yerini aldı (tarihsel bilgi olarak bilinmeli)
+  - **Stream** — append-only log, tekrar okunabilir (replay), çok tüketicili; RabbitMQ'nun Kafka'ya en yakın yapısı
+- **Teslim güvenliği:** `ack`/`nack`/`reject` (+ `requeue`), **prefetch (QoS)** ile tüketici başına eşzamanlı mesaj sınırı — prefetch çok yüksekse tek tüketici kuyruğu kilitler, çok düşükse throughput düşer; **publisher confirms** (asenkron onay) ve neden `tx` yerine tercih edilir
+- **Dead-lettering:** DLX + DLQ; `x-dead-letter-exchange`, red nedeni header'ları; **TTL + DLX ile gecikmeli retry** (ping-pong deseni) vs **Delayed Message Exchange plugin** — hangisi ne zaman
+- **Clustering & yüksek erişilebilirlik:** node'lar, disk vs RAM node, **metadata store Khepri** (Raft tabanlı; 4.2'den itibaren yeni kurulumlarda varsayılan, yükseltilen node'lar eski store'da kalır — `khepri_db` feature flag'i ile geçiş), network partition davranışı (`pause_minority`), quorum queue'ların partition'da nasıl davrandığı
+- **Federation vs Shovel** ⭐ — iki bölge/veri merkezi arasında mesaj taşımanın iki yolu
+
+  | | Federation | Shovel |
+  |---|-----------|--------|
+  | Model | Downstream broker, upstream exchange/queue'ya **abone olur** | Kaynak kuyruktan okur, hedefe **publish eder** (point-to-point) |
+  | Bağlılık | Gevşek; kopma sonrası kendini toparlar | Daha açık/kontrollü, tek yönlü akış |
+  | Tipik kullanım | Sürekli, hub-and-spoke çok bölgeli topoloji | Tek seferlik göç, kuyruk boşaltma, köprüleme |
+
+- **Akış kontrolü (back pressure):** bellek ve disk alarmları (`vm_memory_high_watermark`, `disk_free_limit`) — alarm tetiklendiğinde publisher'ların bloklanması; "mesajlar birikti, publish donuyor" teşhisi
+- Sanal host (vhost), kullanıcı/permission modeli, policy ile kuyruk ayarı yönetimi
+- **İzleme:** Management UI, Prometheus plugin, bakılacak metrikler (queue depth, unacked, consumer utilisation, redelivery oranı); **4.2'de Raft metrik adları değişti** — dashboard'ların güncellenmesi gerekir
+- `RabbitMQ.Client` 7.x — tamamen **async API**; publisher confirm ve consumer örüntüleri
+- 🛠 **Kod:** Sipariş olaylarını topic exchange ile birden fazla servise dağıtan sistem (`order.created.*` binding'leri); DLX + TTL ile artan gecikmeli retry ve son durakta DLQ; publisher confirms ile "mesaj gerçekten yazıldı mı" kanıtı; prefetch değerini 1 / 10 / 1000 yapıp throughput ve adil dağıtım farkını ölçme; Compose ile 3 node'lu cluster + quorum queue üzerinde bir node'u düşürüp mesaj kaybı olmadığını gösterme; iki broker arasında shovel ile kuyruk taşıma.
 
 #### M12.3 Azure Service Bus · `03-azure-service-bus`
 - Queue vs topic/subscription; subscription filtreleri
@@ -1988,7 +2264,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Ham SDK ile çalışmak — ne zaman yeterli
 - 🛠 **Kod:** Aynı consumer'ın ham `RabbitMQ.Client`, MassTransit v8 ve Wolverine ile yazılıp karşılaştırılması (kod miktarı, retry/DLQ yapılandırması, test edilebilirlik).
 
-🎯 **Mülakat:** "At-least-once teslimatta duplicate mesajları nasıl ele alırsın?" ⭐ · "Queue ile topic farkı?" · "Kafka mı RabbitMQ mı?" · "Poison message nedir?" · "Mesaj sırasını nasıl garanti edersin?" · "Command ile event farkı?"
+🎯 **Mülakat:** "At-least-once teslimatta duplicate mesajları nasıl ele alırsın?" ⭐ · "Queue ile topic farkı?" · "RabbitMQ exchange tipleri nedir, `topic` ile `direct` farkı?" ⭐ · "Quorum queue ile classic queue farkı, hangisini seçersin?" · "Prefetch değeri neyi etkiler?" · "Gecikmeli retry'ı RabbitMQ'da nasıl yaparsın?" · "Federation ile shovel farkı?" · "Connection mı channel mı paylaşılır?" · "Kafka mı RabbitMQ mı?" · "Poison message nedir?" · "Mesaj sırasını nasıl garanti edersin?" · "Command ile event farkı?"
 
 ---
 
@@ -2056,8 +2332,8 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ### M14. DevOps: CI/CD, Container & Kubernetes Temelleri
 
-> 📁 `02-mid/14-devops/` · ⏱ ~2 hafta · Önkoşul: J12, J13.4
-> İleri Kubernetes, IaC ve platform mühendisliği → S8.
+> 📁 `02-mid/14-devops/` · ⏱ ~3 hafta · Önkoşul: J12, J13.6
+> Docker temelleri J12'de; burada **container'ı production'a hazırlamak** (BuildKit, image sertleştirme) ve **Kubernetes'i çalıştırmak** var. İleri Kubernetes (HPA/KEDA, Helm, GitOps, NetworkPolicy), IaC ve platform mühendisliği → S8.
 
 #### M14.1 CI/CD Pipeline'ları · `01-ci-cd`
 - Aşamalar: restore → build → test → analiz → publish → containerize → deploy
@@ -2074,23 +2350,73 @@ Her konunun `README.md`'si şu şablonu izler:
 #### M14.2 Container Derinlemesine · `02-containers-advanced`
 - Image varyantları: Debian, Alpine, **chiseled** (Ubuntu, distroless benzeri), Native AOT image
 - Image boyutu ve saldırı yüzeyi; **image tarama** (Trivy, Defender for Containers), SBOM
-- Multi-arch build (amd64/arm64)
+- **BuildKit & `docker buildx`** ⭐ — modern varsayılan builder; aşamaları paralel yürütme, atlanabilen kullanılmayan aşamalar
+  - **Cache mount:** `RUN --mount=type=cache,target=/root/.nuget/packages dotnet restore` ile NuGet paketlerini build'ler arasında saklamak; `# syntax=docker/dockerfile:1` satırı zorunlu; çok projeli solution'da kazanç büyük
+  - **Tuzak:** cache mount **yerel builder'da** yaşar, final image'a girmez → **hosted CI runner'da her çalıştırmada kaybolur**; GitHub Actions cache backend'i ile `--cache-to`/`--cache-from` export/import gerekir
+  - Windows container'larda `RUN --mount` desteklenmez
+  - **Build secret:** `--mount=type=secret` ile özel NuGet feed PAT'ini layer'a gömmeden kullanma (`ARG`/`ENV` ile geçirmek image geçmişine sızdırır)
+- Multi-arch build (`buildx` ile amd64/arm64)
 - Container'da .NET: CPU/bellek limitlerine duyarlılık, GC ayarları (`DOTNET_GCHeapHardLimit`), DATAS
 - `dotnet publish /t:PublishContainer` ileri kullanım
 - Rootless çalışma, read-only filesystem
 - 🛠 **Kod:** Aynı API'nin dört image varyantı: boyut, CVE sayısı (Trivy), başlangıç süresi ve bellek tablosu.
 
-#### M14.3 Kubernetes Temelleri · `03-kubernetes-basics`
-- Mimari: control plane, node, kubelet
-- Temel nesneler: Pod, ReplicaSet, **Deployment**, Service, Ingress (ve Gateway API'ye giriş)
-- ConfigMap ve Secret ile konfigürasyon
-- **Probe'lar:** liveness, readiness, startup ⭐ — ASP.NET Core health check eşlemesi
-- Resource request/limit, QoS sınıfı, **OOMKilled**
-- **Graceful shutdown:** SIGTERM, `terminationGracePeriodSeconds`, preStop hook
-- `kubectl` temelleri; yerel cluster (kind, k3d, Docker Desktop)
-- 🛠 **Kod:** Capstone API'sinin Deployment + Service + Ingress + ConfigMap + Secret manifest'leri; kind üzerinde rolling update ve probe davranışı gözlemi.
+#### M14.3 Kubernetes Temelleri · `03-kubernetes-basics` ⭐
+- **Mimari:** control plane (API server, scheduler, controller manager, etcd), node, kubelet, kube-proxy
+- **Declarative model:** istenen durum (desired state) vs mevcut durum, reconciliation loop; `kubectl apply` ve idempotency
+- **Namespace** — mantıksal izolasyon, ortam/takım ayrımı; `ResourceQuota` ve `LimitRange` ile kota
+- **Label, selector & annotation** ⭐ — Service'in Pod'ları nasıl bulduğu label selector ile olur; annotation metadata içindir, seçim için kullanılmaz
+- **Pod** — en küçük dağıtım birimi, çok container'lı Pod ne zaman anlamlı
+- **ReplicaSet → Deployment** — rolling update, `maxSurge`/`maxUnavailable`, `kubectl rollout status` / `undo`
+- **Service tipleri** ⭐
+  - **ClusterIP** (varsayılan, cluster içi)
+  - **NodePort** (her node'da sabit port)
+  - **LoadBalancer** (cloud yük dengeleyici)
+  - **ExternalName** (DNS CNAME)
+  - **Headless** (`clusterIP: None`) — Pod IP'lerini doğrudan döner, StatefulSet'in stabil DNS'inin temeli (→ M14.4)
+- **Ingress** ve **Gateway API**'ye giriş (derinlemesine → S8.1)
+- **ConfigMap ve Secret** ile konfigürasyon; Secret'ın varsayılan olarak yalnızca base64 olduğu (şifreleme değil) ⭐ — gerçek secret yönetimi → S8.1
+- `kubectl` temelleri ve **teşhis**: `get`, `describe`, `logs` (+ `--previous`), `get events`, `port-forward`, `exec`
+- Yerel cluster: kind, k3d, Docker Desktop; sürüm penceresi — proje aynı anda yalnızca **son üç minor sürümü** destekler (2026'da 1.35-1.37 hattı)
+- 🛠 **Kod:** Capstone API'sinin Deployment + Service + Ingress + ConfigMap + Secret manifest'leri; kind üzerinde rolling update ve `rollout undo`; Service tiplerini tek tek deneyip hangisinin nereden erişilebildiğini tabloya dökme.
 
-#### M14.4 Aspire ile Orkestrasyon · `04-aspire`
+#### M14.4 Kubernetes Workload'ları, Storage & Yaşam Döngüsü · `04-kubernetes-workloads` ⭐
+> Deployment her şey değildir: durumlu servisler, batch işler ve node başına ajanlar farklı nesneler ister. Mülakatta "StatefulSet ile Deployment farkı?" klasik sorudur.
+
+- **Workload nesneleri — hangisi ne zaman** ⭐
+
+  | Nesne | Ne yapar | Tipik kullanım |
+  |-------|----------|----------------|
+  | **Deployment** | Stateless, birbirinin yerine geçebilen replikalar | Web API, worker |
+  | **StatefulSet** | Sıralı ve **kalıcı kimlik** (`web-0`, `web-1`), Pod başına kendi PVC'si, headless Service ile stabil DNS | PostgreSQL, Kafka, Redis |
+  | **DaemonSet** | Her node'da (veya seçili node'larda) bir Pod | Log toplayıcı, metrik ajanı, CNI |
+  | **Job** | Pod'u **tamamlanana kadar** çalıştırır, hata olursa yeniden dener | Migration, batch hesaplama |
+  | **CronJob** | Zamanlanmış Job üretir (cron sözdizimi) | Gece raporu, yedekleme |
+
+  - StatefulSet'in `volumeClaimTemplates`'i ile her Pod'un kendi kalıcı diskini alması ve yeniden zamanlamada korunması
+  - Job'da `completions`/`parallelism`/`backoffLimit`; CronJob'da `concurrencyPolicy` ve kaçırılan çalıştırma
+  - **EF Core migration'ı Kubernetes'te nasıl çalıştırmalı:** uygulama startup'ında mı, **Job/init container** ile mi (çoklu replikada yarış riski → M6.6)
+- **Kalıcı depolama** ⭐
+  - **PersistentVolume (PV)** = cluster'daki depolama, **PersistentVolumeClaim (PVC)** = kullanıcının boyut ve erişim modu talebi
+  - **StorageClass** ile **dinamik provisioning** (cloud disk otomatik oluşsun)
+  - **Access mode'lar:** `ReadWriteOnce` (tek node), `ReadOnlyMany`, `ReadWriteMany` — çoğu cloud blok diski yalnızca RWO verir, bu yüzden "iki Pod aynı diske yazsın" beklentisi çöker ⭐
+  - **Reclaim policy:** `Retain` (veri kalır, elle temizlenir) vs `Delete` (PVC silinince disk de gider) — production'da yanlış seçimin bedeli
+  - `emptyDir`, `configMap`/`secret` volume; ephemeral vs kalıcı
+- **Pod yaşam döngüsü & container türleri**
+  - **Init container** — ana container'lardan önce sırayla çalışır ve biter (migration, bekleme)
+  - **Sidecar container** — K8s **1.33'te stable**; `initContainers` içinde `restartPolicy: Always` ile tanımlanır, ana container'larla birlikte yaşar ve **onlar bittikten sonra** SIGTERM alır; Pod seviyesindeki `restartPolicy`'yi yok sayar
+  - **Probe'lar:** liveness, readiness, startup ⭐ — ASP.NET Core health check eşlemesi (`/health/live`, `/health/ready` → M3.7); yanlış liveness probe'un sağlıklı Pod'u sürekli öldürmesi
+  - **Graceful shutdown:** SIGTERM → `terminationGracePeriodSeconds` → SIGKILL; `preStop` hook; exec form `ENTRYPOINT` zorunluluğu (→ J12.2) ve `IHostApplicationLifetime` (→ M3.1)
+  - Restart policy ve `CrashLoopBackOff`'un backoff mantığı
+- **Resource yönetimi & zamanlama**
+  - Resource `requests`/`limits`, **QoS sınıfları** (Guaranteed / Burstable / BestEffort), **OOMKilled** ⭐; CPU throttling
+  - .NET'in container limitlerine duyarlılığı (→ M14.2)
+  - Zamanlamaya giriş: `nodeSelector`, **taint & toleration**, node/pod **affinity & anti-affinity**, topology spread (derinlemesine → S8.1)
+  - **PodDisruptionBudget** — node bakımında kaç replikanın aynı anda düşebileceği
+- **CRD & Operator** kavramına giriş — Kubernetes API'sini kendi tipinle genişletmek; operator pattern'in "reconciliation loop" fikri (→ S8.6)
+- 🛠 **Kod:** PostgreSQL'i StatefulSet + PVC ile ayağa kaldırıp Pod'u silip verinin kaldığını kanıtlama; EF Core migration'ını Job olarak çalıştırıp uygulama Deployment'ının ona `initContainer` ile beklemesi; bilerek yanlış ayarlanmış liveness probe ile sağlıklı Pod'un öldürülmesini gözlemleyip düzeltme; bellek limiti düşük bir Pod'u `OOMKilled` yapıp `describe` çıktısından teşhis; `concurrencyPolicy: Forbid` olan bir CronJob ile üst üste binen çalıştırmaları engelleme.
+
+#### M14.5 Aspire ile Orkestrasyon · `05-aspire`
 - **Aspire** (13 sürümüyle ".NET" öneki kalktı, polyglot oldu — Python, JavaScript/TypeScript da birinci sınıf)
 - **AppHost:** kaynak modeli (PostgreSQL, Redis, RabbitMQ, Kafka, Keycloak, Ollama container'larını kodla tanımlama), referanslar ve servis keşfi
 - **Service defaults:** OpenTelemetry, health check, resilience, service discovery hazır
@@ -2101,15 +2427,24 @@ Her konunun `README.md`'si şu şablonu izler:
 - Docker Compose'a göre avantaj/dezavantaj
 - 🛠 **Kod:** Mid capstone'un AppHost'u — tüm bağımlılıklar tek `aspire run` ile; `azd up` ile Container Apps'e deploy.
 
-🎯 **Mülakat:** "CI ile CD farkı?" · "Pipeline'da secret'ları nasıl yönetirsin?" · "Liveness ile readiness probe farkı?" · "Pod neden OOMKilled olur?" · "Kubernetes'te graceful shutdown nasıl sağlanır?" · "Aspire ne çözüyor, Docker Compose'dan farkı ne?"
+🎯 **Mülakat:** "CI ile CD farkı?" · "Pipeline'da secret'ları nasıl yönetirsin?" · "BuildKit cache mount CI'da neden işe yaramaz?" · "Deployment ile StatefulSet farkı, hangisini ne zaman?" ⭐ · "DaemonSet ne için kullanılır?" · "Job ile CronJob farkı?" · "PV, PVC ve StorageClass ilişkisi nedir?" ⭐ · "İki Pod aynı diske yazabilir mi?" (access mode) · "Reclaim policy `Delete` seçmenin riski ne?" · "Liveness ile readiness probe farkı?" ⭐ · "Yanlış liveness probe ne yapar?" · "Init container ile sidecar farkı?" · "Pod neden OOMKilled olur?" · "Kubernetes'te graceful shutdown nasıl sağlanır?" ⭐ · "Service tiplerini say, headless Service ne işe yarar?" ⭐ · "Kubernetes Secret gerçekten güvenli mi?" · "Aspire ne çözüyor, Docker Compose'dan farkı ne?"
 
 ---
 
 ### M15. Azure ile Uygulama Geliştirme
 
-> 📁 `02-mid/15-azure-development/` · ⏱ ~3 hafta · Önkoşul: J13, M9
-> Sertifika notu: **AZ-204 31 Temmuz 2026'da emekliye ayrıldı**; geliştirici yolu artık **AI-200 (Azure AI Cloud Developer Associate)**. Bu modül + M16 bu sınavın kapsamıyla büyük ölçüde örtüşür.
-> Azure çözüm mimarisi, Well-Architected Framework ve maliyet → S8.3.
+> 📁 `02-mid/15-azure-development/` · ⏱ ~4 hafta · Önkoşul: J13, M9
+> 📜 **Sertifika hedefi: AI-200 (Azure AI Cloud Developer Associate / *Developing AI Cloud Solutions on Azure*).** **AZ-204 31 Temmuz 2026'da emekliye ayrıldı**; .NET geliştiricisinin Azure associate yolu artık bu sınav. Dört alanın roadmap karşılığı:
+>
+> | AI-200 alanı | Ağırlık | Roadmap |
+> |---|---|---|
+> | Develop containerized solutions on Azure | %20-25 | **M15.2** (+ J12 Docker, S8.1 AKS) |
+> | Develop AI solutions by using Azure data management services | %25-35 | **M15.4** (+ M6 Postgres, M8 Redis/NoSQL, M16.4 vector) |
+> | Connect to and consume Azure services | %20-25 | **M15.3** (Functions), **M15.5** (Event Grid), **M15.6** (Service Bus) |
+> | Secure, monitor, and troubleshoot Azure solutions | %20-25 | **M15.1** (Key Vault), **M15.8** (App Configuration), **M15.7** + M13 (OpenTelemetry, KQL) |
+>
+> Not: sınavın en ağır alanı **veri servisleri + vector search**; resmî study guide'da bu alanın ağırlığı iki yerde farklı yazıyor (%30-35 ve %25-30), sınav öncesi [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200)'ı kontrol et.
+> Azure çözüm mimarisi, Well-Architected Framework ve maliyet → S8.3 (AZ-305).
 
 #### M15.1 Azure'da Kimlik: Managed Identity, Entra ID & Key Vault · `01-identity-keyvault`
 - **Managed Identity** ⭐ — system-assigned vs user-assigned; connection string'siz ve secret'sız bağlantı
@@ -2120,7 +2455,29 @@ Her konunun `README.md`'si şu şablonu izler:
 - Workload identity federation (GitHub Actions, AKS)
 - 🛠 **Kod:** API'nin Azure SQL, Storage ve Key Vault'a **hiç secret kullanmadan** managed identity ile bağlanması; yerelde aynı kodun geliştirici kimliğiyle çalışması.
 
-#### M15.2 Compute Seçenekleri: App Service, Functions, Container Apps · `02-compute`
+#### M15.2 Container Registry & Container Dağıtımı · `02-container-registry-deploy` ⭐
+> AI-200'ün ilk alanı (*Develop containerized solutions*, %20-25) buraya düşer. Docker temelleri → J12; AKS derinliği → S8.1.
+
+- **Azure Container Registry (ACR)**
+  - Registry oluşturma ve SKU'lar (Basic / Standard / Premium — hangisi geo-replication, private endpoint, content trust veriyor)
+  - **Image build, store ve versiyonlama** ⭐: tag stratejisi (`:1.4.2`, `:sha-abc123`, neden `:latest` production'da kullanılmaz), **digest ile sabitleme** (immutable deploy)
+  - **ACR Tasks** — bulutta build: `az acr build` (yerel Docker'a ihtiyaç duymadan), multi-step task, **base image güncellendiğinde otomatik yeniden build** (güvenlik yaması zinciri)
+  - Image temizliği: retention policy, `az acr repository delete`; maliyet
+  - **Kimlik:** admin user yerine **managed identity / RBAC** ile pull (`AcrPull` rolü) ⭐
+  - Image tarama (Defender for Containers) ve imzalama
+- **Container'ı Azure'da çalıştırma**
+  - **App Service for Containers:** image'ı ACR'dan çekme, **app settings ile environment variable ve secret geçirme** (Key Vault referansı ile → M15.1), health check, slot
+  - **Container Apps:** environment kavramı, **revision yönetimi** ve trafik bölme (canary), ingress, secret'lar, Dapr; **KEDA ile event-driven ölçekleme** ve scale-to-zero (detay → M15.3)
+  - **AKS:** `Deployment`/`Service`/`Ingress` manifest'leriyle workload dağıtma, `kubectl apply`, ConfigMap/Secret, resource request/limit (derinlemesine → S8.1)
+  - Container Apps vs AKS vs App Service for Containers — **karar tablosu** (→ M15.3)
+- **Container teşhisi** ⭐ — AI-200'ün açıkça ölçtüğü beceri
+  - **Log'lar:** Container Apps log stream ve Log Analytics (`ContainerAppConsoleLogs_CL`), `kubectl logs` (+ `--previous` ile çökmüş container)
+  - **Event'ler:** `kubectl describe pod` / `kubectl get events` — `ImagePullBackOff`, `CrashLoopBackOff`, `OOMKilled`, probe hatası
+  - **Uçtan uca bağlantı kontrolü:** ingress → servis → container; DNS çözümleme, port eşleşmesi, NSG/private endpoint engeli, `kubectl exec` ile içeriden test
+  - Yaygın hata kalıpları: yanlış registry kimliği, eksik environment variable, `0.0.0.0` yerine `localhost` dinlemek, container'ın beklenen portu açmaması
+- 🛠 **Kod:** API image'ını `az acr build` ile ACR'da derleyip (yerel Docker olmadan) digest ile Container Apps'e deploy eden pipeline; yeni revision'a **%10 trafik** verip metriklere bakarak tamamlama; sonra bilerek bozuk bir deploy (yanlış env var + yanlış port) yapıp `ImagePullBackOff`/`CrashLoopBackOff` ve probe hatalarını log + event üzerinden teşhis etme alıştırması; aynı image'ı App Service for Containers'a managed identity ile çekme.
+
+#### M15.3 Compute Seçenekleri: App Service, Functions, Container Apps · `03-compute`
 - **App Service:** deployment slot ve swap, autoscale, health check, Always On
 - **Azure Functions:** isolated worker model, trigger ve binding'ler, **Flex Consumption** planı (hızlı ölçek, VNet, scale-to-zero), **Durable Functions** (orchestrator, activity, entity; fan-out/fan-in, human interaction)
 - **Azure Container Apps:** KEDA ile event-driven ölçekleme, scale-to-zero, revision ve trafik bölme, Dapr, Container Apps Jobs, serverless GPU
@@ -2128,33 +2485,52 @@ Her konunun `README.md`'si şu şablonu izler:
 - **Karar tablosu** ⭐ — App Service vs Functions vs Container Apps vs AKS
 - 🛠 **Kod:** Aynı arka plan işinin Functions (Service Bus trigger) ve Container Apps (KEDA ile Service Bus ölçekleme) versiyonları; soğuk başlangıç ve maliyet notları.
 
-#### M15.3 Veri Servisleri: Azure SQL, Cosmos DB, PostgreSQL, Managed Redis · `03-data-services`
+#### M15.4 Veri Servisleri: Azure SQL, Cosmos DB, PostgreSQL, Managed Redis · `04-data-services` ⭐
 - **Azure SQL:** single DB, elastic pool, serverless (auto-pause); Entra ile şifresiz auth; transient fault retry; `VECTOR` tipi
 - **Azure Database for PostgreSQL Flexible Server:** pgvector, Entra auth, read replica, PgBouncer
-- **Cosmos DB:**
+- **Cosmos DB for NoSQL** — AI-200'ün en ağırlıklı servisi
   - **Partition key seçimi** ⭐ — en kritik ve geri dönüşü en zor karar (cardinality, hot partition)
-  - RU/s ekonomisi: provisioned, autoscale, serverless
-  - **Consistency level'lar:** Strong, Bounded Staleness, Session (varsayılan), Consistent Prefix, Eventual
-  - Indexing policy, **Change Feed**, TTL, vector search
-  - Cosmos DB for MongoDB (vCore) ve Cosmos DB for PostgreSQL seçenekleri
+  - SDK ile bağlanma ve sorgulama; `CosmosClient` **singleton** kuralı, direct vs gateway mod, bulk execution
+  - **RU/s ekonomisi:** provisioned, autoscale, serverless; sorgu RU maliyetini `RequestCharge` ile ölçmek
+  - **RU'yu düşürmek için ayar** ⭐: **indexing policy**'yi daraltmak (gereksiz yola index koymamak, composite index), projection ile az alan çekmek, cross-partition sorgudan kaçınmak
+  - **Consistency level'lar:** Strong, Bounded Staleness, Session (varsayılan), Consistent Prefix, Eventual — **gevşek seviyenin RU'yu ve gecikmeyi düşürmesi** (okuma maliyeti Strong'da iki katına çıkar)
+  - **Vector search** ⭐: vector embedding policy, `VectorDistance()` ile benzerlik sorgusu, DiskANN/quantized flat index, metadata filtresiyle birlikte kullanım, hybrid search (→ M16.4)
+  - **Change feed processor** ⭐: yeni/güncellenen dokümanları yakalama, lease container, checkpoint ve yeniden başlatmada kaldığı yerden devam; **embedding'leri güncel tutmak** için kanonik kullanım
+  - TTL; Cosmos DB for MongoDB (vCore) ve Cosmos DB for PostgreSQL seçenekleri
   - Cosmos DB ne zaman **yanlış** seçim
+- **PostgreSQL'de vector iş yükü (pgvector) — AI-200'ün özellikle ölçtüğü kısım** ⭐
+  - Şema ve index tasarımı: **HNSW vs IVFFlat** seçimi, `lists`/`m`/`ef_construction` parametreleri, index oluşturma süresi
+  - **pgvector hesaplama maliyetini düşürmek:** boyut indirgeme, **`halfvec`/quantization** ile bellek düşürme, `ef_search` ile recall/gecikme dengesi, index'in belleğe sığması
+  - **Compute/bellek/storage boyutlandırma:** vector index'in RAM'e sığmaması durumunda diske taşma ve gecikme patlaması; IOPS ve storage tier etkisi
+  - **RAG retrieval'da metadata filtresi** ile birlikte vector arama (filtre öncesi/sonrası seçimi ve recall etkisi)
 - **Azure Managed Redis** — Azure Cache for Redis'in halefi
-- 🛠 **Kod:** Sipariş verisini Cosmos DB'de iki farklı partition key ile modelleyip RU maliyetlerini ölçme; Change Feed ile okuma modeli güncelleme.
+  - Cache: TTL, **expiration ve invalidation** stratejisi (→ M8.4), eviction policy
+  - **Vector set / vector index** ile benzerlik araması; ne zaman Redis'te vector tutmak mantıklı (düşük gecikme, kısa ömürlü index)
+  - Tier seçimi ve bellek/maliyet dengesi
+- 🛠 **Kod:** Sipariş verisini Cosmos DB'de iki farklı partition key ile modelleyip **RU maliyetlerini `RequestCharge` ile ölçme**; indexing policy'yi daraltıp aynı sorgunun RU'sunun düştüğünü kanıtlama; Change Feed processor ile ürün açıklaması değişince embedding'i yeniden üretip vector store'u güncelleyen worker; aynı doküman setini Cosmos vector search, pgvector (HNSW) ve Managed Redis'te indeksleyip **recall / gecikme / maliyet** tablosu çıkarma; pgvector index'ini belleğe sığmayacak kadar büyütüp gecikme farkını gözlemleme.
 
-#### M15.4 Storage & Event Grid · `04-storage-events`
+#### M15.5 Storage & Event Grid · `05-storage-events`
 - Blob tier'ları (Hot/Cool/Cold/Archive) ve lifecycle policy
 - **User delegation SAS** (account key'li SAS yerine)
 - Queue Storage, Table Storage — basit ve ucuz seçenekler
-- **Event Grid** ile blob olaylarına tepki
+- **Event Grid derinlemesine** ⭐ — AI-200'ün *Connect to and consume Azure services* alanında ölçülür
+  - Kavramlar: **topic** (system / custom / partner), **event subscription**, event handler; CloudEvents şeması
+  - **Custom event** yayınlama: kendi uygulamandan `EventGridPublisherClient` ile olay gönderme
+  - **Filtreleme** ⭐: subject prefix/suffix, event type, **advanced filter** (payload alanına göre) — gereksiz tüketimi ve maliyeti kesmek
+  - **Teslim ve dayanıklılık:** retry policy ve exponential backoff, TTL, **dead-letter** hedefi (storage), teslim garantisi (at-least-once → idempotent handler zorunluluğu)
+  - Webhook handler doğrulaması (validation handshake), managed identity ile teslim
+  - Event Grid vs Service Bus vs Event Hubs ayrımı (→ M15.6)
 - Front Door / CDN ile statik içerik
-- 🛠 **Kod:** Yüklenen görseli Event Grid tetiklemesiyle küçük resme dönüştüren akış.
+- 🛠 **Kod:** Yüklenen görseli Event Grid tetiklemesiyle küçük resme dönüştüren akış; kendi uygulamasından custom event yayınlayıp **advanced filter** ile yalnızca `amount > 1000` olan siparişleri bir handler'a yönlendirme; handler'ı bilerek hata döndürecek şekilde yazıp retry'ları ve sonunda dead-letter storage'a düşüşü gözlemleme.
 
-#### M15.5 Azure Mesajlaşma Servisleri Karşılaştırması · `05-messaging-services`
-- **Service Bus** (kurumsal mesajlaşma, transaction, session) vs **Event Hubs** (yüksek hacimli stream, Kafka uyumlu) vs **Event Grid** (reaktif olay yönlendirme) vs **Storage Queue** (basit, ucuz) ⭐
-- Hangisi ne zaman — karar tablosu ve maliyet
+#### M15.6 Azure Mesajlaşma Servisleri Karşılaştırması · `06-messaging-services`
+> Servislerin **mekaniği** M12'de öğrenildi (Service Bus → M12.3, Event Grid → M15.5); bu konu bir **seçim** konusudur.
+- **Service Bus** (kurumsal mesajlaşma, transaction, session → M12.3) vs **Event Hubs** (yüksek hacimli stream, Kafka uyumlu) vs **Event Grid** (reaktif olay yönlendirme → M15.5) vs **Storage Queue** (basit, ucuz) ⭐
+- Hangisi ne zaman — karar tablosu, teslim garantileri ve maliyet
+- Yanlış seçimin bedeli: Event Grid'i kuyruk gibi, Service Bus'ı stream gibi kullanmaya çalışmak
 - 🛠 **Kod:** Aynı olayı dört servise gönderen ve tüketim modellerini karşılaştıran demo.
 
-#### M15.6 Application Insights & Azure Monitor · `06-monitoring`
+#### M15.7 Application Insights & Azure Monitor · `07-monitoring`
 - **Azure Monitor OpenTelemetry Distro** (`UseAzureMonitor()`) — önerilen modern yol
 - Telemetri türleri: request, dependency, trace, exception, custom event/metric
 - **KQL temelleri:** `requests | where ... | summarize ... | render`
@@ -2163,13 +2539,13 @@ Her konunun `README.md`'si şu şablonu izler:
 - Sampling ve **maliyet kontrolü**
 - 🛠 **Kod:** Capstone'u Application Insights'a bağla; en yavaş 5 endpoint ve hata oranı için KQL sorguları + alert.
 
-#### M15.7 API Management & App Configuration · `07-apim-app-config`
+#### M15.8 API Management & App Configuration · `08-apim-app-config`
 - **API Management:** policy'ler (rate limit, JWT doğrulama, dönüşüm), ürün ve abonelik, geliştirici portalı
 - APIM'i **AI gateway** olarak kullanmak: LLM token limitleri, yük dağıtımı, semantic cache
 - **App Configuration:** merkezi config, Key Vault referansları, **feature flag**'ler ve dinamik yenileme
 - 🛠 **Kod:** APIM arkasında JWT doğrulamalı ve rate limit'li API; App Configuration feature flag'iyle yeni özelliği kademeli açma.
 
-🎯 **Mülakat:** "Managed identity nedir, secret'sız nasıl bağlanırsın?" ⭐ · "Functions mı, Container Apps mı, App Service mi?" · "Cosmos DB'de partition key nasıl seçilir?" · "Cosmos consistency level'ları?" · "Service Bus, Event Hubs, Event Grid farkı?" · "`DefaultAzureCredential` production'da neden dikkat ister?"
+🎯 **Mülakat:** "Managed identity nedir, secret'sız nasıl bağlanırsın?" ⭐ · "Functions mı, Container Apps mı, App Service mi?" · "ACR'dan image çekerken admin user yerine ne kullanılır?" · "`CrashLoopBackOff` gören bir container'ı nasıl teşhis edersin?" ⭐ · "Container Apps'te canary deploy nasıl yapılır?" · "Cosmos DB'de partition key nasıl seçilir?" ⭐ · "Cosmos consistency level'ları; Strong seçmenin RU'ya etkisi ne?" · "Cosmos'ta bir sorgunun RU maliyetini nasıl düşürürsün?" ⭐ · "Change feed ne işe yarar, embedding'leri güncel tutmak için nasıl kullanılır?" · "pgvector'da HNSW ile IVFFlat arasında nasıl seçersin?" ⭐ · "Vector index belleğe sığmazsa ne olur?" · "Event Grid'de advanced filter ne işe yarar, dead-letter nasıl kurulur?" · "Service Bus, Event Hubs, Event Grid farkı?" · "`DefaultAzureCredential` production'da neden dikkat ister?"
 
 ---
 
@@ -2563,6 +2939,7 @@ Her konunun `README.md`'si şu şablonu izler:
   - Aggregate tasarım kuralları: küçük tut, diğer aggregate'lere ID ile referans ver, bir transaction'da bir aggregate
   - Domain Event, Domain Service, Factory, Repository (DDD anlamında)
 - Anemic vs rich domain model; invariant'ların domain'de korunması
+- **Domain Model mi Transaction Script mi** ⭐ (→ M11.3) — DDD'nin bedeli ve ne zaman ödenmeye değer; **strategic DDD (bounded context, ubiquitous language) tactical DDD olmadan da değerlidir**
 - Domain event → integration event dönüşümü
 - EF Core ile DDD: private setter, backing field, owned/complex type, value object eşleme
 - Event Storming ile modelleme
@@ -3569,24 +3946,24 @@ dotnet-interview/
 
 Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalarda paralel DSA modülü** var. Zaten bir seviyedeysen modüllerin 🎯 sorularıyla kendini test et; rahat cevapladığın modülleri hızlı geç.
 
-### 🟢 Junior (~27 hafta)
+### 🟢 Junior (~30 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
-| 1 | J1 Geliştirici Temelleri | D1 |
-| 2-4 | J2 C# Temelleri | D2 |
-| 5-6 | J3 Collections, Delegates & LINQ | D2 |
-| 7-8 | J4 Async + J5 Build & Run | D5 |
-| 9-10 | J6 ASP.NET Core Temelleri | D5 |
-| 11-13 | J7 Web API Temelleri | D3 (ağaç, heap) |
-| 14-16 | **J8 Veritabanı Temelleri** | D3 |
-| 17-18 | J9 EF Core | D11 — Easy tekrar |
-| 19-20 | J10 Test + J12 Docker | D11 |
-| 21-22 | J11 Güvenlik & Kimlik | D11 |
-| 23-24 | J13 Azure + J14 AI | D11 |
-| 25-27 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
+| 1-2 | J1 Geliştirici Temelleri (Git, **ağ temelleri**, HTTP, CLI) | D1 |
+| 3-6 | **J2 C# Temelleri** (OOP ve sınıf üyeleri dahil) | D2 |
+| 7-8 | J3 Collections, Delegates & LINQ | D2 |
+| 9-10 | J4 Async + J5 Build & Run | D5 |
+| 11-12 | J6 ASP.NET Core Temelleri | D5 |
+| 13-15 | J7 Web API Temelleri | D3 (ağaç, heap) |
+| 16-18 | **J8 Veritabanı Temelleri** | D3 |
+| 19-20 | J9 EF Core | D11 — Easy tekrar |
+| 21-22 | J10 Test + J12 Docker | D11 |
+| 23-24 | J11 Güvenlik & Kimlik | D11 |
+| 25-27 | **J13 Cloud & Azure** (AZ-900 kapsamı) + J14 AI | D11 |
+| 28-30 | 🏁 **Junior Capstone** + I1, I2, I4 + I6 Junior mock | Zamanlı Easy setleri |
 
-### 🟡 Mid (~44 hafta)
+### 🟡 Mid (~47 hafta)
 
 | Hafta | Seviye modülü | Paralel DSA |
 |-------|---------------|-------------|
@@ -3594,19 +3971,19 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | 3-4 | M2 Build, Runtime & Deployment | D4 |
 | 5-7 | M3 ASP.NET Core Derinlemesine | D6 |
 | 8-10 | **M4 Concurrency & Async** — en yüksek getirili modül | D6 |
-| 11-13 | M5 API Tasarımı | D7 |
-| 14-16 | **M6 SQL & PostgreSQL** | D7 |
-| 17-18 | M7 EF Core Derinlemesine | D8 |
-| 19-21 | **M8 NoSQL & Caching** (MongoDB, Redis) | D8 |
-| 22-24 | **M9 Kimlik: OAuth, OIDC, Keycloak** | D9 (temel) |
-| 25-26 | M10 Test Stratejisi | D9 |
-| 27-29 | M11 Mimari & Tasarım | D9 |
-| 30-31 | M12 Mesajlaşma | D11 — Medium |
-| 32-33 | M13 Observability | D11 |
-| 34-35 | M14 DevOps | D11 |
-| 36-38 | M15 Azure | D11 |
-| 39-41 | M16 AI Engineering | D11 |
-| 42-44 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
+| 11-14 | M5 API Tasarımı & Protokoller (**HTTP/2-3, transport** dahil) | D7 |
+| 15-17 | **M6 SQL & PostgreSQL** | D7 |
+| 18-19 | M7 EF Core Derinlemesine | D8 |
+| 20-22 | **M8 NoSQL & Caching** (MongoDB, Redis) | D8 |
+| 23-25 | **M9 Kimlik: OAuth, OIDC, Keycloak** | D9 (temel) |
+| 26-27 | M10 Test Stratejisi | D9 |
+| 28-30 | M11 Mimari & Tasarım | D9 |
+| 31-32 | M12 Mesajlaşma (**RabbitMQ** derinlemesine) | D11 — Medium |
+| 33-34 | M13 Observability | D11 |
+| 35-37 | **M14 DevOps** (container ileri + Kubernetes) | D11 |
+| 38-41 | **M15 Azure** (AI-200 kapsamı) | D11 |
+| 42-44 | M16 AI Engineering | D11 |
+| 45-47 | 🏁 **Mid Capstone** + I3'e giriş + I6 Mid mock | Zamanlı Medium setleri |
 
 ### 🔴 Senior (~35 hafta)
 
@@ -3642,20 +4019,21 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 
 | Alan | Değişiklik | Roadmap'te |
 |------|------------|------------|
-| .NET sürümleri | **.NET 10 LTS** (Kasım 2025 → Kasım 2028) güncel üretim sürümü; **.NET 11 STS** Kasım 2026 (runtime async, C# 15 union tipleri, OpenAPI 3.2, Zstandard) | J1.3, M1.1, M4.3 |
-| Destek politikası | STS desteği **24 aya** çıktı; **.NET 8 ve .NET 9 aynı gün, 10 Kasım 2026'da** destek dışı kalıyor → .NET 10'a geçiş gündemde | J1.3, S5.6 |
-| C# 14 | Extension members, `field` keyword, null-conditional assignment, implicit span dönüşümleri | J2.5, M1.1 |
-| SDK & araçlar | File-based apps (`dotnet run app.cs`), `.slnx`, `dotnet test`'te Microsoft.Testing.Platform, xUnit v3 | J1.3, J10.1 |
+| .NET sürümleri | **.NET 10 LTS** (Kasım 2025 → Kasım 2028) güncel üretim sürümü; **.NET 11 STS** Kasım 2026 (runtime async, C# 15 union tipleri, OpenAPI 3.2, Zstandard) | J1.4, M1.1, M4.3 |
+| Destek politikası | STS desteği **24 aya** çıktı; **.NET 8 ve .NET 9 aynı gün, 10 Kasım 2026'da** destek dışı kalıyor → .NET 10'a geçiş gündemde | J1.4, S5.6 |
+| C# 14 | Extension members, `field` keyword, null-conditional assignment, implicit span dönüşümleri | J2.6, M1.1 |
+| SDK & araçlar | File-based apps (`dotnet run app.cs`), `.slnx`, `dotnet test`'te Microsoft.Testing.Platform, xUnit v3 | J1.4, J10.1 |
 | ASP.NET Core 10 | Varsayılan OpenAPI 3.1, Minimal API yerleşik validation, Server-Sent Events, Identity'de passkey | J7, J11.1, M5.7 |
 | EF Core 10 | Named query filters, complex type → JSON, SQL Server vector search, `LeftJoin`/`RightJoin` | M7, M16.4 |
 | Lisans değişiklikleri | **MediatR** (v13+), **AutoMapper** (v15+), **MassTransit** (v9), **FluentAssertions** (v8) ticari lisansa geçti → alternatifleri bilmek gerekiyor | J10.1, M7.4, M11.5, M12.5 |
-| Aspire | **Aspire 13:** ".NET" öneki kalktı, polyglot (Python, JS/TS AppHost), AI agent'lar için MCP desteği | M14.4 |
+| Aspire | **Aspire 13:** ".NET" öneki kalktı, polyglot (Python, JS/TS AppHost), AI agent'lar için MCP desteği | M14.5 |
 | .NET'te AI | **Microsoft Agent Framework 1.0** (Nisan 2026) — Semantic Kernel + AutoGen birleşimi; SK destekte, AutoGen bakım modunda | S9.1 |
 | AI protokolleri | **MCP C# SDK** 1.x kararlı; **A2A** protokolü Linux Foundation altında | M16.6, S9.3 |
 | Azure AI | Azure AI Foundry → **Microsoft Foundry** (Ocak 2026); Anthropic Claude modelleri katalogda; Foundry Agent Service'te hosted agent'lar | M16.7, S9.7 |
 | Azure servisleri | Azure Cache for Redis → **Azure Managed Redis**; Functions **Flex Consumption**; Container Apps serverless GPU; Azure SQL `VECTOR` tipi GA | M15 |
-| Sertifikalar | **AZ-204 → AI-200** (31 Temmuz 2026); **AI-102 → AI-103**; mimari için AZ-305 | M15, M16.7, S8 |
+| Sertifikalar | Giriş: **AZ-900** (3 alan: kavramlar %25-30, mimari & servisler %35-40, yönetişim %30-35). Geliştirici: **AZ-204 → AI-200** (31 Temmuz 2026; 4 alan: container %20-25, veri servisleri & vector %25-35, servis entegrasyonu %20-25, güvenlik/izleme %20-25). Ayrıca **AI-102 → AI-103**; mimari için AZ-305 | J13, M15, M16.7, S8 |
 | Veritabanları | **PostgreSQL 18** (async I/O, `uuidv7()`, virtual generated columns); **Redis 8** AGPLv3 ile yeniden açık kaynak + **Valkey** forku; MongoDB 8.x Community'de search/vector search; MongoDB EF Core provider'da vector search | J8.6, M6.4, M8 |
+| Mesajlaşma | **RabbitMQ 4.x:** classic queue mirroring 4.0'da kaldırıldı (quorum queue dayanıklı varsayılan seçim), quorum queue'larda `delivery-limit` varsayılanı **20**; **Khepri** metadata store 4.2'den itibaren yeni kurulumlarda varsayılan ve Raft metrik adları değişti; 4.3'te transient classic queue'lar varsayılan olarak kapatıldı ve `delivery-count`/`acquired-count` ayrıldı | M12.2 |
 | Kimlik | **OAuth 2.1 + RFC 9700**: her yerde PKCE, implicit/ROPC yok; DPoP ve PAR yaygınlaşıyor; **Keycloak 26**: passkeys, DPoP, FAPI 2.0, organizations; Azure AD B2C → Entra External ID | J11.3, M9 |
 | Güvenlik | **OWASP Top 10:2025** — yeni: A03 Software Supply Chain Failures, A10 Mishandling of Exceptional Conditions; .NET 10'da post-quantum kriptografi | S7.1, S7.4 |
 
@@ -3666,9 +4044,11 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 - [Microsoft Agent Framework 1.0](https://visualstudiomagazine.com/articles/2026/04/06/microsoft-ships-production-ready-agent-framework-1-0-for-net-and-python.aspx) · [MCP C# SDK](https://csharp.sdk.modelcontextprotocol.io/)
 - [Microsoft Foundry yeniden adlandırma](https://www.directionsonmicrosoft.com/reports/foundry-gets-new-name-anthropic-models/) · [What's new in Microsoft Foundry (Build 2026)](https://devblogs.microsoft.com/foundry/whats-new-in-microsoft-foundry-build-2026/)
 - [Aspire 13 multi-language support](https://www.infoq.com/news/2025/11/dotnet-aspire-13-release/)
+- **Resmî study guide'lar:** [AZ-900](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900) (20 Temmuz 2026) · [AI-200](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200) (7 Ekim 2026) · [Azure AI Cloud Developer Associate sertifika sayfası](https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-cloud-developer-associate/) · [ücretsiz practice assessment'lar](https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications)
 - [AZ-204 → AI-200 geçişi](https://examinotion.com/blog/az-204-retirement-ai-200-migration-guide) · [AI-103 study guide](https://tutorialsdojo.com/ai-103-azure-ai-app-and-agent-developer-associate-study-guide/)
 - [MediatR & MassTransit lisans değişikliği](https://www.milanjovanovic.tech/blog/mediatr-and-masstransit-going-commerical-what-this-means-for-you)
 - [PostgreSQL 18 yenilikleri](https://neon.com/postgresql/postgresql-18-new-features) · [Redis 8 AGPLv3](https://alternativeto.net/news/2025/5/redis-goes-open-source-again-with-the-launch-of-redis-8-under-the-agplv3-license) · [MongoDB EF Core provider: vector search](https://devblogs.microsoft.com/dotnet/mongodb-efcore-provider-queryable-encryption-vector-search/)
+- [RabbitMQ 4.2.0 release notes](https://github.com/rabbitmq/rabbitmq-server/blob/main/release-notes/4.2.0.md) · [RabbitMQ 4.3 highlights](https://www.rabbitmq.com/blog/2026/04/23/rabbitmq-4.3-release) · [Khepri'nin varsayılan olma yol haritası](https://www.rabbitmq.com/blog/2025/09/01/6-khepri-default) · [Quorum queues dokümantasyonu](https://www.rabbitmq.com/docs/quorum-queues)
 - [Keycloak 26.6 release](https://www.keycloak.org/2026/04/keycloak-2660-released) · [RFC 9700 — OAuth 2.0 Security BCP](https://datatracker.ietf.org/doc/rfc9700/)
 - [OWASP Top 10:2025](https://owasp.org/Top10/2025/0x00_2025-Introduction/)
 
@@ -3686,6 +4066,8 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | Writing High-Performance .NET Code | Ben Watson | 🔴 S2 |
 | Concurrency in C# Cookbook | Stephen Cleary | 🟡🔴 M4, S3 |
 | Pro ASP.NET Core | Adam Freeman | 🟢🟡 J6, J7, M3 |
+| **Computer Networking: A Top-Down Approach** | Kurose & Ross | 🟢🟡 J1.2, M5.11 |
+| High Performance Browser Networking (ücretsiz) | Ilya Grigorik | 🟡 J1.2, J1.3, M5.11 |
 | SQL Performance Explained / *Use The Index, Luke* | Markus Winand | 🟢🟡 J8.3, M6.2 |
 | PostgreSQL 14 Internals (ücretsiz) | Egor Rogov | 🟡🔴 M6.4, S4.1 |
 | Database Internals | Alex Petrov | 🔴 S4.1 |
@@ -3718,6 +4100,13 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 - [Model Context Protocol](https://modelcontextprotocol.io/) · [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk) · [A2A Protocol](https://github.com/a2aproject/A2A)
 - [OpenTelemetry .NET](https://opentelemetry.io/docs/languages/net/)
 
+### Azure Sertifikaları (J13 → AZ-900, M15 → AI-200)
+- **AZ-900 — Azure Fundamentals:** [resmî study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900) · [ücretsiz learning path'ler](https://learn.microsoft.com/en-us/training/courses/az-900t00) · [guided project: tag & lock ile kaynak koruma / maliyet guardrail](https://learn.microsoft.com/en-us/training/paths/introduction-cloud-infrastructure-apply-azure-skills-guided-projects/)
+- **AI-200 — Azure AI Cloud Developer Associate:** [resmî study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/ai-200) · [sertifika sayfası](https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-cloud-developer-associate/) · [AI-200T00 kursu](https://learn.microsoft.com/en-us/training/courses/ai-200t00) · [Cosmos DB ile AI çözümleri learning path](https://learn.microsoft.com/en-us/training/paths/develop-ai-solutions-azure-cosmos-db/) · [backend servis entegrasyonu learning path](https://learn.microsoft.com/en-us/training/paths/integrate-backend-services-ai-solutions/)
+- [Ücretsiz practice assessment'lar](https://learn.microsoft.com/en-us/credentials/certifications/practice-assessments-for-microsoft-certifications) — sınav öncesi kapalı kitap deneme
+- [Vector search için Azure servisi seçimi](https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/vector-search) · [AI iş yükleri için veri platformu (WAF)](https://learn.microsoft.com/en-us/azure/well-architected/ai/data-platform)
+- ⚠️ Sınav müfredatları değişiyor: resmî study guide'lar tarihli ("skills measured as of ...") — **sınava girmeden önce mutlaka kontrol et.**
+
 ### Derleme & Runtime İç Yapısı (M2, S1)
 - [sharplab.io](https://sharplab.io/) — C# → lowered C# / IL / JIT asm
 - [ILSpy](https://github.com/icsharpcode/ILSpy) · [MSBuild Structured Log Viewer](https://msbuildlog.com/)
@@ -3727,10 +4116,18 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 - [Performance Improvements in .NET](https://devblogs.microsoft.com/dotnet/tag/performance/) — Stephen Toub'un yıllık serisi
 - [ECMA-335 CLI spesifikasyonu](https://ecma-international.org/publications-and-standards/standards/ecma-335/)
 
+### Ağ & Protokoller (J1.2, J1.3, M5)
+- [High Performance Browser Networking](https://hpbn.co/) — TCP, TLS, HTTP/2, QUIC; ücretsiz ve hâlâ en iyi kaynak
+- [MDN — HTTP](https://developer.mozilla.org/docs/Web/HTTP) · [HTTP/3 açıklaması (ücretsiz kitap)](https://http3-explained.haxx.se/)
+- [Cloudflare Learning Center](https://www.cloudflare.com/learning/) — DNS, TLS, DDoS, CDN kavramları
+- [.NET ağ API'leri](https://learn.microsoft.com/dotnet/fundamentals/networking/) · [`SocketsHttpHandler` ve bağlantı havuzu](https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient-guidelines)
+
 ### Veri (J8, M6, M8, S4)
 - [Use The Index, Luke](https://use-the-index-luke.com/) — index'lerin en iyi ücretsiz anlatımı
 - [The Internals of PostgreSQL](https://www.interdb.jp/pg/)
 - [MongoDB University](https://learn.mongodb.com/)
+- [Redis dokümantasyonu](https://redis.io/docs/latest/) — veri tipleri, `SCAN`, keyspace notifications, client-side caching
+- [RabbitMQ dokümantasyonu](https://www.rabbitmq.com/docs) — quorum queues, federation, shovel, akış kontrolü
 - [Jepsen analizleri](https://jepsen.io/analyses) — dağıtık veritabanlarının tutarlılık testleri
 
 ### DSA & Pattern Pratiği (D1–D11)

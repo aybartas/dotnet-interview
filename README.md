@@ -17,13 +17,24 @@ Roadmap junior konulardan senior konulara **sıralı** ilerler. Aynı alan (veri
 
 | Seviye | Klasör | Modüller | Odak |
 |--------|--------|----------|------|
-| 🟢 **Junior** (0-2 yıl) | `01-junior/` | J1–J14 + capstone | C# temelleri, ASP.NET Core, Web API, **veritabanı temelleri (ilişkisel model, SQL, index, ACID, transaction, SQL vs NoSQL, PostgreSQL)**, EF Core, test, JWT & OAuth/OIDC'ye giriş, Docker, Azure'a giriş, LLM temelleri |
-| 🟡 **Mid** (2-5 yıl) | `02-mid/` | M1–M16 + capstone | C# ve build/runtime derinlemesine, concurrency, API tasarımı (gRPC/GraphQL/SignalR), **PostgreSQL derinlemesine (plan, MVCC, isolation, locking)**, **MongoDB, Redis**, caching, **OAuth 2.1, OIDC, Keycloak**, test stratejisi, mimari, mesajlaşma, observability, Kubernetes, Aspire, Azure, **RAG, MCP, Microsoft Foundry** |
+| 🟢 **Junior** (0-2 yıl) | `01-junior/` | J1–J14 + capstone | **Ağ temelleri (OSI, TCP/UDP, socket)**, HTTP/DNS/TLS, C# temelleri, **OOP ilkeleri & nesne ilişkileri**, **property/constructor/eşitlik/kopyalama semantiği**, ASP.NET Core, Web API, **veritabanı temelleri (ilişkisel model, SQL, index, ACID, transaction, SQL vs NoSQL, PostgreSQL)**, EF Core, test, JWT & OAuth/OIDC'ye giriş, Docker, Azure'a giriş, LLM temelleri |
+| 🟡 **Mid** (2-5 yıl) | `02-mid/` | M1–M16 + capstone | C# ve build/runtime derinlemesine, concurrency, API tasarımı (gRPC/GraphQL/SignalR) ve **protokol/transport derinlemesine (HTTP/2, HTTP/3, QUIC, TLS, mTLS)**, **PostgreSQL derinlemesine (plan, MVCC, isolation, locking)**, **MongoDB, Redis**, caching, **OAuth 2.1, OIDC, Keycloak**, test stratejisi, mimari, **mesajlaşma (RabbitMQ, Service Bus, Kafka)**, observability, CI/CD, **container ileri & Kubernetes (workload'lar, storage, probe'lar)**, Aspire, Azure, **RAG, MCP, Microsoft Foundry** |
 | 🔴 **Senior** (5+ yıl) | `03-senior/` | S1–S10 + capstone | CLR/GC/AOT, performans mühendisliği, dağıtık koordinasyon, **ölçekte veri (storage engine, replication, sharding, CAP)**, DDD & event sourcing, microservices & saga, OWASP 2025 & supply chain, SRE & Azure mimarisi, **Microsoft Agent Framework, MCP/A2A, AI eval & guardrail**, sistem tasarımı |
 | 🧮 **DSA** (paralel) | `04-dsa/` | D1–D11 | Karmaşıklık, veri yapıları, graflar, sıralama/arama, backtracking, 18 pattern kataloğu, problem → pattern eşleştirme, DP, sistem tasarımında DSA |
 | 🎯 **Mülakat** | `05-interview/` | I1–I6 | Coding & live coding, STAR, system design, take-home, teknik liderlik, seviye bazlı mock mülakat |
 
 Her seviye bir **capstone** projesiyle biter (görev yönetimi API'si → e-ticaret platformu → dağıtık sipariş platformu + AI destek agent'ı).
+
+### Azure sertifika hedefleri
+
+İki sertifika roadmap'e gömülü — ilgili modüller sınavın alanlarına birebir eşlenmiş durumda:
+
+| Sertifika | Modül | Kapsam |
+|-----------|-------|--------|
+| **AZ-900** — Azure Fundamentals | [J13](./ROADMAP.md#j13-cloud--azurea-giriş) | Cloud kavramları (%25-30) · Azure mimarisi & servisleri (%35-40) · yönetişim, maliyet & monitoring (%30-35) |
+| **AI-200** — Azure AI Cloud Developer Associate | [M15](./ROADMAP.md#m15-azure-ile-uygulama-geliştirme) (+ [M16](./ROADMAP.md#m16-ai-engineering-uygulama-geliştirme)) | Container çözümleri (%20-25) · veri servisleri & vector search (%25-35) · servis entegrasyonu (%20-25) · güvenlik/izleme/teşhis (%20-25) |
+
+AZ-204 31 Temmuz 2026'da emekliye ayrıldı; geliştirici yolu artık AI-200. Müfredatlar tarihli olarak güncellenir — sınav öncesi resmî study guide'ı kontrol edin ([kaynaklar](./ROADMAP.md#kaynaklar)).
 
 ## Her konu için ne var?
 
