@@ -1,0 +1,80 @@
+### J1.3 — İstek koleksiyonu
+### VS Code (REST Client / Humao eklentisi), JetBrains Rider ve Visual Studio 2022+ bu dosyayı doğrudan çalıştırır.
+### Önce uygulamayı başlatın:  dotnet run            (HTTPS denemeleri için:  dotnet run -- --https)
+### Her istek ### ile ayrılır; "Send Request" / yeşil ok ile çalıştırın. Sunucu konsolunda HAM isteği görün.
+
+@host = http://localhost:5080
+@secureHost = https://localhost:5443
+
+### 1) En basit GET — sunucu gördüğü ham isteği geri yazar
+GET {{host}}/hello?name=dotnet&lang=tr
+Accept: text/plain
+X-Demo: merhaba
+
+### 2) POST + JSON body — Content-Type ve Content-Length header'larına dikkat
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "product": "kitap",
+  "quantity": 2
+}
+
+### 3) Status code aileleri — 2xx / 3xx / 4xx / 5xx
+GET {{host}}/status/200
+
+###
+GET {{host}}/status/404
+
+###
+GET {{host}}/status/503
+
+### 4) Yönlendirme: 302 (geçici) ve 301 (kalıcı) — Location header'ını inceleyin
+GET {{host}}/redirect
+
+###
+GET {{host}}/redirect-permanent
+
+### 5) Idempotency: POST 3 kez → sayaç 3 artar (idempotent DEĞİL)
+POST {{host}}/counter/increment
+
+###
+POST {{host}}/counter/increment
+
+###
+GET {{host}}/counter
+
+### 5b) PUT 3 kez → sonuç hep aynı (idempotent)
+PUT {{host}}/counter/42
+
+###
+PUT {{host}}/counter/42
+
+###
+GET {{host}}/counter
+
+### 6) Cookie: önce set edin, sonra okuyun (bu istemci cookie'yi saklar; curl'de -c/-b gerekir)
+GET {{host}}/cookie/set
+
+###
+GET {{host}}/cookie/read
+
+### 7) Conditional GET: yanıttaki ETag değerini aşağıdaki If-None-Match'e yapıştırın → 304 Not Modified
+GET {{host}}/cache/etag
+
+###
+GET {{host}}/cache/etag
+If-None-Match: "BURAYA-ETAG"
+
+### 8) CORS preflight'ı elle simüle edin (tarayıcının gönderdiği OPTIONS isteği)
+OPTIONS {{host}}/cors/data
+Origin: http://localhost:3000
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: content-type
+
+### 8b) İzin verilmeyen origin → yanıtta Access-Control-Allow-Origin YOK (isteği sunucu işler, ENGELİ TARAYICI yapar)
+GET {{host}}/cors/data
+Origin: http://evil.example
+
+### 9) HTTPS (dotnet run -- --https gerekir) — yanıtta Strict-Transport-Security (HSTS) header'ı var
+GET {{secureHost}}/hello

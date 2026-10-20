@@ -6,15 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A .NET Junior → Mid → Senior interview-prep study repo. **All content is written in Turkish** — keep new prose in Turkish (technical terms and identifiers stay in English, as in the existing text). Target platform is **.NET 10 (LTS) / C# 14**; .NET 11 / C# 15 features may be mentioned but must be marked **(.NET 11)**.
 
-The repo is currently **docs-only** — three tracked files:
+The repo started **docs-only** (`ROADMAP.md`, `README.md`, `CLAUDE.md`) and is being filled in one topic at a time. Content written so far: **J1 (`01-junior/01-dev-foundations/`) — all 5 topics** (theory README, runnable `src/`, `interview-questions.md`). The remaining `01-junior/` … `05-interview/` folders described in `ROADMAP.md → Repo Yapısı` are created as their topics are written. Root `Directory.Build.props` and `Directory.Packages.props` (central package management) already exist; the SDK is .NET 10 (`dotnet` CLI is needed to build/run the examples).
 
 | File | Role |
 |------|------|
-| `ROADMAP.md` | ~4.2k lines, the master plan: 5 tracks, 51 modules, ~290 topics. Each topic's theory outline and the scope of its future code project live here. |
+| `ROADMAP.md` | ~4.2k lines, the master plan: 5 tracks, 51 modules, ~290 topics. Each topic's theory outline and the scope of its code project live here. |
 | `README.md` | For the human studying: how to work through it, folder layout, where theory vs. practice lives, how to author a new topic. |
 | `CLAUDE.md` | This file. |
+| `01-junior/…` | Written topic folders (README + `src/` + `interview-questions.md`). |
 
-The `01-junior/` … `05-interview/` folders described in `ROADMAP.md → Repo Yapısı` **do not exist yet**; they are created one topic at a time. When adding content, the usual task is "write topic X" — see [Writing a topic](#writing-a-topic).
+When adding content, the usual task is "write topic X" — see [Writing a topic](#writing-a-topic).
 
 ## Roadmap structure: level → module → topic
 
