@@ -1,6 +1,6 @@
 # J2.5 Exception Handling — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ `throw` ile `throw ex` arasındaki fark nedir?
 `throw;` yakalanmış exception'ı **orijinal stack trace'iyle** yeniden fırlatır. `throw ex;` ise exception nesnesini yeniden fırlatıp stack trace'i **catch noktasından başlatır**: hatanın gerçekte doğduğu metot ve satır kaybolur, hata sanki catch bloğunun bulunduğu metotta doğmuş gibi görünür; üretimde teşhisi çok zorlaştırır. CA2200 analyzer'ı bunu yakalar. Bağlam eklemek istiyorsan `throw new X("mesaj", ex)` (orijinal `InnerException` olarak korunur); başka yerden/thread'den orijinal stack'le fırlatmak için `ExceptionDispatchInfo.Capture(ex).Throw()`.

@@ -1,6 +1,6 @@
 # J1.3 Web Nasıl Çalışır — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ Tarayıcıya bir URL yazıp Enter'a basınca ne olur?
 1. **URL ayrıştırılır** (scheme, host, port, path, query; fragment sunucuya gitmez). 2. Tarayıcı cache/HSTS kontrol edilir. 3. **DNS çözümleme:** tarayıcı → OS cache/hosts → yerel resolver → (root → TLD → authoritative) zinciriyle ad IP'ye çevrilir (TTL boyunca önbelleklenir). 4. **TCP bağlantısı:** three-way handshake (1 RTT). 5. **TLS handshake** (HTTPS): sertifika doğrulanır, oturum anahtarı türetilir (TLS 1.3'te 1 RTT), ALPN ile HTTP sürümü seçilir. 6. **HTTP isteği** gönderilir. 7. Sunucu tarafında genellikle CDN/load balancer → reverse proxy → uygulama → veritabanı işler. 8. **HTTP yanıtı** döner. 9. Tarayıcı HTML'i ayrıştırır; CSS/JS/görsel için aynı süreci (çoğunlukla mevcut bağlantıyı yeniden kullanarak) tekrarlar ve sayfayı render eder. Derinleştirmek için: her adımın maliyetini (RTT'ler) ve önbelleğini (DNS TTL, HTTP cache, keep-alive) söylerim.

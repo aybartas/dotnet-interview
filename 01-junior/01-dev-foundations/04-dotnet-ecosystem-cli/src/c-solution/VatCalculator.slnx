@@ -1,9 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/VatCalculator.Core/VatCalculator.Core.csproj" />
-    <Project Path="src/VatCalculator.Cli/VatCalculator.Cli.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/VatCalculator.Core.Tests/VatCalculator.Core.Tests.csproj" />
-  </Folder>
-</Solution>

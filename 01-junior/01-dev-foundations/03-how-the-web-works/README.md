@@ -1,6 +1,6 @@
 # J1.3 Web Nasıl Çalışır: HTTP, DNS, TLS
 
-> 📁 `01-junior/01-dev-foundations/03-how-the-web-works/` · Önkoşul: J1.2 · Pratik: [`src/`](src/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/01-dev-foundations/03-how-the-web-works/` · Önkoşul: J1.2 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 ## İçindekiler
 
@@ -90,7 +90,7 @@ tarayıcı cache → işletim sistemi cache / hosts dosyası → yerel DNS resol
 - UDP/53 ile çalışır (büyük cevaplarda TCP).
 - Servis taşıma sırasında TTL'i önceden düşürmek klasik bir operasyon pratiğidir.
 
-> Yavaş ilk istek mi? `curl -w` ile aşamaları ayırın: `time_namelookup` (DNS) → `time_connect` (TCP) → `time_appconnect` (TLS) → `time_starttransfer` (ilk bayt). Bkz. [`src/curl-examples.sh`](src/curl-examples.sh) 9. adım.
+> Yavaş ilk istek mi? `curl -w` ile aşamaları ayırın: `time_namelookup` (DNS) → `time_connect` (TCP) → `time_appconnect` (TLS) → `time_starttransfer` (ilk bayt). Komut 3.11'de (9. örnek).
 
 ### 3.2 HTTP anatomisi
 
@@ -114,7 +114,7 @@ Location: /orders/42
 {"id":42,"status":"created"}
 ```
 
-[`src/`](src/) altındaki Kestrel uygulaması gelen isteği tam bu biçimde konsola yazar ve geri döner — kendi `curl`'ünüzle ne gönderdiğinizi sunucunun gözünden görürsünüz.
+Bu klasördeki Kestrel uygulaması (3.11) gelen isteği tam bu biçimde konsola yazar ve geri döner — kendi `curl`'ünüzle ne gönderdiğinizi sunucunun gözünden görürsünüz.
 
 **HTTP/2 ve /3'te** mesaj binary çerçevelere (frame) dönüşür, header'lar sıkıştırılır (HPACK/QPACK), ama **mantıksal model aynıdır** (method, path, header, body, status). Wireshark'ta okunabilir metin görmezsiniz; araçlar (curl `-v`, tarayıcı DevTools) sizin için metne çevirir.
 
@@ -131,7 +131,7 @@ Location: /orders/42
 | `PATCH` | Kısmi güncelleme | ❌ | ❌ (genelde) | ✓ |
 
 - **Safe:** Sunucu durumunu **değiştirmez** (okuma). Crawler, prefetch, tarayıcı geri tuşu GET'i güvenle tekrarlar → **GET ile silme/güncelleme yapmayın.**
-- **Idempotent:** Aynı isteği 1 kez ya da N kez yapmak **sunucudaki sonuç durumu aynı** bırakır. Ağ hatasında istemcinin **otomatik yeniden deneme (retry)** yapabilmesinin temelidir: `PUT /counter/42`'yi 3 kez göndermek = 1 kez göndermek. `POST /counter/increment`'i 3 kez göndermek = 3 sipariş/3 artış. (Denemek için: [`requests.http`](src/requests.http) 5. ve 5b.)
+- **Idempotent:** Aynı isteği 1 kez ya da N kez yapmak **sunucudaki sonuç durumu aynı** bırakır. Ağ hatasında istemcinin **otomatik yeniden deneme (retry)** yapabilmesinin temelidir: `PUT /counter/42`'yi 3 kez göndermek = 1 kez göndermek. `POST /counter/increment`'i 3 kez göndermek = 3 sipariş/3 artış. (Denemek için: [`requests.http`](requests.http) 5. ve 5b.)
   - `DELETE` idempotenttir: ilk çağrı 204, ikincisi 404 dönebilir — *yanıt* farklı olsa da sunucunun *durumu* (kayıt yok) aynıdır.
   - Aşağıdaki sorunun cevabı: *"Ödeme POST'u zaman aşımına uğradı, tekrar deneyeyim mi?"* — Hayır, çift ödeme riski; çözüm **Idempotency-Key** header'ıdır (→ M5.1).
 
@@ -253,7 +253,7 @@ Access-Control-Max-Age: 600            ← preflight sonucu 10 dk önbellekte (h
 ```
 Preflight onaylanırsa tarayıcı gerçek isteği gönderir.
 
-> **Kritik nokta:** CORS bir **tarayıcı** korumasıdır. `curl`, Postman, sunucudan-sunucuya çağrı CORS'a takılmaz. "Postman'de çalışıyor ama tarayıcıda CORS hatası alıyorum" cümlesi bu yüzden klasiktir. İstek çoğu zaman sunucuya ulaşır ve işlenir; **engeli tarayıcı uygular** (cevabı JS'e vermez). Bu yüzden `AllowAnyOrigin` + `AllowCredentials` gibi gevşek ayar bir güvenlik açığıdır. Denemek için [`requests.http`](src/requests.http) 8. adım.
+> **Kritik nokta:** CORS bir **tarayıcı** korumasıdır. `curl`, Postman, sunucudan-sunucuya çağrı CORS'a takılmaz. "Postman'de çalışıyor ama tarayıcıda CORS hatası alıyorum" cümlesi bu yüzden klasiktir. İstek çoğu zaman sunucuya ulaşır ve işlenir; **engeli tarayıcı uygular** (cevabı JS'e vermez). Bu yüzden `AllowAnyOrigin` + `AllowCredentials` gibi gevşek ayar bir güvenlik açığıdır. Denemek için [`requests.http`](requests.http) 8. adım.
 
 ### 3.10 Proxy, reverse proxy, load balancer, CDN
 
@@ -269,18 +269,41 @@ Proxy arkasındayken sunucu **gerçek istemci IP'sini** doğrudan göremez; `X-F
 
 ### 3.11 Pratik — Kestrel ile ham isteği görmek
 
+Uygulama J01 projesindedir (modül klasöründen çalıştırın):
+
 ```bash
-cd src
-dotnet run                       # http://localhost:5080
-dotnet run -- --https            # ayrıca https://localhost:5443 (önce: dotnet dev-certs https --trust)
+dotnet run -- 1.3                # http://localhost:5080
+dotnet run -- 1.3 --https        # ayrıca https://localhost:5443 (önce: dotnet dev-certs https --trust)
 ```
 
 | Dosya | Ne için? |
 |-------|----------|
-| [`RawRequestLoggingMiddleware.cs`](src/RawRequestLoggingMiddleware.cs) | Gelen isteği ham metne en yakın biçimde loglar |
-| [`Program.cs`](src/Program.cs) | `MapFallback` (her şeyi yansıt), status code, redirect, idempotency, cookie, ETag/304, CORS, HSTS uç noktaları |
-| [`requests.http`](src/requests.http) | Aynı senaryolar için `.http` dosyası (VS Code REST Client, Rider, Visual Studio 2022+) |
-| [`curl-examples.sh`](src/curl-examples.sh) | `curl -v` ile TLS/ALPN/HSTS/redirect/cookie/ETag incelemesi ve `-w` ile aşama bazlı süre ölçümü |
+| [`RawRequestLoggingMiddleware.cs`](RawRequestLoggingMiddleware.cs) | Gelen isteği ham metne en yakın biçimde loglar |
+| [`HowTheWebWorksTopic.cs`](HowTheWebWorksTopic.cs) | `MapFallback` (her şeyi yansıt), status code, redirect, idempotency, cookie, ETag/304, CORS, HSTS uç noktaları |
+| [`requests.http`](requests.http) | Aynı senaryolar için `.http` dosyası (VS Code REST Client, Rider, Visual Studio 2022+) |
+
+Uygulama çalışırken ikinci terminalden `curl` ile inceleyin (`-k`: güvenilmeyen geliştirme sertifikasını atla — **sadece yerel deney**, prod'da asla):
+
+```bash
+curl -v http://localhost:5080/hello -o /dev/null            # '>' istek, '<' yanıt header'ları; '*' bağlantı bilgisi
+curl -I http://localhost:5080/hello                         # HEAD: GET'in body'siz hali (safe + idempotent)
+curl -kv https://localhost:5443/hello -o /dev/null 2>&1 | grep -E 'ALPN|SSL connection|TLSv|subject:|issuer:|using HTTP'
+curl -k --http1.1 -sI https://localhost:5443/hello | head -1   # HTTP/1.1 ile HTTP/2 karşılaştırması (ALPN pazarlığı)
+curl -k --http2   -sI https://localhost:5443/hello | head -1
+curl -k -sI https://localhost:5443/hello | grep -i strict-transport   # HSTS yalnızca HTTPS yanıtında
+
+curl -si http://localhost:5080/redirect | grep -E '^HTTP|^[Ll]ocation'   # yönlendirmeyi takip ETMEDEN
+curl -sL -w '(son status: %{http_code}, yönlendirme: %{num_redirects})\n' http://localhost:5080/redirect   # -L ile
+
+curl -c jar.txt http://localhost:5080/cookie/set; echo      # -c yazar, -b gönderir
+curl -b jar.txt http://localhost:5080/cookie/read; echo     # jar ile: sunucu tanır
+curl http://localhost:5080/cookie/read; echo                # jar olmadan: HTTP stateless
+
+ETAG=$(curl -s -D - -o /dev/null http://localhost:5080/cache/etag | grep -i '^etag' | awk '{print $2}' | tr -d '\r')
+curl -si -H "If-None-Match: $ETAG" http://localhost:5080/cache/etag | head -1   # 304 Not Modified
+
+curl -k -o /dev/null -w 'dns: %{time_namelookup}s | tcp: %{time_connect}s | tls: %{time_appconnect}s | ilk bayt: %{time_starttransfer}s | toplam: %{time_total}s | %{http_version}\n' https://localhost:5443/hello
+```
 
 ---
 

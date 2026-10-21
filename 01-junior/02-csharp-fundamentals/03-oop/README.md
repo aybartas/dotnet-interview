@@ -1,6 +1,6 @@
 # J2.3 OOP Temelleri ⭐
 
-> 📁 `01-junior/02-csharp-fundamentals/03-oop/` · Önkoşul: J2.2 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/02-csharp-fundamentals/03-oop/` · Önkoşul: J2.2 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 Mülakatların en çok soru üretilen başlığı. "Dört ilkeyi say" değil, **kendi kodundan örnek verebilmek** beklenir.
 
@@ -25,10 +25,9 @@ Bu konuda kod şu parçalardan oluşur:
 
 | Parça | Ne gösterir? |
 |-------|--------------|
-| [`src/Oop`](src/Oop/) — 9 bölüm | Dört ilke, polimorfizm türleri, abstract vs interface, `override` vs `new`, casting, ilişkiler, coupling/cohesion, struct ve static |
-| [`PaymentRefactoring/`](src/Oop/PaymentRefactoring/) | Ödeme yöntemleri: **kalıtım → strateji → tam composition**, her adımda **aynı testler yeşil** |
-| [`Relationships/`](src/Oop/Relationships/) | Aggregation (Team/Employee) ve composition (Order/OrderLine) + **GC ile yaşam süresi kanıtı** |
-| [`tests/Oop.Tests`](tests/Oop.Tests/) | 64 test |
+| [`Sections/`](Sections/) — 9 bölüm (`dotnet run -- 2.3 <numara>`) | Dört ilke, polimorfizm türleri, abstract vs interface, `override` vs `new`, casting, ilişkiler, coupling/cohesion, struct ve static |
+| [`PaymentRefactoring/`](PaymentRefactoring/) | Ödeme yöntemleri: **kalıtım → strateji → tam composition**, her adımda **aynı senaryolar aynı çıktıyı verir** |
+| [`Relationships/`](Relationships/) | Aggregation (Team/Employee) ve composition (Order/OrderLine) + **GC ile yaşam süresi kanıtı** |
 
 ---
 
@@ -44,7 +43,7 @@ Bu konuda kod şu parçalardan oluşur:
 
 ### 3.1 Dört ilke — tanım değil, örnekle ⭐
 
-| İlke | Tek cümle | Kodda ([`Section01`](src/Oop/Sections/Section01_FourPrinciples.cs)) |
+| İlke | Tek cümle | Kodda ([`Section01`](Sections/Section01_FourPrinciples.cs)) |
 |------|-----------|------|
 | **Encapsulation** (kapsülleme) | Veriyi ve onu değiştiren davranışı birlikte tut; **geçersiz duruma düşmeyi engelle** | `BankAccount`: `Balance { get; private set; }` + `Withdraw` yetersiz bakiyeyi reddeder → bakiye negatif **olamaz** (invariant). Uygulaması: property → J2.4 |
 | **Abstraction** (soyutlama) | "**Ne** yaptığını" açığa çıkar, "**nasıl** yaptığını" sakla | `IReportExporter`: çağıran CSV mi PDF mi bilmez |
@@ -62,7 +61,7 @@ Bu konuda kod şu parçalardan oluşur:
 | Mekanizma | Çağrı hedefi IL'e yazılır | **vtable** (sanal metot tablosu) üzerinden dolaylı çağrı |
 | Maliyet | Sıfır (inline edilebilir) | 1 ek dolaylama; `sealed`/non-virtual olanlar devirtualize/inline edilebilir |
 
-Tuzak: `object o = "x"; Print(o)` → overload **`object`** sürümüne gider (çalışma zamanı tipi string olsa da); seçim derleme zamanı tipine göredir. `dynamic` seçimi çalışma zamanına erteler ([`Section02`](src/Oop/Sections/Section02_Polymorphism.cs)).
+Tuzak: `object o = "x"; Print(o)` → overload **`object`** sürümüne gider (çalışma zamanı tipi string olsa da); seçim derleme zamanı tipine göredir. `dynamic` seçimi çalışma zamanına erteler ([`Section02`](Sections/Section02_Polymorphism.cs)).
 
 ### 3.3 `abstract class` vs `interface` ⭐
 
@@ -79,7 +78,7 @@ Tuzak: `object o = "x"; Print(o)` → overload **`object`** sürümüne gider (�
 **C# 8 default implementation sonrası fark ne kaldı?** İnterface hâlâ **durum tutamaz**, **constructor'ı yoktur**; bir sınıf **tek** abstract class'tan türer ama **istediği kadar** interface uygular; default implementation'a yalnızca **interface referansı** üzerinden erişilir. Default implementation'ın asıl amacı, **yayınlanmış bir interface'e üye eklerken uygulayanları kırmamaktır**, çoklu kalıtımın durumsuz biçimi değildir.
 
 - **`abstract` üye:** gövdesi yok, türeyen **uygulamak zorunda**. Abstract sınıf **örneklenemez ama constructor'ı olabilir** (türeyen sınıf çağırır): `Report(string title)`.
-- **Explicit interface implementation:** iki interface'in **aynı imzalı** üyesi çakışırsa her biri ayrı uygulanır (`string IBird.Move()`, `string IRobot.Move()`); yalnızca ilgili interface referansı üzerinden erişilir ([`Section03`](src/Oop/Sections/Section03_AbstractVsInterface.cs)).
+- **Explicit interface implementation:** iki interface'in **aynı imzalı** üyesi çakışırsa her biri ayrı uygulanır (`string IBird.Move()`, `string IRobot.Move()`); yalnızca ilgili interface referansı üzerinden erişilir ([`Section03`](Sections/Section03_AbstractVsInterface.cs)).
 - **Pratik kural:** önce interface (bağımlılığı soyutlar, test edilebilir); ortak **kod/durum** paylaşımı gerekiyorsa abstract class.
 
 ### 3.4 `virtual`, `override`, `new`, `sealed` ⭐
@@ -97,13 +96,13 @@ Base b = new ViaNew();       b.Hello();   // "Base"      ← DEĞİŞKENİN tipi
 - **`override`**: sanal metodu **değiştirir**, çağrı runtime tipe göre çözülür.
 - **`new`**: taban üyeyi **gizler**; çağrı **değişkenin derleme zamanı tipine** göre çözülür. Aynı nesne hangi tipte tutulduğuna göre farklı davranır → şaşırtıcı hata kaynağı. Yazmazsanız derleyici CS0108 uyarısı verir. Neredeyse hiç istenen şey değildir.
 - **`sealed override`**: zinciri burada keser (daha fazla override yok; JIT devirtualize edebilir). `sealed class` kalıtımı tamamen kapatır.
-- ([`Section04`](src/Oop/Sections/Section04_NewVsOverride.cs) çıktısı + `BehaviorTests`.)
+- ([`Section04`](Sections/Section04_NewVsOverride.cs) çıktısı + `BehaviorTests`.)
 
 ### 3.5 Upcasting / downcasting
 
 - **Upcast** (türeyen → taban): her zaman güvenli, örtük; nesne değişmez, yalnızca *görünüm* daralır.
 - **Downcast** (taban → türeyen): çalışma zamanında doğrulanır → `(Dog)x` başarısızsa `InvalidCastException`, `x as Dog` → `null`, **`x is Dog d`** → kontrol+cast+değişken tek adımda. `switch` + pattern ile tip bazlı dallanma.
-- Çok downcast = tasarım kokusu: davranışı **virtual metoda** taşıyın, çağıranın tip kontrolü yapmasını gerektirmeyin (Open/Closed). ([`Section05`](src/Oop/Sections/Section05_Casting.cs))
+- Çok downcast = tasarım kokusu: davranışı **virtual metoda** taşıyın, çağıranın tip kontrolü yapmasını gerektirmeyin (Open/Closed). ([`Section05`](Sections/Section05_Casting.cs))
 
 ### 3.6 Nesne ilişkileri — ownership ve yaşam süresi ⭐
 
@@ -114,17 +113,17 @@ Base b = new ViaNew();       b.Hello();   // "Base"      ← DEĞİŞKENİN tipi
 | **Aggregation** | zayıf "has-a" | Parça bütünden **uzun yaşayabilir** | `Team` ↔ `Employee` |
 | **Composition** | güçlü "has-a" | Parça bütünle **birlikte ölür** | `Order` ↔ `OrderLine` |
 
-Kodda nasıl ayırt edilir ([`Relationships/`](src/Oop/Relationships/)):
+Kodda nasıl ayırt edilir ([`Relationships/`](Relationships/)):
 - **Aggregation:** parça **dışarıda oluşturulur** ve bütüne verilir (`team.Add(employee)`); bütün dağılınca parça sağ kalır, başka bütüne taşınabilir.
 - **Composition:** parçayı **bütün yaratır** (`order.AddLine(...)`, `OrderLine` constructor'ı `internal`); parça tek bir bütüne aittir, bütün iptal edilince parça anlamsızlaşır.
 
-Testler bunu **kanıtlar** ([`RelationshipTests`](tests/Oop.Tests/RelationshipTests.cs)): `WeakReference` + `GC.Collect()` ile — takım toplanınca çalışanlar yaşar; sipariş toplanınca satırlar da toplanır. DDD'de **aggregate** sınırı tam olarak bu ayrımdan beslenir (bütünün tutarlılık sınırı ve yaşam döngüsü, → S5.1).
+[`Section06`](Sections/Section06_Relationships.cs) bunu **kanıtlar**: `WeakReference` + `GC.Collect()` ile — takım toplanınca çalışanlar yaşar; sipariş toplanınca satırlar da toplanır. DDD'de **aggregate** sınırı tam olarak bu ayrımdan beslenir (bütünün tutarlılık sınırı ve yaşam döngüsü, → S5.1).
 
 ### 3.7 Coupling & cohesion ⭐
 
 - **Coupling (bağlılık):** bir sınıfın başkasını **ne kadar bildiği**. Hedef: **gevşek**. Ölçmek: *"Bu sınıfı değiştirince kaç yer etkileniyor?"*, *"Bunu test etmek için kaç somut şey ayağa kalkmalı?"*
 - **Cohesion (uyum):** bir sınıfın üyelerinin **aynı amaca** ne kadar hizmet ettiği. Hedef: **yüksek**. Ölçmek: *"Bu sınıfın kaç farklı değişme nedeni var?"* (SRP).
-- **`new` ile somut tipe bağlanmanın maliyeti:** `new SmtpSender()` sınıfın içinde → test ederken gerçek e-posta gider, kanalı değiştirmek sınıfı değiştirmeyi gerektirir, bağımlılık imzada görünmez. **Interface + constructor injection** bağı gevşetir ([`Section07`](src/Oop/Sections/Section07_CouplingCohesion.cs); → J6.2).
+- **`new` ile somut tipe bağlanmanın maliyeti:** `new SmtpSender()` sınıfın içinde → test ederken gerçek e-posta gider, kanalı değiştirmek sınıfı değiştirmeyi gerektirir, bağımlılık imzada görünmez. **Interface + constructor injection** bağı gevşetir ([`Section07`](Sections/Section07_CouplingCohesion.cs); → J6.2).
 - Düşük uyum örneği: `OrderManager` e-posta + PDF + vergi + veritabanını birlikte yapar → vergi kuralı da şablon da aynı dosyayı değiştirir.
 
 ### 3.8 SOLID'e giriş (tamamı → M11.1)
@@ -139,9 +138,9 @@ Testler bunu **kanıtlar** ([`RelationshipTests`](tests/Oop.Tests/RelationshipTe
 
 Özellikle **SRP** (Adım 3'te her kural/politika ayrı sınıf) ve **DIP** (`OrderService(INotifier)`) bu konunun kodunda görünür.
 
-### 3.9 Composition over inheritance ⭐ — [`PaymentRefactoring/`](src/Oop/PaymentRefactoring/)
+### 3.9 Composition over inheritance ⭐ — [`PaymentRefactoring/`](PaymentRefactoring/)
 
-Ödeme yöntemleri (kredi kartı, havale, cüzdan) üç adımda refactor edilir. **Her adımda aynı 15 davranış testi** koşar ([`PaymentRefactoringTests`](tests/Oop.Tests/PaymentRefactoringTests.cs): bir *contract* taban test sınıfı, üç adım için üç ince alt sınıf):
+Ödeme yöntemleri (kredi kartı, havale, cüzdan) üç adımda refactor edilir. **Her adımda aynı 8 senaryo** ([`Section09`](Sections/Section09_PaymentRefactoring.cs): ortak `IPaymentScenarios` sözleşmesi, üç adım için üç uygulama) **aynı sonucu** verir:
 
 | Adım | Yapı | Sorun / kazanım |
 |------|------|-----------------|
@@ -156,7 +155,7 @@ Testler bunu **kanıtlar** ([`RelationshipTests`](tests/Oop.Tests/RelationshipTe
 ### 3.10 `struct` ve `static` — OOP kısıtları
 
 - **struct:** sınıftan/struct'tan **kalıtım alamaz** (örtük olarak `ValueType`'tan türer, fiilen `sealed`); **interface uygulayabilir** (ama interface'e atama boxing'dir, → J2.2). Polimorfizm yalnızca interface üzerinden.
-- **`static` sınıf/üye:** durumsuz, saf yardımcılar (`Math`, extension method, factory) için uygun. "**Her şeyi static yapma**" eleştirisi: static üye imzada görünmeyen **gizli bağımlılıktır**, mock'lanamaz, paylaşılan durum paralel testleri bozar, polimorfizme katılamaz. Zaman/rastgelelik/dosya sistemi → **soyutla ve enjekte et** (`TimeProvider`, `IFileSystem`). ([`Section08`](src/Oop/Sections/Section08_StructAndStatic.cs): `DateTime.Now` vs `TimeProvider`; testte saat sabitlenir.)
+- **`static` sınıf/üye:** durumsuz, saf yardımcılar (`Math`, extension method, factory) için uygun. "**Her şeyi static yapma**" eleştirisi: static üye imzada görünmeyen **gizli bağımlılıktır**, mock'lanamaz, paylaşılan durum paralel testleri bozar, polimorfizme katılamaz. Zaman/rastgelelik/dosya sistemi → **soyutla ve enjekte et** (`TimeProvider`, `IFileSystem`). ([`Section08`](Sections/Section08_StructAndStatic.cs): `DateTime.Now` vs `TimeProvider`; testte saat sabitlenir.)
 
 ---
 

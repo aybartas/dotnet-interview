@@ -1,6 +1,6 @@
 # J2.6 Günlük Modern C#
 
-> 📁 `01-junior/02-csharp-fundamentals/06-everyday-modern-csharp/` · Önkoşul: J2.5 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/02-csharp-fundamentals/06-everyday-modern-csharp/` · Önkoşul: J2.5 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 2026'da junior bir geliştiricinin her gün yazdığı sözdizimi. Sürüm sürüm tarihçe ve ileri özellikler → M1.1.
 
@@ -21,7 +21,7 @@
 
 C# son on yılda "ne yapılacağını" kısa ve deklaratif söyleyen bir dile dönüştü: `record`, pattern matching, `switch` expression, raw string literal, collection expression, primary constructor… Bu konu, yeni kodda **her gün** göreceğiniz özellikleri kapsar.
 
-Kodun merkezi: **aynı sipariş domain modeli iki kez yazıldı** — [`Csharp7Style/Domain.cs`](src/ModernCSharp/Csharp7Style/Domain.cs) (elle `Equals`/`GetHashCode`, `switch` statement, `StringBuilder`, blok namespace) ve [`Csharp14Style/Domain.cs`](src/ModernCSharp/Csharp14Style/Domain.cs) (record, pattern, raw string, `field`…). 79 test, iki stilin **aynı davranışı** verdiğini kanıtlar; [`compare-loc.sh`](src/compare-loc.sh) satırları sayar: **224 → 56 satır (~%75 azalma)**.
+Kodun merkezi: **aynı sipariş domain modeli iki kez yazıldı** — [`Csharp7Style/Domain.cs`](Csharp7Style/Domain.cs) (elle `Equals`/`GetHashCode`, `switch` statement, `StringBuilder`, blok namespace) ve [`Csharp14Style/Domain.cs`](Csharp14Style/Domain.cs) (record, pattern, raw string, `field`…). [`Section10`](Sections/Section10_SideBySide.cs) iki stilin **aynı davranışı** verdiğini gösterir ve [`LineCounter`](Comparison/LineCounter.cs) ile satırları sayar: **224 → 56 satır (~%75 azalma)**.
 
 ---
 
@@ -74,7 +74,7 @@ public sealed class OrderDto { public required string Id { get; init; } public r
 | positional / tuple | `(tier, subtotal) switch { (Gold, > 1000m) => … }` |
 | list (C# 11) | `arr is [1, .., 3]`, `[var first, .., var last]` |
 
-Eskiden `as` + null kontrolü veya `(T)` cast + `is` gerekirdi. Null kontrolünde `x is not null`, `!=` operatörü overload edilmiş tiplerde yanıltıcı olabileceğinden tercih edilir. İç içe property pattern'de ara değer `null` ise eşleşme sessizce başarısız olur (patlamaz). ([`Section03`](src/ModernCSharp/Sections/Section03_Patterns.cs))
+Eskiden `as` + null kontrolü veya `(T)` cast + `is` gerekirdi. Null kontrolünde `x is not null`, `!=` operatörü overload edilmiş tiplerde yanıltıcı olabileceğinden tercih edilir. İç içe property pattern'de ara değer `null` ise eşleşme sessizce başarısız olur (patlamaz). ([`Section03`](Sections/Section03_Patterns.cs))
 
 ### 3.4 `switch` expression
 
@@ -93,7 +93,7 @@ Bir **değer** üretir (atanır/döndürülür), `break` yok, `_` varsayılan, `
 
 - `$"{name,-8}|{price,10:N2}|{date:yyyy-MM-dd}"` — ifade + hizalama + biçim. Makineler arası metin için `FormattableString.Invariant(...)`.
 - **Raw string literal** (C# 11): `"""…"""` — içeride **kaçış gerekmez** (JSON, SQL, regex, HTML için ideal); kapanış `"""`'in girintisi içerikten kırpılır. Interpolation: `$$"""…{{ifade}}…"""` — tek `{ }` literal kalır (JSON'a ait).
-- Verbatim `@"…"` yerini büyük ölçüde raw string'e bıraktı. **Güvenlik:** kullanıcı girdisini SQL/komut metnine interpolation ile gömmeyin → parametre (→ J8, J11.4). ([`Section05`](src/ModernCSharp/Sections/Section05_Strings.cs))
+- Verbatim `@"…"` yerini büyük ölçüde raw string'e bıraktı. **Güvenlik:** kullanıcı girdisini SQL/komut metnine interpolation ile gömmeyin → parametre (→ J8, J11.4). ([`Section05`](Sections/Section05_Strings.cs))
 
 ### 3.6 Collection expressions ve spread
 
@@ -116,7 +116,7 @@ public sealed class Greeter(ILogger logger, string prefix) { public string Greet
 
 ### 3.8 Küçük şekerler
 
-- **File-scoped namespace** (`namespace X;`), **global using** + `ImplicitUsings`, **target-typed `new()`** (`List<int> l = new();`; `var x = new();` derlenmez), **`using` declaration** (`using var r = …;` → kapsam sonunda, ters sırada Dispose), lambda'da varsayılan parametre (C# 12). ([`Section08`](src/ModernCSharp/Sections/Section08_SmallSyntax.cs))
+- **File-scoped namespace** (`namespace X;`), **global using** + `ImplicitUsings`, **target-typed `new()`** (`List<int> l = new();`; `var x = new();` derlenmez), **`using` declaration** (`using var r = …;` → kapsam sonunda, ters sırada Dispose), lambda'da varsayılan parametre (C# 12). ([`Section08`](Sections/Section08_SmallSyntax.cs))
 
 ### 3.9 C# 14 ile gelen ve günlük kodda görülenler
 
@@ -128,7 +128,7 @@ public sealed class Greeter(ILogger logger, string prefix) { public string Greet
 - **Null-conditional assignment:** `customer?.Name = "x";` — `customer` null ise atama **ve sağ taraf** hiç değerlendirilmez; `customer?.Count += 1` de çalışır (`++`/`--` değil).
 - Extension members, partial constructors/events vb. → M1.1. C# 15 / .NET 11 özellikleri yalnızca **(.NET 11)** işaretiyle anılır.
 
-### 3.10 İki stil yan yana ([`Section10`](src/ModernCSharp/Sections/Section10_SideBySide.cs), [`compare-loc.sh`](src/compare-loc.sh))
+### 3.10 İki stil yan yana ([`Section10`](Sections/Section10_SideBySide.cs), [`LineCounter`](Comparison/LineCounter.cs))
 
 | Konu | C# 7 tarzı | C# 14 tarzı |
 |------|-----------|-------------|
@@ -147,7 +147,7 @@ public sealed class Greeter(ILogger logger, string prefix) { public string Greet
 
 ## 4. Gerçek dünya senaryosu
 
-**"Eski servisi modernleştiriyoruz."** 600 satırlık DTO/model katmanı: her sınıfta elle `Equals`/`GetHashCode`/`ToString`. Önce davranışı testlerle sabitleyin (bu konudaki `OrderBehaviorContract` yaklaşımı: iki uygulama aynı testlerden geçer), sonra DTO'ları `record`/`required init`'e çevirin; EF entity'lerine dokunmayın. Satır sayısı ~%70 düşer, `Equals`/`GetHashCode` tutarsızlığı hata sınıfı ortadan kalkar.
+**"Eski servisi modernleştiriyoruz."** 600 satırlık DTO/model katmanı: her sınıfta elle `Equals`/`GetHashCode`/`ToString`. Önce davranışı testlerle sabitleyin (bu konudaki `IOrderFacade` yaklaşımı: iki uygulama aynı senaryodan aynı sonucu verir), sonra DTO'ları `record`/`required init`'e çevirin; EF entity'lerine dokunmayın. Satır sayısı ~%70 düşer, `Equals`/`GetHashCode` tutarsızlığı hata sınıfı ortadan kalkar.
 
 **"Dev ortamda çalışan makbuz üretimde bozuk."** `$"{price:N2}"` geliştirici makinesinde `en-US`, müşteride `tr-TR` kültüründe farklı çıktı verdi; JSON ve makine çıktılarında `FormattableString.Invariant`/`InvariantCulture` kullanın (→ J2.2).
 

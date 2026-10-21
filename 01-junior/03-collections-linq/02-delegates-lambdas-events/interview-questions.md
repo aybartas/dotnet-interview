@@ -1,6 +1,6 @@
 # J3.2 Delegates, Lambdas & Events — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. Delegate nedir? `Func`, `Action` ve `Predicate` farkı?
 Delegate, bir metoda (veya metot zincirine) tip güvenli referans tutan nesnedir; imza (parametreler + dönüş tipi) delegate tipiyle belirlenir. `Func<T1,…,TResult>` dönüş değeri olan, `Action<T1,…>` dönüş değeri olmayan (void), `Predicate<T>` `bool` dönen tek parametreli (`Func<T,bool>` ile eşdeğer) hazır generic delegate'lerdir; kendi delegate tipini yazmak nadiren gerekir.

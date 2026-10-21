@@ -1,6 +1,6 @@
 # J1.2 Ağ Temelleri: OSI, TCP/UDP & Socket ⭐
 
-> 📁 `01-junior/01-dev-foundations/02-network-fundamentals/` · Önkoşul: — · Pratik: [`src/`](src/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/01-dev-foundations/02-network-fundamentals/` · Önkoşul: — · Sorular: [`interview-questions.md`](interview-questions.md)
 
 HTTP'nin altında ne olduğunu bilmeden "bu istek neden yavaş?", "bağlantı neden timeout oluyor?" ya da "socket exhaustion nedir?" sorularına cevap verilemez. Backend mülakatlarının klasik ısınma turudur.
 
@@ -58,7 +58,7 @@ L3  [ IP header | TCP header | HTTP verisi ]               ← packet    (src/ds
 L2  [ Eth header | IP | TCP | HTTP | Eth trailer ]         ← frame     (MAC adresleri)
 ```
 
-Her birimin adı farklıdır: **segment** (TCP) / **datagram** (UDP) → **packet** (IP) → **frame** (Ethernet). Wireshark'ta bu iç içe geçmiş header'ları görürsünüz (bkz. [`src/capture-handshake.sh`](src/capture-handshake.sh)).
+Her birimin adı farklıdır: **segment** (TCP) / **datagram** (UDP) → **packet** (IP) → **frame** (Ethernet). Wireshark'ta bu iç içe geçmiş header'ları görürsünüz (yakalama alıştırması: 3.10).
 
 ---
 
@@ -165,7 +165,7 @@ Her yön ayrı kapanır (dörtlü). **İlk FIN'i gönderen taraf (active close) 
 | **Flow control (receive window)** | Alıcı "tamponumda şu kadar yerim var" diye bildirir; gönderen alıcıyı boğmaz |
 | **Congestion control** | **Slow start** (küçük başla, her RTT'de üstel artır) → **congestion avoidance** (doğrusal artır) → kayıp görünce yavaşla. Ağı (alıcıyı değil) korur. |
 
-[`LossDemo`](src/LossDemo.cs) flow control'ün etkisini gösterir: yavaş alıcıya TCP ile gönderen **bekletilir**, UDP ile gönderen aldırmaz ve paketler düşer.
+[`LossDemo`](LossDemo.cs) flow control'ün etkisini gösterir: yavaş alıcıya TCP ile gönderen **bekletilir**, UDP ile gönderen aldırmaz ve paketler düşer.
 
 **Head-of-line (HOL) blocking:** TCP sıralı teslim eder; bir segment kaybolursa sonraki segmentler (başka bir isteğe ait olsalar bile) **eksik olan gelene kadar** uygulamaya verilmez. HTTP/2 tek TCP bağlantısı üzerinde çoklama yapar; kayıp olduğunda tüm akışlar bu yüzden bekler. HTTP/3 (QUIC) bunu UDP üstünde akış bazında bağımsız teslimle çözer (→ M5.11).
 
@@ -194,7 +194,7 @@ Sunucu (TCP):                          İstemci (TCP):
   | Bağlantı üzerinde `Stream` | `NetworkStream` (`client.GetStream()`) |
   | Üst seviye | `HttpClient`, Kestrel (hepsi sonunda bunların üstüne kuruludur) |
 
-- **TCP bayt akışıdır:** İki `Write("A")` ve `Write("B")` karşıda tek `Read` ile `"AB"` olarak gelebilir; tek bir `Write` birden çok `Read`'e bölünebilir. Mesaj sınırını uygulama protokolü çizer: satır sonu (`\n`), uzunluk öneki (length-prefix) ya da sabit boyut. [`TcpEcho`](src/TcpEcho.cs) satır tabanlı, [`LossDemo`](src/LossDemo.cs) sabit 512 byte + `ReadExactlyAsync` kullanır. UDP'de ise bir `Send` = bir `Receive`.
+- **TCP bayt akışıdır:** İki `Write("A")` ve `Write("B")` karşıda tek `Read` ile `"AB"` olarak gelebilir; tek bir `Write` birden çok `Read`'e bölünebilir. Mesaj sınırını uygulama protokolü çizer: satır sonu (`\n`), uzunluk öneki (length-prefix) ya da sabit boyut. [`TcpEcho`](TcpEcho.cs) satır tabanlı, [`LossDemo`](LossDemo.cs) sabit 512 byte + `ReadExactlyAsync` kullanır. UDP'de ise bir `Send` = bir `Receive`.
 
 ### 3.5 Ephemeral port exhaustion & keep-alive ⭐
 
@@ -214,7 +214,7 @@ SocketException: Cannot assign requested address   (AddressNotAvailable)
 
 **Connection reuse / keep-alive neden önemli?** Yeni bağlantı = handshake (1 RTT) + (HTTPS ise TLS 1–2 RTT) + TCP slow-start'ın sıfırdan başlaması + port tüketimi. Açık bağlantıyı yeniden kullanmak hepsini ortadan kaldırır. HTTP/1.1'de `Connection: keep-alive` varsayılandır; HTTP/2 tek bağlantıda çoklama yapar.
 
-> 🛠 Pratik: `dotnet run -- time-wait 500` → sayacın arttığını, `--reuse` ile artmadığını görün.
+> 🛠 Pratik: `dotnet run -- 1.2 time-wait 500` → sayacın arttığını, `--reuse` ile artmadığını görün.
 
 ### 3.6 Performans kavramları
 
@@ -272,6 +272,35 @@ Teşhis ağacı (aşağıdan yukarı):
 
 Wireshark'ta faydalı filtreler: `tcp.port == 5000`, `tcp.flags.syn == 1`, `tcp.analysis.retransmission`, `tcp.flags.reset == 1`, `dns`.
 
+### 3.10 Pratik: kodla ve paket yakalamayla gözlem
+
+Bu konunun kodu J01 projesindedir (modül klasöründen çalıştırın). Her komut ağın farklı bir yönünü gösterir; `dotnet run -- 1.2 help` hepsini listeler:
+
+```bash
+dotnet run -- 1.2 tcp-server 5000                          # satır tabanlı TCP echo (her istemci için ayrı Task)
+dotnet run -- 1.2 tcp-client 127.0.0.1 5000 merhaba dunya  # ikinci terminal
+dotnet run -- 1.2 udp-server 5001                          # UDP echo: bağlantı YOK, her datagram bağımsız
+dotnet run -- 1.2 udp-client 127.0.0.1 5001 selam          # sunucu kapalıysa cevap gelmez → zaman aşımı
+dotnet run -- 1.2 loss 20000                               # aynı yük TCP ve UDP ile: UDP'de paket kaybı
+dotnet run -- 1.2 time-wait 500 [--reuse]                  # TIME_WAIT birikimi; --reuse tek bağlantı
+```
+
+**Handshake'i tcpdump ile yakalamak** (Linux/macOS, root gerekir; .NET gerekmez; Wireshark'ta: loopback, filtre `tcp.port == 5000`):
+
+```bash
+sudo tcpdump -i lo -n -S "tcp port 5000" &        # macOS'ta arayüz: lo0
+nc -l 127.0.0.1 5000 >/dev/null &                 # sunucu
+printf 'merhaba\n' | nc -q 1 127.0.0.1 5000       # istemci: bağlan, 1 mesaj gönder, kapat
+sleep 1; sudo pkill tcpdump
+```
+
+Nasıl okunur (`Flags`: `S`=SYN, `S.`=SYN-ACK, `.`=ACK, `P.`=veri, `F.`=FIN-ACK):
+1. `[S]` istemci → sunucu: "bağlanmak istiyorum" (seq = x)
+2. `[S.]` sunucu → istemci: "tamam, ben de hazırım" (seq = y, ack = x+1)
+3. `[.]` istemci → sunucu: "aldım" (ack = y+1) → bağlantı kuruldu, **1 RTT**
+4. `[P.]` veri paketi (`merhaba\n` = 8 byte, `length 8`)
+5. `[F.]` … `[F.]` … `[.]` kapanış: her yön ayrı FIN ile kapanır (dörtlü); ilk FIN'i gönderen `TIME_WAIT`'e girer.
+
 ---
 
 ## 4. Gerçek dünya senaryosu
@@ -284,7 +313,7 @@ Wireshark'ta faydalı filtreler: `tcp.port == 5000`, `tcp.flags.syn == 1`, `tcp.
 4. Çözüm: `HttpClient`'ı singleton/`IHttpClientFactory` ile yeniden kullanmak; bağlantılar keep-alive ile açık kalır, aynı TCP bağlantısı üzerinden binlerce istek gider.
 5. Etki: `TIME_WAIT` sayısı düşer, handshake + TLS maliyeti kalkar, gecikme düşer.
 
-Bu sorunu üretmek ve çözmek tam olarak [`TimeWaitDemo`](src/TimeWaitDemo.cs)'nun konusudur.
+Bu sorunu üretmek ve çözmek tam olarak [`TimeWaitDemo`](TimeWaitDemo.cs)'nun konusudur.
 
 **Ek senaryo — "Uygulama pod'u DB'ye bağlanamıyor":** `nc -zv db 5432` → `timed out` (refused değil) ⇒ cevap hiç gelmiyor ⇒ servis kapalı değil, **ağ kuralı** (NSG/firewall/network policy) engelliyor. Doğru yönlendirme: uygulama kodunu değil ağ kuralını kontrol et.
 
@@ -327,7 +356,7 @@ Sık sorulanlar ([`interview-questions.md`](interview-questions.md)'de cevaplar�
 - **TCP vs UDP:** güvenilirlik + sıralama ↔ gecikme + overhead. Tek doğru yok; iş yüküne göre. QUIC ikisinin arasını doldurur (UDP üstünde güvenilir, akış bazlı, 0-RTT).
 - **Bağlantı havuzu vs bağlantı başına istek:** havuz handshake/TLS/slow-start maliyetini ortadan kaldırır ama boşta bağlantılar kaynak tutar, uzun ömürlü bağlantılar load balancer'a dengesiz dağılabilir (DNS değişikliğini fark etmez → `PooledConnectionLifetime`, M5.9).
 - **Nagle algoritması / `NoDelay`:** küçük yazmaları birleştirip verimlilik kazandırır, ama gecikme ekler. Düşük gecikme isteyen protokoller `TcpClient.NoDelay = true` yapar.
-- **Socket tamponları:** `ReceiveBufferSize`/`SendBufferSize` büyütmek yüksek BDP (bandwidth × delay) hatlarda throughput'u artırır; bellek maliyeti vardır. UDP'de küçük tampon = kayıp (bkz. [`LossDemo`](src/LossDemo.cs)).
+- **Socket tamponları:** `ReceiveBufferSize`/`SendBufferSize` büyütmek yüksek BDP (bandwidth × delay) hatlarda throughput'u artırır; bellek maliyeti vardır. UDP'de küçük tampon = kayıp (bkz. [`LossDemo`](LossDemo.cs)).
 - **Backlog:** `listen(backlog)` küçükse ani bağlantı dalgasında istemciler `SYN` aşamasında bekler/düşer.
 - **L4 vs L7 LB:** L7 esneklik ve gözlemlenebilirlik verir (path routing, WAF), L4 ham hız ve basitlik.
 

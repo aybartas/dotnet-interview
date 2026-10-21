@@ -1,6 +1,6 @@
 # J2.1 Program Anatomisi — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. `Main` metodunun geçerli imzaları nelerdir? Exit code ne anlama gelir?
 `void Main()`, `void Main(string[] args)`, `int Main(...)`, `async Task Main(...)` ve `async Task<int> Main(...)`; hepsi `static`'tir, erişim düzeyi önemli değildir, bir assembly'de tek giriş noktası olabilir. Dönüş değeri **exit code**'dur: process bittiğinde işletim sistemine bildirilen sayı; `0` başarı, sıfırdan farklı hata demektir. CI, shell script'leri, Docker ve Kubernetes Job'ları bu koda bakar. Yakalanmayan exception process'i sıfırdan farklı kodla sonlandırır.

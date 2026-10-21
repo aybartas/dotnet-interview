@@ -1,6 +1,6 @@
 # J2.1 Program Anatomisi
 
-> 📁 `01-junior/02-csharp-fundamentals/01-program-anatomy/` · Önkoşul: J1 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/02-csharp-fundamentals/01-program-anatomy/` · Önkoşul: J1 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 ## İçindekiler
 
@@ -19,7 +19,7 @@
 
 Bir C# programının **iskeleti**: nereden başlar (entry point), kod nasıl düzenlenir (namespace, using, partial), kime ne görünür (erişim belirleyicileri) ve dilin her gün karşınıza çıkan temel mekanikleri (dönüşümler, taşma, operatörler, preprocessor, derleme zamanı bilgisi). Mülakatın ilk teknik turu çoğunlukla buradan başlar; yüzeysel tanım değil **örnekle açıklama** beklenir.
 
-[`src/ProgramAnatomy`](src/ProgramAnatomy/) 13 küçük, yorumlu bölümden oluşur; [`src/AccessModifiers`](src/AccessModifiers/) iki assembly ile erişim belirleyicilerini derleyiciye denetletir.
+Konu 13 küçük, yorumlu bölümden oluşur ([`Sections/`](Sections/); `dotnet run -- 2.1 <numara>`); [`AccessModifiers/`](AccessModifiers/) ve [`J02.Lib`](../../02-csharp-fundamentals-lib/) iki assembly ile erişim belirleyicilerini derleyiciye denetletir.
 
 ---
 
@@ -46,7 +46,7 @@ static async Task<int> Main()            static async Task<int> Main(string[] ar
 
 - Bir assembly'de **tek** entry point olabilir.
 - **Exit code:** process bittiğinde işletim sistemine bildirilen sayı. `0` = başarı, sıfırdan farklı = hata. CI, script'ler, Kubernetes `Job`'ları ve Docker bu sayıya bakar. Yakalanmayan exception process'i sıfırdan farklı kodla (Linux'ta genelde 134) sonlandırır.
-- **Top-level statements (C# 9):** `Program.cs`'e doğrudan ifadeler yazarsınız; derleyici bir `Program` sınıfı ve `<Main>$` metodu **üretir**. `args` örtük bir değişkendir; `return 3;` exit code'u belirler; `await` kullanırsanız `Main` otomatik `async Task<int>` olur. Bir projede **yalnızca bir dosya** top-level statements içerebilir. ([`Section01`](src/ProgramAnatomy/Sections/Section01_EntryPoint.cs) bunu reflection ile gösterir.)
+- **Top-level statements (C# 9):** `Program.cs`'e doğrudan ifadeler yazarsınız; derleyici bir `Program` sınıfı ve `<Main>$` metodu **üretir**. `args` örtük bir değişkendir; `return 3;` exit code'u belirler; `await` kullanırsanız `Main` otomatik `async Task<int>` olur. Bir projede **yalnızca bir dosya** top-level statements içerebilir. ([`Section01`](Sections/Section01_EntryPoint.cs) bunu reflection ile gösterir.)
 
 ```csharp
 // Program.cs                         // Derleyicinin ürettiği (kavramsal)
@@ -84,19 +84,19 @@ Akılda tutma: `protected internal` = `protected` **VEYA** `internal` (birleşim
 - **`InternalsVisibleTo`:** `internal` üyeleri belirli "dost" assembly'lere açar; tipik kullanım **test projesi**. csproj'da `<InternalsVisibleTo Include="Proje.Tests" />`. Tasarım notu: `internal` yalnızca bir uygulama detayını gizler; sırf test edebilmek için her şeyi `public` yapmak yerine bunu kullanın.
 - **Pratik kural:** en dar düzeyle başlayın; `private` → `internal` → `public` yönünde ihtiyaç oldukça açın. Kütüphane yazıyorsanız public yüzey bir **sözleşmedir**.
 
-> 🛠 [`src/AccessModifiers`](src/AccessModifiers/): `Library` (6 düzeyden birer üye) + `Consumer` (başka assembly). `dotnet run --project Consumer` geçerli erişimleri; `dotnet build Consumer -p:DefineConstants=SHOW_ERRORS` **derleme hatalarını** (CS0122, CS0103, CS1061) gösterir.
+> 🛠 [`AccessModifiers/`](AccessModifiers/): `J02.Lib`'deki `Vault` (6 düzeyden birer üye, [`Vault.cs`](../../02-csharp-fundamentals-lib/Vault.cs)) + bu klasördeki "dışarıdaki" kod (başka assembly). `dotnet run -- 2.1 access-modifiers` geçerli erişimleri; `dotnet build -p:DefineConstants=SHOW_ERRORS` (modül klasöründe) **derleme hatalarını** (CS0122, CS0103, CS1061) gösterir.
 
 ### 3.4 `static` class, static üye, static constructor
 
 - **`static class`:** örneği oluşturulamaz, yalnızca static üye taşır, `sealed` gibidir (`Math`, `Path`, `Enumerable`). Yardımcı fonksiyonlar ve extension method'lar için.
 - **static üye:** tip başına **tek kopya**; tüm çağıranlar aynı durumu paylaşır. Eleştiri: gizli global durum, **test edilebilirliği** düşürür ("her şeyi static yapma" → J2.3).
-- **static constructor:** parametresiz, erişim belirleyicisiz, elle çağrılamaz; tip **ilk kullanılmadan önce** runtime tarafından **bir kez** ve thread-safe olarak çalıştırılır. `const`'a erişim tetiklemez. İçinde exception fırlarsa tip kalıcı olarak `TypeInitializationException` verir ([`Section03`](src/ProgramAnatomy/Sections/Section03_Statics.cs)). Zamanlamanın derin hali (`beforefieldinit`) → S1.2.
+- **static constructor:** parametresiz, erişim belirleyicisiz, elle çağrılamaz; tip **ilk kullanılmadan önce** runtime tarafından **bir kez** ve thread-safe olarak çalıştırılır. `const`'a erişim tetiklemez. İçinde exception fırlarsa tip kalıcı olarak `TypeInitializationException` verir ([`Section03`](Sections/Section03_Statics.cs)). Zamanlamanın derin hali (`beforefieldinit`) → S1.2.
 
 ### 3.5 `partial`
 
 Bir tipi (veya metodu) **birden çok dosyaya** bölmek. Amaç: elle yazılan kodu **üretilmiş koddan** ayırmak (designer, ORM, source generator).
 
-- `partial class` — derleme sırasında dosyalar tek tipte birleşir ([`Invoice.cs`](src/ProgramAnatomy/Sections/Invoice.cs) + [`Invoice.Generated.cs`](src/ProgramAnatomy/Sections/Invoice.Generated.cs)).
+- `partial class` — derleme sırasında dosyalar tek tipte birleşir ([`Invoice.cs`](Sections/Invoice.cs) + [`Invoice.Generated.cs`](Sections/Invoice.Generated.cs)).
 - `partial` metot — bildirim ve uygulama ayrı dosyalarda. **Source generator'ların temel mekanizması:** siz `[GeneratedRegex(...)] static partial Regex Digits();` yazarsınız, derleyici **gövdeyi derleme sırasında üretir** (`System.Text.Json` source-gen, `LoggerMessage`, `GeneratedRegex` …) (→ S1.5).
 - Tüm parçalar aynı erişim düzeyi/`partial` anahtar sözcüğüyle bildirilmeli; çelişen taban sınıf bildirimleri hata verir.
 
@@ -146,7 +146,7 @@ checked { ... }       // blok içindeki tüm aritmetik/dönüşümler denetlenir
 ### 3.10 Operatörler
 
 - **Öncelik** (yüksek → düşük, özet): `()` · `x++` · `! ~ ++x` · `* / %` · `+ -` · `<< >>` · `< > <= >= is as` · `== !=` · `&` · `^` · `|` · `&&` · `||` · `??` · `?:` · atama. Şüphede **parantez**.
-- **Short-circuit ⭐:** `&&` ve `||` sağ tarafı gerekmedikçe değerlendirmez; mantıksal `&` ve `|` **her iki tarafı da** değerlendirir. Faydası: `text != null && text.Length > 0` null-guard'ı. Yan etkili sağ taraf varsa fark davranışı değiştirir ([`Section09`](src/ProgramAnatomy/Sections/Section09_Operators.cs)).
+- **Short-circuit ⭐:** `&&` ve `||` sağ tarafı gerekmedikçe değerlendirmez; mantıksal `&` ve `|` **her iki tarafı da** değerlendirir. Faydası: `text != null && text.Length > 0` null-guard'ı. Yan etkili sağ taraf varsa fark davranışı değiştirir ([`Section09`](Sections/Section09_Operators.cs)).
 - Tamsayı bölmesi kesir atar (`7 / 2 == 3`); `%` işareti **sol operandı** izler (`-7 % 3 == -1`).
 
 ### 3.11 `nameof`, `typeof`, `sizeof`, `default`
@@ -174,15 +174,15 @@ checked { ... }       // blok içindeki tüm aritmetik/dönüşümler denetlenir
 ### 3.13 XML documentation ve Caller attribute'ları
 
 - **`///`** yorumları IntelliSense'te görünür; csproj'da `<GenerateDocumentationFile>true` ile `.xml` üretilir; Swashbuckle/OpenAPI bu dosyayı okuyup endpoint açıklamalarına taşır (→ J7.5). Sık etiketler: `<summary>`, `<param>`, `<returns>`, `<exception cref>`, `<remarks>`, `<example>`, `<see cref>`. Eksik yorum uyarısı CS1591 (public yüzeyi olan kütüphanelerde faydalı).
-- **`[CallerMemberName]`, `[CallerFilePath]`, `[CallerLineNumber]`:** çağıranın bilgisi **derleme zamanında** parametre varsayılanına yazılır — reflection/`StackTrace` yok, sıfır maliyet. **`[CallerArgumentExpression]`:** argümanın kaynak koddaki **metnini** verir; `ArgumentNullException.ThrowIfNull(x)` `paramName`'i böyle bulur, kendi `Guard` metotlarınızı da yazabilirsiniz ([`Section13`](src/ProgramAnatomy/Sections/Section13_CallerInfo.cs)). `INotifyPropertyChanged` uygulamalarında `[CallerMemberName]` klasiktir.
+- **`[CallerMemberName]`, `[CallerFilePath]`, `[CallerLineNumber]`:** çağıranın bilgisi **derleme zamanında** parametre varsayılanına yazılır — reflection/`StackTrace` yok, sıfır maliyet. **`[CallerArgumentExpression]`:** argümanın kaynak koddaki **metnini** verir; `ArgumentNullException.ThrowIfNull(x)` `paramName`'i böyle bulur, kendi `Guard` metotlarınızı da yazabilirsiniz ([`Section13`](Sections/Section13_CallerInfo.cs)). `INotifyPropertyChanged` uygulamalarında `[CallerMemberName]` klasiktir.
 
 ---
 
 ## 4. Gerçek dünya senaryosu
 
-**"Test projesi iç sınıfı göremiyor, ekip her şeyi `public` yapıyor."** Kütüphane yazarı `PriceRules` gibi iç hesaplamaları `internal` tutar; test projesine `InternalsVisibleTo` ile kapıyı açar ([`InternalsVisibleToTests`](tests/ProgramAnatomy.Tests/InternalsVisibleToTests.cs)). Böylece public API yüzeyi küçük kalır, iç kural yine test edilir. Public yapılan her şey artık geriye dönük uyumluluk borcudur.
+**"Test projesi iç sınıfı göremiyor, ekip her şeyi `public` yapıyor."** Kütüphane yazarı `PriceRules` gibi iç hesaplamaları `internal` tutar; test projesine `InternalsVisibleTo` ile kapıyı açar. Böylece public API yüzeyi küçük kalır, iç kural yine test edilir. Public yapılan her şey artık geriye dönük uyumluluk borcudur.
 
-**"Stok toplamı negatif çıktı."** `int itemCount * int unitPriceInCents` taşar ve **sessizce** negatif sonuç üretir ([`Section08`](src/ProgramAnatomy/Sections/Section08_CheckedUnchecked.cs): 70.000 × 40.000). Çözüm: `long`/`decimal` kullanımı, kritik hesaplarda `checked`, ve sınır değer testi.
+**"Stok toplamı negatif çıktı."** `int itemCount * int unitPriceInCents` taşar ve **sessizce** negatif sonuç üretir ([`Section08`](Sections/Section08_CheckedUnchecked.cs): 70.000 × 40.000). Çözüm: `long`/`decimal` kullanımı, kritik hesaplarda `checked`, ve sınır değer testi.
 
 **"Sunucuda fiyat 1234,5 yerine 0 geliyor."** `decimal.Parse` geliştirici makinesinde `tr-TR`, sunucuda `en-US` kültürüyle çalışıyor. Makineler arası veri için daima `InvariantCulture` (veya `TryParse`).
 

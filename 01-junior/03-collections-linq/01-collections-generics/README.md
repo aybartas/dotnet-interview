@@ -1,6 +1,6 @@
 # J3.1 Collections & Generics
 
-> 📁 `01-junior/03-collections-linq/01-collections-generics/` · Önkoşul: J2 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/03-collections-linq/01-collections-generics/` · Önkoşul: J2 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 Veri yapılarının **teorisi ve Big-O ispatları DSA pistinde** (→ D2, D3); burada .NET API'lerinin **doğru kullanımı** var.
 
@@ -19,7 +19,7 @@ Veri yapılarının **teorisi ve Big-O ispatları DSA pistinde** (→ D2, D3); b
 
 ## 1. Ne?
 
-`System.Collections.Generic` içindeki tip güvenli koleksiyonlar ve bunları yazarken/kullanırken bilinmesi gereken sözleşmeler: arayüz hiyerarşisi, kapasite, enumerator, anahtar sözleşmesi ve generics. [`src/CollectionsGenerics`](src/CollectionsGenerics/) 8 bölüm, [`tests/`](tests/) 29 test içerir.
+`System.Collections.Generic` içindeki tip güvenli koleksiyonlar ve bunları yazarken/kullanırken bilinmesi gereken sözleşmeler: arayüz hiyerarşisi, kapasite, enumerator, anahtar sözleşmesi ve generics. Konu 8 bölümden oluşur (`dotnet run -- 3.1 <numara>`).
 
 ---
 
@@ -33,7 +33,7 @@ Veri yapılarının **teorisi ve Big-O ispatları DSA pistinde** (→ D2, D3); b
 
 ## 3. Nasıl?
 
-### 3.1 Koleksiyon turu ([`Section01`](src/CollectionsGenerics/Sections/Section01_Tour.cs))
+### 3.1 Koleksiyon turu ([`Section01`](Sections/Section01_Tour.cs))
 
 | Tip | Ne? | Not |
 |-----|-----|-----|
@@ -62,7 +62,7 @@ ICollection<T>                    + Count, Add, Remove, Contains, Clear   (deği
 
 **Neden read-only döndürülür?** (1) Encapsulation — sınıf kendi invariant'ını (tekrarsızlık, sıra, doğrulama) tek elden korur; (2) niyet tipte okunur; (3) iç temsili (List → Array/ImmutableArray) sonradan kırıcı olmadan değiştirebilirsiniz.
 
-[`Inventory.cs`](src/CollectionsGenerics/Models/Inventory.cs) dört seviyeyi gösterir:
+[`Inventory.cs`](Models/Inventory.cs) dört seviyeyi gösterir:
 
 | Seviye | Koruma |
 |--------|--------|
@@ -74,7 +74,7 @@ ICollection<T>                    + Count, Add, Remove, Contains, Clear   (deği
 
 Canlı görünüm ile anlık görüntü arasında seçim ayrıca bir tasarım kararıdır.
 
-### 3.3 `Array` vs `List<T>`: kapasite ([`Section03`](src/CollectionsGenerics/Sections/Section03_Capacity.cs))
+### 3.3 `Array` vs `List<T>`: kapasite ([`Section03`](Sections/Section03_Capacity.cs))
 
 `List<T>` arkada bir dizi tutar; dolunca **2 katı** yeni dizi ayırıp kopyalar (`0 → 4 → 8 → 16 → 32…`; amortize O(1) `Add`). Boyutu biliyorsanız `new List<T>(capacity)`: 1 milyon `int` eklemede 8,0 MB yerine 3,8 MB tahsis (ara diziler yok). `Capacity ≠ Count`; `Clear()` kapasiteyi küçültmez, `TrimExcess()` küçültür. Array: boyut sabit ve bilinen, performans kritik (`Span<T>`, buffer) durumlar; API dönüşünde ikisi de iç temsili sızdırır.
 
@@ -82,11 +82,11 @@ Canlı görünüm ile anlık görüntü arasında seçim ayrıca bir tasarım ka
 
 `foreach` → `GetEnumerator()`, `MoveNext()`/`Current`, `Dispose()`. Gezinme durumu **enumerator'dadır**, koleksiyonda değil (iki `foreach` bağımsızdır). `List<T>.Enumerator` bir **struct**'tır: doğrudan `foreach` 0 byte tahsis eder, `IEnumerable<T>` olarak tutulursa kutulanır (deneyde 40 B). **Gezinirken koleksiyonu değiştirmek** `InvalidOperationException` verir (iç `_version` kontrolü); çözüm `RemoveAll` veya kopya üzerinde gezinmek. `yield return` ile kendi iterator'ınızı yazarsınız (derleyici state machine üretir; derin hali → M1.4).
 
-### 3.5 Arama süresi ⭐ ([`Section05`](src/CollectionsGenerics/Sections/Section05_LookupBenchmark.cs))
+### 3.5 Arama süresi ⭐ ([`Section05`](Sections/Section05_LookupBenchmark.cs))
 
 100.000 elemanda 1.000 arama (yarısı yok): `List.Contains` ≈ 14 ms, `BinarySearch` ≈ 1 ms, `HashSet.Contains` ≈ 0,4 ms, `Dictionary.ContainsKey` ≈ 0,3 ms. Sonuç aynı; fark, `List`'in her aramada baştan tarayıp hash yapılarının n'den bağımsız yaklaşık sabit süreli olmasıdır. Küçük n'de (~<20) fark yok; hash yapısı kurma maliyeti (bellek + O(n)) çok sayıda arama ile amorti olur. Ölçüm kabadır (BenchmarkDotNet → S2.1).
 
-### 3.6 Dictionary anahtar sözleşmesi ⭐ ([`Section06`](src/CollectionsGenerics/Sections/Section06_KeyContract.cs))
+### 3.6 Dictionary anahtar sözleşmesi ⭐ ([`Section06`](Sections/Section06_KeyContract.cs))
 
 1. `a.Equals(b)` ⇒ `a.GetHashCode() == b.GetHashCode()`.
 2. Hash ve `Equals` **aynı** ve **değişmez** alanlara dayanmalı.
@@ -101,7 +101,7 @@ Canlı görünüm ile anlık görüntü arasında seçim ayrıca bir tasarım ka
 
 `string` anahtarda varsayılan karşılaştırma **ordinal** (büyük/küçük harf duyarlı); farklı davranış için tipi değiştirmeden `IEqualityComparer<T>` verilir (`StringComparer.OrdinalIgnoreCase`). Anahtar olarak `string`, `int`, `Guid`, enum, `record`, `readonly record struct` kullanın.
 
-### 3.7 Generics ([`Section07`](src/CollectionsGenerics/Sections/Section07_Generics.cs))
+### 3.7 Generics ([`Section07`](Sections/Section07_Generics.cs))
 
 **Neden var?** (1) **Tip güvenliği** derleme zamanında (`List<int>`'e string eklenemez; `ArrayList`'e eklenir ve çalışırken patlar), (2) **boxing'siz performans** (→ J2.2), (3) **kod tekrarının önlenmesi** (tek algoritma, her tip için; JIT her değer tipi için özelleşmiş kod üretir).
 
@@ -115,7 +115,7 @@ Canlı görünüm ile anlık görüntü arasında seçim ayrıca bir tasarım ka
 
 Kısıtsız `T` hakkında yalnızca `object` üyeleri bilinir; aşırı kısıtlamak yeniden kullanılabilirliği düşürür. **`InMemoryRepository<T,TId> where T : class, IEntity<TId> where TId : notnull`** taslağı: aynı sınıf `Product`/`int` ve `Customer`/`Guid` için, cast'siz ve tip güvenli (`products.Add(customer)` derlenmez). Variance (`in`/`out`) ve generic math → M1.2.
 
-### 3.8 Hangi koleksiyon ne zaman? ([`Section08`](src/CollectionsGenerics/Sections/Section08_DecisionTable.cs))
+### 3.8 Hangi koleksiyon ne zaman? ([`Section08`](Sections/Section08_DecisionTable.cs))
 
 | İhtiyaç | Seçim |
 |---------|-------|
@@ -136,7 +136,7 @@ Kısıtsız `T` hakkında yalnızca `object` üyeleri bilinir; aşırı kısıtl
 
 **"Rapor 10 dakika sürüyor."** 200.000 satırlık dosya, her satır için `existingIds.Contains(id)` (`List<int>`) → O(n²) ≈ 40 milyar karşılaştırma. `HashSet<int>` ile dakikalar saniyeye iner; kod tek satır değişti.
 
-**"Dictionary'de olan kullanıcıyı bulamıyoruz."** `UserKey` sınıfı yalnızca `Equals`'ı override etmiş; `GetHashCode` varsayılan (referans tabanlı) → farklı nesneler farklı kovaya gider. Çözüm `record` (veya `Equals` + `GetHashCode`); kalıcı önlem anahtar tiplerini `record` yapmak ve sözleşme için test yazmak ([`KeyContractTests`](tests/CollectionsGenerics.Tests/KeyContractAndGenericsTests.cs)).
+**"Dictionary'de olan kullanıcıyı bulamıyoruz."** `UserKey` sınıfı yalnızca `Equals`'ı override etmiş; `GetHashCode` varsayılan (referans tabanlı) → farklı nesneler farklı kovaya gider. Çözüm `record` (veya `Equals` + `GetHashCode`); kalıcı önlem anahtar tiplerini `record` yapmak ve sözleşme için test yazmak (bu konudaki [`Keys.cs`](Models/Keys.cs) tuzakları tek tek gösterir).
 
 **"Müşteri listesini başka bir modül boşalttı."** `public List<Customer> Customers` dışarı açılmış; başka bir servis `Clear()` çağırdı. `IReadOnlyList<Customer>` döndürmek + ekleme için sınıfın kendi metodu (invariant: aynı Id iki kez eklenemez).
 

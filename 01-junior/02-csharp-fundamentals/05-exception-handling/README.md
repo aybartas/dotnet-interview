@@ -1,6 +1,6 @@
 # J2.5 Exception Handling
 
-> 📁 `01-junior/02-csharp-fundamentals/05-exception-handling/` · Önkoşul: J2.4 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/02-csharp-fundamentals/05-exception-handling/` · Önkoşul: J2.4 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 ## İçindekiler
 
@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-**Exception**, normal akışı kesen ve çağrı zincirinde yukarı doğru, bir `catch` bulunana kadar yayılan hata nesnesidir. Hata yönetimi dört soruya cevap verir: **Neyi yakalarım? Nerede? Ne yaparım? Yeniden nasıl fırlatırım?** [`src/ExceptionHandling`](src/ExceptionHandling/) 8 bölümlük bir console uygulaması, [`tests/`](tests/) 23 test içerir.
+**Exception**, normal akışı kesen ve çağrı zincirinde yukarı doğru, bir `catch` bulunana kadar yayılan hata nesnesidir. Hata yönetimi dört soruya cevap verir: **Neyi yakalarım? Nerede? Ne yaparım? Yeniden nasıl fırlatırım?** Konu 8 bölümden oluşur (`dotnet run -- 2.5 <numara>`).
 
 ---
 
@@ -39,7 +39,7 @@ catch (FormatException ex)  { /* bu tipe özel */ }          // yukarıdan aşa�
 catch (Exception ex)        { /* genel (en sona) */ }        // özelden genele yazılır (aksi CS0160)
 finally    { /* HER ZAMAN çalışır: temizlik */ }
 ```
-- `finally` hata olsa da olmasa da, hatta `return`'den sonra bile çalışır ([`Section01`](src/ExceptionHandling/Sections/Section01_TryCatchFinally.cs)). İçine `return`/`throw` koymayın: bekleyen exception'ı **yutar veya ezer**.
+- `finally` hata olsa da olmasa da, hatta `return`'den sonra bile çalışır ([`Section01`](Sections/Section01_TryCatchFinally.cs)). İçine `return`/`throw` koymayın: bekleyen exception'ı **yutar veya ezer**.
 - **`using` / `await using`** = `IDisposable`/`IAsyncDisposable` için `try/finally` şekerlemesi: exception olsa da kaynak bırakılır, catch'ten **önce** Dispose çalışır.
 
 ### 3.2 Exception hiyerarşisi ve custom exception
@@ -55,14 +55,14 @@ Exception
 ```
 **Önce hazır tipi seç:** `ArgumentNullException` (argüman null, `ThrowIfNull`), `ArgumentOutOfRangeException`, `InvalidOperationException` (nesne *bu durumda* bu işlemi yapamaz), `NotSupportedException` (işlem hiç desteklenmiyor).
 
-**Custom exception ne zaman?** (1) Çağıranın exception **tipine göre farklı davranması** gerekiyorsa (`catch (InsufficientFundsException)`), (2) **ek veri** taşıması gerekiyorsa (hesap no, eksik tutar → mesajı ayrıştırmak yerine property). Yalnızca farklı bir **mesaj** için tip üretmeyin. Kurallar: adı `…Exception` ile biter · `System.Exception`'dan türet (`ApplicationException`'dan değil) · standart ctor'lar (mesaj, mesaj+inner) · ek bilgi salt okunur property · hiyerarşi sığ ([`DomainExceptions.cs`](src/ExceptionHandling/Domain/DomainExceptions.cs): `DomainException` kökü → `InsufficientFundsException`, `OrderNotFoundException`, `ValidationFailedException`). Kök tip, üst katmana **tek catch ile** "iş kuralı hatası"nı ayırma imkânı verir (→ HTTP 4xx; beklenmeyen → 500). Altyapı hatasını çevirirken **`InnerException`'ı koru**.
+**Custom exception ne zaman?** (1) Çağıranın exception **tipine göre farklı davranması** gerekiyorsa (`catch (InsufficientFundsException)`), (2) **ek veri** taşıması gerekiyorsa (hesap no, eksik tutar → mesajı ayrıştırmak yerine property). Yalnızca farklı bir **mesaj** için tip üretmeyin. Kurallar: adı `…Exception` ile biter · `System.Exception`'dan türet (`ApplicationException`'dan değil) · standart ctor'lar (mesaj, mesaj+inner) · ek bilgi salt okunur property · hiyerarşi sığ ([`DomainExceptions.cs`](Domain/DomainExceptions.cs): `DomainException` kökü → `InsufficientFundsException`, `OrderNotFoundException`, `ValidationFailedException`). Kök tip, üst katmana **tek catch ile** "iş kuralı hatası"nı ayırma imkânı verir (→ HTTP 4xx; beklenmeyen → 500). Altyapı hatasını çevirirken **`InnerException`'ı koru**.
 
 ### 3.3 Exception filter ⭐
 
 ```csharp
 catch (HttpFailure ex) when (ex.StatusCode == 404) { … }
 ```
-Filter doğruysa catch devreye girer; yanlışsa exception yakalanmamış gibi yoluna devam eder. Kritik fark: **filter, stack çözülmeden ÖNCE değerlendirilir** (sıra: filter → iç `finally` → catch gövdesi; [`Section03`](src/ExceptionHandling/Sections/Section03_Filters.cs) ve `FlowTests` kanıtlar) → debugger/dump'ta fırlatma noktasının stack'i ve yerel değişkenleri **sağlam** kalır. Tipik kullanım: HTTP status/hata kodu ayrımı, retry'lanabilir hata, `InnerException` tipi, **"logla ama yakalama"** deseni (filter içinde log + `false`). Filter hızlı ve yan etkisiz olmalı; içinde fırlatılan exception yutulur.
+Filter doğruysa catch devreye girer; yanlışsa exception yakalanmamış gibi yoluna devam eder. Kritik fark: **filter, stack çözülmeden ÖNCE değerlendirilir** (sıra: filter → iç `finally` → catch gövdesi; [`Section03`](Sections/Section03_Filters.cs) kanıtlar) → debugger/dump'ta fırlatma noktasının stack'i ve yerel değişkenleri **sağlam** kalır. Tipik kullanım: HTTP status/hata kodu ayrımı, retry'lanabilir hata, `InnerException` tipi, **"logla ama yakalama"** deseni (filter içinde log + `false`). Filter hızlı ve yan etkisiz olmalı; içinde fırlatılan exception yutulur.
 
 ### 3.4 `throw` vs `throw ex` ⭐
 
@@ -70,7 +70,7 @@ Filter doğruysa catch devreye girer; yanlışsa exception yakalanmamış gibi y
 catch (Exception ex) { throw;    }   // ✓ orijinal stack trace KORUNUR
 catch (Exception ex) { throw ex; }   // ✗ stack trace burada SIFIRLANIR
 ```
-Deney ([`Section04`](src/ExceptionHandling/Sections/Section04_ThrowVsThrowEx.cs), `RethrowTests`): zincir `Entry → Middle → ThrowSite`.
+Deney ([`Section04`](Sections/Section04_ThrowVsThrowEx.cs)): zincir `Entry → Middle → ThrowSite`.
 
 | Yeniden fırlatma | Stack trace |
 |------------------|-------------|
@@ -83,7 +83,7 @@ Analyzer **CA2200** `throw ex`'i yakalar. `throw;` yalnızca catch bloğunda ge�
 
 ### 3.5 Exception maliyeti ⭐
 
-Fırlatma pahalıdır: stack trace yakalama + stack çözme + filter/finally işletme. Deney ([`Section05`](src/ExceptionHandling/Sections/Section05_Cost.cs)): 20.000 girdi, yarısı geçersiz → `int.TryParse` ≈ 1 ms, `Parse + catch` ≈ 45 ms (**~50×**). Exception **olmayan** yolda `try` bloğu neredeyse ücretsizdir.
+Fırlatma pahalıdır: stack trace yakalama + stack çözme + filter/finally işletme. Deney ([`Section05`](Sections/Section05_Cost.cs)): 20.000 girdi, yarısı geçersiz → `int.TryParse` ≈ 1 ms, `Parse + catch` ≈ 45 ms (**~50×**). Exception **olmayan** yolda `try` bloğu neredeyse ücretsizdir.
 
 **Kural:** exception **beklenen kontrol akışı** için değil **istisnai** durumlar içindir. Parse için `TryParse`, sözlük için `TryGetValue`, "kayıt yok" için `null`/`Result`/Try deseni. (Gerekçeler: performans, okunabilirlik, debugger'da first-chance gürültüsü, izleme sistemlerinde yanlış alarm.)
 
@@ -104,7 +104,7 @@ Fırlatma pahalıdır: stack trace yakalama + stack çözme + filter/finally iş
 - **`await`** orijinal exception'ı **açar** (ilk iç exception); **`.Wait()`/`.Result`** `AggregateException` ile **sarar** (ve deadlock riski vardır → J4).
 - **`Task.WhenAll`**: birden çok hata olursa `await` yalnızca **ilkini** fırlatır; **hepsi** `task.Exception.InnerExceptions`'tadır. `AggregateException.Flatten()` iç içe aggregate'leri düzleştirir, `Handle()` bilinenleri işler.
 - **İptal:** `OperationCanceledException` hata değil normal akıştır, ayrı yakalanır.
-- ⚠ `async void`'deki exception **yakalanamaz** ve süreci çökertebilir (yalnızca event handler'lar için); unutulan (await edilmeyen) Task'taki exception **kaybolur**. Derin hali → J4, M4. ([`Section07`](src/ExceptionHandling/Sections/Section07_TaskExceptions.cs))
+- ⚠ `async void`'deki exception **yakalanamaz** ve süreci çökertebilir (yalnızca event handler'lar için); unutulan (await edilmeyen) Task'taki exception **kaybolur**. Derin hali → J4, M4. ([`Section07`](Sections/Section07_TaskExceptions.cs))
 
 ### 3.8 Exception vs `Result` (kavramsal giriş)
 
@@ -116,7 +116,7 @@ Fırlatma pahalıdır: stack trace yakalama + stack çözme + filter/finally iş
 | Çağıranı zorlama | Hayır (unutulabilir) | **Evet** (`Match` ile iki durum ele alınır) |
 | Zincirde | Otomatik yayılır | Her seviyede taşıma gerekir |
 
-[`Result<T>`](src/ExceptionHandling/Domain/Result.cs) minimal örnek. İkisi birlikte kullanılır: domain `Result` döner, en dış katman HTTP koduna çevirir; beklenmeyen hata exception olarak kalır. Ayrıntı (ROP, kütüphaneler, tartışma) → M11.6.
+[`Result<T>`](Domain/Result.cs) minimal örnek. İkisi birlikte kullanılır: domain `Result` döner, en dış katman HTTP koduna çevirir; beklenmeyen hata exception olarak kalır. Ayrıntı (ROP, kütüphaneler, tartışma) → M11.6.
 
 ---
 

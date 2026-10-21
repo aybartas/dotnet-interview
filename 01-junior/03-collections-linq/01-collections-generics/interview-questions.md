@@ -1,6 +1,6 @@
 # J3.1 Collections & Generics — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ `List<T>` ile `HashSet<T>` farkı nedir? Ne zaman hangisi?
 `List<T>` sıralı, tekrara izin veren, indeksle erişilen dinamik dizidir; `Contains` O(n) tarar. `HashSet<T>` tekrarsız kümedir, hash tablosuyla `Add`/`Contains` ortalama O(1) çalışır ama **sıra/indeks garantisi yoktur**, küme işlemleri (`Union`, `Intersect`, `Except`, `IsSubsetOf`) sunar. Sıra veya indeks gerekiyorsa ya da eleman az ve tek seferlik tarama yapılıyorsa `List`; "var mı?" sorusu çok sorulacaksa veya tekrarsızlık gerekiyorsa `HashSet`. Bedeli: bellek, hash hesabı ve elemanın `Equals`/`GetHashCode` sözleşmesine uyması.

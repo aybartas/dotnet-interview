@@ -1,6 +1,6 @@
 # J3.3 LINQ Temelleri
 
-> 📁 `01-junior/03-collections-linq/03-linq-basics/` · Önkoşul: J3.1, J3.2 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/03-collections-linq/03-linq-basics/` · Önkoşul: J3.1, J3.2 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 ## İçindekiler
 
@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-**LINQ (Language Integrated Query)**, her türlü veri kaynağını (bellekteki koleksiyon, veritabanı, XML…) aynı operatör kümesiyle sorgulamayı sağlar. `IEnumerable<T>` üzerindeki LINQ (**LINQ to Objects**) `System.Linq.Enumerable` extension method'ları ve **delegate**'lerdir (→ J3.2); `IQueryable<T>` üzerindeki LINQ ise **expression tree** üretir ve bir sağlayıcı (EF Core gibi) tarafından başka bir dile (SQL) çevrilir. [`src/LinqBasics`](src/LinqBasics/) 8 bölüm + 20 rapor alıştırması, [`tests/`](tests/) 48 test içerir.
+**LINQ (Language Integrated Query)**, her türlü veri kaynağını (bellekteki koleksiyon, veritabanı, XML…) aynı operatör kümesiyle sorgulamayı sağlar. `IEnumerable<T>` üzerindeki LINQ (**LINQ to Objects**) `System.Linq.Enumerable` extension method'ları ve **delegate**'lerdir (→ J3.2); `IQueryable<T>` üzerindeki LINQ ise **expression tree** üretir ve bir sağlayıcı (EF Core gibi) tarafından başka bir dile (SQL) çevrilir. Konu 8 bölüm + 20 rapor alıştırması içerir (`dotnet run -- 3.3 <numara>`).
 
 ---
 
@@ -31,18 +31,18 @@
 
 ## 3. Nasıl?
 
-Çalıştırma: `cd src/LinqBasics && dotnet run` (menü) veya `dotnet run -- 2` (tek bölüm). Testler: `cd tests/LinqBasics.Tests && dotnet test`.
+Çalıştırma (J03 modül klasöründe): `dotnet run -- 3.3` (bölüm listesi), `dotnet run -- 3.3 2` (tek bölüm), `dotnet run -- 3.3 all` (hepsi).
 
-### 3.1 Query syntax vs method syntax ([`Section01`](src/LinqBasics/Sections/Section01_Syntax.cs))
+### 3.1 Query syntax vs method syntax ([`Section01`](Sections/Section01_Syntax.cs))
 
 ```csharp
 var q1 = from p in products where p.Price > 100 orderby p.Price select p.Name;   // query syntax
 var q2 = products.Where(p => p.Price > 100).OrderBy(p => p.Price).Select(p => p.Name); // method syntax
 ```
 
-Derleyici query syntax'ı method syntax'a çevirir; **aynı IL**. Method syntax daha yaygındır ve tüm operatörleri kapsar (`Chunk`, `MaxBy`, `CountBy`… query syntax'ta yoktur). Query syntax `join`, birden çok `from` ve `let` içeren sorgularda daha okunaklı olabilir. Takımda tutarlı kalın; [`Reports.RevenueByCategory`](src/LinqBasics/Reports/Reports.cs) query syntax örneğidir.
+Derleyici query syntax'ı method syntax'a çevirir; **aynı IL**. Method syntax daha yaygındır ve tüm operatörleri kapsar (`Chunk`, `MaxBy`, `CountBy`… query syntax'ta yoktur). Query syntax `join`, birden çok `from` ve `let` içeren sorgularda daha okunaklı olabilir. Takımda tutarlı kalın; [`Reports.RevenueByCategory`](Reports/Reports.cs) query syntax örneğidir.
 
-### 3.2 Deferred vs immediate execution ⭐ ([`Section02`](src/LinqBasics/Sections/Section02_DeferredExecution.cs))
+### 3.2 Deferred vs immediate execution ⭐ ([`Section02`](Sections/Section02_DeferredExecution.cs))
 
 Sorgu **tanımlandığında çalışmaz**; ancak **enumerate** edildiğinde (`foreach`, `ToList()`, `Count()`, `First()`…) çalışır ve **her enumeration'da yeniden** çalışır:
 
@@ -51,9 +51,9 @@ Sorgu **tanımlandığında çalışmaz**; ancak **enumerate** edildiğinde (`fo
 | **Ertelenmiş** (lazy) | `Where`, `Select`, `SelectMany`, `OrderBy`, `GroupBy`, `Join`, `Take`, `Skip`, `Distinct`, `Zip`, `Chunk`… |
 | **Anında** (immediate) | `ToList`, `ToArray`, `ToDictionary`, `ToLookup`, `ToHashSet`, `Count`, `Sum`, `Min`/`Max`, `Average`, `First`, `Single`, `Any`, `All`, `Aggregate`… |
 
-Tuzaklar (hepsi testte): (1) tanımdan **sonra** kaynağa eleman eklenirse sorgu onu da görür; (2) lambda içinde yakalanan değişken **enumeration anındaki** değerle okunur (closure, → J3.2); (3) yan etkili `Select` enumerate edilmedikçe hiç çalışmaz; (4) `ToList()` bir **anlık görüntü** alır. Ayrıca operatörler **streaming** (eleman eleman akıtır: `Where`, `Select`, `Take`) veya **buffering** (`OrderBy`, `GroupBy`, `Reverse`, `Join`'in iç tarafı; tüm kaynağı okur) olabilir; `Take(3)` ile streaming zincir erken durur.
+Tuzaklar (hepsi Section02'de çıktıyla gösterilir): (1) tanımdan **sonra** kaynağa eleman eklenirse sorgu onu da görür; (2) lambda içinde yakalanan değişken **enumeration anındaki** değerle okunur (closure, → J3.2); (3) yan etkili `Select` enumerate edilmedikçe hiç çalışmaz; (4) `ToList()` bir **anlık görüntü** alır. Ayrıca operatörler **streaming** (eleman eleman akıtır: `Where`, `Select`, `Take`) veya **buffering** (`OrderBy`, `GroupBy`, `Reverse`, `Join`'in iç tarafı; tüm kaynağı okur) olabilir; `Take(3)` ile streaming zincir erken durur.
 
-### 3.3 Temel operatörler ([`Section03`](src/LinqBasics/Sections/Section03_Operators.cs))
+### 3.3 Temel operatörler ([`Section03`](Sections/Section03_Operators.cs))
 
 - **Filtre/projeksiyon:** `Where`, `Select`, `SelectMany` (iç içe listeyi düzleştirir), `Distinct`/`DistinctBy`, `OfType`.
 - **Sıralama:** `OrderBy`/`ThenBy`/`OrderByDescending`, .NET 7+ `Order()`/`OrderDescending()`; sıralama **stabildir**; ikincil anahtar için `ThenBy` (ikinci `OrderBy` ilkini sıfırlar!).
@@ -62,7 +62,7 @@ Tuzaklar (hepsi testte): (1) tanımdan **sonra** kaynağa eleman eklenirse sorgu
 - **Bölme:** `Take`, `Skip`, `TakeWhile`, `SkipWhile`, `Chunk`, `Zip`; sayfalama = `OrderBy` + `Skip((page-1)*size)` + `Take(size)`.
 - **Küme:** `Union`, `Intersect`, `Except`/`ExceptBy`, `Concat`.
 
-### 3.4 `First` / `FirstOrDefault` / `Single` / `SingleOrDefault` ⭐ ([`Section04`](src/LinqBasics/Sections/Section04_FirstSingle.cs))
+### 3.4 `First` / `FirstOrDefault` / `Single` / `SingleOrDefault` ⭐ ([`Section04`](Sections/Section04_FirstSingle.cs))
 
 | | 0 eleman | 1 eleman | >1 eleman |
 |---|---|---|---|
@@ -73,18 +73,18 @@ Tuzaklar (hepsi testte): (1) tanımdan **sonra** kaynağa eleman eklenirse sorgu
 
 `Single` "tam olarak bir tane **olmalı**" iddiasıdır (iş kuralı/veri bütünlüğünü doğrular); `First` "bir tane yeter" der. `Single` ikinci eşleşmeyi görene kadar tüm diziyi tarar, `First` ilk eşleşmede durur. `FirstOrDefault(defaultValue)` (.NET 6+) özel varsayılan verir; `null` sonucu kontrol edilmelidir.
 
-### 3.5 `Any()` vs `Count() > 0` ve çoklu enumeration ([`Section05`](src/LinqBasics/Sections/Section05_AnyCountMultipleEnumeration.cs))
+### 3.5 `Any()` vs `Count() > 0` ve çoklu enumeration ([`Section05`](Sections/Section05_AnyCountMultipleEnumeration.cs))
 
 - `Any()` ilk elemanda durur; `Count()` her şeyi sayar (kaynak `ICollection` ise O(1), değilse O(n)). "Var mı?" için **`Any()`**.
 - `IEnumerable<T>` parametresini bir metotta birden çok kez dolaşmak (`if (x.Any()) … x.Count() … foreach`) kaynağı (iterator, DB sorgusu, dosya) **her seferinde yeniden çalıştırır**; analyzer uyarısı `CA1851`. Çözüm: bir kez `ToList()`/`ToArray()` ile somutlaştırın veya parametreyi `IReadOnlyCollection<T>` yapın. `TryGetNonEnumeratedCount` kaynağı dolaşmadan sayıyı bulmayı dener.
 - Kaynak bir iterator ise sıra/yan etki bozulabilir; rastgele veya her seferinde değişen kaynaklarda (`Random`, `DateTime.Now`) iki enumeration **farklı** sonuç verir.
 
-### 3.6 Yeni operatörler ([`Section06`](src/LinqBasics/Sections/Section06_NewOperators.cs))
+### 3.6 Yeni operatörler ([`Section06`](Sections/Section06_NewOperators.cs))
 
 - **(.NET 9)** `CountBy(keySelector)` → `GroupBy(...).Select(g => (g.Key, g.Count()))` yerine, grup nesneleri oluşturmadan; `AggregateBy(key, seed, func)` anahtar başına birikim; `Index()` → `(Index, Item)` çiftleri (`Select((x, i) => …)` yerine).
-- **(.NET 10)** `LeftJoin` / `RightJoin` — eşleşmeyen satırı tutan **gerçek** outer join; öncesinde `GroupJoin` + `SelectMany` + `DefaultIfEmpty` gerekiyordu ([`Reports.CustomersWithoutOrders`](src/LinqBasics/Reports/Reports.cs)). Eşleşmeyen tarafın değeri `default` (referans tipte `null`) gelir.
+- **(.NET 10)** `LeftJoin` / `RightJoin` — eşleşmeyen satırı tutan **gerçek** outer join; öncesinde `GroupJoin` + `SelectMany` + `DefaultIfEmpty` gerekiyordu ([`Reports.CustomersWithoutOrders`](Reports/Reports.cs)). Eşleşmeyen tarafın değeri `default` (referans tipte `null`) gelir.
 
-### 3.7 `IEnumerable<T>` vs `IQueryable<T>` ⭐ ([`Section07`](src/LinqBasics/Sections/Section07_EnumerableVsQueryable.cs))
+### 3.7 `IEnumerable<T>` vs `IQueryable<T>` ⭐ ([`Section07`](Sections/Section07_EnumerableVsQueryable.cs))
 
 | | `IEnumerable<T>` | `IQueryable<T>` |
 |---|---|---|
@@ -94,9 +94,9 @@ Tuzaklar (hepsi testte): (1) tanımdan **sonra** kaynağa eleman eklenirse sorgu
 
 `dbContext.Products.Where(p => p.Price > 100)` → `WHERE Price > 100` SQL'ine çevrilir ve yalnız sonuç gelir. Araya **`AsEnumerable()`/`ToList()`** girerse kalan operatörler bellekte çalışır ve **tüm tablo** çekilir (istemci tarafı filtreleme tuzağı). `Expression<Func<>>` içine her C# metodu yazılamaz (çevrilemeyen çağrı çalışma zamanında hata verir). Ayrıntı: EF Core sorgu çevirisi → J9.4, `IQueryable` ve expression tree derinliği → M1.3.
 
-### 3.8 20 rapor alıştırması ([`Section08`](src/LinqBasics/Sections/Section08_Reports.cs), [`Reports.cs`](src/LinqBasics/Reports/Reports.cs), [`ShopData.cs`](src/LinqBasics/Data/ShopData.cs))
+### 3.8 20 rapor alıştırması ([`Section08`](Sections/Section08_Reports.cs), [`Reports.cs`](Reports/Reports.cs), [`ShopData.cs`](Data/ShopData.cs))
 
-6 müşteri, 10 ürün, 12 sipariş (teslim edilen cirosu **5.030 TL**, iptal oranı %16,7, hiç satılmamış ürün, hiç sipariş vermemiş müşteri) üzerinde: en çok satan ürün, kategori/müşteri/ay bazlı ciro, sayfalama, `Chunk`, `LeftJoin`, `CountBy`, top-1-per-group… **Önce metodun yorumundaki soruyu okuyup kendi sorgunuzu yazın**, sonra [`ReportTests`](tests/LinqBasics.Tests/ReportTests.cs) ile (elle hesaplanmış beklenen sonuçlar) karşılaştırın.
+6 müşteri, 10 ürün, 12 sipariş (teslim edilen cirosu **5.030 TL**, iptal oranı %16,7, hiç satılmamış ürün, hiç sipariş vermemiş müşteri) üzerinde: en çok satan ürün, kategori/müşteri/ay bazlı ciro, sayfalama, `Chunk`, `LeftJoin`, `CountBy`, top-1-per-group… **Önce metodun yorumundaki soruyu okuyup kendi sorgunuzu yazın**, sonra `dotnet run -- 3.3 8` çıktısıyla (sonuçlar veri setinden elle doğrulanmıştır; ciro toplamı 5.030 TL) karşılaştırın.
 
 ---
 
