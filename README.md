@@ -1,6 +1,6 @@
 # .NET Junior → Mid → Senior Mülakat Hazırlığı
 
-Türkçe, uygulamalı bir .NET mülakat hazırlık reposu. Hedef platform **.NET 10 (LTS) / C# 14**. Konu planının tamamı [`ROADMAP.md`](ROADMAP.md) içindedir (5 pist, 51 modül, ~290 konu); bu repo konuları teker teker doldurur.
+Türkçe, uygulamalı bir .NET mülakat hazırlık reposu. Hedef platform **.NET 10 (LTS) / C# 14**. Konu planının tamamı [`ROADMAP.md`](ROADMAP.md) içindedir (6 pist, 51 modül, ~300 konu); bu repo konuları teker teker doldurur.
 
 ## Başlamak
 
@@ -39,15 +39,17 @@ DotnetInterview.slnx                     # tek solution
 ├── 04-async-basics/                     # J04.AsyncBasics (Web SDK: yerel Kestrel API'ye çağrılar)
 └── 05-build-run-basics/                 # J05.BuildRunBasics
 02-mid/  03-senior/  04-dsa/  05-interview/   # sırayla doldurulur
+06-certifications/                        # Azure sertifika pisti (AZ-900, AI-200): seviyelerden bağımsız
 ```
 
 | Seviye | Klasör | Durum |
 |--------|--------|-------|
-| [Junior](ROADMAP.md#seviye-1--junior) (J1–J14) | `01-junior/` | J1 (5 konu), J2 (6 konu), J3 (3 konu), J4 (3 konu), J5 (3 konu) yazıldı; devamı sırayla |
-| [Mid](ROADMAP.md#seviye-2--mid) (M1–M16) | `02-mid/` | planlandı |
+| [Junior](ROADMAP.md#seviye-1--junior) (J1–J13) | `01-junior/` | J1 (5 konu), J2 (6 konu), J3 (3 konu), J4 (3 konu), J5 (3 konu) yazıldı; devamı sırayla |
+| [Mid](ROADMAP.md#seviye-2--mid) (M1–M15) | `02-mid/` | planlandı |
 | [Senior](ROADMAP.md#seviye-3--senior) (S1–S10) | `03-senior/` | planlandı |
 | [DSA](ROADMAP.md#dsa-pisti--veri-yapıları--algoritmalar) (D1–D11) | `04-dsa/` | planlandı (seviyelerle paralel; tek proje) |
 | [Mülakat](ROADMAP.md#mülakat-hazırlığı) (I1–I6) | `05-interview/` | planlandı (yalnızca `.md`) |
+| [Sertifika](ROADMAP.md#sertifika-pisti--azure-sertifikaları) (C1 **AZ-900**, C2 **AI-200**) | `06-certifications/` | planlandı — seviyelerden bağımsız; teori + laboratuvar + sınav tarzı quiz |
 
 Planın geri kalanı: [Genel Harita](ROADMAP.md#genel-harita) · [Çalışma Planı](ROADMAP.md#çalışma-planı) · [2026 Radarı](ROADMAP.md#2026-radarı--neler-değişti).
 
@@ -58,7 +60,7 @@ Planın geri kalanı: [Genel Harita](ROADMAP.md#genel-harita) · [Çalışma Pla
 | Ne öğrenilecek (ana hat) | [`ROADMAP.md`](ROADMAP.md) — konu maddeleri, ⭐ = sık sorulan |
 | Uzun anlatım (teori) | konunun `README.md`'si: *Ne? / Neden? / Nasıl? / Gerçek dünya senaryosu / Mülakat perspektifi / Yaygın hatalar / Performans & trade-off / Kaynaklar* |
 | Çalışan kod | konu klasöründeki `.cs` dosyaları (modül projesinin içinde) |
-| Mülakat soruları | konunun `interview-questions.md`'si + ROADMAP'teki modül 🎯 satırı |
+| Mülakat soruları | konunun `interview-questions.md`'si + ROADMAP'teki modül 🎯 satırı (sertifika pistinde: `quiz.md` + 📝 satırı) |
 | Altyapı (veritabanı, broker…) | gereken modülde `docker-compose.yml` |
 
 Repo bilerek yalındır: **test projesi yalnızca konusu test olan modüllerde** (J10, M10…) bulunur, komut satırı alıştırmaları script değil README'deki kod bloklarıdır.
