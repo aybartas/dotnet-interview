@@ -110,6 +110,7 @@ The Azure certification content (**C1 = AZ-900**, **C2 = AI-200**) is its **own 
 - **Never reproduce real exam questions / braindumps** (NDA). Write original, exam-format questions. State the exam "skills measured as of …" date and tell the reader to re-check the official study guide.
 - Labs must be **cheap and clean**: free tier/emulators where possible (Azurite, Cosmos DB emulator, Service Bus emulator via the module `docker-compose.yml`), always end with a cleanup step (`az group delete`) and mention a budget alarm.
 - Still lean: no test projects, no scripts. The ROADMAP topic lines are `📝 **Quiz:**` (in addition to `🛠 **Kod:**`) and each cert module ends with a `📝 **Sınav:**` line (typical exam questions) instead of `🎯 **Mülakat:**`.
+- Each topic lists its **📌 official objective** (which study-guide bullet it covers). AI-200 labs are written in C#, with an equivalent Python snippet in the README, because the exam audience profile expects Python.
 - Fact-check Azure/cert claims (exam weights, retirements, service names) against the official study guide before writing; record sources in ROADMAP `## 2026 Radarı` / `Kaynaklar`.
 
 ## Writing a topic
