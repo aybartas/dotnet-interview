@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- J4: Async Programlamaya Giriş — üç konu tek projede (klasör = konu). Web SDK: konular yerel bir Kestrel API'ye HTTP çağrısı yapar
+       (J4.1/J4.2 gecikmeli uç nokta, J4.3 iptal edilebilir rapor endpoint'i). Çalıştırma: dotnet run, ardından konu ve bölüm numarası (bkz. Program.cs) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Junior.AsyncBasics</RootNamespace>
+  </PropertyGroup>
+
+</Project>
