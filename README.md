@@ -49,7 +49,7 @@ DotnetInterview.slnx                     # tek solution
 | [Senior](ROADMAP.md#seviye-3--senior) (S1–S10) | `03-senior/` | planlandı |
 | [DSA](ROADMAP.md#dsa-pisti--veri-yapıları--algoritmalar) (D1–D11) | `04-dsa/` | planlandı (seviyelerle paralel; tek proje) |
 | [Mülakat](ROADMAP.md#mülakat-hazırlığı) (I1–I6) | `05-interview/` | planlandı (yalnızca `.md`) |
-| [Sertifika](ROADMAP.md#sertifika-pisti--azure-sertifikaları) (C1 **AZ-900**, C2 **AI-200**) | `06-certifications/` | **C1.1–C1.3 yazıldı** (AZ-900 *Describe cloud concepts* alanı) — seviyelerden bağımsız; C1: 15 konu (AZ-900, *July 20, 2026* müfredatı), C2: 14 konu (AI-200, *October 7, 2026* müfredatı); teori + laboratuvar + sınav tarzı quiz |
+| [Sertifika](ROADMAP.md#sertifika-pisti--azure-sertifikaları) (C1 **AZ-900**, C2 **AI-200**) | `06-certifications/` | **C1.1–C1.5 yazıldı** (AZ-900) — seviyelerden bağımsız; C1: 15 konu (AZ-900, *July 20, 2026* müfredatı), C2: 14 konu (AI-200, *October 7, 2026* müfredatı); teori + laboratuvar + sınav tarzı quiz |
 
 Planın geri kalanı: [Genel Harita](ROADMAP.md#genel-harita) · [Çalışma Planı](ROADMAP.md#çalışma-planı) · [2026 Radarı](ROADMAP.md#2026-radarı--neler-değişti).
 
