@@ -35,13 +35,15 @@ DotnetInterview.slnx                     # tek solution
 │   └── 02-network-fundamentals/ …       # README + kod dosyaları + sorular
 ├── 02-csharp-fundamentals/              # J02.CSharpFundamentals
 ├── 02-csharp-fundamentals-lib/          # J02.Lib (assembly sınırı deneyleri için küçük kütüphane)
-└── 03-collections-linq/                 # J03.CollectionsLinq
+├── 03-collections-linq/                 # J03.CollectionsLinq
+├── 04-async-basics/                     # J04.AsyncBasics (Web SDK: yerel Kestrel API'ye çağrılar)
+└── 05-build-run-basics/                 # J05.BuildRunBasics
 02-mid/  03-senior/  04-dsa/  05-interview/   # sırayla doldurulur
 ```
 
 | Seviye | Klasör | Durum |
 |--------|--------|-------|
-| [Junior](ROADMAP.md#seviye-1--junior) (J1–J14) | `01-junior/` | J1 (5 konu), J2 (6 konu), J3 (3 konu) yazıldı; devamı sırayla |
+| [Junior](ROADMAP.md#seviye-1--junior) (J1–J14) | `01-junior/` | J1 (5 konu), J2 (6 konu), J3 (3 konu), J4 (3 konu), J5 (3 konu) yazıldı; devamı sırayla |
 | [Mid](ROADMAP.md#seviye-2--mid) (M1–M16) | `02-mid/` | planlandı |
 | [Senior](ROADMAP.md#seviye-3--senior) (S1–S10) | `03-senior/` | planlandı |
 | [DSA](ROADMAP.md#dsa-pisti--veri-yapıları--algoritmalar) (D1–D11) | `04-dsa/` | planlandı (seviyelerle paralel; tek proje) |
