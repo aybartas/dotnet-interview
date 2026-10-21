@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Junior.CollectionsLinq.LinqBasics</RootNamespace>
+    <!-- Türkçe şehir/ad sıralaması ve ay adları için gerçek kültür verisi (ICU) kullanılır -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+</Project>
