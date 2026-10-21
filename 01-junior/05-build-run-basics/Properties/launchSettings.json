@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "J05.BuildRunBasics": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DEMO_ENV": "launchSettings.json'dan geldi"
+      }
+    }
+  }
+}
