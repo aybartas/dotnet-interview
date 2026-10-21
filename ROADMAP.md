@@ -218,7 +218,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 | ID | Modül | Sertifika · alanlar |
 |----|-------|---------------------|
-| [C1](#c1-microsoft-azure-fundamentals-az-900) | Microsoft Azure Fundamentals | **AZ-900** (July 20, 2026) · 13 konu: cloud computing & shared responsibility, faydalar & SLA, IaaS/PaaS/SaaS, mimari, compute, ağ, storage, kimlik & güvenlik, maliyet, yönetişim, araçlar, izleme + deneme sınavı |
+| [C1](#c1-microsoft-azure-fundamentals-az-900) | Microsoft Azure Fundamentals | **AZ-900** (July 20, 2026) · 15 konu: cloud computing & shared responsibility, faydalar & SLA, IaaS/PaaS/SaaS & serverless, temel mimari, VM'ler & scale set & availability set, App Service/container/AVD/Functions, ağ, storage & migration, Entra ID & RBAC, Zero Trust & Defender, maliyet, yönetişim, yönetim araçları & ARM, izleme + deneme sınavı |
 | [C2](#c2-azure-ai-cloud-developer-associate-ai-200) | Azure AI Cloud Developer Associate | **AI-200** (October 7, 2026) · 14 konu: ACR, Container Apps & KEDA, AKS; Cosmos DB (NoSQL, vector, change feed), pgvector, Managed Redis; Functions, Service Bus, Event Grid; Key Vault, App Configuration, OpenTelemetry & KQL + deneme sınavı |
 
 ---
@@ -1101,7 +1101,7 @@ Her konunun `README.md`'si şu şablonu izler:
 - Unit test + `WebApplicationFactory` integration testleri
 - Structured logging, health check endpoint'i
 - Multi-stage Dockerfile + `docker compose up` ile tek komutta çalışma
-- GitHub Actions CI (build + test); isteğe bağlı olarak App Service'e deploy (Azure laboratuvarı → C1.5)
+- GitHub Actions CI (build + test); isteğe bağlı olarak App Service'e deploy (Azure laboratuvarı → C1.6)
 - **Bonus:** Görev açıklamasından `IChatClient` ile otomatik etiket önerisi
 - README: kurulum, mimari kararlar, varsayımlar, yapılmayanlar ve nedenleri
 
@@ -3637,7 +3637,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 | `README.md` | Teori — 8 başlıklı şablon; 5. başlık **"Sınav perspektifi"** (sınav neyi, nasıl sorar; tuzaklar; anahtar kelimeler) |
 | Kod / `az` CLI laboratuvarı | **Pratik**: Azure CLI komutları README'de kod bloğu olarak; Azure SDK/emülatör (Azurite, Cosmos emulator) ile çalışan .NET kodu modül projesinde |
 | `quiz.md` | Sınav tarzı sorular (tek/çoklu seçim, evet-hayır tablosu, sıralama, senaryo; AI-200'de ayrıca kod tamamlama ve vaka) — cevap ve **gerekçe** `<details>` içinde |
-| `13-practice-exam/` · `14-practice-exam/` | Her sertifikanın sonunda **tam uzunlukta deneme sınavı**, alan bazlı puan tablosu ve sınav stratejisi |
+| `15-practice-exam/` · `14-practice-exam/` | Her sertifikanın sonunda **tam uzunlukta deneme sınavı**, alan bazlı puan tablosu ve sınav stratejisi |
 
 - **Sorular özgündür:** Gerçek sınav soruları Microsoft'un gizlilik sözleşmesi (NDA) kapsamındadır; "çıkmış soru" veya braindump kullanılmaz. Sorular **sınav formatında** ve resmî **konu ağırlıklarına** göre yazılır.
 - **Müfredat tarihlidir:** study guide'lar "skills measured as of …" ile tarihlenir; sınava girmeden önce resmî sayfayı kontrol et.
@@ -3648,174 +3648,377 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 
 ### C1. Microsoft Azure Fundamentals (AZ-900)
 
-> 📁 `06-certifications/01-az-900-azure-fundamentals/` · ⏱ ~4 hafta · Önkoşul: — (J12 sonrasında çalışmak en verimli yoldur; Docker/CLI aşinalığı laboratuvarları kolaylaştırır)
+> 📁 `06-certifications/01-az-900-azure-fundamentals/` · ⏱ ~5 hafta · Önkoşul: — (J12 sonrasında çalışmak en verimli yoldur; Docker/CLI aşinalığı laboratuvarları kolaylaştırır)
 > 📜 **Sertifika:** Microsoft Azure Fundamentals (**AZ-900**) — giriş seviyesi, **genişlik** sınavı. Müfredat: resmî study guide, **"skills measured as of July 20, 2026"**. Değişiklik kaydına göre bu sürümde compute & networking, kaynak yönetimi/dağıtımı ve izleme araçları bölümlerinde **küçük** düzenlemeler var; alan ağırlıkları değişmedi.
 >
 > | Sınav alanı | Ağırlık | Konular |
 > |---|---|---|
 > | Describe cloud concepts | %25-30 | C1.1 – C1.3 |
-> | Describe Azure architecture and services | %35-40 | C1.4 – C1.8 |
-> | Describe Azure management and governance | %30-35 | C1.9 – C1.12 |
+> | Describe Azure architecture and services | %35-40 | C1.4 – C1.10 |
+> | Describe Azure management and governance | %30-35 | C1.11 – C1.14 |
 >
-> Her konuda üç katman var: **📌 Resmî hedef** (study guide'daki hangi maddeyi kapsadığı) · **Teori** (README) · **🛠 Pratik** (az CLI laboratuvarı ve/veya `C01` projesindeki kod) · **📝 Quiz** (sınav formatında, gerekçeli). *(bağlam)* etiketli maddeler sınavda doğrudan sorulmaz ama soruyu anlamak için gereklidir.
+> Her konuda dört katman var: **📌 Resmî hedef** (study guide'daki hangi maddeyi kapsadığı) · **Teori** (README) · **🛠 Pratik** (az CLI laboratuvarı ve/veya `C01` projesindeki kod; portal demoları yok, gereken bilgi teoride) · **📝 Quiz** (sınav formatında, gerekçeli). *(bağlam)* etiketli maddeler sınav hedefinde açıkça yazmaz ama soruyu anlamak ve gerçek işte kullanmak için gereklidir.
 > Sınav bilgileri (süre, geçme puanı 700/1000, ücret, dil) zaman zaman değişir — sınavdan önce resmî [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)'ı ve değişiklik kaydını kontrol et. Geliştirici derinliği → C2 (AI-200); çözüm mimarisi → S8.3 (AZ-305).
 > **Quiz notu:** Gerçek sınav soruları Microsoft'un gizlilik sözleşmesi kapsamındadır; "çıkmış soru"/braindump kullanılmaz. Sorular sınav formatında (tek seçim, çoklu seçim, evet/hayır tablosu, sıralama, senaryo), resmî alan ağırlıklarına göre **özgün** yazılır.
 
-#### C1.1 Cloud Computing ve Shared Responsibility · `01-cloud-computing` ⭐
-- 📌 **Resmî hedef:** *Describe cloud computing* — cloud computing'i tanımla · shared responsibility model · cloud modelleri (public, private, hybrid) · her modelin kullanım senaryosu · consumption-based model · cloud fiyatlandırma modellerini karşılaştır · serverless
-- **Teori:**
-  - Cloud computing'in nitelikleri: on-demand self-servis, geniş ağ erişimi, kaynak havuzu, hızlı esneklik, **ölçülen hizmet**
-  - **Shared responsibility model** ⭐: on-prem → IaaS → PaaS → SaaS geçişinde sorumluluğun kayması; **her modelde müşteride kalanlar** (veri, cihazlar/uç noktalar, hesaplar ve kimlikler) · **her modelde Microsoft'ta kalanlar** (fiziksel datacenter, fiziksel ağ, fiziksel host) · **modele göre değişenler** (OS, ağ kontrolleri, uygulama, kimlik altyapısı)
-  - **Cloud modelleri:** public, private, hybrid; *multicloud* ve Azure Arc ile bağlantısı (→ C1.11); seçim kriterleri: veri egemenliği/regülasyon, eski sistemler, maliyet, ani yük (cloud bursting)
-  - **Consumption-based model:** kullandığın kadar öde, ön yatırım yok, kapasite tahmini riski yok; **CapEx vs OpEx** ⭐
-  - **Fiyatlandırma modelleri:** pay-as-you-go, reserved (taahhütlü), spot; free tier ve deneme kredileri *(ayrıntı → C1.9)*
-  - **Serverless:** sunucu yönetimi yok, olay tetiklemeli, kullanım başına ücret; Azure Functions ve Logic Apps örnekleri; serverless'ın PaaS ile ilişkisi
-- **Sınav tuzakları:** "şifre/MFA politikası kimin sorumluluğunda?" (her zaman müşteri), "işletim sistemi yaması" (IaaS'ta müşteri, PaaS'ta Microsoft), hybrid ile multicloud, CapEx'i OpEx'e çeviren seçenek hangisi
-- 🛠 **Kod:** Aynı iş yükü (web uygulaması + veritabanı) için on-prem / IaaS / PaaS / SaaS **sorumluluk matrisini** doldurma alıştırması (README'de tablo + `<details>` çözüm); `az login` → `az account show` → ilk resource group'u açıp silme; **bütçe alarmı** kurma (Cost Management → Budgets) — öğrenirken fatura şoku yaşamamak için ilk iş.
-- 📝 **Quiz:** sorumluluk matrisi, cloud modeli senaryoları, consumption-based ve serverless (≈15 soru)
+**Kapsam kontrol listesi** — AZ-900 hazırlık kurslarındaki standart bölüm başlıklarının hepsi bu modülde:
 
-#### C1.2 Cloud'un Faydaları ve SLA · `02-cloud-benefits` ⭐
+| Bölüm | Başlıklar | Konu |
+|---|---|---|
+| Cloud kavramları | What is cloud computing · Shared responsibility model · Public / private / hybrid cloud · Consumption-based model · Cloud pricing | C1.1 |
+| | Benefits: high availability, scalability, elasticity, reliability, predictability, security, governance, manageability | C1.2 |
+| | Cloud service types: IaaS, PaaS, SaaS · Serverless | C1.3 |
+| | Core architectural components: regions, region pairs, sovereign regions · availability zones, datacenters · resources & resource groups · subscriptions · management groups | C1.4 |
+| Compute & ağ | Azure compute services & Azure Virtual Machines · VM Scale Sets · Availability Sets & Proximity Placement Groups | C1.5 |
+| | App Service, containers, Azure Virtual Desktop · Azure Functions | C1.6 |
+| | Azure networking services · VNet peering · Azure DNS · VPN Gateway (+ ExpressRoute) · Public & private endpoints | C1.7 |
+| Storage | Azure Storage · Blob Storage · AzCopy · Azure Files & Azure File Sync · Azure Migrate · Azure Data Box | C1.8 |
+| Kimlik, erişim, güvenlik | Identity & Microsoft Entra ID · Benefits of Entra ID · Authentication vs authorization · External identities (B2B/B2C) · SSO · Conditional Access · MFA/2FA · Passwordless · RBAC | C1.9 |
+| | Zero Trust · Defense in depth · Microsoft Defender for Cloud | C1.10 |
+| Maliyet | Factors that affect cost · Pricing Calculator · Cost Management · Resource tags | C1.11 |
+| Yönetişim | Governance & compliance · Azure Policy · Resource locks · Microsoft Purview | C1.12 |
+| Araçlar | Azure portal · Cloud Shell (CLI/PowerShell ile kaynak oluşturma) · Azure Arc · IaC · ARM templates (portalda şablon üretme dahil) | C1.13 |
+| İzleme | Azure Advisor · Azure Service Health · Azure Monitor merkezi dashboard'u · Azure Monitor raporları (Workbooks) | C1.14 |
+| Sınav | Deneme sınavı, puanlama, strateji | C1.15 |
+
+#### C1.1 Cloud Computing, Cloud Modelleri ve Fiyatlandırma · `01-cloud-computing` ⭐
+- 📌 **Resmî hedef:** *Describe cloud computing* — cloud computing'i tanımla · shared responsibility model · cloud modelleri (public, private, hybrid) · her modelin kullanım senaryosu · consumption-based model · cloud fiyatlandırma modellerini karşılaştır · serverless *(serverless → C1.3'te hizmet türleriyle birlikte)*
+- **Teori — What is cloud computing:**
+  - Tanım: bilgi işlem hizmetlerinin (sunucu, depolama, ağ, veritabanı, yazılım, analitik, AI) **internet üzerinden, ihtiyaç anında ve kullanım kadar ücretle** sunulması
+  - NIST'in beş niteliği: **on-demand self-service**, **broad network access**, **resource pooling**, **rapid elasticity**, **measured service**
+  - Geleneksel datacenter ile farkı: donanım satın alma/kurma süresi, kapasite tahmini, bakım, fiziksel güvenlik
+- **Teori — Shared responsibility model** ⭐ (sınavın en sık sorduğu tablo):
+
+  | Sorumluluk | On-prem | IaaS | PaaS | SaaS |
+  |---|---|---|---|---|
+  | Bilgi ve veri · cihazlar (mobil, PC) · hesaplar ve kimlikler | Müşteri | **Müşteri** | **Müşteri** | **Müşteri** |
+  | Kimlik ve directory altyapısı | Müşteri | Müşteri | Paylaşımlı | Paylaşımlı |
+  | Uygulamalar | Müşteri | Müşteri | Paylaşımlı | Microsoft |
+  | Ağ kontrolleri | Müşteri | Müşteri | Paylaşımlı | Microsoft |
+  | İşletim sistemi | Müşteri | Müşteri | Microsoft | Microsoft |
+  | Fiziksel host · fiziksel ağ · fiziksel datacenter | Müşteri | **Microsoft** | **Microsoft** | **Microsoft** |
+
+  - Kural: **veri, cihazlar, hesaplar/kimlikler her zaman müşteride**; **fiziksel her şey bulutta her zaman Microsoft'ta**; arada kalanlar modele göre kayar
+- **Teori — Public, private, hybrid cloud:**
+  - **Public cloud:** sağlayıcının altyapısı, birçok müşteri paylaşır; CapEx yok, hızlı başlangıç, sonsuza yakın ölçek; daha az fiziksel kontrol
+  - **Private cloud:** tek kuruluşa ait (kendi datacenter'ı veya ayrılmış barındırma); tam kontrol ve uyumluluk; donanım/bakım maliyeti ve sorumluluğu kuruluşta
+  - **Hybrid cloud:** public + private birlikte; eski sistemler ve hassas veri yerinde, esnek iş yükü bulutta; **cloud bursting**; regülasyon/veri egemenliği senaryoları
+  - *(bağlam)* **Multicloud:** birden çok public cloud sağlayıcısı; yönetimi Azure Arc ile (→ C1.13)
+  - Senaryo eşleştirme: "regülasyon nedeniyle veri kurum içinde kalmalı ama web katmanı ölçeklenmeli" → hybrid
+- **Teori — Consumption-based model:**
+  - Kullandığın kadar öde; ön yatırım (donanım) yok; kapasite fazlası/eksiği riski yok; maliyet tüketimle orantılı
+  - **CapEx vs OpEx** ⭐: CapEx = baştan büyük sabit yatırım, amortisman (kendi datacenter'ın); OpEx = işletme gideri, dönemsel ve değişken (bulut aboneliği); bulut harcamayı **CapEx'ten OpEx'e** kaydırır
+- **Teori — Cloud pricing:**
+  - **Pay-as-you-go** (taahhütsüz, saniye/dakika/saat veya işlem bazında), **reserved instances / savings plan** (1-3 yıl taahhütle indirim), **spot** (boşta kapasite, kesilebilir, çok ucuz), **free tier / ücretsiz hesap kredisi**, **dev/test fiyatlandırması**
+  - Ne zaman hangisi: sabit 7/24 yük → reservation; değişken yük → pay-as-you-go; kesintiye dayanıklı toplu iş → spot (ayrıntılı maliyet → C1.11)
+- **Sınav tuzakları:** "MFA/şifre politikası kimin sorumluluğunda?" → **her zaman müşteri**; "işletim sistemi yaması" → IaaS'ta müşteri, PaaS/SaaS'ta Microsoft; hybrid ile multicloud; "baştan yatırım gerektirmeyen model" → OpEx/consumption
+- 🛠 **Pratik:** Aynı iş yükü (web uygulaması + veritabanı) için on-prem / IaaS / PaaS / SaaS **sorumluluk matrisini** doldurma alıştırması (README'de boş tablo + `<details>` çözüm); `az login` → `az account show` → ilk resource group'u açıp silme; **bütçe alarmı** kurma (Cost Management → Budgets) — öğrenirken fatura şoku yaşamamak için ilk iş.
+- 📝 **Quiz:** sorumluluk matrisi, cloud modeli senaryoları, CapEx/OpEx, fiyatlandırma modeli seçimi (≈18 soru)
+
+#### C1.2 Cloud'un Faydaları · `02-cloud-benefits` ⭐
 - 📌 **Resmî hedef:** *Describe the benefits of using cloud services* — high availability ve scalability · reliability ve predictability · security ve governance · manageability
-- **Teori:**
-  - **High availability:** hedeflenen çalışma süresi, yedeklilik; **SLA** kavramı ve yüzdelerin anlamı (%99,9 ≈ aylık ~43 dk, %99,95 ≈ ~22 dk, %99,99 ≈ ~4,3 dk kesinti)
-  - **Composite SLA** *(bağlam — sorulabilir)*: seri bağlı bileşenlerde SLA'lar çarpılır; yedekli (paralel) yapıda `1 − (1−a)(1−b)`; SLA'yı yükseltmenin yolları (zone/bölge yedekliliği) ve maliyeti
-  - **Scalability:** **vertical** (scale up: daha güçlü makine) vs **horizontal** (scale out: daha çok makine); **elasticity** = yüke göre **otomatik** büyüme/küçülme (autoscale)
-  - **Reliability:** arızadan toparlanma, dağıtık tasarım, bölgesel dayanıklılık · **Predictability:** performans (autoscale, load balancing) ve maliyet öngörülebilirliği (Pricing Calculator, Cost Management) — Well-Architected ile ilişkisi (→ S8.3)
-  - **Security & governance:** şablonlar, Azure Policy, uyumluluk, yamaların sağlayıcıda olması · **Manageability:** *of* the cloud (otomatik ölçek, izleme, şablonla dağıtım) ve *in* the cloud (portal, CLI, API ile yönetim)
-  - Preview servislerin (public/private preview) SLA kapsamında olmaması
-- **Sınav tuzakları:** scalability ile elasticity; vertical ile horizontal; "faydayı tanımla" eşleştirme soruları (HA mı reliability mi?); SLA yüzdesinden kesinti süresi
-- 🛠 **Kod:** `C01` projesinde **konsol hesaplayıcı**: SLA → günlük/aylık/yıllık izin verilen kesinti tablosu; seri ve paralel **composite SLA** hesabı; tek VM vs zone-redundant mimari karşılaştırması.
-- 📝 **Quiz:** fayda eşleştirme, scale up/out/elasticity senaryoları, SLA hesap soruları (≈15 soru)
+- **Teori — her fayda: tanım, nasıl sağlanır, Azure örneği:**
 
-#### C1.3 Cloud Hizmet Türleri: IaaS, PaaS, SaaS · `03-cloud-service-types` ⭐
-- 📌 **Resmî hedef:** *Describe cloud service types* — IaaS · PaaS · SaaS · her hizmet türünün kullanım senaryosu
+  | Fayda | Tanım | Bulutta nasıl sağlanır | Azure örneği |
+  |---|---|---|---|
+  | **High availability** | Kesinti olsa bile hizmetin **hedeflenen çalışma süresinde** kalması | Yedeklilik, tek arıza noktasını kaldırmak, otomatik failover | **SLA**'lar (%99,9 / %99,95 / %99,99), availability zone, scale set |
+  | **Scalability** | Talebe göre **kapasiteyi artırma/azaltma** yeteneği | **Vertical** (scale up/down: daha güçlü/zayıf makine) · **horizontal** (scale out/in: makine sayısı) | VM boyutu değiştirme, VM Scale Sets, App Service plan ölçeği |
+  | **Elasticity** | Ölçeklemenin yüke göre **otomatik** yapılması | Metrik/zaman tabanlı **autoscale** kuralları | Autoscale, Functions'ın otomatik ölçeklemesi |
+  | **Reliability** | Arızadan **toparlanma** ve çalışmaya devam etme | Dağıtık tasarım, bölge/zone yedekliliği, felaket kurtarma | Region pair, geo-redundant storage, Azure Site Recovery *(bağlam)* |
+  | **Predictability** | **Performans** ve **maliyetin** öngörülebilir olması | Performans: autoscale, load balancing, HA · Maliyet: kullanım takibi ve tahmin | Pricing Calculator, Cost Management, Well-Architected Framework (→ S8.3) |
+  | **Security** | Güvenlik kontrolleri üzerinde **istenen düzeyde kontrol** | IaaS'ta tam kontrol, PaaS/SaaS'ta yamalar sağlayıcıda; DDoS koruması gibi altyapı güvenliği | Defender for Cloud, Key Vault, DDoS Protection |
+  | **Governance** | Kurumsal standartlara ve regülasyonlara **uyum** | Şablonlar, politikalar, denetim ve uyumluluk raporları | Azure Policy, management group'lar, Purview |
+  | **Manageability** | Bulutun **yönetimi** (management *of* the cloud) ve bulutta **yönetim** (management *in* the cloud) | *Of:* otomatik ölçek, izleme ve uyarı, şablonla dağıtım · *In:* portal, CLI, API, PowerShell | Azure Monitor, ARM/Bicep, Azure portal, Cloud Shell |
+
+  - **High availability vs reliability vs disaster recovery:** HA = çalışmayı **sürdürmek** (kesinti süresini küçültmek); reliability/DR = arızadan veya felaketten **toparlanmak**
+  - **SLA** ⭐: yüzdeyi kesinti süresine çevirme — %99,9 ≈ ayda ~43 dk, %99,95 ≈ ~22 dk, %99,99 ≈ ~4,3 dk; preview servislerin SLA'sı yoktur; ücretsiz katmanlarda genellikle SLA yoktur
+  - **Composite SLA** *(bağlam — hesap sorusu gelebilir)*: seri bağlı bileşenlerde SLA'lar **çarpılır** (%99,95 × %99,99 ≈ %99,94); yedekli yapıda `1 − (1−a)(1−b)`; SLA'yı yükseltmek için zone/bölge yedekliliği ve maliyeti
+  - **Scalability vs elasticity** ⭐: scalability **yetenek**, elasticity bu yeteneğin **otomatik** kullanımı
+- **Sınav tuzakları:** fayda ↔ tanım eşleştirme (özellikle HA ile reliability, scalability ile elasticity, security ile governance); scale up mı scale out mu; "kesintide hizmet sürsün" → HA; "talep artınca otomatik büyüsün" → elasticity
+- 🛠 **Kod:** `C01` projesinde **konsol hesaplayıcı**: SLA → günlük/aylık/yıllık izin verilen kesinti tablosu; seri ve paralel **composite SLA** hesabı; tek VM vs iki zone'a yayılmış VM karşılaştırması.
+- 📝 **Quiz:** fayda eşleştirme (her faydadan en az 2 soru), scale up/out/elasticity senaryoları, SLA hesabı (≈20 soru)
+
+#### C1.3 Cloud Hizmet Türleri: IaaS, PaaS, SaaS ve Serverless · `03-cloud-service-types` ⭐
+- 📌 **Resmî hedef:** *Describe cloud service types* — IaaS · PaaS · SaaS · her hizmet türünün kullanım senaryosu · (*Describe cloud computing*'den) serverless
 - **Teori:**
-  - **IaaS:** en fazla kontrol/esneklik, en fazla sorumluluk — lift-and-shift, test/geliştirme, depolama/yedekleme; Azure örnekleri: Virtual Machines, VNet, Managed Disks
-  - **PaaS:** platform yönetilir, sen uygulama ve verinle ilgilenirsin — web/API geliştirme, analitik/BI, geliştirme çerçeveleri; örnekler: App Service, Azure SQL Database, Azure Functions
-  - **SaaS:** hazır uygulama, kullan — e-posta, CRM, ofis; örnekler: Microsoft 365, Dynamics 365
-  - Karar sezgisi: "ne kadarını yönetmek istiyorum?"; aynı işin üç modelde nasıl görüneceği; serverless ve container'ların bu yelpazedeki yeri
-- **Sınav tuzakları:** "en az yönetim yükü" → SaaS/PaaS, "işletim sistemine tam erişim" → IaaS; ürün → model eşleştirme (Azure SQL Database PaaS, SQL Server on VM IaaS)
-- 🛠 **Kod:** Aynı Todo uygulaması için IaaS (VM üzerinde), PaaS (App Service) ve SaaS (hazır ürün) seçeneklerini **Pricing Calculator**'da fiyatlandırıp kontrol/maliyet/sorumluluk tablosu çıkarma (README'de not şablonu).
-- 📝 **Quiz:** ürün → hizmet türü eşleştirme, kullanım senaryosu seçimi (≈12 soru)
+
+  | | IaaS | PaaS | SaaS |
+  |---|---|---|---|
+  | Ne kiralarsın | Altyapı: sanal makine, ağ, depolama | Platform: çalışma ortamı, veritabanı, ara katman | Hazır uygulama |
+  | Kontrol / sorumluluk | **En fazla** | Orta | **En az** |
+  | Kullanım senaryosu | **Lift-and-shift** taşıma, test/geliştirme ortamı, özel yazılım, depolama/yedekleme, yüksek performanslı hesap | Web/API geliştirme, iş zekâsı/analitik, geliştirme çerçeveleri, IoT backend | E-posta ve iletişim, ofis uygulamaları, CRM/ERP, iş birliği |
+  | Azure örnekleri | Virtual Machines, Virtual Network, Managed Disks | App Service, Azure SQL Database, Azure Functions, Cosmos DB | Microsoft 365, Dynamics 365, Outlook |
+
+  - Pizza benzetmesi ("evde yap → hazır al → yemeğe çık") ve sorumluluk matrisiyle (→ C1.1) ilişkisi
+- **Teori — Serverless:**
+  - Tanım: sunucular hâlâ vardır ama **sağlanmaları, ölçeklenmeleri ve yönetilmeleri** tamamen sağlayıcıdadır; geliştirici yalnızca kod/iş mantığı yazar
+  - Nitelikler: **olay tetiklemeli** çalışma, **otomatik ölçekleme** (sıfıra kadar), **çalışma süresi/çağrı başına ücret**, altyapı yönetimi yok
+  - Serverless, PaaS'ın bir alt türü olarak düşünülür; Azure örnekleri: **Azure Functions** (kod), **Azure Logic Apps** (görsel iş akışı), serverless container (Container Apps) (→ C1.6)
+- **Sınav tuzakları:** "işletim sistemine tam erişim" → IaaS; "en az yönetim yükü" → SaaS (uygulama hazırsa) / PaaS (kendi kodunu çalıştıracaksan); ürün → model eşleştirme (Azure SQL Database = PaaS, VM üzerinde SQL Server = IaaS, Microsoft 365 = SaaS); "yalnızca kod çalışırken ödeme" → serverless
+- 🛠 **Pratik:** Aynı Todo uygulaması için IaaS (VM), PaaS (App Service) ve SaaS seçeneklerini **Pricing Calculator**'da fiyatlandırıp kontrol/maliyet/sorumluluk karşılaştırma tablosu çıkarma (README'de şablon).
+- 📝 **Quiz:** ürün → hizmet türü eşleştirme, kullanım senaryosu seçimi, serverless nitelikleri (≈15 soru)
 
 #### C1.4 Azure Temel Mimari Bileşenleri · `04-core-architecture` ⭐
-- 📌 **Resmî hedef:** *Describe the core architectural components of Azure* — region, region pair, sovereign region · availability zone · Azure datacenter · resource ve resource group · subscription · management group · resource group / subscription / management group hiyerarşisi
-- **Teori:**
-  - **Fiziksel:** datacenter → **availability zone** (bir bölgede fiziksel olarak ayrı, bağımsız güç/soğutma/ağ; en az 3) → **region** → **region pair** (aynı coğrafyada, mümkün olduğunca ≥300 mil uzakta; sıralı güncelleme, felakette öncelikli kurtarma, bazı servislerde otomatik replikasyon; tek yönlü eşleşmeler) → **sovereign region** (Azure Government, 21Vianet tarafından işletilen Azure China)
-  - **Zonal** vs **zone-redundant** servis; zone'u olmayan bölgeler
-  - **Mantıksal:** **resource**, **resource group** (bir kaynak tek grupta; grup silinince içindeki her şey silinir; iç içe grup yok; gruplar ve kaynaklar farklı bölgelerde olabilir), **subscription** (faturalama ve erişim sınırı; birden çok subscription neden), **management group** (subscription'ları gruplar; 6 seviye derinlik), **hiyerarşi** ve RBAC/Policy'nin yukarıdan **miras** alınması
-  - Bölge seçim kriterleri: gecikme, veri ikametgâhı, servis uygunluğu, fiyat
-- **Sınav tuzakları:** availability zone ile region pair; "hangi kapsama atanmalı?" (management group vs subscription vs resource group); resource group silinince ne olur; bir kaynak iki grupta olabilir mi
-- 🛠 **Kod:** `az account list-locations -o table`, `az group create/list/delete` ile bölge keşfi ve kaynak grubu yaşam döngüsü; bir grupta iki kaynak açıp **grubu silince ikisinin de gittiğini** gözlemleme; kendi tenant → management group → subscription → RG şemanı çizme.
-- 📝 **Quiz:** zone/pair/sovereign senaryoları, hiyerarşi ve miras soruları (≈15 soru)
+- 📌 **Resmî hedef:** *Describe the core architectural components of Azure* — regions, region pairs, sovereign regions · availability zones · Azure datacenters · resources ve resource groups · subscriptions · management groups · resource group / subscription / management group hiyerarşisi
+- **Teori — Fiziksel altyapı:**
+  - **Datacenter:** sunucu rafları, bağımsız güç, soğutma ve ağ; müşteriye doğrudan açılmaz, region ve zone olarak gruplanır
+  - **Region:** coğrafi bölgede, düşük gecikmeli ağla bağlı bir veya daha çok datacenter; servis/özellik uygunluğu ve fiyat bölgeye göre değişir; bazı servisler **global**'dir (Entra ID, Front Door, Azure DNS)
+  - **Availability zone** ⭐: bir region içinde **fiziksel olarak ayrı** datacenter grupları (bağımsız güç, soğutma, ağ); zone destekli bölgelerde **en az üç**; datacenter arızasına karşı koruma; **zonal** (kaynak tek zone'a sabitlenir: VM, disk, IP) vs **zone-redundant** (platform otomatik çoğaltır: ZRS storage, SQL Database) servisler
+  - **Region pair** ⭐: aynı coğrafyada, mümkün olduğunca ≥300 mil uzakta iki bölge; bölgesel felakette **öncelikli kurtarma**, planlı güncellemelerin **sıralı** yapılması, bazı servislerde (GRS gibi) ikincil bölgeye replikasyon, veri ikametgâhının coğrafya içinde kalması; bazı eşleşmeler tek yönlüdür, yeni bölgelerde eşleşme olmayabilir
+  - **Sovereign region:** ana Azure'dan yasal/işletimsel olarak ayrılmış örnekler — **Azure Government** (ABD kamu kurumları), **Azure China** (21Vianet tarafından işletilen)
+  - Bölge seçim kriterleri: kullanıcıya **gecikme**, **veri ikametgâhı/regülasyon**, servis uygunluğu, fiyat, zone ve pair durumu
+- **Teori — Mantıksal yapı:**
+  - **Resource:** oluşturulan her öğe (VM, VNet, storage account, veritabanı…)
+  - **Resource group** ⭐: kaynakların **yaşam döngüsüne göre** mantıksal kabı; kurallar: bir kaynak **yalnızca bir** gruptadır · gruplar **iç içe olmaz** · kaynaklar gruplar arasında **taşınabilir** · gruptaki kaynaklar **farklı bölgelerde** olabilir · **grup silinince içindeki her şey silinir** · RBAC/Policy/lock grup düzeyinde uygulanıp içerideki kaynaklara miras kalır
+  - **Subscription:** yönetim, **faturalama** ve ölçek sınırı; **billing boundary** (ayrı fatura/maliyet raporu) ve **access control boundary** (ayrı erişim politikası); birden çok subscription nedenleri: ortam (dev/test/prod), departman/organizasyon, faturalama ayrımı, **kota/limit** aşımı; subscription türleri (free, pay-as-you-go, Enterprise Agreement, CSP…)
+  - **Management group** ⭐: subscription'ları gruplayan kapsam; Policy ve RBAC'ı **birçok subscription'a birden** uygulama; **6 seviyeye kadar** derinlik (root hariç), tek bir root management group, bir subscription/management group tek bir ebeveyne bağlıdır; 10.000 management group'a kadar
+  - **Hiyerarşi:** Entra **tenant** → root management group → management group'lar → **subscription** → **resource group** → **resource**; ayarlar yukarıdan aşağı **miras** alınır
+- **Sınav tuzakları:** availability zone ile region pair ("datacenter arızası" → zone; "bölgesel felaket" → pair); "politikayı tüm subscription'lara uygula" → management group; resource group silinince ne olur; bir kaynak iki grupta olabilir mi; global servisler
+- 🛠 **Pratik:** `az account list-locations -o table` ve `az account list-locations --query "[?metadata.regionType=='Physical']"` ile bölge/pair keşfi; `az group create/list/delete` ile resource group yaşam döngüsü — bir grupta iki kaynak açıp **grubu silince ikisinin de gittiğini** gözlemleme; kendi tenant → management group → subscription → RG şemanı çizme.
+- 📝 **Quiz:** zone/pair/sovereign senaryoları, resource group kuralları, subscription ve management group kapsamı, hiyerarşi ve miras (≈20 soru)
 
-#### C1.5 Compute ve Uygulama Barındırma · `05-compute-hosting`
-- 📌 **Resmî hedef:** *Describe Azure compute and networking services* (compute bölümü) — compute türleri (container, VM, functions) · VM seçenekleri (Azure VMs, VM Scale Sets, availability sets, Azure Virtual Desktop) · VM için gereken kaynaklar · uygulama barındırma seçenekleri (web apps, container'lar, VM'ler)
-- **Teori:**
-  - **Virtual Machines** (IaaS): ne zaman (tam kontrol, özel yazılım, lift-and-shift); VM için gereken kaynaklar: boyut (SKU), **disk**, **VNet/subnet**, **NIC**, public IP, **NSG**
-  - **VM Scale Sets:** aynı VM'lerden oluşan, otomatik ölçeklenen grup · **Availability set:** update domain / fault domain ile tek datacenter içi dayanıklılık · availability zone ile farkı
-  - **Azure Virtual Desktop:** bulutta masaüstü/uygulama sanallaştırma, çok oturumlu Windows
-  - **Container'lar:** VM'e göre hafif, hızlı başlayan izole süreçler; **Azure Container Instances** (en basit), **Azure Container Apps** (serverless container platformu), **AKS** (yönetilen Kubernetes) (geliştirici derinliği → C2.1–C2.3)
-  - **Azure Functions:** olay tetiklemeli serverless kod; tüketim planı, stateless/stateful (Durable)
-  - **App Service:** web app, API, mobil backend; Windows/Linux; ölçek, slot (giriş)
-  - Barındırma karar ağacı: VM ↔ container ↔ App Service ↔ Functions
-- **Sınav tuzakları:** availability set ile availability zone ile scale set; "işletim sistemi yönetmeden web uygulaması" → App Service; "kısa süren olay tetiklemeli kod" → Functions; "masaüstü sanallaştırma" → AVD
-- 🛠 **Kod:** Todo API'yi **App Service'e deploy** etme (`az webapp up` / ZIP deploy); connection string'i **Application Settings**'ten verip `IConfiguration`'a environment variable olarak akışını gözlemleme; **log stream**; aynı image'ı Container Instances'ta tek komutla çalıştırma; sonunda `az group delete`.
-- 📝 **Quiz:** compute seçimi senaryoları, VM seçenekleri, gerekli kaynaklar (≈15 soru)
+#### C1.5 Azure Compute ve Virtual Machines · `05-compute-virtual-machines` ⭐
+- 📌 **Resmî hedef:** *Describe Azure compute and networking services* — compute türleri (VM, container, functions) · VM seçenekleri: **Azure VMs, VM Scale Sets, availability sets**, (Azure Virtual Desktop → C1.6) · **VM için gereken kaynaklar**
+- **Teori — Azure compute services (genel bakış):** isteğe bağlı işlem gücü; **VM** (IaaS) ↔ **container** ↔ **App Service** (PaaS) ↔ **Functions** (serverless) seçim yelpazesi
+- **Teori — Azure Virtual Machines:**
+  - Ne zaman: işletim sistemi üzerinde **tam kontrol**, özel yazılım/yapılandırma, **lift-and-shift**, test/geliştirme, uygulama barındırma, datacenter'ı buluta genişletme
+  - **VM için gereken kaynaklar** ⭐: **boyut** (SKU: CPU/RAM ailesi — genel amaçlı, compute/memory optimized, GPU), **image** (Windows/Linux, Marketplace), **disk** (OS diski + veri diskleri; managed disk; Standard HDD/SSD, Premium SSD), **ağ**: **VNet + subnet**, **NIC**, (isteğe bağlı) **public IP**, **NSG**
+  - Fiyatlandırma: çalışma süresi kadar; **durdurulup deallocate** edilen VM compute ücreti almaz (disk ücreti sürer)
+- **Teori — VM Scale Sets (VMSS):**
+  - Aynı yapılandırmadaki VM'lerden oluşan, **yük dengeleyiciyle** birlikte çalışan grup; talebe veya zamana göre **otomatik** sayı artırma/azaltma (scale out/in); yüzlerce VM'i tek kaynak gibi yönetme; zone'lara yayılabilir
+  - Kullanım: değişken trafikli web katmanı, büyük hesaplama işleri
+- **Teori — Availability sets:**
+  - Tek datacenter içinde VM'leri **update domain** (planlı bakımda aynı anda yeniden başlatılan grup; varsayılan 5, en çok 20) ve **fault domain** (ortak güç/ağ anahtarını paylaşan donanım grubu; en çok 3) arasına dağıtma
+  - Ek ücret yok (yalnızca VM'ler); **availability zone ile farkı:** set = datacenter içi donanım/bakım arızası, zone = datacenter arızası
+- **Teori — Proximity placement groups** *(bağlam — kurslarda işlenir)*:
+  - VM'leri **fiziksel olarak birbirine yakın** (aynı datacenter içinde) yerleştirerek **en düşük ağ gecikmesini** sağlamak; düşük gecikme gerektiren çok katmanlı/HPC iş yükleri
+  - Trade-off: yakınlık ↔ dayanıklılık (aynı yere toplamak zone yayılımının tersidir); availability set ve scale set ile birlikte kullanılabilir
+- **Sınav tuzakları:** availability set ↔ availability zone ↔ scale set eşleştirme; "VM ücretini durdur" → deallocate; "VM için hangisi gereksiz?" kaynak listesi soruları; scale set'in otomatik ölçek sağlaması
+- 🛠 **Pratik:** `az vm create` ile Linux VM (NSG, public IP ve disk kaynaklarının **birlikte oluştuğunu** `az resource list -g …` ile görme); VM'i `deallocate` edip ücretlendirme durumunu gözlemleme; iki örnekli **VM Scale Set** ve basit autoscale kuralı; availability set oluşturup fault/update domain değerlerine bakma; `az group delete` ile temizlik.
+- 📝 **Quiz:** VM kaynakları, VMSS/availability set/zone/proximity group seçimi senaryoları (≈18 soru)
 
-#### C1.6 Ağ Servisleri · `06-networking` *(derinlemesine ağ → J1.2, S8.3)*
-- 📌 **Resmî hedef:** *Describe Azure compute and networking services* (ağ bölümü) — virtual networking (VNet, subnet, peering, Azure DNS, VPN Gateway, ExpressRoute) · public ve private endpoint
-- **Teori:**
-  - **VNet:** izole ağ, adres alanı (CIDR), **subnet**; Azure kaynaklarıyla, internetle ve on-prem ile iletişim; **VNet peering** (bölge içi ve global; Microsoft omurgası üzerinden)
-  - **Azure DNS:** Azure'da barındırılan DNS zone'ları; **private DNS zone** (VNet içi isim çözümleme)
-  - **VPN Gateway:** **şifreli** tünel, **public internet üzerinden**; site-to-site, point-to-site, VNet-to-VNet; policy-based vs route-based; active/active
-  - **ExpressRoute:** **özel**, internete çıkmayan bağlantı (bağlantı sağlayıcısı üzerinden); daha yüksek hız/güvenilirlik; Global Reach; ExpressRoute Direct
-  - **Public endpoint** vs **private endpoint** (Private Link: PaaS servisine VNet içinden özel IP ile erişim)
-  - *(bağlam)* NSG ile trafik filtreleme; Load Balancer (L4), Application Gateway (L7/WAF), Front Door — sınavda ad olarak geçebilir, ayrıntı → S8.3
-- **Sınav tuzakları:** VPN Gateway vs ExpressRoute ("internet üzerinden gitmesin" → ExpressRoute); peering ile VPN; private endpoint ile service endpoint; DNS'in Azure'da barındırılması
-- 🛠 **Kod:** `az network vnet create` + iki subnet; iki VNet arasında **peering**; private DNS zone; bir storage account'a **private endpoint** ekleyip public erişimi kapatma; kaynakları temizleme.
-- 📝 **Quiz:** bağlantı seçenekleri, VNet/peering/DNS senaryoları, endpoint türleri (≈15 soru)
+#### C1.6 Uygulama Barındırma: App Service, Container'lar, Azure Virtual Desktop, Functions · `06-app-hosting`
+- 📌 **Resmî hedef:** *Describe Azure compute and networking services* — compute türleri (container'lar, functions) · VM seçenekleri içinde **Azure Virtual Desktop** · **uygulama barındırma seçenekleri** (web apps, container'lar, VM'ler)
+- **Teori — Azure App Service** (PaaS):
+  - Web uygulaması, **REST API**, mobil backend, **WebJobs** (arka plan işi); .NET, Java, Node.js, Python, PHP; Windows ve Linux
+  - Platform özellikleri: otomatik yama, **autoscale**, deployment **slot**'ları, CI/CD entegrasyonu, özel domain ve TLS, kimlik doğrulama entegrasyonu
+  - **App Service plan:** altta yatan compute (ücretlendirilen birim); birden çok uygulama aynı planı paylaşabilir
+- **Teori — Container'lar:**
+  - Container vs VM: container **işletim sistemini sanallaştırır** (hafif, saniyeler içinde başlar), VM **donanımı** sanallaştırır (tam OS)
+  - **Azure Container Instances (ACI):** tek container'ı en hızlı/basit çalıştırma, saniye bazında ücret; orkestrasyon yok
+  - **Azure Container Apps:** serverless container platformu; otomatik ölçek (sıfıra kadar), HTTP ingress, mikroservis
+  - **Azure Kubernetes Service (AKS):** yönetilen Kubernetes; çok sayıda container'ın orkestrasyonu, en fazla kontrol (geliştirici derinliği → C2.1–C2.3)
+- **Teori — Azure Virtual Desktop (AVD):**
+  - Bulutta **masaüstü ve uygulama sanallaştırma**; herhangi bir cihazdan Windows masaüstüne erişim; **Windows 11/10 çok oturumlu** (multi-session) desteği; Entra ID ile kimlik ve MFA
+  - Fayda: veri cihazda değil bulutta (güvenlik), kullanıcı ve masaüstü yönetiminin merkezileşmesi
+- **Teori — Azure Functions:**
+  - **Olay tetiklemeli**, kısa süreli kod parçaları; HTTP isteği, zamanlayıcı, kuyruk mesajı, blob yüklemesi gibi tetikleyiciler
+  - **Stateless** (varsayılan) ve **stateful** (Durable Functions); otomatik ölçek; tüketim planında yalnızca çalıştığı süre kadar ücret
+  - Functions vs App Service vs Logic Apps: kod mu, sürekli çalışan uygulama mı, görsel iş akışı mı
+- **Barındırma karar ağacı:** tam OS kontrolü → VM · hazır web/API platformu → App Service · container ve mikroservis → ACI / Container Apps / AKS · olay tetiklemeli kısa kod → Functions · masaüstü sanallaştırma → AVD
+- **Sınav tuzakları:** "işletim sistemi yönetmeden web uygulaması" → App Service; "tek container'ı hızlıca, orkestrasyonsuz" → ACI; "binlerce container orkestrasyonu" → AKS; "zamanlayıcıyla 5 dakikalık iş" → Functions; "uzaktan Windows masaüstü" → AVD; container vs VM
+- 🛠 **Pratik:** Todo API'yi **App Service'e deploy** etme (`az webapp up` / ZIP deploy); connection string'i **Application Settings**'ten verip `IConfiguration`'a environment variable olarak akışını gözlemleme; **log stream** ile canlı log; aynı image'ı **Container Instances**'ta tek komutla (`az container create`) çalıştırma; HTTP tetiklemeli tek bir Azure Function (yerelde Core Tools ile); sonunda `az group delete`.
+- 📝 **Quiz:** barındırma seçimi senaryoları, container servisleri, AVD ve Functions nitelikleri (≈18 soru)
 
-#### C1.7 Storage Servisleri ve Veri Taşıma · `07-storage`
-- 📌 **Resmî hedef:** *Describe Azure storage services* — storage servislerini karşılaştır · storage tier'ları · redundancy seçenekleri · storage account seçenekleri ve türleri · dosya taşıma seçenekleri (AzCopy, Azure Storage Explorer, Azure File Sync) · migration seçenekleri (Azure Migrate, Azure Data Box)
-- **Teori:**
-  - **Servisler:** **Blob** (nesne, yapılandırılmamış veri), **Azure Files** (SMB/NFS dosya paylaşımı), **Queue** (basit mesaj kuyruğu), **Table** (NoSQL anahtar-değer), **Disk** (VM diskleri) — hangisi ne için
-  - **Storage account** türleri: Standard general-purpose v2, Premium block blob / file shares / page blob; benzersiz isim ve endpoint (`<ad>.blob.core.windows.net`)
-  - **Access tier'ları:** **Hot**, **Cool** (≥30 gün), **Cold** (≥90 gün), **Archive** (≥180 gün, çevrimdışı, okumak için *rehydrate* — saatler sürer); erken silme ücreti
-  - **Redundancy** ⭐: birincil bölgede **LRS** (tek datacenter, 3 kopya) ve **ZRS** (3 zone); ikincil bölgeli **GRS** ve **GZRS**; okunabilir ikincil **RA-GRS** / **RA-GZRS**; her birinin hangi arızaya dayandığı
-  - **Dosya taşıma:** **AzCopy** (komut satırı), **Azure Storage Explorer** (GUI), **Azure File Sync** (on-prem Windows Server ↔ Azure Files önbellek/senkron)
-  - **Migration:** **Azure Migrate** (keşif, değerlendirme, taşıma merkezi), **Azure Data Box** (çok büyük veri / bant genişliği kısıtlı ortam için fiziksel cihaz)
-- **Sınav tuzakları:** "bölgesel felakette de okunabilir" → RA-GRS/RA-GZRS; "zone arızasına dayanıklı, tek bölge" → ZRS; Archive tier'dan anında okuma yapılamaz; "40 TB'ı ağ olmadan taşı" → Data Box; File Sync ile AzCopy
-- 🛠 **Kod:** `C01` projesinde **Blob Storage** demosu (`Azure.Storage.Blobs`): upload/download/listeleme ve tier değiştirme — yerelde **Azurite** emülatörüyle (Azure hesabı gerekmez); AzCopy ile klasör kopyalama; aynı storage account'u LRS ve GZRS olarak Pricing Calculator'da karşılaştırma.
-- 📝 **Quiz:** servis seçimi, tier ve redundancy eşleştirme, taşıma aracı seçimi (≈18 soru)
+#### C1.7 Ağ Servisleri · `07-networking` ⭐ *(derinlemesine ağ → J1.2, S8.3)*
+- 📌 **Resmî hedef:** *Describe Azure compute and networking services* — virtual networking: **VNet, subnet, peering, Azure DNS, VPN Gateway, ExpressRoute** · **public ve private endpoint**'ler
+- **Teori — Azure networking services / Virtual Network:**
+  - **VNet**: Azure kaynaklarının **izole** ağı; adres alanı (CIDR, ör. `10.0.0.0/16`); bölgeye bağlıdır
+  - VNet'in sağladıkları: **izolasyon ve segmentasyon** (subnet'ler), **internet iletişimi** (public IP / load balancer), **Azure kaynakları arası iletişim**, **on-prem ile iletişim** (VPN/ExpressRoute), **trafik yönlendirme** (route table), **trafik filtreleme** (NSG, NVA)
+  - **Subnet:** VNet'in alt ağı; kaynakları gruplama ve güvenlik kuralı uygulama
+- **Teori — VNet peering:**
+  - İki VNet'i **Microsoft omurgası üzerinden** (internete çıkmadan) bağlama; aynı bölge (regional) veya farklı bölgeler (**global peering**); düşük gecikme; geçişli (transitive) değildir; adres alanları çakışmamalı
+- **Teori — Azure DNS:**
+  - Azure altyapısında **DNS domain barındırma**; tanıdık araçlarla (portal, CLI) kayıt yönetimi, RBAC ve kayıt kilidi; Azure'un global ad sunucu ağıyla yüksek erişilebilirlik; **Azure DNS ile domain satın alınmaz** (yalnızca barındırılır)
+  - **Private DNS zone:** VNet içinde özel isim çözümleme
+- **Teori — VPN Gateway:**
+  - On-prem ile Azure arasında **public internet üzerinden şifreli** (IPsec/IKE) tünel; **site-to-site** (ofis/datacenter), **point-to-site** (tek istemci), **VNet-to-VNet**
+  - **Policy-based** vs **route-based** VPN; yüksek erişilebilirlik: **active/standby** (varsayılan), **active/active**, zone-redundant gateway, ExpressRoute için yedek
+- **Teori — ExpressRoute** (VPN ile karşılaştırma için zorunlu):
+  - **Özel**, **internete çıkmayan** bağlantı (bağlantı sağlayıcısı/ortak tesis üzerinden); daha yüksek bant genişliği, daha öngörülebilir gecikme ve güvenilirlik; **Global Reach** (şubeler arası), **ExpressRoute Direct**; Microsoft 365 ve Azure servislerine özel erişim
+  - **VPN Gateway vs ExpressRoute** ⭐: şifreli ama internet üzerinden ↔ özel hat, internet değil
+- **Teori — Public ve private endpoint'ler:**
+  - **Public endpoint:** kaynağa internetten erişilebilen genel adres (ör. `mystorage.blob.core.windows.net`)
+  - **Private endpoint** (Azure **Private Link**): PaaS servisine VNet'ten **özel IP** ile erişim; trafik Microsoft ağında kalır; public erişim kapatılabilir
+  - *(bağlam)* NSG ile trafik filtreleme; Load Balancer (L4), Application Gateway (L7/WAF), Front Door, Azure Firewall — sınavda ad olarak geçebilir
+- **Sınav tuzakları:** "internet üzerinden geçmeyen bağlantı" → ExpressRoute; "şifreli, internet üzerinden, düşük maliyet" → VPN Gateway; iki VNet'i bağlamak → peering (VPN değil); peering transitive değildir; Azure DNS domain satmaz; private endpoint ile public endpoint
+- 🛠 **Pratik:** `az network vnet create` + iki subnet; ikinci VNet ve **peering** (iki yönlü); **private DNS zone** ve VNet bağlantısı; bir storage account'a **private endpoint** ekleyip public erişimi kapatma ve erişimi VNet içindeki VM'den test etme; kaynakları temizleme.
+- 📝 **Quiz:** bağlantı seçenekleri (VPN/ExpressRoute/peering), VNet ve DNS senaryoları, endpoint türleri (≈18 soru)
 
-#### C1.8 Kimlik, Erişim ve Güvenlik · `08-identity-access-security` ⭐ *(geliştirici derinliği → M9, C2.11)*
-- 📌 **Resmî hedef:** *Describe Azure identity, access, and security* — directory servisleri (Microsoft Entra ID, Microsoft Entra Domain Services) · kimlik doğrulama yöntemleri (SSO, MFA, passwordless) · external identities (B2B, B2C) · Conditional Access · Azure RBAC · Zero Trust · defense-in-depth · Microsoft Defender for Cloud
-- **Teori:**
-  - **Microsoft Entra ID** (eski Azure AD): bulut kimlik ve erişim servisi; tenant, kullanıcı, grup, uygulama; on-prem AD ile **Entra Connect** senkronizasyonu · **Entra Domain Services**: domain join, Kerberos/NTLM, LDAP gibi klasik AD özelliklerini yönetilen olarak sunar
-  - **Authentication vs authorization** ⭐ · **SSO** · **MFA** (bildiğin + sahip olduğun + olduğun şey) · **passwordless** (Windows Hello for Business, Microsoft Authenticator, FIDO2/passkey)
-  - **External identities:** **B2B** (iş ortağı misafir kullanıcı), **B2C / Entra External ID** (müşteri uygulamaları için kimlik)
-  - **Conditional Access:** sinyal (kullanıcı, konum, cihaz, uygulama, risk) → karar (izin, MFA iste, engelle)
-  - **Azure RBAC** ⭐: rol (Owner, Contributor, Reader, servis rolleri) + kapsam (management group → subscription → RG → kaynak) + miras; **RBAC ile Entra rolleri** ve **RBAC ile Azure Policy** farkı
-  - **Zero Trust:** açıkça doğrula, en az yetki, ihlal varsay · **Defense in depth** katmanları: fiziksel → kimlik/erişim → çevre → ağ → compute → uygulama → veri
-  - **Microsoft Defender for Cloud:** güvenlik duruşu (secure score), öneriler, tehdit koruması; Azure, hybrid ve multicloud
-- **Sınav tuzakları:** Entra ID ile Entra Domain Services; B2B ile B2C; Conditional Access ile MFA; RBAC'ın **izin verme**, Policy'nin **kaynağın özelliklerini** denetleme olması; Zero Trust ilke eşleştirmesi
-- 🛠 **Kod:** Entra'da bir grup oluşturup bir RG üzerinde **Reader** rolünü gruba atama ve yetkinin yalnızca o kapsamda geçerli olduğunu doğrulama (`az role assignment create/list`); Defender for Cloud'da secure score ve önerilere bakma.
-- 📝 **Quiz:** kimlik servisi seçimi, kimlik doğrulama yöntemleri, RBAC kapsamı, Zero Trust/defense in depth (≈18 soru)
+#### C1.8 Azure Storage: Blob, Files, Taşıma ve Migration · `08-storage` ⭐
+- 📌 **Resmî hedef:** *Describe Azure storage services* — storage servislerini karşılaştır · storage tier'ları · redundancy seçenekleri · storage account seçenekleri ve türleri · dosya taşıma seçenekleri (**AzCopy, Azure Storage Explorer, Azure File Sync**) · migration seçenekleri (**Azure Migrate, Azure Data Box**)
+- **Teori — Azure Storage ve storage account:**
+  - **Storage account:** benzersiz ad alanı, endpoint'ler (`<ad>.blob/.file/.queue/.table.core.windows.net`); türleri: **Standard general-purpose v2** (çoğu senaryo), **Premium block blobs**, **Premium file shares**, **Premium page blobs**
+  - Storage servisleri: **Blob** (nesne), **Azure Files** (dosya paylaşımı), **Queue** (basit mesajlaşma), **Table** (NoSQL anahtar-değer), **Disks** (VM için blok depolama) — hangisi ne için
+- **Teori — Redundancy** ⭐:
 
-#### C1.9 Maliyet Yönetimi · `09-cost-management` ⭐
-- 📌 **Resmî hedef:** *Describe cost management in Azure* — maliyeti etkileyen faktörler · Pricing Calculator *(TCO Calculator'ın yeri için güncel study guide'ı kontrol et)* · Microsoft Cost Management yetenekleri · tag'lerin amacı
-- **Teori:**
-  - **Maliyet faktörleri:** kaynak türü ve SKU, tüketim, bakım (kullanılmayan kaynak), **coğrafya/bölge**, **ağ trafiği** (gelen genelde ücretsiz, **çıkış/egress** ve bölgeler arası trafik ücretli), subscription türü, Marketplace ürünleri
-  - Tasarruf: **reservations**, savings plan, **spot VM**, **Azure Hybrid Benefit**, dev/test fiyatlandırması, doğru boyutlandırma, otomatik kapatma
-  - **Pricing Calculator** (yeni iş yükünün tahmini maliyeti) · **TCO Calculator** (on-prem ile karşılaştırma)
-  - **Microsoft Cost Management:** maliyet analizi, **budgets** ve alarmlar, öneriler (Advisor ile), dışa aktarma
-  - **Tag'ler** ⭐: anahtar-değer; maliyet ayırma, yönetim, otomasyon, uyumluluk; **tag'ler varsayılan olarak miras alınmaz** (Policy ile zorlanır/kopyalanır)
-- **Sınav tuzakları:** Pricing ile TCO Calculator; "bütçe aşılınca e-posta" → Cost Management budget; egress ücreti; "maliyeti departmana göre raporla" → tag
-- 🛠 **Kod:** Budget + alarm (aylık limit, %80 / %100 eşikleri); kaynaklara `env`/`owner`/`costCenter` tag'leri verip **Cost Management'ta tag bazlı** maliyet görünümü; `C01` hesaplayıcısına 3 yıllık **CapEx (on-prem) vs OpEx (cloud)** karşılaştırması.
-- 📝 **Quiz:** maliyet faktörü, araç seçimi, tasarruf yolu, tag senaryoları (≈15 soru)
+  | Seçenek | Kopya | Neye dayanır |
+  |---|---|---|
+  | **LRS** | Birincil bölgede tek datacenter içinde 3 kopya | Sunucu/raf arızası — datacenter felaketine **dayanmaz** |
+  | **ZRS** | Birincil bölgede 3 availability zone'a | Datacenter/zone arızası |
+  | **GRS** | LRS + ikincil bölgede (region pair) LRS | Bölgesel felaket (ikincil yalnızca failover sonrası okunur) |
+  | **GZRS** | ZRS + ikincil bölgede LRS | Zone **ve** bölgesel felaket |
+  | **RA-GRS / RA-GZRS** | GRS/GZRS + ikincilden **sürekli okuma** | Bölgesel felakette de okuma erişimi |
 
-#### C1.10 Yönetişim ve Uyumluluk · `10-governance-compliance` ⭐
-- 📌 **Resmî hedef:** *Describe features and tools in Azure for governance and compliance* — Microsoft Purview · Azure Policy · resource lock'lar
-- **Teori:**
-  - **Azure Policy** ⭐: kaynakların **özelliklerini** kurallara göre denetleme/zorlama (izin verilen bölge/SKU, zorunlu tag); etkiler: **Audit, Deny, Modify, Append, DeployIfNotExists**; **initiative** (policy set); uyumluluk raporu; mevcut kaynaklar için **remediation**; kapsam ve miras
-  - **Resource lock:** **CanNotDelete** (Delete) ve **ReadOnly**; kapsamdan aşağı **miras**; lock **rolden bağımsızdır** — Owner bile önce lock'ı kaldırmak zorundadır
-  - **Microsoft Purview:** veri yönetişimi, risk ve uyumluluk çözümleri ailesi — veri haritası/kataloğu, sınıflandırma ve hassas veri keşfi; on-prem, multicloud ve SaaS verisi
-  - *(bağlam)* Microsoft Service Trust Portal / Trust Center, uyumluluk belgeleri; landing zone ve deployment stack fikri (Blueprint'in yerini alan yaklaşım → S8.3)
-- **Sınav tuzakları:** **Policy vs RBAC** ("kim ne yapabilir" ↔ "ne yapılabilir"); Policy vs lock; ReadOnly lock'ın beklenmedik etkileri; Purview'un ne yaptığı (veri yönetişimi, kimlik değil)
-- 🛠 **Kod:** Zorunlu `env` ve `owner` tag'i olmayan kaynağın oluşturulmasını **Deny** eden Azure Policy (built-in "Require a tag" ile); izin verilen bölgeler politikası; production RG'ye `CanNotDelete` lock koyup silme denemesinin **reddedildiğini** gösterme; lock'ı kaldırıp temizleme.
-- 📝 **Quiz:** Policy/RBAC/lock ayrımı, Policy etkileri, Purview senaryoları (≈15 soru)
+- **Teori — Blob Storage:**
+  - Yapılandırılmamış veri (görsel, video, yedek, log, dosya); hiyerarşi: account → **container** → **blob**; blob türleri: **block** (dosyalar), **append** (log), **page** (VM diskleri)
+  - **Access tier'ları:** **Hot** (sık erişim) · **Cool** (seyrek, ≥30 gün) · **Cold** (nadir, ≥90 gün) · **Archive** (çok nadir, ≥180 gün, **çevrimdışı** — okumak için **rehydrate**, saatler sürer); erişim maliyeti ↔ depolama maliyeti dengesi; lifecycle kuralları
+- **Teori — Azure Files ve Azure File Sync:**
+  - **Azure Files:** bulutta tam yönetilen **SMB/NFS dosya paylaşımı**; Windows/Linux/macOS'tan bağlanma; "lift-and-shift" uygulamaların paylaşılan klasörleri
+  - **Azure File Sync:** on-prem **Windows Server**'ı Azure Files'ın **önbelleği** yapar; çok noktada senkron, **cloud tiering** (seyrek dosyalar bulutta, yer açılır), hızlı felaket kurtarma
+- **Teori — Dosya taşıma araçları:**
+  - **AzCopy:** blob/dosya kopyalama için **komut satırı** aracı; senkron, toplu kopya, storage account'lar ve bulutlar arası
+  - **Azure Storage Explorer:** blob/dosya/kuyruk/tablo yönetimi için **grafik** masaüstü uygulaması (arka planda AzCopy kullanır)
+  - **Azure File Sync:** yukarıda — sürekli, iki yönlü senkron
+- **Teori — Migration seçenekleri:**
+  - **Azure Migrate:** taşıma için **merkezi hub** — keşif, değerlendirme (boyutlandırma/maliyet), sunucu, veritabanı, web uygulaması ve VDI taşıma; entegre araçlar (Discovery and assessment, Server Migration, Data Migration Assistant, Database Migration Service, Web app migration assistant)
+  - **Azure Data Box:** çok büyük veriyi (ör. 40 TB'a kadar kullanılabilir kapasite — Data Box ailesinde daha büyük seçenekler de var) **fiziksel cihazla** taşıma; ağ bağlantısı yetersiz/pahalı/yoksa; içe ve dışa aktarma; cihaz verisi güvenle silinir
+- **Sınav tuzakları:** redundancy ↔ senaryo eşleştirme ("bölgesel felakette de okunabilir" → RA-GRS/RA-GZRS; "zone arızası, tek bölge" → ZRS); Archive'dan anında okuma yok; "on-prem dosya sunucusunu Azure ile senkronla, önbellekte tut" → File Sync; "terabaytlarca veri, ağ yok" → Data Box; "komut satırı" → AzCopy, "grafik araç" → Storage Explorer; "taşıma için değerlendirme" → Azure Migrate
+- 🛠 **Pratik:** `C01` projesinde **Blob Storage** demosu (`Azure.Storage.Blobs`): container oluşturma, upload/download/listeleme, **access tier değiştirme** — yerelde **Azurite** emülatörüyle (Azure hesabı gerekmez); AzCopy ile yerel klasörü blob container'a kopyalama (`azcopy copy … --recursive`); Azure Files paylaşımı oluşturup bağlama; aynı storage account'u LRS ve GZRS olarak Pricing Calculator'da karşılaştırma.
+- 📝 **Quiz:** servis seçimi, redundancy ve tier eşleştirme, taşıma/migration aracı seçimi (≈20 soru)
 
-#### C1.11 Kaynak Yönetimi ve Dağıtım Araçları · `11-management-deployment-tools`
-- 📌 **Resmî hedef:** *Describe features and tools for managing and deploying Azure resources* — Azure portal · Azure Cloud Shell (Azure CLI ve Azure PowerShell dahil) · Azure Arc · infrastructure as code · Azure Resource Manager ve ARM template'leri
-- **Teori:**
-  - **Azure portal:** web arayüzü, dashboard'lar; **Cloud Shell:** tarayıcıda Bash/PowerShell, kimliği hazır, depolama ile kalıcı; **Azure CLI** (`az`) vs **Azure PowerShell** (`Az` modülü) — aynı işler, farklı sözdizimi/ekosistem
-  - **Azure Resource Manager (ARM)** ⭐: tüm yönetim isteklerinin geçtiği dağıtım ve yönetim katmanı; tutarlı yönetim, RBAC/tag/lock uygulama noktası, bağımlılık sırası
-  - **Infrastructure as Code:** deklaratif şablonlar, tekrarlanabilir ve **idempotent** dağıtım, sürüm kontrolü; **ARM template** (JSON) ve **Bicep** (okunabilir DSL, ARM'a derlenir); Terraform'a giriş (→ S8.2)
-  - **Azure Arc:** Azure dışındaki (on-prem, diğer bulutlar, edge) sunucuları, Kubernetes kümelerini, veri servislerini Azure'dan yönetme — Policy, RBAC, Defender, izleme
-- **Sınav tuzakları:** "aynı ortamı tekrar tekrar ve tutarlı kur" → ARM/Bicep; "başka buluttaki sunucuyu Azure Policy ile yönet" → Arc; Cloud Shell'in kurulum gerektirmemesi; CLI vs PowerShell
-- 🛠 **Kod:** Aynı resource group + storage account'u üç yolla oluşturma: portal, `az` CLI ve **Bicep** (`az deployment group create`); Bicep'i iki kez dağıtıp **idempotent** olduğunu (değişiklik yok) gözlemleme; `az bicep build` ile ARM JSON'a derleme.
-- 📝 **Quiz:** araç seçimi, ARM/IaC, Arc senaryoları (≈12 soru)
+#### C1.9 Kimlik ve Erişim: Microsoft Entra ID, Kimlik Doğrulama, RBAC · `09-identity-access` ⭐ *(geliştirici derinliği → M9, C2.11)*
+- 📌 **Resmî hedef:** *Describe Azure identity, access, and security* — directory servisleri (**Microsoft Entra ID**, **Microsoft Entra Domain Services**) · kimlik doğrulama yöntemleri (**SSO, MFA, passwordless**) · **external identities** (B2B, B2C) · **Conditional Access** · **Azure RBAC**
+- **Teori — Identity ve Microsoft Entra ID** (eski adı Azure Active Directory):
+  - Kimlik = yeni güvenlik çevresi; Entra ID: Microsoft'un **bulut tabanlı kimlik ve erişim yönetimi** servisi — kullanıcı, grup, uygulama ve cihaz kimlikleri; **tenant** = kuruluşun Entra örneği
+  - Kimler kullanır: BT yöneticileri (erişim kontrolü), geliştiriciler (uygulamaya SSO/kimlik ekleme), kullanıcılar (self-servis şifre sıfırlama), Microsoft 365/Azure/Dynamics aboneleri
+  - On-prem **Active Directory** ile farkı (Kerberos/LDAP/GPO ↔ HTTP tabanlı modern protokoller: OAuth 2.0, OIDC, SAML); **Microsoft Entra Connect** ile on-prem AD → Entra senkronizasyonu
+  - **Microsoft Entra Domain Services:** domain join, Group Policy, LDAP, Kerberos/NTLM gibi **klasik AD özelliklerini yönetilen** olarak sunar — domain controller kurmadan eski uygulamaları buluta taşımak
+- **Teori — Benefits of Microsoft Entra ID:**
+  - **Authentication** (kimlik doğrulama, self-servis şifre sıfırlama, MFA, akıllı kilitleme) · **Single sign-on** · **Application management** (SaaS ve şirket içi uygulamalar, uygulama proxy) · **Device management** (cihaz kaydı, Intune ile politika) · **Identity protection** (riskli oturum/kullanıcı tespiti) · **Conditional Access** · merkezi denetim ve log'lar
+- **Teori — Authentication vs authorization** ⭐: **AuthN** = "sen kimsin?" (kimliği kanıtlama: şifre, MFA); **AuthZ** = "ne yapabilirsin?" (kimliği doğrulanmış kullanıcının yetkileri: RBAC); önce AuthN sonra AuthZ
+- **Teori — External identities:**
+  - **B2B collaboration:** iş ortaklarını kendi kimlikleriyle (kendi Entra/Microsoft/Google hesabı) **misafir** olarak davet etme; kendi tenant'ında erişim yönetimi; B2B direct connect (Teams paylaşımlı kanallar)
+  - **B2C / Microsoft Entra External ID:** **müşteriye dönük** uygulamalar için kimlik (kayıt, giriş, sosyal hesaplar, özelleştirilebilir sayfalar); Azure AD B2C yeni müşterilere kapandı → **Entra External ID**
+- **Teori — Single Sign-On (SSO):** tek kimlikle **birden çok uygulamaya** bir kez giriş; kullanıcı deneyimi + güvenlik (tek kimliğin yönetimi, hesap kapatıldığında tüm erişimin bitmesi); ne kadar çok kimlik o kadar çok şifre/risk
+- **Teori — Multi-Factor Authentication (MFA / 2FA):**
+  - İki veya daha fazla **faktör**: **bildiğin** (şifre, PIN) · **sahip olduğun** (telefon, donanım anahtarı) · **olduğun** (parmak izi, yüz); 2FA = MFA'nın iki faktörlü hâli
+  - Entra MFA yöntemleri: Microsoft Authenticator bildirimi/kodu, SMS, sesli arama, OATH token, FIDO2; **security defaults** ile temel MFA; şifre çalınsa bile hesabın korunması
+- **Teori — Passwordless:**
+  - Şifreyi tamamen kaldırıp "sahip olduğun + olduğun/bildiğin (cihaz PIN'i)" ile giriş: **Windows Hello for Business**, **Microsoft Authenticator** (telefonla oturum), **FIDO2 güvenlik anahtarları / passkey**; daha güvenli (phishing'e dayanıklı) ve daha kolay
+- **Teori — Conditional Access:**
+  - **Sinyal → karar → uygulama:** sinyaller (kullanıcı/grup, **konum/IP**, **cihaz** durumu, uygulama, **oturum/kullanıcı riski**) → kararlar (**izin ver**, **MFA iste**, cihazı uyumlu olmaya zorla, **engelle**)
+  - Örnek politikalar: "yöneticiler her zaman MFA", "bilinmeyen konumdan girişte MFA", "uyumsuz cihazdan e-postaya erişim yok"; Entra ID P1 lisansı gerektirir *(bağlam)*
+- **Teori — Role-Based Access Control (RBAC)** ⭐:
+  - **Rol** (izin kümesi) + **güvenlik sorumlusu** (kullanıcı, grup, service principal, managed identity) + **kapsam** (management group, subscription, resource group, kaynak) = **rol ataması**
+  - Built-in roller: **Owner** (her şey + erişim yönetimi), **Contributor** (her şey, erişim yönetimi hariç), **Reader** (yalnızca görüntüleme), **User Access Administrator**; servise özel roller; özel (custom) roller
+  - Atama **kapsamdan aşağı miras** alınır; izinler toplanır (allow model); **en az yetki** ilkesi; Azure Resource Manager üzerinden uygulanır
+  - RBAC vs **Entra rolleri** (Global Administrator gibi directory rolleri) vs **Azure Policy** (→ C1.12)
+- **Sınav tuzakları:** Entra ID ile Entra Domain Services ("klasik domain join ve LDAP" → Domain Services); B2B ile B2C; SSO ile MFA; Conditional Access'in **MFA'yı koşula bağladığı**; AuthN ile AuthZ eşleştirme; "yalnızca görüntüleme" → Reader; "erişim yönetimi hariç her şey" → Contributor; RBAC'ın miras alınması
+- 🛠 **Pratik:** Entra'da bir kullanıcı ve grup oluşturma; bir resource group üzerinde **Reader** rolünü gruba atama ve yetkinin yalnızca o kapsamda geçerli olduğunu doğrulama (`az role assignment create/list`); bir B2B misafir kullanıcı daveti; (deneme tenant'ında) MFA/security defaults ayarlarına ve bir Conditional Access politikası şablonuna bakma.
+- 📝 **Quiz:** kimlik servisi seçimi, Entra faydaları, AuthN/AuthZ, external identities, SSO/MFA/passwordless/Conditional Access, RBAC kapsamı ve rolleri (≈22 soru)
 
-#### C1.12 İzleme Araçları · `12-monitoring-tools`
-- 📌 **Resmî hedef:** *Describe monitoring tools in Azure* — Azure Advisor · Azure Service Health · Azure Monitor (Log Analytics, alert'ler, Application Insights dahil)
-- **Teori:**
-  - **Azure Advisor:** **güvenilirlik, güvenlik, performans, maliyet, operasyonel mükemmellik** kategorilerinde kişiselleştirilmiş öneriler
-  - **Azure Service Health:** **Azure Status** (genel durum) · **Service Health** (senin subscription'larını etkileyen kesinti, planlı bakım, sağlık önerileri) · **Resource Health** (tek kaynağın durumu)
-  - **Azure Monitor:** metrik ve log toplama/analiz platformu; **Log Analytics** (KQL ile sorgu → C2.13), **alert**'ler ve **action group**'lar, **Application Insights** (uygulama performansı, istek/bağımlılık/hata telemetrisi)
-- **Sınav tuzakları:** Advisor ile Service Health; Service Health ile Resource Health; "uygulamanın yavaş isteklerini izle" → Application Insights; "metrik eşiği aşınca SMS" → alert + action group
-- 🛠 **Kod:** `az advisor recommendation list` ile önerileri listeleme; bir kaynağa **metrik alert + action group** (e-posta) kurup tetikleme; Log Analytics'te basit bir KQL sorgusu; Service Health'te bir uyarı kuralı.
-- 📝 **Quiz:** izleme aracı seçimi senaryoları (≈12 soru)
+#### C1.10 Güvenlik: Zero Trust, Defense in Depth, Microsoft Defender for Cloud · `10-security` ⭐
+- 📌 **Resmî hedef:** *Describe Azure identity, access, and security* — **Zero Trust** kavramı · **defense-in-depth** modelinin amacı · **Microsoft Defender for Cloud**'un amacı
+- **Teori — Zero-Trust model of security:**
+  - Varsayım: ağın içi de güvenli değildir — "**asla güvenme, her zaman doğrula**"; geleneksel "kale ve hendek" (güvenli iç ağ) modeline karşı
+  - Üç ilke ⭐: **Verify explicitly** (her isteği tüm sinyallerle doğrula: kimlik, konum, cihaz, servis, veri sınıfı, anomali) · **Use least privilege access** (just-in-time/just-enough-access, risk tabanlı politika) · **Assume breach** (etki alanını küçült — segmentasyon, uçtan uca şifreleme, analitikle tespit)
+  - Azure'daki karşılıkları: Entra ID + Conditional Access + MFA, RBAC + PIM *(bağlam)*, private endpoint ve segmentasyon
+- **Teori — Defense in depth:**
+  - Tek bir kontrol aşılsa bile diğerleri korur: katmanlı savunma; katmanlar (dıştan içe) ⭐: **fiziksel güvenlik** (datacenter erişimi) → **kimlik ve erişim** (SSO, MFA, denetim) → **çevre** (perimeter: DDoS koruması, çevre firewall'ları) → **ağ** (segmentasyon, NSG, varsayılan engelleme) → **compute** (VM erişimi, yamalar, uç nokta koruması) → **uygulama** (güvenli geliştirme, secret'ları Key Vault'ta tutmak) → **veri** (şifreleme, erişim kontrolü — saldırganın asıl hedefi)
+  - Her katmana bir Azure servisi eşleme: DDoS Protection, Azure Firewall, NSG, Defender for Cloud, Key Vault, şifreleme
+- **Teori — Microsoft Defender for Cloud:**
+  - **Bulut güvenliği duruş yönetimi (CSPM)** ve **iş yükü koruması (CWPP)**: Azure, **on-prem** (Arc ile) ve **diğer bulutlar** (AWS, GCP)
+  - **Assess** (sürekli değerlendirme, zafiyet tarama) · **Secure** (**secure score**, öneriler, Azure Policy tabanlı güvenlik benchmark'ı) · **Defend** (tehdit tespiti, güvenlik uyarıları, olay müdahalesi); Defender planları (Servers, Storage, SQL, Containers…)
+- **Sınav tuzakları:** Zero Trust ilkesi ↔ uygulama eşleştirme; defense in depth katman sırası ve katman ↔ kontrol eşleştirmesi; Defender for Cloud'un multicloud/hybrid kapsamı; Defender for Cloud ile Azure Policy ve Advisor farkı
+- 🛠 **Pratik:** Defender for Cloud'da **secure score** ve önerilere bakma, bir öneriyi (ör. storage account public erişimi) uygulayıp puanın etkisini izleme; kendi örnek mimarin için defense in depth katman tablosunu doldurma (README'de şablon + çözüm).
+- 📝 **Quiz:** Zero Trust ilkeleri, defense in depth katmanları, Defender for Cloud yetenekleri (≈15 soru)
 
-#### C1.13 Deneme Sınavı ve Sınav Stratejisi · `13-practice-exam`
+#### C1.11 Azure'da Maliyet Yönetimi · `11-cost-management` ⭐
+- 📌 **Resmî hedef:** *Describe cost management in Azure* — **maliyeti etkileyen faktörler** · **Pricing Calculator** *(TCO Calculator'ın güncel müfredattaki yeri için study guide'ı kontrol et)* · **Microsoft Cost Management** yetenekleri · **tag**'lerin amacı
+- **Teori — Factors that affect cost:**
+  - **Kaynak türü ve ayarları** (SKU, boyut, tier), **tüketim** (pay-as-you-go ↔ **reservations** / savings plan indirimi), **bakım** (unutulan/kullanılmayan kaynaklar — VM silinince disk/IP kalabilir), **coğrafya/bölge** (aynı servis bölgeye göre farklı fiyat), **ağ trafiği** (gelen genelde ücretsiz, **giden/egress** ve bölgeler/zone'lar arası trafik ücretli; bant genişliği bölgeleri), **subscription türü** (free, kredi), **Azure Marketplace** (üçüncü taraf ürün ücretleri)
+  - Tasarruf yolları: reservations, savings plan, **spot VM**, **Azure Hybrid Benefit** (mevcut Windows Server/SQL Server lisansları), dev/test fiyatlandırması, doğru boyutlandırma (Advisor), otomatik kapatma, kaynak silme
+- **Teori — Azure Pricing Calculator:**
+  - Henüz kurulmamış bir iş yükünün **tahmini maliyetini** hesaplama: servis ekle → bölge, tier, saat, adet seç → aylık tahmin; dışa aktarma ve paylaşma; tahmin olduğu, fatura olmadığı
+  - *(bağlam)* **TCO Calculator:** on-prem altyapının (sunucu, depolama, ağ, işçilik, enerji) Azure ile **toplam sahip olma maliyeti** karşılaştırması — Pricing Calculator ile farkı klasik bir sorudur
+- **Teori — Azure Cost Management:**
+  - **Cost analysis** (gerçekleşen maliyetleri kaynak/servis/bölge/**tag** bazında görme, trend), **budgets** (limit + eşik **uyarıları**, e-posta/action group), **cost alerts** (bütçe, kredi, departman harcama kotası), **öneriler** (Advisor ile), **dışa aktarma** ve zamanlanmış raporlar; birden çok subscription ve bulut
+- **Teori — Resource tags:**
+  - **Anahtar-değer** meta veri (`env=prod`, `costCenter=1234`, `owner=ali`); kullanım: **maliyet yönetimi ve raporlama**, kaynak yönetimi/arama, operasyon (otomatik kapatma), güvenlik (veri sınıflandırma), uyumluluk
+  - Kurallar: tag'ler **varsayılan olarak miras alınmaz** (resource group tag'i içindeki kaynağa geçmez); **Azure Policy** ile zorunlu kılma veya gruptan kopyalama (Modify etkisi); portal/CLI/ARM ile ekleme
+- **Sınav tuzakları:** Pricing ile TCO Calculator; "bütçe %80 olunca e-posta" → Cost Management budget; egress ücreti ve bölge farkı; "maliyeti departmana göre raporla" → tag; tag mirası; reservation ile spot
+- 🛠 **Pratik:** **Pricing Calculator**'da küçük bir web uygulaması (App Service + SQL Database + storage) tahmini; Cost Management'ta **budget** (aylık limit, %80 ve %100 eşikleri) ve alarm; kaynaklara `env`/`owner`/`costCenter` tag'leri verip **tag bazlı cost analysis** görünümü; `C01` hesaplayıcısına 3 yıllık **CapEx (on-prem) vs OpEx (cloud)** karşılaştırması.
+- 📝 **Quiz:** maliyet faktörleri, araç seçimi, tasarruf yolu, budget ve tag senaryoları (≈18 soru)
+
+#### C1.12 Azure Yönetişim ve Uyumluluk · `12-governance-compliance` ⭐
+- 📌 **Resmî hedef:** *Describe features and tools in Azure for governance and compliance* — **Microsoft Purview** · **Azure Policy** · **resource lock**'lar
+- **Teori — Azure governance and compliance (genel çerçeve):**
+  - Yönetişim = kuruluşun kurallarını (güvenlik, maliyet, uyumluluk, adlandırma) **ölçekte** uygulamak ve denetlemek; araç seti: management group'lar (→ C1.4), RBAC (→ C1.9), **Policy**, **lock**, tag (→ C1.11), Purview
+  - *(bağlam)* Uyumluluk kaynakları: **Microsoft Service Trust Portal** (denetim raporları, ISO/SOC belgeleri), Microsoft Trust Center, gizlilik bildirimi ve ürün koşulları
+- **Teori — Azure Policy** ⭐:
+  - Kaynakların **özelliklerinin** kurallara uygunluğunu **değerlendirip zorlama** (oluşturma/güncelleme anında ve mevcut kaynaklar için sürekli)
+  - Yapı taşları: **policy definition** (kural, JSON), **assignment** (kapsama atama: management group/subscription/RG; istisna), **initiative** (policy set — birlikte uygulanan tanımlar; ör. güvenlik benchmark'ı)
+  - **Etkiler:** **Audit** (uyarı/raporla), **Deny** (oluşturmayı engelle), **Modify** / **Append** (tag ekle/düzelt), **DeployIfNotExists** (eksik ayarı kur, ör. tanılama), AuditIfNotExists, Disabled
+  - Örnekler: **izin verilen bölgeler**, izin verilen VM SKU'ları, **zorunlu tag**, gruptan tag devralma; **uyumluluk** panosu ve **remediation** (mevcut uyumsuz kaynakları düzeltme)
+  - Policy ↔ RBAC: RBAC **kullanıcının** ne yapabileceğini, Policy **kaynağın** nasıl olabileceğini belirler; Owner bile Deny politikasına takılır
+  - Bir politikanın yaşam döngüsü: built-in tanımı seç (ör. *Require a tag and its value on resources*, *Allowed locations*) → kapsama **ata** → aykırı yeni kaynak **Deny** ile reddedilir → mevcut uyumsuz kaynaklar **compliance** panosunda listelenir → gerekiyorsa **remediation task** ile düzeltilir
+- **Teori — Resource locks:**
+  - Kaynakların **kazara silinmesini/değiştirilmesini** önler; türler: **Delete (CanNotDelete)** — okunur ve değiştirilir ama silinemez · **ReadOnly** — okunur, değiştirilemez ve silinemez (bazı yönetim işlemlerini de engelleyebilir)
+  - Subscription/RG/kaynak düzeyinde; alt kaynaklara **miras**; **rol yetkisinden bağımsızdır** — Owner bile işlem için önce lock'ı kaldırmak zorundadır (lock'ı kaldırmak da yetki ister)
+- **Teori — Microsoft Purview:**
+  - **Veri yönetişimi, risk ve uyumluluk** çözümleri ailesi: tüm verinin (on-prem, multicloud, SaaS) **haritası/kataloğu**, otomatik **keşif ve sınıflandırma** (hassas veri, ör. kredi kartı numarası), veri soy ağacı (lineage), erişim/yaşam döngüsü yönetimi
+  - İki ana alan: **risk ve uyumluluk** (Microsoft 365 verisi: bilgi koruma, veri kaybı önleme) ve **birleşik veri yönetişimi** (Azure SQL, Data Lake, S3 vb. veri kaynakları)
+- 🛠 **Pratik:** `az policy assignment create` ile *Allowed locations* politikasını bir RG'ye atayıp izin verilmeyen bölgede kaynak oluşturma denemesinin reddedildiğini görme; production RG'ye `CanNotDelete` lock koyup silme denemesinin **reddedildiğini** gösterme; ReadOnly lock'ın bir ayarı değiştirmeyi engellediğini gözlemleme; lock'ları kaldırıp temizleme (`az lock create/list/delete`).
+- **Sınav tuzakları:** **Policy vs RBAC**; Policy vs lock; Delete vs ReadOnly; lock'ın Owner'ı da durdurması ve miras alınması; Purview'un ne yaptığı (veri yönetişimi — kimlik veya maliyet aracı değil); initiative'in ne olduğu
+- 📝 **Quiz:** Policy etkileri ve kapsamı, Policy/RBAC/lock ayrımı, lock türleri, Purview senaryoları (≈18 soru)
+
+#### C1.13 Azure Kaynaklarını Yönetme ve Dağıtma Araçları · `13-management-deployment-tools` ⭐
+- 📌 **Resmî hedef:** *Describe features and tools for managing and deploying Azure resources* — **Azure portal** · **Azure Cloud Shell** (Azure CLI ve Azure PowerShell dahil) · **Azure Arc** · **infrastructure as code** · **Azure Resource Manager** ve **ARM template**'leri
+- **Teori — The Azure portal:**
+  - Web tabanlı birleşik konsol: kaynak oluşturma/yönetme, **dashboard**'lar (özelleştirilebilir), izleme, erişilebilirlik; sürekli güncellenir, kesintisiz bakım; tekrarlanabilir/otomatik işler için uygun değildir
+- **Teori — Azure Cloud Shell:**
+  - Tarayıcıdan (portal içinden veya `shell.azure.com`) erişilen, **kimliği hazır** etkileşimli kabuk; **Bash** (Azure CLI) veya **PowerShell** (Azure PowerShell); kurulum gerektirmez, araçlar güncel, dosyalar için isteğe bağlı depolama
+  - **Azure CLI** (`az …`, Bash'e yakın sözdizimi, platformlar arası) vs **Azure PowerShell** (`New-AzResourceGroup` gibi cmdlet'ler) — aynı yetenekler, farklı ekosistem; yerel kurulum da mümkündür
+  - Aynı iş iki sözdizimiyle: `az group create --name rg-demo --location westeurope` ↔ `New-AzResourceGroup -Name rg-demo -Location westeurope`; çıktı süzme: `--query` (JMESPath) ve `-o table`
+- **Teori — Azure Arc:**
+  - Azure dışındaki kaynakları (on-prem sunucular, **diğer bulutlardaki** sunucular, **Kubernetes** kümeleri, SQL Server/veri servisleri, VMware/SCVMM VM'leri) **Azure Resource Manager'a yansıtıp** Azure'dan yönetme
+  - Sağladıkları: tek panelde envanter, **Azure Policy** ve **RBAC**, **Defender for Cloud**, Azure Monitor, tag'ler; hybrid ve multicloud yönetişimi
+- **Teori — Azure Resource Manager (ARM)** ⭐:
+  - Azure'un **dağıtım ve yönetim servisi**: portal, CLI, PowerShell, REST API, SDK'dan gelen **tüm** istekler ARM'dan geçer → tutarlı sonuç, kimlik doğrulama/yetkilendirme, RBAC/tag/lock/Policy'nin uygulandığı tek nokta
+  - Faydaları: kaynakları **grup halinde** yönetme, **deklaratif şablonlarla** dağıtım, bağımlılıkların doğru sırayla kurulması, tekrar tekrar tutarlı dağıtım
+- **Teori — Infrastructure as Code (IaC):**
+  - Altyapıyı **kodla** (dosyalarla) tanımlayıp dağıtmak: tekrarlanabilirlik, sürüm kontrolü ve kod incelemesi, ortamlar arası tutarlılık, **idempotent** dağıtım (aynı şablon tekrar uygulandığında aynı sonuç), otomasyon (CI/CD)
+  - **Deklaratif** ("ne istediğim") vs imperatif ("adım adım ne yapılacağı") yaklaşım; Azure'da: **ARM template**, **Bicep**; *(bağlam)* Terraform (→ S8.2)
+- **Teori — ARM templates:**
+  - **JSON** biçiminde deklaratif şablon: `parameters`, `variables`, `resources`, `outputs`; **paralel dağıtım** (ARM bağımlılık sırasını kendisi çözer), şablon doğrulama (validation) ve önizleme (**what-if**), modüler şablonlar, Template Specs *(bağlam)*
+  - **Bicep:** ARM template'in okunabilir DSL'i; **ARM JSON'a derlenir**; aynı yetenekler, daha kısa sözdizimi
+  - **Portalda şablon üretme:** kaynak oluşturma sihirbazının **Review + create** adımındaki *Download a template for automation* ve mevcut kaynak/resource group için **Export template** — portalda tıklanarak yapılan işin ARM JSON karşılığını verir; otomasyona başlangıç noktasıdır (dışa aktarılan şablon genellikle temizlenip parametrelenmelidir)
+- 🛠 **Pratik:** resource group + storage account + App Service plan + web app'i `az` CLI ile oluşturup silme; aynı storage account'u bir ARM template/Bicep dosyasıyla `az deployment group create` ile dağıtma ve ikinci dağıtımda `what-if` ile **değişiklik olmadığını** (idempotent) görme.
+- **Sınav tuzakları:** "aynı ortamı tekrar tekrar tutarlı kur" → ARM template/IaC; "kurulumsuz tarayıcı komut satırı" → Cloud Shell; "başka buluttaki sunucuya Azure Policy uygula" → Arc; tüm isteklerin ARM'dan geçmesi; ARM template biçimi (JSON) ve deklaratif olması; CLI ile PowerShell'in aynı işi yapabilmesi
+- 📝 **Quiz:** araç seçimi, ARM/IaC nitelikleri, Arc senaryoları, Cloud Shell (≈16 soru)
+
+#### C1.14 Azure İzleme Araçları · `14-monitoring-tools` ⭐
+- 📌 **Resmî hedef:** *Describe monitoring tools in Azure* — **Azure Advisor** · **Azure Service Health** · **Azure Monitor** (Log Analytics, Azure Monitor alert'leri, Application Insights dahil)
+- **Teori — Azure Advisor:**
+  - Kaynak yapılandırmanı ve kullanım verini analiz eden **kişiselleştirilmiş öneri** servisi; beş kategori ⭐: **Reliability**, **Security**, **Performance**, **Cost**, **Operational Excellence**; **Advisor score**; öneriyi uygulama/erteleme/kapatma, uyarı kurma, öneri dışa aktarma
+  - Örnekler: az kullanılan VM'i küçült/kapat (maliyet), tek örnekli VM'e availability set öner (güvenilirlik)
+- **Teori — Azure Service Health:**
+  - Üç parça ⭐: **Azure Status** (tüm Azure'un **genel** durum sayfası, herkese açık) · **Service Health** (**senin** subscription ve bölgelerini etkileyen olaylar: hizmet sorunları, **planlı bakım**, sağlık tavsiyeleri, güvenlik bildirimleri; olay geçmişi ve kök neden raporları; uyarı kuralları) · **Resource Health** (**tek bir kaynağın** mevcut ve geçmiş sağlık durumu)
+  - Kullanım: "uygulamam mı bozuk, Azure mı?" sorusunu ayırt etmek
+- **Teori — Azure Monitor:**
+  - Azure, on-prem ve diğer bulutlardan **metrik** ve **log** toplayan, analiz eden ve harekete geçiren **birleşik izleme platformu**; veri kaynakları: uygulama, işletim sistemi, Azure kaynakları, subscription (Activity Log), tenant
+  - **Log Analytics:** log verisini **KQL** ile sorgulama aracı (workspace) (→ C2.13) · **Azure Monitor alerts:** metrik/log/aktivite koşulu → **action group** (e-posta, SMS, webhook, Logic App, Function) · **Application Insights:** uygulama performans izleme (istek süreleri, hata oranı, bağımlılıklar, sayfa görüntüleme, **availability test**'ler)
+- **Teori — Azure Monitor merkezi dashboard'u:**
+  - Portal'daki **Azure Monitor** sayfası: tüm izleme yeteneklerine tek giriş noktası (metrics explorer, logs, alerts, insights)
+  - **Azure dashboard**'ları: metrik grafiklerini, log sorgu sonuçlarını ve kaynak kutucuklarını **tek ekranda** toplama, paylaşma (RBAC ile); *(bağlam)* Grafana entegrasyonu
+  - **Insights:** VM insights, Container insights, Application Insights gibi hazır **küratörlü** görünümler
+- **Teori — Azure Monitor raporları:**
+  - **Workbooks:** metrik, log ve metni birleştiren **etkileşimli rapor** şablonları (parametreler, grafikler, tablolar); hazır galeri şablonları ve özel raporlar; paylaşılabilir
+  - Log Analytics sorgularından grafik (`render`), alert geçmişi ve **Activity Log** raporları; *(bağlam)* Power BI'a aktarma
+- **Sınav tuzakları:** Advisor ile Service Health (öneri ↔ olay); Service Health ile Resource Health ile Azure Status (kapsam farkı); "uygulamanın yavaş isteklerini izle" → Application Insights; "metrik eşiği aşınca SMS" → alert + action group; "log'ları sorgula" → Log Analytics; "etkileşimli rapor" → Workbooks
+- 🛠 **Pratik:** `az advisor recommendation list -o table` ile önerileri listeleme ve portalda kategori bazında inceleme; Service Health'te bir **uyarı kuralı** (planlı bakım/hizmet sorunu → e-posta); bir VM'e **metrik alert + action group** kurup tetikleme; Log Analytics'te basit bir KQL sorgusu; metrik grafiklerinden bir **Azure dashboard** oluşturup paylaşma; galeriden bir **Workbook** raporu açıp özelleştirme.
+- 📝 **Quiz:** izleme aracı seçimi, Advisor kategorileri, Service Health bileşenleri, Monitor özellikleri (≈18 soru)
+
+#### C1.15 Deneme Sınavı ve Sınav Stratejisi · `15-practice-exam`
 - **Tam uzunlukta deneme sınavı** (≈50 soru) — alan ağırlıklarına göre dağıtılmış (%25-30 / %35-40 / %30-35); tek/çoklu seçim, evet-hayır tablosu, sıralama, senaryo
 - **Puanlama:** alan bazında puan tablosu; her yanlışı konu koduna (C1.x) bağlayan tekrar planı
-- **Sınav teknikleri:** "NOT / EXCEPT" soruları, eleme yöntemi, anahtar kelimeler ("en az yönetim yükü", "en düşük maliyet", "bölgesel felaket", "internetten geçmeden"), evet-hayır tablolarında her satırı bağımsız değerlendirmek, zaman yönetimi
+- **Sınav teknikleri:** "NOT / EXCEPT" soruları, eleme yöntemi, anahtar kelimeler ("en az yönetim yükü", "en düşük maliyet", "bölgesel felaket", "internetten geçmeden", "otomatik"), evet-hayır tablolarında her satırı bağımsız değerlendirmek, zaman yönetimi
 - **Sınav günü:** Pearson VUE test merkezi veya çevrimiçi gözetim kuralları; resmî ücretsiz **practice assessment**; Microsoft Learn'deki ücretsiz AZ-900 learning path ve sandbox'lar
-- 🛠 **Kod:** Deneme sınavını zamanlı çöz → yanlışları C1.x ile eşleştir → zayıf alan tekrar listesi; ardından resmî practice assessment'ı kapalı kitap çöz.
+- 🛠 **Pratik:** Deneme sınavını zamanlı çöz → yanlışları C1.x ile eşleştir → zayıf alan tekrar listesi; ardından resmî practice assessment'ı kapalı kitap çöz.
 - 📝 **Quiz:** Deneme sınavı + cevap anahtarı, gerekçeler ve alan bazlı puan tablosu
 
-📝 **Sınav:** "Shared responsibility'de hangi sorumluluk her zaman müşteride?" · "CapEx ile OpEx; consumption-based model?" · "Scale up / scale out / elasticity?" · "%99,95 SLA aylık kaç dakika kesinti?" · "Ürün → IaaS/PaaS/SaaS eşleştirme" · "Availability zone ile region pair?" · "Resource group silinince?" · "Availability set ile scale set?" · "VPN Gateway ile ExpressRoute?" · "LRS/ZRS/GRS/GZRS/RA-GRS hangi arızaya dayanır?" · "Archive tier'dan okuma?" · "Data Box ne zaman?" · "Entra ID ile Entra Domain Services; B2B ile B2C?" · "Conditional Access ne yapar?" · "RBAC ile Azure Policy?" · "Resource lock Owner'ı da durdurur mu?" · "Pricing Calculator ile TCO?" · "Tag'ler miras alınır mı?" · "Azure Arc ne yapar?" · "Advisor, Service Health, Resource Health farkı?"
+📝 **Sınav:** "Shared responsibility'de hangi sorumluluk her zaman müşteride?" · "CapEx ile OpEx; consumption-based model?" · "Scale up / scale out / elasticity?" · "HA ile reliability farkı?" · "%99,95 SLA aylık kaç dakika kesinti?" · "Ürün → IaaS/PaaS/SaaS eşleştirme; serverless nitelikleri?" · "Availability zone ile region pair?" · "Resource group silinince; bir kaynak iki grupta olabilir mi?" · "Politikayı tüm subscription'lara uygula?" · "Availability set ile scale set ile availability zone?" · "Proximity placement group ne sağlar?" · "Tek container'ı orkestrasyonsuz çalıştır?" · "VPN Gateway ile ExpressRoute; peering transitive mi?" · "LRS/ZRS/GRS/GZRS/RA-GRS hangi arızaya dayanır?" · "Archive tier'dan okuma?" · "File Sync, AzCopy, Storage Explorer farkı?" · "Data Box ne zaman; Azure Migrate ne yapar?" · "Entra ID ile Entra Domain Services; B2B ile B2C?" · "Conditional Access ne yapar; MFA faktörleri?" · "Owner, Contributor, Reader farkı?" · "Zero Trust'ın üç ilkesi; defense in depth katman sırası?" · "Defender for Cloud ne yapar?" · "Pricing Calculator ile TCO?" · "Tag'ler miras alınır mı?" · "RBAC ile Azure Policy; Policy etkileri?" · "Resource lock Owner'ı da durdurur mu?" · "Purview ne yapar?" · "Azure Arc ne yapar; ARM template neden?" · "Advisor, Service Health, Resource Health farkı?" · "Workbooks ne için?"
 
 ---
 
@@ -4082,7 +4285,7 @@ dotnet-interview/
 │   └── 06-mock-checklist/
 │
 └── 06-certifications/              # seviyelerden bağımsız sertifika pisti
-    ├── 01-az-900-azure-fundamentals/      # C01.AzureFundamentals (13 konu)
+    ├── 01-az-900-azure-fundamentals/      # C01.AzureFundamentals (15 konu)
     └── 02-ai-200-azure-ai-cloud-developer/ # C02.AzureAiCloudDeveloper (14 konu + docker-compose.yml)
 ```
 
@@ -4172,13 +4375,13 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 | 29-31 | S10 Sistem Tasarımı + I3 tatbikatları | D10 tasarım soruları |
 | 32-35 | 🏁 **Senior Capstone** + I5 + I6 Senior mock | — |
 
-### 📜 Sertifika Pisti (~12 hafta, seviyelerle paralel)
+### 📜 Sertifika Pisti (~13 hafta, seviyelerle paralel)
 
 Sertifika pisti seviye sırasının parçası değildir; ilgili modüller bittikten sonra **seviye çalışmasına paralel** (haftada 2-3 gün) ya da ardışık yürütülür. Her sertifika kendi **deneme sınavıyla** biter.
 
 | Zamanlama | Modül | Not |
 |-----------|-------|-----|
-| Junior hafta ~21-29 (J12 sonrası) | **C1 AZ-900** (~4 hafta) | Junior capstone'dan önce veya hemen sonra; Azure'a ilk temas |
+| Junior hafta ~21-29 (J12 sonrası) | **C1 AZ-900** (~5 hafta) | Junior capstone'dan önce veya hemen sonra; Azure'a ilk temas |
 | Mid hafta ~35-43 ve sonrası (M9, M12, M13, M14, M15.4 sonrası) | **C2 AI-200** (~8 hafta) | Mid capstone öncesi/paralel; sınavdan önce M6/M8 (veri), M9 (kimlik), M12 (mesajlaşma) tekrarı |
 
 > Sınava girme kararı sana aittir: C1/C2'yi **bilgi** olarak çalışıp sınava girmeyebilirsin; quiz ve deneme sınavı yine seviye ölçer. Sınavdan önce resmî study guide'ı ve **practice assessment**'ı kontrol et.
