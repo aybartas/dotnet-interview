@@ -3774,7 +3774,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Management group** ⭐: subscription'ları gruplayan kapsam; Policy ve RBAC'ı **birçok subscription'a birden** uygulama; **6 seviyeye kadar** derinlik (root hariç), tek bir root management group, bir subscription/management group tek bir ebeveyne bağlıdır; 10.000 management group'a kadar
   - **Hiyerarşi:** Entra **tenant** → root management group → management group'lar → **subscription** → **resource group** → **resource**; ayarlar yukarıdan aşağı **miras** alınır
 - **Sınav tuzakları:** availability zone ile region pair ("datacenter arızası" → zone; "bölgesel felaket" → pair); "politikayı tüm subscription'lara uygula" → management group; resource group silinince ne olur; bir kaynak iki grupta olabilir mi; global servisler
-- 🛠 **Pratik:** `az account list-locations -o table` ve `az account list-locations --query "[?metadata.regionType=='Physical']"` ile bölge/pair keşfi; `az group create/list/delete` ile resource group yaşam döngüsü — bir grupta iki kaynak açıp **grubu silince ikisinin de gittiğini** gözlemleme; kendi tenant → management group → subscription → RG şemanı çizme.
+- 🛠 **Pratik:** `az account list-locations -o table` ve `az account list-locations --query "[?metadata.regionType=='Physical']"` (eşleşik bölge sütunu `metadata.pairedRegion` ile) ile bölge/pair keşfi; `az group create/list/delete` ile resource group yaşam döngüsü — bir grupta iki kaynak açıp **grubu silince ikisinin de gittiğini** gözlemleme; kendi tenant → management group → subscription → RG şemanı çizme.
 - 📝 **Quiz:** zone/pair/sovereign senaryoları, resource group kuralları, subscription ve management group kapsamı, hiyerarşi ve miras (≈20 soru)
 
 #### C1.5 Azure Compute ve Virtual Machines · `05-compute-virtual-machines` ⭐
@@ -3789,7 +3789,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - Kullanım: değişken trafikli web katmanı, büyük hesaplama işleri
 - **Teori — Availability sets:**
   - Tek datacenter içinde VM'leri **update domain** (planlı bakımda aynı anda yeniden başlatılan grup; varsayılan 5, en çok 20) ve **fault domain** (ortak güç/ağ anahtarını paylaşan donanım grubu; en çok 3) arasına dağıtma
-  - Ek ücret yok (yalnızca VM'ler); **availability zone ile farkı:** set = datacenter içi donanım/bakım arızası, zone = datacenter arızası
+  - Ek ücret yok (yalnızca VM'ler); **availability zone ile farkı:** set = datacenter içi donanım/bakım arızası, zone = datacenter arızası; Microsoft yeni HA tasarımlarında availability zone'ları / Flexible orkestrasyonlu scale set'leri öneriyor
 - **Teori — Proximity placement groups** *(bağlam — kurslarda işlenir)*:
   - VM'leri **fiziksel olarak birbirine yakın** (aynı datacenter içinde) yerleştirerek **en düşük ağ gecikmesini** sağlamak; düşük gecikme gerektiren çok katmanlı/HPC iş yükleri
   - Trade-off: yakınlık ↔ dayanıklılık (aynı yere toplamak zone yayılımının tersidir); availability set ve scale set ile birlikte kullanılabilir
