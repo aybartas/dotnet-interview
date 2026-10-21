@@ -3872,7 +3872,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Azure File Sync:** yukarıda — sürekli, iki yönlü senkron
 - **Teori — Migration seçenekleri:**
   - **Azure Migrate:** taşıma için **merkezi hub** — keşif, değerlendirme (boyutlandırma/maliyet), sunucu, veritabanı, web uygulaması ve VDI taşıma; entegre araçlar (Discovery and assessment, Server Migration, Data Migration Assistant, Database Migration Service, Web app migration assistant)
-  - **Azure Data Box:** çok büyük veriyi (ör. 40 TB'a kadar kullanılabilir kapasite — Data Box ailesinde daha büyük seçenekler de var) **fiziksel cihazla** taşıma; ağ bağlantısı yetersiz/pahalı/yoksa; içe ve dışa aktarma; cihaz verisi güvenle silinir
+  - **Azure Data Box:** çok büyük veriyi **fiziksel cihazla** taşıma (Data Box Disk; yeni nesil Data Box ~120/525 TB; Data Box Heavy emekli — kapasiteler değişir); ağ bağlantısı yetersiz/pahalı/yoksa; içe ve dışa aktarma; cihaz verisi güvenle silinir
 - **Sınav tuzakları:** redundancy ↔ senaryo eşleştirme ("bölgesel felakette de okunabilir" → RA-GRS/RA-GZRS; "zone arızası, tek bölge" → ZRS); Archive'dan anında okuma yok; "on-prem dosya sunucusunu Azure ile senkronla, önbellekte tut" → File Sync; "terabaytlarca veri, ağ yok" → Data Box; "komut satırı" → AzCopy, "grafik araç" → Storage Explorer; "taşıma için değerlendirme" → Azure Migrate
 - 🛠 **Pratik:** `C01` projesinde **Blob Storage** demosu (`Azure.Storage.Blobs`): container oluşturma, upload/download/listeleme, **access tier değiştirme** — yerelde **Azurite** emülatörüyle (Azure hesabı gerekmez); AzCopy ile yerel klasörü blob container'a kopyalama (`azcopy copy … --recursive`); Azure Files paylaşımı oluşturup bağlama; aynı storage account'u LRS ve GZRS olarak Pricing Calculator'da karşılaştırma.
 - 📝 **Quiz:** servis seçimi, redundancy ve tier eşleştirme, taşıma/migration aracı seçimi (≈20 soru)
@@ -3889,7 +3889,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 - **Teori — Authentication vs authorization** ⭐: **AuthN** = "sen kimsin?" (kimliği kanıtlama: şifre, MFA); **AuthZ** = "ne yapabilirsin?" (kimliği doğrulanmış kullanıcının yetkileri: RBAC); önce AuthN sonra AuthZ
 - **Teori — External identities:**
   - **B2B collaboration:** iş ortaklarını kendi kimlikleriyle (kendi Entra/Microsoft/Google hesabı) **misafir** olarak davet etme; kendi tenant'ında erişim yönetimi; B2B direct connect (Teams paylaşımlı kanallar)
-  - **B2C / Microsoft Entra External ID:** **müşteriye dönük** uygulamalar için kimlik (kayıt, giriş, sosyal hesaplar, özelleştirilebilir sayfalar); Azure AD B2C yeni müşterilere kapandı → **Entra External ID**
+  - **B2C / Microsoft Entra External ID:** **müşteriye dönük** uygulamalar için kimlik (kayıt, giriş, sosyal hesaplar, özelleştirilebilir sayfalar); Azure AD B2C 1 Mayıs 2025'ten beri yeni müşterilere kapalı (mevcutlara destek sürüyor) → **Entra External ID**
 - **Teori — Single Sign-On (SSO):** tek kimlikle **birden çok uygulamaya** bir kez giriş; kullanıcı deneyimi + güvenlik (tek kimliğin yönetimi, hesap kapatıldığında tüm erişimin bitmesi); ne kadar çok kimlik o kadar çok şifre/risk
 - **Teori — Multi-Factor Authentication (MFA / 2FA):**
   - İki veya daha fazla **faktör**: **bildiğin** (şifre, PIN) · **sahip olduğun** (telefon, donanım anahtarı) · **olduğun** (parmak izi, yüz); 2FA = MFA'nın iki faktörlü hâli
@@ -3905,7 +3905,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - Atama **kapsamdan aşağı miras** alınır; izinler toplanır (allow model); **en az yetki** ilkesi; Azure Resource Manager üzerinden uygulanır
   - RBAC vs **Entra rolleri** (Global Administrator gibi directory rolleri) vs **Azure Policy** (→ C1.12)
 - **Sınav tuzakları:** Entra ID ile Entra Domain Services ("klasik domain join ve LDAP" → Domain Services); B2B ile B2C; SSO ile MFA; Conditional Access'in **MFA'yı koşula bağladığı**; AuthN ile AuthZ eşleştirme; "yalnızca görüntüleme" → Reader; "erişim yönetimi hariç her şey" → Contributor; RBAC'ın miras alınması
-- 🛠 **Pratik:** Entra'da bir kullanıcı ve grup oluşturma; bir resource group üzerinde **Reader** rolünü gruba atama ve yetkinin yalnızca o kapsamda geçerli olduğunu doğrulama (`az role assignment create/list`); bir B2B misafir kullanıcı daveti; (deneme tenant'ında) MFA/security defaults ayarlarına ve bir Conditional Access politikası şablonuna bakma.
+- 🛠 **Pratik:** Entra'da bir kullanıcı ve grup oluşturma; bir resource group üzerinde **Reader** rolünü gruba atama ve yetkinin yalnızca o kapsamda geçerli olduğunu doğrulama (`az role assignment create/list`); Microsoft Graph `/invitations` ile (`az rest`) bir B2B misafir kullanıcı daveti; temizlik. MFA/security defaults ve Conditional Access şablonları teoride anlatılır.
 - 📝 **Quiz:** kimlik servisi seçimi, Entra faydaları, AuthN/AuthZ, external identities, SSO/MFA/passwordless/Conditional Access, RBAC kapsamı ve rolleri (≈22 soru)
 
 #### C1.10 Güvenlik: Zero Trust, Defense in Depth, Microsoft Defender for Cloud · `10-security` ⭐
@@ -3921,7 +3921,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Bulut güvenliği duruş yönetimi (CSPM)** ve **iş yükü koruması (CWPP)**: Azure, **on-prem** (Arc ile) ve **diğer bulutlar** (AWS, GCP)
   - **Assess** (sürekli değerlendirme, zafiyet tarama) · **Secure** (**secure score**, öneriler, Azure Policy tabanlı güvenlik benchmark'ı) · **Defend** (tehdit tespiti, güvenlik uyarıları, olay müdahalesi); Defender planları (Servers, Storage, SQL, Containers…)
 - **Sınav tuzakları:** Zero Trust ilkesi ↔ uygulama eşleştirme; defense in depth katman sırası ve katman ↔ kontrol eşleştirmesi; Defender for Cloud'un multicloud/hybrid kapsamı; Defender for Cloud ile Azure Policy ve Advisor farkı
-- 🛠 **Pratik:** Defender for Cloud'da **secure score** ve önerilere bakma, bir öneriyi (ör. storage account public erişimi) uygulayıp puanın etkisini izleme; kendi örnek mimarin için defense in depth katman tablosunu doldurma (README'de şablon + çözüm).
+- 🛠 **Pratik:** `az security` komutlarıyla Defender for Cloud **secure score** ve önerilerine bakma; public blob erişimine açık bir storage account'u `--allow-blob-public-access false` ile düzeltme; kendi örnek mimarin için defense in depth katman tablosunu doldurma (README'de şablon + çözüm).
 - 📝 **Quiz:** Zero Trust ilkeleri, defense in depth katmanları, Defender for Cloud yetenekleri (≈15 soru)
 
 #### C1.11 Azure'da Maliyet Yönetimi · `11-cost-management` ⭐
@@ -3931,14 +3931,14 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - Tasarruf yolları: reservations, savings plan, **spot VM**, **Azure Hybrid Benefit** (mevcut Windows Server/SQL Server lisansları), dev/test fiyatlandırması, doğru boyutlandırma (Advisor), otomatik kapatma, kaynak silme
 - **Teori — Azure Pricing Calculator:**
   - Henüz kurulmamış bir iş yükünün **tahmini maliyetini** hesaplama: servis ekle → bölge, tier, saat, adet seç → aylık tahmin; dışa aktarma ve paylaşma; tahmin olduğu, fatura olmadığı
-  - *(bağlam)* **TCO Calculator:** on-prem altyapının (sunucu, depolama, ağ, işçilik, enerji) Azure ile **toplam sahip olma maliyeti** karşılaştırması — Pricing Calculator ile farkı klasik bir sorudur
+  - *(bağlam)* **TCO Calculator** *(bağımsız araç kaldırıldı; karşılaştırma artık **Azure Migrate business case** ile — bkz. 2026 Radarı)*: on-prem altyapının (sunucu, depolama, ağ, işçilik, enerji) Azure ile **toplam sahip olma maliyeti** karşılaştırması — Pricing Calculator ile farkı klasik bir sorudur
 - **Teori — Azure Cost Management:**
   - **Cost analysis** (gerçekleşen maliyetleri kaynak/servis/bölge/**tag** bazında görme, trend), **budgets** (limit + eşik **uyarıları**, e-posta/action group), **cost alerts** (bütçe, kredi, departman harcama kotası), **öneriler** (Advisor ile), **dışa aktarma** ve zamanlanmış raporlar; birden çok subscription ve bulut
 - **Teori — Resource tags:**
   - **Anahtar-değer** meta veri (`env=prod`, `costCenter=1234`, `owner=ali`); kullanım: **maliyet yönetimi ve raporlama**, kaynak yönetimi/arama, operasyon (otomatik kapatma), güvenlik (veri sınıflandırma), uyumluluk
   - Kurallar: tag'ler **varsayılan olarak miras alınmaz** (resource group tag'i içindeki kaynağa geçmez); **Azure Policy** ile zorunlu kılma veya gruptan kopyalama (Modify etkisi); portal/CLI/ARM ile ekleme
 - **Sınav tuzakları:** Pricing ile TCO Calculator; "bütçe %80 olunca e-posta" → Cost Management budget; egress ücreti ve bölge farkı; "maliyeti departmana göre raporla" → tag; tag mirası; reservation ile spot
-- 🛠 **Pratik:** **Pricing Calculator**'da küçük bir web uygulaması (App Service + SQL Database + storage) tahmini; Cost Management'ta **budget** (aylık limit, %80 ve %100 eşikleri) ve alarm; kaynaklara `env`/`owner`/`costCenter` tag'leri verip **tag bazlı cost analysis** görünümü; `C01` hesaplayıcısına 3 yıllık **CapEx (on-prem) vs OpEx (cloud)** karşılaştırması.
+- 🛠 **Pratik:** **Pricing Calculator**'da küçük bir web uygulaması (App Service + SQL Database + storage) tahmini (README'de şablon); **budget** (aylık limit, %80 ve %100 eşikleri) ve alarm; `az tag`/`az resource tag` ile `env`/`owner`/`costCenter` tag'leri ve **tag bazlı** maliyet raporu (C01'de tag mirası olmadığını gösteren örnek rapor); `C01` hesaplayıcısına 3 yıllık **CapEx (on-prem) vs OpEx (cloud)** karşılaştırması.
 - 📝 **Quiz:** maliyet faktörleri, araç seçimi, tasarruf yolu, budget ve tag senaryoları (≈18 soru)
 
 #### C1.12 Azure Yönetişim ve Uyumluluk · `12-governance-compliance` ⭐
@@ -3959,8 +3959,8 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 - **Teori — Microsoft Purview:**
   - **Veri yönetişimi, risk ve uyumluluk** çözümleri ailesi: tüm verinin (on-prem, multicloud, SaaS) **haritası/kataloğu**, otomatik **keşif ve sınıflandırma** (hassas veri, ör. kredi kartı numarası), veri soy ağacı (lineage), erişim/yaşam döngüsü yönetimi
   - İki ana alan: **risk ve uyumluluk** (Microsoft 365 verisi: bilgi koruma, veri kaybı önleme) ve **birleşik veri yönetişimi** (Azure SQL, Data Lake, S3 vb. veri kaynakları)
-- 🛠 **Pratik:** `az policy assignment create` ile *Allowed locations* politikasını bir RG'ye atayıp izin verilmeyen bölgede kaynak oluşturma denemesinin reddedildiğini görme; production RG'ye `CanNotDelete` lock koyup silme denemesinin **reddedildiğini** gösterme; ReadOnly lock'ın bir ayarı değiştirmeyi engellediğini gözlemleme; lock'ları kaldırıp temizleme (`az lock create/list/delete`).
 - **Sınav tuzakları:** **Policy vs RBAC**; Policy vs lock; Delete vs ReadOnly; lock'ın Owner'ı da durdurması ve miras alınması; Purview'un ne yaptığı (veri yönetişimi — kimlik veya maliyet aracı değil); initiative'in ne olduğu
+- 🛠 **Pratik:** `az policy assignment create` ile *Allowed locations* politikasını bir RG'ye atayıp izin verilmeyen bölgede kaynak oluşturma denemesinin reddedildiğini görme; production RG'ye `CanNotDelete` lock koyup silme denemesinin **reddedildiğini** gösterme; ReadOnly lock'ın bir ayarı değiştirmeyi engellediğini gözlemleme; lock'ları kaldırıp temizleme (`az lock create/list/delete`).
 - 📝 **Quiz:** Policy etkileri ve kapsamı, Policy/RBAC/lock ayrımı, lock türleri, Purview senaryoları (≈18 soru)
 
 #### C1.13 Azure Kaynaklarını Yönetme ve Dağıtma Araçları · `13-management-deployment-tools` ⭐
@@ -3984,7 +3984,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **JSON** biçiminde deklaratif şablon: `parameters`, `variables`, `resources`, `outputs`; **paralel dağıtım** (ARM bağımlılık sırasını kendisi çözer), şablon doğrulama (validation) ve önizleme (**what-if**), modüler şablonlar, Template Specs *(bağlam)*
   - **Bicep:** ARM template'in okunabilir DSL'i; **ARM JSON'a derlenir**; aynı yetenekler, daha kısa sözdizimi
   - **Portalda şablon üretme:** kaynak oluşturma sihirbazının **Review + create** adımındaki *Download a template for automation* ve mevcut kaynak/resource group için **Export template** — portalda tıklanarak yapılan işin ARM JSON karşılığını verir; otomasyona başlangıç noktasıdır (dışa aktarılan şablon genellikle temizlenip parametrelenmelidir)
-- 🛠 **Pratik:** resource group + storage account + App Service plan + web app'i `az` CLI ile oluşturup silme; aynı storage account'u bir ARM template/Bicep dosyasıyla `az deployment group create` ile dağıtma ve ikinci dağıtımda `what-if` ile **değişiklik olmadığını** (idempotent) görme.
+- 🛠 **Pratik:** resource group + storage account + App Service plan + web app'i `az` CLI ile oluşturup silme; aynı storage account'u bir ARM template/Bicep dosyasıyla `az deployment group create` ile dağıtma ve ikinci dağıtımda `what-if` ile **değişiklik olmadığını** (idempotent) görme; `az bicep build` ile Bicep → ARM JSON; CLI ↔ Azure PowerShell karşılıkları.
 - **Sınav tuzakları:** "aynı ortamı tekrar tekrar tutarlı kur" → ARM template/IaC; "kurulumsuz tarayıcı komut satırı" → Cloud Shell; "başka buluttaki sunucuya Azure Policy uygula" → Arc; tüm isteklerin ARM'dan geçmesi; ARM template biçimi (JSON) ve deklaratif olması; CLI ile PowerShell'in aynı işi yapabilmesi
 - 📝 **Quiz:** araç seçimi, ARM/IaC nitelikleri, Arc senaryoları, Cloud Shell (≈16 soru)
 
@@ -4007,7 +4007,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Workbooks:** metrik, log ve metni birleştiren **etkileşimli rapor** şablonları (parametreler, grafikler, tablolar); hazır galeri şablonları ve özel raporlar; paylaşılabilir
   - Log Analytics sorgularından grafik (`render`), alert geçmişi ve **Activity Log** raporları; *(bağlam)* Power BI'a aktarma
 - **Sınav tuzakları:** Advisor ile Service Health (öneri ↔ olay); Service Health ile Resource Health ile Azure Status (kapsam farkı); "uygulamanın yavaş isteklerini izle" → Application Insights; "metrik eşiği aşınca SMS" → alert + action group; "log'ları sorgula" → Log Analytics; "etkileşimli rapor" → Workbooks
-- 🛠 **Pratik:** `az advisor recommendation list -o table` ile önerileri listeleme ve portalda kategori bazında inceleme; Service Health'te bir **uyarı kuralı** (planlı bakım/hizmet sorunu → e-posta); bir VM'e **metrik alert + action group** kurup tetikleme; Log Analytics'te basit bir KQL sorgusu; metrik grafiklerinden bir **Azure dashboard** oluşturup paylaşma; galeriden bir **Workbook** raporu açıp özelleştirme.
+- 🛠 **Pratik:** `az advisor recommendation list -o table` ile önerileri listeleme; Service Health için bir **activity log alert** (hizmet sorunu/planlı bakım → e-posta); bir storage account'a **metrik alert + action group**; Log Analytics workspace'te basit bir KQL sorgusu; temizlik. Azure dashboard'ları ve Workbook'lar teoride anlatılır.
 - 📝 **Quiz:** izleme aracı seçimi, Advisor kategorileri, Service Health bileşenleri, Monitor özellikleri (≈18 soru)
 
 #### C1.15 Deneme Sınavı ve Sınav Stratejisi · `15-practice-exam`
@@ -4419,6 +4419,7 @@ Sertifika pisti seviye sırasının parçası değildir; ilgili modüller bittik
 | Sertifikalar | Giriş: **AZ-900** (3 alan: kavramlar %25-30, mimari & servisler %35-40, yönetişim %30-35). Geliştirici: **AZ-204 → AI-200** (AZ-204 31 Temmuz 2026'da emekli; study guide *as of October 7, 2026*: container %20-25, veri servisleri & vector **%30-35** (önceki sürümde %25-30), servis entegrasyonu %20-25, güvenlik/izleme %20-25; hedef kitle Python bilgisi bekler). AZ-900 study guide *as of July 20, 2026* (compute/ağ, yönetim araçları ve izleme bölümlerinde küçük değişiklik). Ayrıca **AI-102 → AI-103**; mimari için AZ-305 | C1, C2, M15.7, S8 |
 | Veritabanları | **PostgreSQL 18** (async I/O, `uuidv7()`, virtual generated columns); **Redis 8** AGPLv3 ile yeniden açık kaynak + **Valkey** forku; MongoDB 8.x Community'de search/vector search; MongoDB EF Core provider'da vector search | J8.6, M6.4, M8 |
 | Mesajlaşma | **RabbitMQ 4.x:** classic queue mirroring 4.0'da kaldırıldı (quorum queue dayanıklı varsayılan seçim), quorum queue'larda `delivery-limit` varsayılanı **20**; **Khepri** metadata store 4.2'den itibaren yeni kurulumlarda varsayılan ve Raft metrik adları değişti; 4.3'te transient classic queue'lar varsayılan olarak kapatıldı ve `delivery-count`/`acquired-count` ayrıldı | M12.2 |
+| Azure (AZ-900 konuları) | Azure AD B2C 1 Mayıs 2025'ten beri yeni müşteriye kapalı → **Entra External ID**; Azure'da **zorunlu MFA** (portal fazı 2025 başı, CLI/PowerShell/IaC fazı Ekim 2025'ten itibaren kademeli); bağımsız **TCO Calculator** kaldırıldı (on-prem ↔ Azure karşılaştırması → **Azure Migrate business case**; resmî duyuru bulunamadı, ikincil kaynak); **Data Box Heavy** emekli, yeni nesil Data Box ~120/525 TB; Functions **Linux Consumption** 30 Eylül 2028'de emekli (→ Flex Consumption); klasik Application Insights emekli (workspace-based) | C1.6, C1.8, C1.9, C1.11, C1.14 |
 | Kimlik | **OAuth 2.1 + RFC 9700**: her yerde PKCE, implicit/ROPC yok; DPoP ve PAR yaygınlaşıyor; **Keycloak 26**: passkeys, DPoP, FAPI 2.0, organizations; Azure AD B2C → Entra External ID | J11.3, M9 |
 | Güvenlik | **OWASP Top 10:2025** — yeni: A03 Software Supply Chain Failures, A10 Mishandling of Exceptional Conditions; .NET 10'da post-quantum kriptografi | S7.1, S7.4 |
 
@@ -4436,6 +4437,7 @@ Sertifika pisti seviye sırasının parçası değildir; ilgili modüller bittik
 - [RabbitMQ 4.2.0 release notes](https://github.com/rabbitmq/rabbitmq-server/blob/main/release-notes/4.2.0.md) · [RabbitMQ 4.3 highlights](https://www.rabbitmq.com/blog/2026/04/23/rabbitmq-4.3-release) · [Khepri'nin varsayılan olma yol haritası](https://www.rabbitmq.com/blog/2025/09/01/6-khepri-default) · [Quorum queues dokümantasyonu](https://www.rabbitmq.com/docs/quorum-queues)
 - [Keycloak 26.6 release](https://www.keycloak.org/2026/04/keycloak-2660-released) · [RFC 9700 — OAuth 2.0 Security BCP](https://datatracker.ietf.org/doc/rfc9700/)
 - [OWASP Top 10:2025](https://owasp.org/Top10/2025/0x00_2025-Introduction/)
+- AZ-900 konuları: [Azure AD B2C FAQ (yeni müşterilere kapanış)](https://learn.microsoft.com/azure/active-directory-b2c/faq) · [Mandatory MFA for Azure](https://learn.microsoft.com/entra/identity/authentication/concept-mandatory-multifactor-authentication) · [Data Box overview](https://learn.microsoft.com/azure/databox/data-box-overview) · [Data Box Heavy](https://learn.microsoft.com/azure/databox/data-box-heavy-overview) · [Azure Functions hosting options](https://learn.microsoft.com/azure/azure-functions/functions-scale) · [Classic Application Insights retirement](https://azure.microsoft.com/updates/we-re-retiring-classic-application-insights-on-29-february-2024) · [TCO Calculator → Azure Migrate business case (ikincil kaynak)](https://www.mindmeshacademy.com/certifications/azure/az-900-microsoft-azure-fundamentals/study-guide/3-2-2-estimating-cost-before-you-spend)
 
 ---
 
