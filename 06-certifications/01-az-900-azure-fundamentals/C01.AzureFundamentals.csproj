@@ -10,4 +10,9 @@
     <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- C1.8 Blob Storage demosu (Azurite: modül klasöründe docker compose up -d) -->
+    <PackageReference Include="Azure.Storage.Blobs" />
+  </ItemGroup>
+
 </Project>
