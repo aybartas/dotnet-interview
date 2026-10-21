@@ -3817,7 +3817,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - Functions vs App Service vs Logic Apps: kod mu, sürekli çalışan uygulama mı, görsel iş akışı mı
 - **Barındırma karar ağacı:** tam OS kontrolü → VM · hazır web/API platformu → App Service · container ve mikroservis → ACI / Container Apps / AKS · olay tetiklemeli kısa kod → Functions · masaüstü sanallaştırma → AVD
 - **Sınav tuzakları:** "işletim sistemi yönetmeden web uygulaması" → App Service; "tek container'ı hızlıca, orkestrasyonsuz" → ACI; "binlerce container orkestrasyonu" → AKS; "zamanlayıcıyla 5 dakikalık iş" → Functions; "uzaktan Windows masaüstü" → AVD; container vs VM
-- 🛠 **Pratik:** Todo API'yi **App Service'e deploy** etme (`az webapp up` / ZIP deploy); connection string'i **Application Settings**'ten verip `IConfiguration`'a environment variable olarak akışını gözlemleme; **log stream** ile canlı log; aynı image'ı **Container Instances**'ta tek komutla (`az container create`) çalıştırma; HTTP tetiklemeli tek bir Azure Function (yerelde Core Tools ile); sonunda `az group delete`.
+- 🛠 **Pratik:** Todo API'yi **App Service'e deploy** etme (`az webapp up` / ZIP deploy); connection string'i **Application Settings**'ten verip `IConfiguration`'a environment variable olarak akışını gözlemleme; **log stream** ile canlı log; örnek bir image'ı **Container Instances**'ta tek komutla (`az container create`) çalıştırma (kendi image'ın için registry/ACR → C2.1); HTTP tetiklemeli tek bir Azure Function (yerelde Core Tools ile); sonunda `az group delete`.
 - 📝 **Quiz:** barındırma seçimi senaryoları, container servisleri, AVD ve Functions nitelikleri (≈18 soru)
 
 #### C1.7 Ağ Servisleri · `07-networking` ⭐ *(derinlemesine ağ → J1.2, S8.3)*
@@ -3842,7 +3842,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Private endpoint** (Azure **Private Link**): PaaS servisine VNet'ten **özel IP** ile erişim; trafik Microsoft ağında kalır; public erişim kapatılabilir
   - *(bağlam)* NSG ile trafik filtreleme; Load Balancer (L4), Application Gateway (L7/WAF), Front Door, Azure Firewall — sınavda ad olarak geçebilir
 - **Sınav tuzakları:** "internet üzerinden geçmeyen bağlantı" → ExpressRoute; "şifreli, internet üzerinden, düşük maliyet" → VPN Gateway; iki VNet'i bağlamak → peering (VPN değil); peering transitive değildir; Azure DNS domain satmaz; private endpoint ile public endpoint
-- 🛠 **Pratik:** `az network vnet create` + iki subnet; ikinci VNet ve **peering** (iki yönlü); **private DNS zone** ve VNet bağlantısı; bir storage account'a **private endpoint** ekleyip public erişimi kapatma ve erişimi VNet içindeki VM'den test etme; kaynakları temizleme.
+- 🛠 **Pratik:** `az network vnet create` + iki subnet; ikinci VNet ve **peering** (iki yönlü); **private DNS zone** ve VNet bağlantısı; bir storage account'a **private endpoint** ekleyip public erişimi kapatma ve erişimi VNet içindeki VM'den test etme; kaynakları temizleme. VPN Gateway ve ExpressRoute maliyet ve kurulum süresi nedeniyle laboratuvarda kurulmaz, teoride anlatılır.
 - 📝 **Quiz:** bağlantı seçenekleri (VPN/ExpressRoute/peering), VNet ve DNS senaryoları, endpoint türleri (≈18 soru)
 
 #### C1.8 Azure Storage: Blob, Files, Taşıma ve Migration · `08-storage` ⭐
