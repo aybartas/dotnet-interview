@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <!-- (c) Class library: Sdk aynı, OutputType belirtilmediği için çıktı .dll (Exe değil). Başka projeler tarafından referans edilir. -->
-  <PropertyGroup>
-    <RootNamespace>Junior.DevFoundations.DotnetEcosystemCli.Vat</RootNamespace>
-  </PropertyGroup>
-
-</Project>

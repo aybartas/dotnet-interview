@@ -1,6 +1,6 @@
 # J1.2 Ağ Temelleri — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ OSI modeli nedir? Backend geliştirici hangi katmanlarla ilgilenir?
 OSI, ağ iletişimini 7 katmana ayıran kavramsal bir modeldir (Physical, Data Link, Network, Transport, Session, Presentation, Application). Pratikte kullanılan model 4 katmanlı TCP/IP'dir. Backend geliştirici için asıl önemli olanlar **L3 (IP — adresleme/yönlendirme)**, **L4 (TCP/UDP — port, bağlantı, güvenilirlik)** ve **L7 (HTTP — uygulama protokolü)** katmanlarıdır. Önemli olan 7 katmanı ezberlemek değil, bir sorunun hangi katmanda olduğunu sınıflamaktır: `ping` çalışıyor ama `curl` timeout veriyorsa L3 sağlam, sorun L4/L7'dedir.

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- J2: C# Temelleri — altı konu tek console projesinde (klasör = konu). Çalıştırma: dotnet run, ardından konu ve bölüm numarası (bkz. Program.cs) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Junior.CSharpFundamentals</RootNamespace>
+    <!-- Kök Directory.Build.props InvariantGlobalization=true yapar; kültür deneyleri (tr-TR, "Türkçe I problemi") gerçek ICU verisi ister. -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <!-- /// yorumlarından XML dokümantasyon dosyası üret (J2.1 Section12). CS1591 (public üyede yorum yok) gürültüsü kapalı. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Assembly sınırı deneyleri için (J2.1 erişim belirleyicileri, J2.2 const gömülmesi) -->
+    <ProjectReference Include="..\02-csharp-fundamentals-lib\J02.Lib.csproj" />
+  </ItemGroup>
+
+</Project>

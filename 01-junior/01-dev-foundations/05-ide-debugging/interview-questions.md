@@ -1,6 +1,6 @@
 # J1.5 IDE, Debugging & Kod Kalitesi — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Çözümler: [SOLUTIONS.md](SOLUTIONS.md). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md) (çözümler README 3.7'de, spoiler). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ Bir hatayı nasıl ayıklarsın? Süreci anlat.
 Önce hatayı **yeniden üretirim** (en küçük girdi/senaryo). Sonra hipotez kurarım ve debugger ile **gözlemlerim**: şüpheli yere breakpoint koyar, Locals/Watch ile değerleri, Call Stack ile "buraya nasıl geldim"i incelerim; istisna varsa fırlatıldığı noktada dururum (first-chance). Kök nedeni bulunca düzeltir ve aynı hatayı yakalayan bir **test eklerim**. Tahmin yürütüp rastgele değişiklik yapmam; `Console.WriteLine` yerine tracepoint/loglama tercih ederim.

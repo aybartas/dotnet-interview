@@ -1,6 +1,6 @@
 # J2.3 OOP Temelleri — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ OOP'un dört ilkesini kendi kodundan örnekle anlat.
 - **Encapsulation:** `BankAccount`'ta `Balance { get; private set; }` ve `Withdraw` içinde yetersiz bakiye kontrolü → bakiye dışarıdan keyfi değişemez, negatif olamaz (invariant korunur).

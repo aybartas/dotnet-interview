@@ -1,6 +1,6 @@
 # J2.2 Tip Sistemi & Bellek Modeli ⭐
 
-> 📁 `01-junior/02-csharp-fundamentals/02-type-system-memory/` · Önkoşul: J2.1 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/02-csharp-fundamentals/02-type-system-memory/` · Önkoşul: J2.1 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 Mülakatın en klasik açılışı: *"Value type ile reference type farkı nedir?"* — ama **"biri stack'te, biri heap'te"** cevabı yetmez.
 
@@ -21,7 +21,7 @@ Mülakatın en klasik açılışı: *"Value type ile reference type farkı nedir
 
 .NET'in **Common Type System**'i (CTS): her değerin bir tipi vardır ve bu tip, değerin **nasıl kopyalandığını**, **nerede yaşadığını** ve **nasıl karşılaştırıldığını** belirler. Bu konu; value/reference ayrımını, `struct`/`class`/`record` seçimini, boxing'i, `string`'in özel durumunu, null'ı, parametre geçirme biçimlerini (`ref/out/in`), tuple'ları ve enum'ları kapsar.
 
-[`src/TypeSystemMemory`](src/TypeSystemMemory/) 12 deney içerir (`dotnet run -- <numara>`); [`tests/`](tests/) aynı davranışları 27 testle sabitler.
+Konu 12 deney içerir (`dotnet run -- 2.2 <numara>`) ve ayrıca const gömülmesi deneyi (`dotnet run -- 2.2 const-embedding`, adımlar 3.9'da). Const deneyi için ikinci bir assembly gerekir: [`J02.Lib`](../../02-csharp-fundamentals-lib/Config.cs).
 
 ---
 
@@ -38,7 +38,7 @@ Mülakatın en klasik açılışı: *"Value type ile reference type farkı nedir
 
 ### 3.1 Unified type system
 
-Her tip doğrudan veya dolaylı olarak `System.Object`'ten türer — value type'lar dahil (`Int32 → ValueType → Object`). `int` yalnızca `System.Int32`'nin C# takma adıdır (`5.ToString()` bu yüzden çalışır). Bu, her şeyi `object`'e atayabilmeyi sağlar; bedeli value type'lar için **boxing**'dir (3.5). ([`Section01`](src/TypeSystemMemory/Sections/Section01_UnifiedTypeSystem.cs))
+Her tip doğrudan veya dolaylı olarak `System.Object`'ten türer — value type'lar dahil (`Int32 → ValueType → Object`). `int` yalnızca `System.Int32`'nin C# takma adıdır (`5.ToString()` bu yüzden çalışır). Bu, her şeyi `object`'e atayabilmeyi sağlar; bedeli value type'lar için **boxing**'dir (3.5). ([`Section01`](Sections/Section01_UnifiedTypeSystem.cs))
 
 ### 3.2 Value type vs reference type ⭐
 
@@ -62,7 +62,7 @@ Her tip doğrudan veya dolaylı olarak `System.Object`'ten türer — value type
 
 Tersi de doğrudur: *"reference type heap'tedir"* — referansın kendisi (işaretçi) yerel değişkense stack'te durur; heap'te duran nesnedir. (Stack/heap ayrıntısı bir **uygulama detayıdır**; semantiği değil, bellek yerleşimini ve GC baskısını etkiler. Derin hali → S1.3.)
 
-**Metoda geçirme** de aynı kuraldır — her şey varsayılan olarak **değer ile (by value)** geçer. Reference type'ta kopyalanan *referanstır*: nesnenin içeriğini değiştirebilirsiniz ama referansa yeni nesne atamak çağıranı etkilemez (etkilemesi için `ref`, 3.10). ([`Section02`](src/TypeSystemMemory/Sections/Section02_ValueVsReference.cs))
+**Metoda geçirme** de aynı kuraldır — her şey varsayılan olarak **değer ile (by value)** geçer. Reference type'ta kopyalanan *referanstır*: nesnenin içeriğini değiştirebilirsiniz ama referansa yeni nesne atamak çağıranı etkilemez (etkilemesi için `ref`, 3.10). ([`Section02`](Sections/Section02_ValueVsReference.cs))
 
 ### 3.3 `struct` vs `class` vs `record` vs `record struct` ⭐
 
@@ -77,7 +77,7 @@ Tersi de doğrudur: *"reference type heap'tedir"* — referansın kendisi (işar
 
 **Struct ne zaman?** Microsoft önerisi: tek bir mantıksal değeri temsil eder, örnek boyutu **16 byte altı**, **immutable**, sık boxing'e uğramaz. Aksi halde `class`. Struct'ın kopyalama maliyeti büyüdükçe avantajı biter (büyük struct'lar `in` ile geçirilir).
 
-**Mutable struct neden tehlikeli?** Kopyaya yazıp orijinalin değiştiğini sanırsınız ([`Section04`](src/TypeSystemMemory/Sections/Section04_MutableStruct.cs)):
+**Mutable struct neden tehlikeli?** Kopyaya yazıp orijinalin değiştiğini sanırsınız ([`Section04`](Sections/Section04_MutableStruct.cs)):
 
 ```csharp
 var list = new List<Counter> { new() };
@@ -99,7 +99,7 @@ object o = 42;          // boxing
 int i = (int)o;         // unboxing
 ```
 
-**Gizlice olduğu yerler** ([`Section05`](src/TypeSystemMemory/Sections/Section05_Boxing.cs), ölçümlü):
+**Gizlice olduğu yerler** ([`Section05`](Sections/Section05_Boxing.cs), ölçümlü):
 - `object` parametre alan metoda value type geçirmek,
 - value type'ı **interface**'e atamak (`IComparable c = 5`; struct → `IShape`),
 - non-generic koleksiyonlar (`ArrayList`, `Hashtable`),
@@ -130,7 +130,7 @@ if (cmd.ToLower() == "file")                // Türkçe cihazlarda false! (tipik
 
 ### 3.8 `var` vs `dynamic` vs `object`
 
-`var` **derleme zamanı** çıkarımıdır — hâlâ statik tipli ve güvenli (anonim tipler için zorunlu). `object` her şeyi tutar ama üyelere erişmek için cast gerekir, value type'ta boxing yapar. `dynamic` bağlamayı **çalışma zamanına** erteler: derleme güvenliği ve IntelliSense yok, hata `RuntimeBinderException` olarak çalışırken çıkar, ilk çağrıda binder maliyeti vardır → COM/Office interop veya şemasız veri gibi nadir durumlar dışında kaçının. ([`Section08`](src/TypeSystemMemory/Sections/Section08_VarDynamicObject.cs))
+`var` **derleme zamanı** çıkarımıdır — hâlâ statik tipli ve güvenli (anonim tipler için zorunlu). `object` her şeyi tutar ama üyelere erişmek için cast gerekir, value type'ta boxing yapar. `dynamic` bağlamayı **çalışma zamanına** erteler: derleme güvenliği ve IntelliSense yok, hata `RuntimeBinderException` olarak çalışırken çıkar, ilk çağrıda binder maliyeti vardır → COM/Office interop veya şemasız veri gibi nadir durumlar dışında kaçının. ([`Section08`](Sections/Section08_VarDynamicObject.cs))
 
 ### 3.9 `const` vs `readonly` vs `static readonly`
 
@@ -141,7 +141,24 @@ if (cmd.ToLower() == "file")                // Türkçe cihazlarda false! (tipik
 | Bellekte | Yok (IL'e gömülür) | Static alan | Nesne alanı |
 | **Çağıran assembly** | Değer **çağıranın IL'ine kopyalanır** | Çalışırken okunur | — |
 
-**Versiyonlama tuzağı** ⭐: Kütüphanede `public const int MaxRetries = 3` → 5 yapıp yalnızca kütüphaneyi dağıtırsanız, onu kullanan **yeniden derlenmemiş** uygulama hâlâ 3'ü kullanır. [`src/ConstEmbedding/run-demo.sh`](src/ConstEmbedding/run-demo.sh) bunu kanıtlar. Kural: public ve değişebilir değer → `static readonly`/property; `const` yalnızca gerçekten değişmeyenler için. (Optional parametre varsayılanları da çağırana derlenir → J2.4.) `readonly` ≠ immutable: alan yeniden atanamaz ama `readonly List<int>`'in içeriği değişir.
+**Versiyonlama tuzağı** ⭐: Kütüphanede `public const int MaxRetries = 3` → 5 yapıp yalnızca kütüphaneyi dağıtırsanız, onu kullanan **yeniden derlenmemiş** uygulama hâlâ 3'ü kullanır. Aşağıdaki deney bunu kanıtlar. Kural: public ve değişebilir değer → `static readonly`/property; `const` yalnızca gerçekten değişmeyenler için. (Optional parametre varsayılanları da çağırana derlenir → J2.4.) `readonly` ≠ immutable: alan yeniden atanamaz ama `readonly List<int>`'in içeriği değişir.
+
+**Deney — const gömülmesini kanıtlayın** (J02 modül klasöründe; `Config` sınıfı [`J02.Lib`](../../02-csharp-fundamentals-lib/Config.cs)'tedir, `V2` sembolü değerleri değiştirir):
+
+```bash
+# 1) Lib v1 ile derle ve çalıştır            → MaxRetries=3, Timeout=30
+dotnet build -nologo -v q && dotnet bin/Debug/net10.0/J02.CSharpFundamentals.dll 2.2 const-embedding
+
+# 2) SADECE Lib'i v2 derle, yeni dll'i J02'nin yanına kopyala (J02'yi YENİDEN DERLEME!)
+dotnet build ../02-csharp-fundamentals-lib -nologo -v q -p:DefineConstants=V2 -o /tmp/lib-v2
+cp /tmp/lib-v2/J02.Lib.dll bin/Debug/net10.0/
+
+# 3) Tekrar çalıştır                         → Version=v2, Timeout=60 (çalışırken okundu) ama MaxRetries HÂLÂ 3 (IL'e gömülmüştü)
+dotnet bin/Debug/net10.0/J02.CSharpFundamentals.dll 2.2 const-embedding
+
+# 4) J02'yi yeniden derle (Lib v2 ile)       → MaxRetries artık 5
+dotnet build -nologo -v q -p:DefineConstants=V2 && dotnet bin/Debug/net10.0/J02.CSharpFundamentals.dll 2.2 const-embedding
+```
 
 ### 3.10 `ref`, `out`, `in`
 
@@ -152,7 +169,7 @@ if (cmd.ToLower() == "file")                // Türkçe cihazlarda false! (tipik
 | `out` | ✗ gerekmez | ✓ **zorunlu** (her yolda) | referans |
 | `in` | ✓ | ✗ salt okunur | referans (kopyasız) |
 
-`out` birden çok değer döndürme ve `TryXxx` deseni için; `in` büyük `readonly struct`'ları kopyalamadan geçirmek için; `ref` local/return dizi elemanına yerinde erişim. `async` metotlarda ve iterator'larda `ref/out/in` parametre kullanılamaz. Modern kodda `out` yerine tuple/record dönmek çoğu zaman daha okunaklıdır. ([`Section10`](src/TypeSystemMemory/Sections/Section10_RefOutIn.cs))
+`out` birden çok değer döndürme ve `TryXxx` deseni için; `in` büyük `readonly struct`'ları kopyalamadan geçirmek için; `ref` local/return dizi elemanına yerinde erişim. `async` metotlarda ve iterator'larda `ref/out/in` parametre kullanılamaz. Modern kodda `out` yerine tuple/record dönmek çoğu zaman daha okunaklıdır. ([`Section10`](Sections/Section10_RefOutIn.cs))
 
 ### 3.11 Tuple ve deconstruction
 
@@ -161,13 +178,13 @@ if (cmd.ToLower() == "file")                // Türkçe cihazlarda false! (tipik
 ### 3.12 `enum` ve `[Flags]`
 
 - `enum` adlandırılmış tamsayı sabitleridir (varsayılan taban `int`). **Her tamsayı enum'a cast edilebilir** — `(OrderStatus)99` exception atmaz, geçersiz değer üretir; `Enum.IsDefined` ile doğrulayın. `Enum.TryParse("99")` da *başarılı* olur (sayısal metin) → yine `IsDefined`. `switch`'te `default` dalında geçersiz değeri **öne çıkarın**.
-- `[Flags]`: değerler **2'nin kuvvetleri** (veya bileşimleri); `|` ile birleştir, `& ~X` ile kaldır, `HasFlag` ya da `(v & X) != 0` ile test et; `ToString()` "Read, Write" yazar. `0` için `None` tanımlayın. ([`Section12`](src/TypeSystemMemory/Sections/Section12_Enums.cs))
+- `[Flags]`: değerler **2'nin kuvvetleri** (veya bileşimleri); `|` ile birleştir, `& ~X` ile kaldır, `HasFlag` ya da `(v & X) != 0` ile test et; `ToString()` "Read, Write" yazar. `0` için `None` tanımlayın. ([`Section12`](Sections/Section12_Enums.cs))
 
 ---
 
 ## 4. Gerçek dünya senaryosu
 
-**"Sadece Türkçe Windows kullanan müşterilerde dosya yükleme komutu çalışmıyor."** Kod `if (action.ToLower() == "file")` ile bir komutu karşılaştırıyor; `FILE` Türk kültüründe `fıle` olduğu için hiçbir zaman eşleşmiyor. Geliştirici makineleri `en-US`, müşteri `tr-TR`. Çözüm `StringComparison.OrdinalIgnoreCase`; kalıcı önlem `CA1309/CA1310` analyzer kurallarının hata seviyesine çekilmesi ve testlerin `tr-TR` kültüründe de koşması ([`OrdinalIgnoreCase_is_culture_independent`](tests/TypeSystemMemory.Tests/BoxingAndStringTests.cs)).
+**"Sadece Türkçe Windows kullanan müşterilerde dosya yükleme komutu çalışmıyor."** Kod `if (action.ToLower() == "file")` ile bir komutu karşılaştırıyor; `FILE` Türk kültüründe `fıle` olduğu için hiçbir zaman eşleşmiyor. Geliştirici makineleri `en-US`, müşteri `tr-TR`. Çözüm `StringComparison.OrdinalIgnoreCase`; kalıcı önlem `CA1309/CA1310` analyzer kurallarının hata seviyesine çekilmesi ve kodun `tr-TR` kültüründe de denenmesi (bu konudaki Section06 aynı hatayı üretir).
 
 **"Yüksek hacimli log işleme servisinde GC baskısı."** Profil: metrik değerleri `List<object>`'te tutuluyor, her sayı boxing → saniyede milyonlarca küçük nesne, Gen0 GC patlaması. Çözüm: `List<double>`/generic metot (`ArrayList → List<int>` deneyi); kritik yolda `where T : struct, IMetric` ile boxing'siz çağrı.
 

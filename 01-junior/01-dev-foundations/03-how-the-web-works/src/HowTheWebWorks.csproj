@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <PropertyGroup>
-    <RootNamespace>Junior.DevFoundations.HowTheWebWorks</RootNamespace>
-  </PropertyGroup>
-
-</Project>

@@ -1,6 +1,6 @@
 # J1.4 .NET Ekosistemi & CLI — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ SDK ile Runtime arasındaki fark nedir?
 **SDK** uygulamayı *geliştirmek/derlemek* için gereken her şeydir: `dotnet` CLI, Roslyn derleyicisi, MSBuild, NuGet, şablonlar — ve içinde bir runtime da bulunur. **Runtime** derlenmiş uygulamayı *çalıştırmak* için gereken minimum bileşendir (CLR/JIT, GC, base class library; web için ASP.NET Core runtime'ı). Geliştirici makinesi ve CI'da SDK, production sunucu/container'da yalnızca runtime olur (Docker'da `sdk` imajı build için, `aspnet`/`runtime` imajı çalıştırmak için).
@@ -45,7 +45,7 @@ Bulunduğu klasör (ve altı) için kullanılacak **SDK sürümünü sabitler** 
 (1) Varsayılanı `PublishAot=true`'dur; yansıma tabanlı JSON serileştirme (ör. anonim nesne döndüren Minimal API) çalışmaz — AOT'a hazır değilsek `#:property PublishAot=false`. (2) Repo kökünde Central Package Management varsa `#:package Paket@sürüm` ile çakışır (`NU1008`); `ManagePackageVersionsCentrally=false` gerekir. (3) Üst klasörlerdeki `Directory.Build.props` dosyaya da uygulanır.
 
 ### 15. Aynı uygulamayı hangi aşamada tek dosyadan solution'a taşırsın?
-Dosya birden fazla sorumluluk taşımaya başladığında, birim testi gerektiğinde, birden çok host (CLI + API) aynı mantığı kullanacağında veya takım çalışmaya başladığında: önce `dotnet project convert`, sonra iş mantığını ayrı bir class library'ye (Core), test projesini yanına, ince bir host projesini üzerine koyarım (bu konudaki `c-solution` yapısı).
+Dosya birden fazla sorumluluk taşımaya başladığında, birim testi gerektiğinde, birden çok host (CLI + API) aynı mantığı kullanacağında veya takım çalışmaya başladığında: önce `dotnet project convert`, sonra iş mantığını ayrı bir class library'ye (Core), test projesini yanına, ince bir host projesini üzerine koyarım (README 3.6'daki `VatCalculator` çözüm yapısı).
 
 ### 16. `dotnet new` ile hangi şablonları kullanırsın?
 `console` (uygulama), `classlib` (kütüphane), `webapi` (ASP.NET Core API), `worker` (arka plan servisi), `xunit3`/`mstest`/`nunit` (test), `sln` (solution), ayrıca `gitignore`, `editorconfig`, `globaljson` yardımcı şablonları. `dotnet new list` ile görülür, şirket şablonları da yazılabilir.

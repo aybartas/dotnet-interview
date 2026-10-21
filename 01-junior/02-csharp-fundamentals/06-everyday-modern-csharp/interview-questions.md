@@ -1,6 +1,6 @@
 # J2.6 Günlük Modern C# — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ `record` ile `class` farkı nedir?
 `record` (class) yine bir referans tipidir; farkı, derleyicinin **değer tabanlı eşitlik** (`Equals`/`GetHashCode`/`==`), `ToString`, `Deconstruct`, init-only property'ler ve `with` desteğini otomatik üretmesidir. `class`'ta eşitlik varsayılan olarak referanstır ve bunların hepsini elle yazarsınız. Record değişmez veri taşıyıcılar, DTO'lar ve value object'ler için; class kimlik, davranış ve mutable durum taşıyan entity'ler için uygundur. `record struct` aynı özellikleri değer tipinde sunar (`readonly record struct` tercih edilir).

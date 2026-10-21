@@ -1,6 +1,6 @@
 # J1.1 Git & Versiyon Kontrolü
 
-> 📁 `01-junior/01-dev-foundations/01-git/` · Önkoşul: — · Pratik: [`src/`](src/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/01-dev-foundations/01-git/` · Önkoşul: — · Sorular: [`interview-questions.md`](interview-questions.md)
 
 ## İçindekiler
 
@@ -138,7 +138,58 @@ Adımlar: dosyayı açın → **iki tarafın niyetini** anlayıp birleştirin (�
 - `git rerere` aynı çakışmayı tekrar tekrar çözmeyi (uzun yaşayan branch'lerde) otomatikleştirir.
 - Çakışmayı önlemenin en iyi yolu: **küçük, kısa ömürlü branch'ler** ve sık `main` entegrasyonu.
 
-> 🛠 Pratik: [`src/01-merge-conflict.sh`](src/01-merge-conflict.sh) ve [`src/02-rebase-conflict.sh`](src/02-rebase-conflict.sh)
+**🛠 Alıştırma — merge çakışması üretin ve çözün** (boş bir klasörde; global git ayarınıza dokunmaz):
+
+```bash
+git init -b main && git config user.name Alistirma && git config user.email a@example.com
+git config merge.conflictStyle diff3            # ortak atayı da gösterir
+
+cat > Calculator.cs <<'CS'
+public static class Calculator
+{
+    public static decimal ApplyDiscount(decimal price, decimal percent) => price - price * percent / 100;
+}
+CS
+git add . && git commit -m "chore: Calculator"
+
+git switch -c feature/validation                # 1. geliştirici: doğrulama ekler
+sed -i 's|=> price - price \* percent / 100;|{ if (percent is < 0 or > 100) throw new ArgumentOutOfRangeException(nameof(percent)); return price - price * percent / 100; }|' Calculator.cs
+git commit -am "feat: indirim yüzdesi doğrulaması"
+
+git switch main                                 # 2. geliştirici: AYNI satırı yuvarlar
+sed -i 's|=> price - price \* percent / 100;|=> Math.Round(price - price * percent / 100, 2);|' Calculator.cs
+git commit -am "feat: indirimli fiyat 2 basamağa yuvarlanır"
+
+git merge feature/validation                    # ÇAKIŞMA! Calculator.cs'i açın, iki değişikliği birleştirin
+git add Calculator.cs && git commit             # merge commit
+git log --oneline --graph --all
+```
+
+Vazgeçmek için `git merge --abort`. Ayrıca deneyin: `git log --merge`, `git diff --name-only --diff-filter=U`.
+
+**🛠 Alıştırma — aynı çakışmayı rebase ile yaşayın** (yukarıdaki repoyu `git reset --hard` ile ya da yeni bir klasörde başlatın):
+
+```bash
+git init -b main && git config user.name Alistirma && git config user.email a@example.com
+echo 'public static class Pricing { public static decimal Total(decimal net) => net * 1.18m; }' > Pricing.cs
+git add . && git commit -m "chore: Pricing"
+
+git switch -c feature/currency                  # 2 commit: yuvarlama + yeni sınıf
+echo 'public static class Pricing { public static decimal Total(decimal net) => Math.Round(net * 1.18m, 2); }' > Pricing.cs
+git commit -am "feat: toplam yuvarlanır"
+echo 'public static class Currency { public static string Format(decimal v) => v.ToString("C2"); }' >> Pricing.cs
+git commit -am "feat: para birimi formatlayıcı"
+
+git switch main                                 # main: AYNI satırı değiştirir
+echo 'public static class Pricing { public const decimal VatRate = 1.20m; public static decimal Total(decimal net) => net * VatRate; }' > Pricing.cs
+git commit -am "refactor: KDV oranı sabite taşındı"
+
+git switch feature/currency && git rebase main  # rebase ORTASINDASINIZ: çakışmayı çözün
+git add Pricing.cs && git rebase --continue     # 2. commit de çakışabilir; aynısını tekrarlayın
+git log --oneline --graph --all                 # doğrusal geçmiş — commit'ler YENİ hash aldı
+```
+
+Vazgeçmek için `git rebase --abort`. Merge senaryosuyla **geçmişin şeklini** karşılaştırın; paylaşılmış branch'te rebase yapılmaz.
 
 ### 3.3 `stash`, `cherry-pick`, `bisect`
 
@@ -166,7 +217,28 @@ git bisect reset
 
 Bisect'in etkili çalışması **küçük commit'lere** ve her commit'in derlenebilir olmasına bağlıdır — bir başka sebep daha, commit'leri küçük tutmak için.
 
-> 🛠 Pratik: [`src/03-bisect.sh`](src/03-bisect.sh)
+**🛠 Alıştırma — bisect ile suçlu commit'i bulun** (40 commit'te biri KDV'yi sessizce bozuyor):
+
+```bash
+git init -b main && git config user.name Alistirma && git config user.email a@example.com
+printf '#!/usr/bin/env bash\nsource ./vat.env\n[[ $(( 100 * (100 + VAT_PERCENT) / 100 )) -eq 118 ]]\n' > check.sh && chmod +x check.sh
+echo "VAT_PERCENT=18" > vat.env && git add . && git commit -m "chore: ilk commit"
+
+BUG_AT=$(( RANDOM % 30 + 6 ))                   # her seferinde farklı: ezberlenemesin
+for i in $(seq 1 40); do
+  echo "- değişiklik $i" >> CHANGELOG.md
+  if [ "$i" -eq "$BUG_AT" ]; then echo "VAT_PERCENT=8" > vat.env; msg="refactor: konfigürasyon temizliği (#$i)"
+  else msg="docs: changelog güncellemesi (#$i)"; fi
+  git add . && git commit -qm "$msg"
+done
+
+git bisect start HEAD "$(git rev-list --max-parents=0 HEAD)"   # kötü = HEAD, iyi = ilk commit
+git bisect run ./check.sh                       # otomatik; elle için her adımda ./check.sh + git bisect good|bad
+git bisect reset
+echo "gerçek hatalı commit: #$BUG_AT"
+```
+
+`check.sh` çıkış kodu sözleşmesi: `0` = iyi, `1` = kötü, `125` = atla. 40 commit için en fazla ~6 adım (`log₂ 40`).
 
 ### 3.4 `reset` (soft/mixed/hard) vs `revert` ⭐
 
@@ -276,7 +348,7 @@ appsettings.Development.json   # (projeye bağlı) yerel gizli ayarlar varsa
 **"Cuma akşamı prod'da fatura toplamı yanlış."**
 
 1. Müşteri şikâyeti geldi; son iki haftada ~150 commit girmiş. Hatalı sürümü (`v2.3.1`) ve son sağlam sürümü (`v2.2.0`) biliyorsunuz.
-2. `git bisect start v2.3.1 v2.2.0` ile 7-8 adımda suçlu commit'i bulursunuz: "refactor: konfigürasyon temizliği" — KDV oranı yanlışlıkla değişmiş (tam olarak [`src/03-bisect.sh`](src/03-bisect.sh) senaryosu).
+2. `git bisect start v2.3.1 v2.2.0` ile 7-8 adımda suçlu commit'i bulursunuz: "refactor: konfigürasyon temizliği" — KDV oranı yanlışlıkla değişmiş (tam olarak yukarıdaki bisect alıştırmasının senaryosu).
 3. Fix'i hemen yayınlamak için yarım işinizi `git stash` ile rafa kaldırırsınız.
 4. `main`'den `hotfix/vat-rate` branch'i açar, düzeltir, PR açar, review + CI'dan sonra merge edersiniz.
 5. Aynı düzeltme eski bir `release/2.2` hattında da destekleniyorsa `git cherry-pick` ile backport edilir.

@@ -1,6 +1,6 @@
 # J3.2 Delegates, Lambdas & Events
 
-> 📁 `01-junior/03-collections-linq/02-delegates-lambdas-events/` · Önkoşul: J3.1 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/03-collections-linq/02-delegates-lambdas-events/` · Önkoşul: J3.1 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 ## İçindekiler
 
@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-**Delegate**, bir metoda (veya metot zincirine) tip güvenli referans tutan nesnedir; davranışı **değer gibi taşımayı** sağlar. **Lambda**, delegate üreten kısa anonim fonksiyon sözdizimidir. **Event**, delegate üzerine kurulu yayıncı–abone (publish/subscribe) mekanizmasıdır. LINQ (J3.3), `Task.Run`, ASP.NET Core middleware ve DI fabrikaları gibi her yerde karşınıza çıkar. [`src/DelegatesLambdasEvents`](src/DelegatesLambdasEvents/) 7 bölüm, [`tests/`](tests/) 31 test içerir.
+**Delegate**, bir metoda (veya metot zincirine) tip güvenli referans tutan nesnedir; davranışı **değer gibi taşımayı** sağlar. **Lambda**, delegate üreten kısa anonim fonksiyon sözdizimidir. **Event**, delegate üzerine kurulu yayıncı–abone (publish/subscribe) mekanizmasıdır. LINQ (J3.3), `Task.Run`, ASP.NET Core middleware ve DI fabrikaları gibi her yerde karşınıza çıkar. Konu 7 bölümden oluşur (`dotnet run -- 3.2 <numara>`).
 
 ---
 
@@ -31,7 +31,7 @@
 
 ## 3. Nasıl?
 
-### 3.1 Delegate, `Func`/`Action`/`Predicate`, method group, multicast ([`Section01`](src/DelegatesLambdasEvents/Sections/Section01_Delegates.cs))
+### 3.1 Delegate, `Func`/`Action`/`Predicate`, method group, multicast ([`Section01`](Sections/Section01_Delegates.cs))
 
 ```csharp
 delegate int BinaryOperation(int a, int b);     // delegate TİPİ = imza
@@ -46,7 +46,7 @@ Predicate<int> isEven = n => n % 2 == 0;         // ≡ Func<int,bool>
 - **Null:** abone yoksa delegate `null`'dır → `?.Invoke(...)`.
 - Delegate vs interface: tek metotluk davranış için delegate hafiftir; ilişkili birden çok metot/durum için interface.
 
-### 3.2 Lambda ([`Section02`](src/DelegatesLambdasEvents/Sections/Section02_Lambdas.cs))
+### 3.2 Lambda ([`Section02`](Sections/Section02_Lambdas.cs))
 
 | Biçim | Örnek |
 |-------|-------|
@@ -59,7 +59,7 @@ Predicate<int> isEven = n => n % 2 == 0;         // ≡ Func<int,bool>
 
 Lambda hedef tipe göre bir **delegate**'e ya da **`Expression<TDelegate>`**'e dönüşür. `Expression<Func<int,bool>>` kodun **ağaç (veri) temsilidir** (`x > 5` → `GreaterThan`); `IQueryable`/EF Core sorguyu SQL'e çevirmek için bunu kullanır (→ J3.3, J9.4, M1.3).
 
-### 3.3 Closure ve captured variable ⭐ ([`Section03`](src/DelegatesLambdasEvents/Sections/Section03_Closures.cs))
+### 3.3 Closure ve captured variable ⭐ ([`Section03`](Sections/Section03_Closures.cs))
 
 **Closure** = lambda + yakaladığı dış değişkenler. Lambda **değeri değil değişkenin kendisini** yakalar; değeri **çalıştığı anda** okur:
 
@@ -79,7 +79,7 @@ funcs.Select(f => f());                             // 3, 3, 3   (beklenen 0,1,2
 - **Derleyici ne üretir?** Yakalanan değişkenler heap'teki bir **display class** nesnesine taşınır (`f.Target` → `<>c__DisplayClass…`). Yakalamayan `static` lambda önbelleğe alınmış tek örnektir (ek tahsis yok).
 - **Bedel:** her closure bir nesne tahsis eder (deneyde 1000 iterasyon: yakalayan ≈ 64 KB, yakalamayan ≈ 64 B) ve yakalanan değişkenin ömrünü lambda'nınkine uzatır (büyük nesne yakalamak onu bellekte tutar). Çok thread'li kodda paylaşılan yakalanan değişken yarış koşulu üretir.
 
-### 3.4 `event` ⭐ ([`Section04`](src/DelegatesLambdasEvents/Sections/Section04_Events.cs), [`Events.cs`](src/DelegatesLambdasEvents/Models/Events.cs))
+### 3.4 `event` ⭐ ([`Section04`](Sections/Section04_Events.cs), [`Events.cs`](Models/Events.cs))
 
 **Neden çıplak delegate değil?** `public Action<Order>? OnCreated;` alanında dışarıdaki herkes: `= null` ile **tüm aboneleri siler**, `= tek` ile **ezer**, `?.Invoke(...)` ile **sahte olay üretir**. `event` anahtar sözcüğü delegate'i **kapsüller**: dışarıya yalnızca `+=` / `-=` açılır (CS0070: dışarıdan atama ve tetikleme yok); tetikleme yalnızca yayıncıdadır.
 
@@ -91,13 +91,13 @@ protected virtual void OnOrderCreated(OrderCreatedEventArgs e) => OrderCreated?.
 - **Observer deseni:** yayıncı abonelerin kim olduğunu bilmez → gevşek bağlılık (→ J2.3).
 - **Dikkat:** (1) bir abone exception fırlatırsa **kalan aboneler çalışmaz** (dayanıklılık için `GetInvocationList()` ile tek tek çağırıp yakalayın); (2) aboneler yayıncının thread'inde **senkron** çalışır (yavaş abone yayıncıyı bloklar); (3) `?.Invoke` null kontrolü ve çağrıyı güvenli yapar. Süreçler arası olay = mesajlaşma (→ M12).
 
-### 3.5 Abonelik sızıntısı ⭐ ([`Section05`](src/DelegatesLambdasEvents/Sections/Section05_SubscriptionLeak.cs))
+### 3.5 Abonelik sızıntısı ⭐ ([`Section05`](Sections/Section05_SubscriptionLeak.cs))
 
 Yayıncı, aboneye **referans tutar** (event = delegate zinciri; her elemanın `Target`'ı abone nesnesi). **Uzun ömürlü yayıncı** (singleton servis, `static event`) + **kısa ömürlü abone** (sayfa, view-model, istek kapsamlı nesne) birleşimi, abone `-=` yapmazsa onu GC'den korur: deneyde `WeakReference` ile kanıtlandı — abonelikten çıkmayan abone GC sonrası **hâlâ yaşıyor**, `Dispose` ile ayrılan toplandı; üstelik sızan abone her `Tick`'te çalışmaya devam eder ("hayalet" davranış).
 
 **Çözümler:** işi bitince `-=` (genelde `IDisposable.Dispose`'ta, `using` ile garanti); zayıf olay desenleri (`WeakReference`/`WeakEventManager`); `static event`'ten kaçınma; lambda ile abone olduysanız `-=` için **aynı delegate nesnesini** saklayın (yeni bir lambda farklı nesnedir). Teşhis: bellek profilleyici (dotMemory, `dotnet-gcdump`) → "yayıncı → abone" retention path (derin hali → M1.6, S2.5).
 
-### 3.6 Local function vs lambda ([`Section06`](src/DelegatesLambdasEvents/Sections/Section06_LocalFunctions.cs))
+### 3.6 Local function vs lambda ([`Section06`](Sections/Section06_LocalFunctions.cs))
 
 | | Local function | Lambda |
 |---|----------------|--------|
@@ -109,7 +109,7 @@ Yayıncı, aboneye **referans tutar** (event = delegate zinciri; her elemanın `
 
 `static` local function dış değişkeni yakalayamaz. Klasik kullanım: **iterator + erken argüman doğrulaması** — iterator metodunun gövdesi ertelendiği için doğrulama ilk `MoveNext`'te çalışır; doğrulamayı dış metoda, iterator'ı local function'a koyarsanız hata **anında** fırlar. Kural: **delegate/Expression değeri gerektiğinde** (parametre, LINQ, olay) lambda; **yalnızca tek metotta kullanılan yardımcı mantık/özyineleme** için local function.
 
-### 3.7 Lambda ile strateji: indirim motoru ([`DiscountEngine.cs`](src/DelegatesLambdasEvents/Models/DiscountEngine.cs))
+### 3.7 Lambda ile strateji: indirim motoru ([`DiscountEngine.cs`](Models/DiscountEngine.cs))
 
 `DiscountEngine`, kuralları `Func<Order, decimal>` olarak alır; birleştirme biçimi de bir strateji (`Combiners.Best`, `Combiners.Sum` veya yerinde bir lambda: *en iyi iki indirimin toplamı*). `Rules.Percentage(10)` gibi fabrikalar parametreyi **yakalayan** lambda döndürür; `When`/`Capped` kuralları birleştiren **higher-order function**'lardır. Yeni kural = yeni lambda, motor değişmez (Open/Closed). Karşılaştırma: J2.3'teki `IFeePolicy`/`IPaymentRule` sınıfları aynı fikrin daha törenli hâli. Durum taşıyan, birden çok metodu olan veya DI ile kaydedilecek stratejiler için interface/sınıf; tek metotluk davranış için delegate.
 

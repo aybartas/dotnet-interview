@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="Library/Library.csproj" />
-  <Project Path="Consumer/Consumer.csproj" />
-</Solution>

@@ -1,6 +1,6 @@
 # J2.4 Sınıf Üyeleri & Nesne Semantiği ⭐
 
-> 📁 `01-junior/02-csharp-fundamentals/04-class-members/` · Önkoşul: J2.3 · Pratik: [`src/`](src/) · Test: [`tests/`](tests/) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/02-csharp-fundamentals/04-class-members/` · Önkoşul: J2.3 · Sorular: [`interview-questions.md`](interview-questions.md)
 
 OOP ilkelerinin C#'taki somut karşılıkları: property, constructor, eşitlik, kopyalama. Mülakatın "ince detay" soruları buradan gelir.
 
@@ -19,7 +19,7 @@ OOP ilkelerinin C#'taki somut karşılıkları: property, constructor, eşitlik,
 
 ## 1. Ne?
 
-Bir sınıfın **üyeleri** (property, constructor, operatör, indexer, extension…) ve nesnelerin **semantiği** (eşit mi? kopyası nasıl alınır? ne zaman kurulur/bırakılır?). [`src/ClassMembers`](src/ClassMembers/) 9 bölüm; [`tests/`](tests/) 38 test (başlatma sırası, `HashSet` bozulması, mutable key, shallow/deep copy, operator tutarlılığı…).
+Bir sınıfın **üyeleri** (property, constructor, operatör, indexer, extension…) ve nesnelerin **semantiği** (eşit mi? kopyası nasıl alınır? ne zaman kurulur/bırakılır?). Konu 9 bölümden oluşur (`dotnet run -- 2.4 <numara>`): başlatma sırası, `HashSet` bozulması, mutable key, shallow/deep copy, operator tutarlılığı…
 
 ---
 
@@ -36,7 +36,7 @@ Bir sınıfın **üyeleri** (property, constructor, operatör, indexer, extensio
 
 ### 3.1 Property vs field ⭐
 
-[`Products.cs`](src/ClassMembers/Models/Products.cs): `ProductBefore` (public field) → `ProductAfter` (property).
+[`Products.cs`](Models/Products.cs): `ProductBefore` (public field) → `ProductAfter` (property).
 
 **Public field neden kullanılmaz?**
 1. **Doğrulama yapılamaz:** `Price = -5` serbest → invariant korunmaz.
@@ -68,7 +68,7 @@ Bir sınıfın **üyeleri** (property, constructor, operatör, indexer, extensio
 | copy constructor | Aynı tipten parametre alan ctor (özel sözdizimi yok) |
 | `this(...)` / `base(...)` | Zincirleme; primary constructor → J2.6 |
 
-**Başlatma sırası** ⭐ — klasik "ince" soru ([`Section02`](src/ClassMembers/Sections/Section02_InitializationOrder.cs) çıktısı):
+**Başlatma sırası** ⭐ — klasik "ince" soru ([`Section02`](Sections/Section02_InitializationOrder.cs) çıktısı):
 
 ```
 new Derived() →
@@ -82,13 +82,13 @@ Neden initializer'lar "ters"? Derleyici onları constructor'ın **başına**, `b
 
 ### 3.3 Constructor'dan `virtual` metot çağırmak ⭐ (CA2214)
 
-Base ctor çalışırken türetilmiş sınıfın **ctor gövdesi henüz çalışmamıştır**; override edilen metot **yarım kurulmuş nesneyi** görür ([`VirtualCall.cs`](src/ClassMembers/Models/VirtualCall.cs)):
+Base ctor çalışırken türetilmiş sınıfın **ctor gövdesi henüz çalışmamıştır**; override edilen metot **yarım kurulmuş nesneyi** görür ([`VirtualCall.cs`](Models/VirtualCall.cs)):
 
 ```
 Taban ctor içinde:  initializer: başlatıcıdan, ctor: null, count: 0      ← ctor'da atananlar varsayılan!
 Ctor bittikten sonra: initializer: başlatıcıdan, ctor: ctor gövdesinden, count: 42
 ```
-Field initializer ile atananlar *dolu* (taban ctor'dan önce çalıştıkları için), ctor gövdesinde atananlar *boş* → tutarsız ve bulması zor hata. Analyzer **CA2214** bunu yakalar (varsayılan kapalıdır; bu proje [`.editorconfig`](src/ClassMembers/.editorconfig) ile `warning` yapar, `dotnet build --no-incremental` çıktısında görünür). Çözüm: virtual çağrıyı ctor'da yapma; nesne **tamamen kurulduktan sonra** (factory + `Initialize()`; `SafeBase.Create<T>()`).
+Field initializer ile atananlar *dolu* (taban ctor'dan önce çalıştıkları için), ctor gövdesinde atananlar *boş* → tutarsız ve bulması zor hata. Analyzer **CA2214** bunu yakalar (varsayılan kapalıdır; bu proje [`.editorconfig`](.editorconfig) ile `warning` yapar, `dotnet build --no-incremental` çıktısında görünür). Çözüm: virtual çağrıyı ctor'da yapma; nesne **tamamen kurulduktan sonra** (factory + `Initialize()`; `SafeBase.Create<T>()`).
 
 ### 3.4 Eşitlik ve hash ⭐
 
@@ -114,18 +114,18 @@ public static class StringExtensions {
 "merhaba".Shout();   // derleyici: StringExtensions.Shout("merhaba")  (statik çağrının süslü yazımı)
 ```
 - Gerçekte tipe **hiçbir şey eklenmez**; null receiver ile bile çalışır (`NullReferenceException` yok).
-- **Çözümleme sırası:** (1) **örnek metot HER ZAMAN önce** gelir (aynı imzalı extension asla çağrılmaz — [`Widget`](src/ClassMembers/Extensions/StringExtensions.cs)), (2) çağıran dosyanın `using`'leriyle görünen extension'lar. **`using` yoksa görünmez.**
+- **Çözümleme sırası:** (1) **örnek metot HER ZAMAN önce** gelir (aynı imzalı extension asla çağrılmaz — [`Widget`](Extensions/StringExtensions.cs)), (2) çağıran dosyanın `using`'leriyle görünen extension'lar. **`using` yoksa görünmez.**
 - **LINQ'in tamamı extension method'dur** (`System.Linq.Enumerable` bir static class). C# 14 *extension members* → M1.1.
 - Ne zaman? Sahibi olmadığınız tipe (framework) davranış eklemek, fluent API, interface'e davranış. Ne zaman değil? **Durum** eklemek, davranışı **override** etmek, polimorfizm → inheritance / wrapper / composition.
 
 ### 3.6 Operator overloading ve indexer
 
-[`Money`](src/ClassMembers/Models/Money.cs) (`readonly struct`, value object):
-- **`==` ve `!=` birlikte** tanımlanır (CS0216); `<`/`>` ve `<=`/`>=` de çift. `==` tanımlıysa **`Equals`/`GetHashCode` aynı mantıkla** override edilmeli (CS0660/CS0661 uyarır) — testte `a == b` ⇔ `a.Equals(b)` ⇔ aynı hash.
+[`Money`](Models/Money.cs) (`readonly struct`, value object):
+- **`==` ve `!=` birlikte** tanımlanır (CS0216); `<`/`>` ve `<=`/`>=` de çift. `==` tanımlıysa **`Equals`/`GetHashCode` aynı mantıkla** override edilmeli (CS0660/CS0661 uyarır) — `a == b` ⇔ `a.Equals(b)` ⇔ aynı hash olmalı.
 - `implicit` dönüşüm: kayıp/exception yok (`decimal → Money`); `explicit`: kayıp olabilir (`Money → decimal`: para birimi kaybolur).
 - Anlamlı olduğunda kullanın (Money, Vector, `DateTime - DateTime`); `Order + Order` gibi anlamsız overload okunabilirliği bozar.
 
-[`MoneyBag`](src/ClassMembers/Models/MoneyBag.cs) **indexer**: `this[int]` (get/set), `this[string]` (para birimi toplamı), `this[string, int]` (çok parametreli). `Count` + `int` indexer varsa derleyici `bag[^1]` (Index) ve aralık desteğini otomatik sağlar. Indexer derlemede `Item` property'sidir.
+[`MoneyBag`](Models/MoneyBag.cs) **indexer**: `this[int]` (get/set), `this[string]` (para birimi toplamı), `this[string, int]` (çok parametreli). `Count` + `int` indexer varsa derleyici `bag[^1]` (Index) ve aralık desteğini otomatik sağlar. Indexer derlemede `Item` property'sidir.
 
 ### 3.7 Shallow copy vs deep copy ⭐
 
@@ -137,7 +137,7 @@ public static class StringExtensions {
 | JSON round-trip | Deep, yazması kolay; **yavaş**, tip kısıtlı (parametresiz ctor, dairesel referans) |
 | `record` + `with` | **Shallow!** İç içe record/koleksiyonda referans paylaşılır → `rec with { Address = rec.Address with { … } }` |
 
-**`ICloneable` neden önerilmez?** `Clone()` `object` döner (cast gerekir) ve shallow mı deep mi olduğunu **sözleşmede belirtmez**; Microsoft public API'de kullanılmamasını önerir. En iyi çözüm çoğu zaman **immutable tasarım** (kopyalama ihtiyacı azalır). ([`Section07`](src/ClassMembers/Sections/Section07_Copying.cs), [`CopyTests`](tests/ClassMembers.Tests/CopyTests.cs))
+**`ICloneable` neden önerilmez?** `Clone()` `object` döner (cast gerekir) ve shallow mı deep mi olduğunu **sözleşmede belirtmez**; Microsoft public API'de kullanılmamasını önerir. En iyi çözüm çoğu zaman **immutable tasarım** (kopyalama ihtiyacı azalır). ([`Section07`](Sections/Section07_Copying.cs))
 
 ### 3.8 Diğer üyeler
 
@@ -150,11 +150,11 @@ public static class StringExtensions {
 
 ## 4. Gerçek dünya senaryosu
 
-**"Sipariş kopyalanıp düzenlenince orijinal sipariş de değişiyor."** "Taslak oluştur" özelliği `MemberwiseClone` ile siparişi kopyalıyor; kullanıcı kopyada teslimat adresini değiştirince orijinalin adresi de değişiyor (iç `Address` paylaşılıyor). Çözüm: copy constructor ile deep copy; testte `Assert.NotSame(original.ShippingAddress, copy.ShippingAddress)`. ([`CopyTests`](tests/ClassMembers.Tests/CopyTests.cs))
+**"Sipariş kopyalanıp düzenlenince orijinal sipariş de değişiyor."** "Taslak oluştur" özelliği `MemberwiseClone` ile siparişi kopyalıyor; kullanıcı kopyada teslimat adresini değiştirince orijinalin adresi de değişiyor (iç `Address` paylaşılıyor). Çözüm: copy constructor ile deep copy; `ReferenceEquals(original.ShippingAddress, copy.ShippingAddress)` artık `false` olmalı. ([`Section07`](Sections/Section07_Copying.cs))
 
-**"Kullanıcı sepete aynı ürünü iki kez ekleyebiliyor."** `CartItem` yalnızca `Equals` override etmiş; `HashSet<CartItem>` hash farklı olduğu için eşitliği görmüyor ([`BadPoint`](src/ClassMembers/Models/EqualityModels.cs) davranışı). Çözüm: `GetHashCode` + `IEquatable<T>` (ya da `record`).
+**"Kullanıcı sepete aynı ürünü iki kez ekleyebiliyor."** `CartItem` yalnızca `Equals` override etmiş; `HashSet<CartItem>` hash farklı olduğu için eşitliği görmüyor ([`BadPoint`](Models/EqualityModels.cs) davranışı). Çözüm: `GetHashCode` + `IEquatable<T>` (ya da `record`).
 
-**"Yalnızca bazı alt sınıflarda NullReferenceException."** Taban sınıf ctor'u virtual `Initialize()` çağırıyor; bir alt sınıf bu metotta ctor gövdesinde atanan alanı kullanıyor → o an `null` ([`DerivedWithState`](src/ClassMembers/Models/VirtualCall.cs)).
+**"Yalnızca bazı alt sınıflarda NullReferenceException."** Taban sınıf ctor'u virtual `Initialize()` çağırıyor; bir alt sınıf bu metotta ctor gövdesinde atanan alanı kullanıyor → o an `null` ([`DerivedWithState`](Models/VirtualCall.cs)).
 
 ---
 

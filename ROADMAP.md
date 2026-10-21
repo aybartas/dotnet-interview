@@ -58,23 +58,30 @@ Metin içi çapraz referanslar bu ID'lerle yapılır: **(→ M6.3)** "bu konunun
 
 | İşaret | Anlamı |
 |--------|--------|
-| 🛠 **Kod** | Bu konunun `src/` klasöründe yazılacak projenin kapsamı |
+| 🛠 **Kod** | Bu konunun klasöründe (modül projesinin içinde) yazılacak çalıştırılabilir kodun kapsamı |
 | 🎯 **Mülakat** | Modül sonunda cevaplayabilmen gereken tipik sorular |
 | ⭐ | Mülakatlarda **çok sık** sorulan klasik konu |
 | **(.NET 11)** | Kasım 2026'da gelen / önizlemedeki özellik — bil ama production'da .NET 10 varsay |
 | 🟢 🟡 🔴 | (DSA pistinde) Junior / Mid / Senior zorluk seviyesi |
 
-### Her konu klasörünün şablonu
+### Her modül klasörünün şablonu
+
+**Bir modül = bir .NET projesi.** Modül klasöründe `.csproj` durur; her konu o projenin içinde bir klasördür (ayrı `src/` veya `tests/` klasörü yoktur). Tüm repo tek bir solution'dır (`DotnetInterview.slnx`).
 
 ```
-<seviye>/<NN-modül>/<NN-konu>/
-├── README.md               # kavramsal anlatım (aşağıdaki şablon)
-├── src/                    # `dotnet run` ile çalışan bağımsız proje
-├── tests/                  # (varsa) konuya ait testler
-└── interview-questions.md  # 10-20 soru + cevap
+<seviye>/<NN-modül>/
+├── J0X.ModülAdı.csproj     # proje tipi modülün gereğine göre: Console, Web, Web API, Worker…
+├── Program.cs              # (console modülleri) konu menüsü: dotnet run -- <konu> [bölüm]
+├── docker-compose.yml      # yalnızca altyapı gereken modüllerde (DB, Redis, Keycloak, broker)
+└── <NN-konu>/
+    ├── README.md               # kavramsal anlatım (aşağıdaki şablon)
+    ├── <kod dosyaları>         # konunun kodu (Sections/, Models/ …)
+    └── interview-questions.md  # 10-20 soru + cevap
 ```
 
-Altyapı gerektiren modüllerde (veritabanı, Redis, Keycloak, broker) modül klasöründe ortak bir `docker-compose.yml` bulunur; konular onu kullanır.
+- **Test projesi yoktur**; yalnızca konusu test olan modüller (J10, M10…) test projesi içerir. Diğer konularda doğrulama, kodun çıktısını okumakla yapılır.
+- **Script yoktur** (`.sh` vb.): komut satırı alıştırmaları README'de kod bloğu olarak anlatılır.
+- Kod içermeyen modüller (ör. Kubernetes, CI/CD) proje açmaz; dosyaları solution'da klasör olarak görünür.
 
 Her konunun `README.md`'si şu şablonu izler:
 
@@ -83,7 +90,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 ## Ne? (tanım, zihinsel model)
 ## Neden? (hangi problemi çözüyor)
-## Nasıl? (kod üzerinden — src/ ile birebir)
+## Nasıl? (kod üzerinden — konu klasöründeki kodla birebir)
 ## Gerçek dünya senaryosu
 ## Mülakat perspektifi (nasıl sorulur, ne beklenir)
 ## Yaygın hatalar / tuzaklar
@@ -94,7 +101,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### Nasıl çalışılır?
 
 1. Konunun `README.md`'sini oku.
-2. `src/` içindeki projeyi **kendin yaz** — kopyalama. Okumak öğrenmek değildir.
+2. Konunun kodunu **kendin yaz** — kopyalama. Okumak öğrenmek değildir.
 3. `interview-questions.md`'yi **kapalı kitap** cevapla, sonra kontrol et.
 4. Haftada 1 gün tekrar, ayda 1 kez seviyene uygun mock mülakat (→ I6).
 
@@ -3450,7 +3457,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 
 > 📁 `04-dsa/` · **Seviyelerle paralel ilerler** — 1. haftadan itibaren haftada 2-3 gün.
 > Mülakatta fark yaratan şey algoritma ezberlemek değil, **problemdeki sinyali doğru pattern'e eşlemek** ve çözümü sesli, test edilebilir şekilde yazmaktır.
-> Her modülün `src/` klasöründe: veri yapısını **sıfırdan** implementasyon + xUnit testleri + .NET'in yerleşik karşılığıyla BenchmarkDotNet karşılaştırması + çözülmüş problemler.
+> DSA tek bir projedir (`04-dsa/`; her modül bir klasör): veri yapısını **sıfırdan** implementasyon + çalıştırılabilir doğrulama (konsol çıktısı) + .NET'in yerleşik karşılığıyla BenchmarkDotNet karşılaştırması + çözülmüş problemler.
 
 **Seviyeye göre DSA hedefi:**
 
@@ -3839,6 +3846,7 @@ Klasör hiyerarşisi roadmap'in birebir aynısıdır: **seviye → modül → ko
 
 ```
 dotnet-interview/
+├── DotnetInterview.slnx            # TEK solution: Visual Studio'da bunu açın
 ├── README.md
 ├── ROADMAP.md                      # bu dosya
 ├── CLAUDE.md
@@ -3920,12 +3928,12 @@ dotnet-interview/
 
 ```
 01-junior/08-database-fundamentals/
-├── README.md                       # modül özeti, konu listesi, önkoşullar, kurulum
+├── J08.DatabaseFundamentals.csproj # modülün TEK projesi (konular klasör olarak içinde)
+├── Program.cs                      # konu menüsü
 ├── docker-compose.yml              # PostgreSQL + pgAdmin + MongoDB + Redis (modülün tüm konuları kullanır)
 ├── 01-relational-modeling/
 │   ├── README.md
-│   ├── src/
-│   ├── tests/
+│   ├── <kod dosyaları>
 │   └── interview-questions.md
 ├── 02-sql-basics/
 ├── 03-index-basics/
@@ -3935,10 +3943,11 @@ dotnet-interview/
 ```
 
 **Kod konvansiyonları (önerilen):**
-- Her konu bağımsız çalışır: `cd <konu>/src && dotnet run` — konular arası proje referansı yok
-- Proje/namespace adı klasörden türetilir: `Junior.DatabaseFundamentals.TransactionsAcid`
+- Bir modül = bir proje (`J08.DatabaseFundamentals.csproj`); konular proje içinde klasördür. `cd <modül> && dotnet run -- <konu> [bölüm]`
+- Proje adı `J<NN>.<ModülAdı>` (Solution Explorer'da sıralı görünür); namespace `Junior.DatabaseFundamentals.TransactionsAcid` biçimindedir (konu başına ayrı namespace → ad çakışması olmaz)
+- Aynı modüldeki konular birbirinin tipini kullanmaz; assembly sınırı gerektiren deneyler için modülün yanına küçük bir `J0X.Lib` projesi eklenebilir
 - Altyapı modül seviyesindeki `docker-compose.yml`'den gelir; connection string'ler `appsettings.Development.json` + User Secrets
-- Capstone'lar birden fazla proje içerebilir; kendi `*.slnx` dosyaları vardır
+- Capstone'lar birden fazla katmanlı proje içerebilir; hepsi aynı solution'a eklenir
 
 ---
 
@@ -4171,7 +4180,7 @@ Günde 2-3 saat varsayımıyla. Her satırda **seviye modülü + aynı haftalard
 ## Nasıl İlerleyeceğim?
 
 1. Bu roadmap **canlı bir doküman**. Bir konu tamamlandığında başlığı klasör bağlantısına dönüşecek.
-2. Her konunun klasöründe: `README.md` + `src/` + (varsa) `tests/` + `interview-questions.md`.
+2. Her konunun klasöründe: `README.md` + kod dosyaları + `interview-questions.md`; modül klasöründe tek `.csproj`.
 3. **Sıralı ilerle** — seviyeleri atlama, DSA'yı paralel yürüt.
 4. Kodu **kopyalama, yaz.** AI asistanını açıklama ve review için kullan, yerine yazdırma (→ J14.2).
 5. Her seviyeyi capstone + mock mülakatla kapat.

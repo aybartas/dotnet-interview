@@ -1,6 +1,6 @@
 # J2.4 Sınıf Üyeleri & Nesne Semantiği — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ Neden public field yerine property kullanılır?
 (1) **Doğrulama/invariant koruma:** field'a her değer atanabilir, property'nin setter'ı doğrulayabilir. (2) **Erişim hassasiyeti:** salt okunur, `private set`, `init` gibi kısıtlamalar yapılabilir. (3) **Evrim:** sonradan field'ı property'ye çevirmek *binary breaking change*'dir (IL `ldfld` → `callvirt get_X`; eski derlenmiş tüketici `MissingFieldException` alır), baştan property yazmak ücretsizdir (auto-property). (4) Data binding, serileştirme, EF gibi araçlar property bekler. Field'a `ref/out` geçilebilir, property'ye geçilemez — bilinen küçük fark.

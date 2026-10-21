@@ -1,6 +1,6 @@
 # J1.1 Git — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ `merge` ile `rebase` arasındaki fark nedir?
 `merge` iki branch'in uçlarını birleştiren yeni bir **merge commit** üretir; mevcut commit'lere dokunmaz, gerçek (doğrusal olmayan) geçmişi korur. `rebase` ise feature branch'indeki commit'leri hedef branch'in ucuna **yeniden oynatır**; içerik aynı kalsa da commit'ler yeni hash alır, yani geçmiş yeniden yazılır ve sonuç doğrusal olur. Bu yüzden rebase **yalnızca henüz paylaşılmamış (push edilmemiş veya sadece benim kullandığım) branch'lerde** güvenlidir. Pratik kural: feature branch'imi `main`'e güncel tutmak için rebase, feature'ı `main`'e almak için PR + (squash) merge.

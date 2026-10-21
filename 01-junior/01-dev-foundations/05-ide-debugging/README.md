@@ -1,6 +1,6 @@
 # J1.5 IDE, Debugging & Kod Kalitesi Araçları
 
-> 📁 `01-junior/01-dev-foundations/05-ide-debugging/` · Önkoşul: J1.4 · Pratik: [`src/`](src/) · Çözümler (spoiler): [`SOLUTIONS.md`](SOLUTIONS.md) · Sorular: [`interview-questions.md`](interview-questions.md)
+> 📁 `01-junior/01-dev-foundations/05-ide-debugging/` · Önkoşul: J1.4 · Çözümler (spoiler): [3.7 sonu](#egzersiz-çözümleri-spoiler) · Sorular: [`interview-questions.md`](interview-questions.md)
 
 ## İçindekiler
 
@@ -66,7 +66,7 @@ Bunlar araçtır; **CLI hepsinin altındadır** (`dotnet build/test` her yerde a
 | Çeşit | Ne zaman? | Örnek |
 |-------|-----------|-------|
 | **Normal** | Bir satırın durumunu görmek | — |
-| **Conditional** | Binlerce iterasyondan yalnızca *belirli* durumda durmak | `order.Quantity < 0` ([Egzersiz 6](SOLUTIONS.md)) |
+| **Conditional** | Binlerce iterasyondan yalnızca *belirli* durumda durmak | `order.Quantity < 0` ([Egzersiz 6](#egzersiz-çözümleri-spoiler)) |
 | **Hit count** | N'inci geçişte durmak | "7345'inci iterasyonda" |
 | **Tracepoint (log point)** | **Durmadan** değer loglamak; kodu değiştirmeden, `Console.WriteLine` eklemeden | Mesaj: `{order.Id}: {order.Quantity}` |
 | **Function / Data breakpoint** | Bir metoda girildiğinde / bir alan değiştiğinde durmak | (IDE'ye göre) |
@@ -77,13 +77,13 @@ Bunlar araçtır; **CLI hepsinin altındadır** (`dotnet build/test` her yerde a
 |---------|--------|
 | **Locals / Autos** | Mevcut kapsamdaki değişkenler ve değerleri |
 | **Watch** | Seçtiğiniz ifadeleri sürekli izler (`i`, `order.Total`, `list.Count`) |
-| **Immediate Window** | O an **ifade çalıştırın/değerlendirin**: `percent / 100`, `list.Where(x => x > 1).Count()`; hatta değişkene atama yapıp denemek ([Egzersiz 5](SOLUTIONS.md)) |
+| **Immediate Window** | O an **ifade çalıştırın/değerlendirin**: `percent / 100`, `list.Where(x => x > 1).Count()`; hatta değişkene atama yapıp denemek ([Egzersiz 5](#egzersiz-çözümleri-spoiler)) |
 | **Call Stack** | "Buraya nasıl geldim?" — çağrı zinciri; üstteki çerçeveyi seçip o noktadaki yerelleri de görebilirsiniz |
-| **Make Object ID** | Referansa kalıcı etiket (`{1#}`): iki değişken **aynı nesneyi** mi gösteriyor? ([Egzersiz 8](SOLUTIONS.md)) |
+| **Make Object ID** | Referansa kalıcı etiket (`{1#}`): iki değişken **aynı nesneyi** mi gösteriyor? ([Egzersiz 8](#egzersiz-çözümleri-spoiler)) |
 | **Threads / Tasks / Parallel Stacks** | Eşzamanlı kod, bekleyen `Task`'lar, deadlock teşhisi (→ J4, M4) |
 | **Breakpoints penceresi** | Hepsini tek yerden aç/kapat, koşulları düzenle |
 
-**Debug ≠ Release:** Debug yapılandırmasında optimizasyon kapalıdır ve ek hata ayıklama bilgisi vardır; Release'de derleyici/JIT kodu yeniden düzenler, değişkenler "optimized away" olur, `Debug.*` ve `[Conditional("DEBUG")]` çağrıları **silinir** ([Egzersiz 9](SOLUTIONS.md)). "Debug'da çalışıyor, Release'de çalışmıyor" gerçek bir sorun sınıfıdır — çoğu zaman yan etkili assert, zamanlama/race ya da optimizasyona duyarlı kod.
+**Debug ≠ Release:** Debug yapılandırmasında optimizasyon kapalıdır ve ek hata ayıklama bilgisi vardır; Release'de derleyici/JIT kodu yeniden düzenler, değişkenler "optimized away" olur, `Debug.*` ve `[Conditional("DEBUG")]` çağrıları **silinir** ([Egzersiz 9](#egzersiz-çözümleri-spoiler)). "Debug'da çalışıyor, Release'de çalışmıyor" gerçek bir sorun sınıfıdır — çoğu zaman yan etkili assert, zamanlama/race ya da optimizasyona duyarlı kod.
 
 ### 3.2 Exception ayarları: "first-chance exception"da durmak ⭐
 
@@ -99,11 +99,11 @@ Varsayılan olarak debugger yalnızca **işlenmeyen** (unhandled) istisnada duru
 ### 3.3 `dotnet watch` ve Hot Reload
 
 ```bash
-cd src/watch-demo
-dotnet watch                # çalıştır + dosya değişikliğini izle
+# J01 modül klasöründe; 3. egzersizi çalıştırır ve dosya değişikliğini izler
+dotnet watch -- 1.5 3       # (dotnet watch run -- 1.5 3 ile aynı)
 ```
 
-- **Hot Reload:** Çalışan uygulamada **kod değişikliğini yeniden başlatmadan** uygular (durum/bellek korunur; denemede sayaç `#13 → #14` devam eder). Metot gövdesi değişiklikleri sorunsuz uygulanır.
+- **Hot Reload:** Çalışan uygulamada **kod değişikliğini yeniden başlatmadan** uygular (durum/bellek korunur; çalışan bir web uygulamasında/döngüde değişiklik anında görünür). Metot gövdesi değişiklikleri sorunsuz uygulanır. Denemek için `Exercises/` altındaki bir egzersizin metot gövdesini değiştirip kaydedin.
 - **"Rude edit"** (imza değiştirmek, yeni alan/tip eklemek gibi desteklenmeyen değişiklikler): Hot Reload uygulayamaz, yeniden başlatmayı önerir.
 - Web projelerinde tarayıcı otomatik yenilenir. `Ctrl+R`: elle yeniden başlat.
 - Faydası: UI/API geliştirirken "değiştir → derle → durdur → başlat → aynı sayfaya git" döngüsünü kaldırır. Debugger bağlıyken (IDE'de F5) de Hot Reload çalışır.
@@ -127,7 +127,7 @@ dotnet_analyzer_diagnostic.category-Style.severity = suggestion   # kategori baz
 csharp_style_namespace_declarations = file_scoped:suggestion      # stil tercihi + önem derecesi
 ```
 
-Örnek tam dosya: [`src/.editorconfig`](src/.editorconfig) — biçim (girinti, satır sonu), `using`/`var`/namespace stili, **adlandırma kuralları** (interface `I…`, private alan `_camelCase`) ve analyzer önem dereceleri. `.editorconfig` **repoyla birlikte commit'lenir**; IDE'ler, `dotnet format` ve derleyici aynı dosyayı okur → "benim makinemde farklı biçimleniyor" biter.
+Örnek tam dosya: [`AnalyzersNullable/.editorconfig`](AnalyzersNullable/.editorconfig) — biçim (girinti, satır sonu), `using`/`var`/namespace stili, **adlandırma kuralları** (interface `I…`, private alan `_camelCase`) ve analyzer önem dereceleri. `.editorconfig` **repoyla birlikte commit'lenir**; IDE'ler, `dotnet format` ve derleyici aynı dosyayı okur → "benim makinemde farklı biçimleniyor" biter.
 
 **Derlemede zorlama:** IDE'deki `IDE####` stil kuralları varsayılanda yalnızca editörde görünür. Derlemede (ve CI'da) de çalışması için:
 
@@ -178,38 +178,92 @@ Bu **derleme zamanı** ipucudur; çalışma zamanında koruma eklemez (`!` ile s
 | `CS8604` | Olası null argüman | Çağırmadan önce kontrol et / parametreyi `T?` yap |
 | `CS8618` | Non-nullable alan/özellik constructor sonunda başlatılmadı | Başlat, `required` kullan, ya da `T?` yap |
 
-**Null-forgiving operatörü `!`** ("eminim null değil") uyarıyı susturur, null'ı kaldırmaz ([Egzersiz 2](SOLUTIONS.md)). Yalnızca *kanıtlayabildiğiniz* yerde kullanın. Ek araçlar: `is not null`, `??`, `??=`, `?.`, `ArgumentNullException.ThrowIfNull(x)`, `[NotNullWhen(true)]` gibi nullable öznitelikleri (`TryGetValue(…, out var v)` imzası bu yüzden doğru çalışır).
+**Null-forgiving operatörü `!`** ("eminim null değil") uyarıyı susturur, null'ı kaldırmaz ([Egzersiz 2](#egzersiz-çözümleri-spoiler)). Yalnızca *kanıtlayabildiğiniz* yerde kullanın. Ek araçlar: `is not null`, `??`, `??=`, `?.`, `ArgumentNullException.ThrowIfNull(x)`, `[NotNullWhen(true)]` gibi nullable öznitelikleri (`TryGetValue(…, out var v)` imzası bu yüzden doğru çalışır).
 
 ### 3.7 Pratik
 
+Kod J01 projesindedir (modül klasöründen çalıştırın):
+
 ```bash
-cd src
+# 1) Debugger egzersizleri — 9 bilerek hatalı program (Exercises/)
+dotnet run -- 1.5                # liste
+dotnet run -- 1.5 6              # 6. egzersiz
+dotnet run -- 1.5 6 --hint       # ipucu · çözümler: aşağıdaki "Egzersiz çözümleri" (önce kendiniz deneyin!)
+# IDE'de: J01'i başlangıç projesi yapın, Debug argümanlarına "1.5 6" yazın → Exercises/'a breakpoint → F5
+# Egzersiz 9 (Debug/Release): dotnet run -c Release -- 1.5 9
 
-# 1) Debugger egzersizleri — 9 bilerek hatalı program
-cd debugging-exercises
-dotnet run                  # liste
-dotnet run -- 6             # 6. egzersiz
-dotnet run -- 6 --hint      # ipucu · çözümler: ../../SOLUTIONS.md
-# IDE'de: projeyi aç → Program.cs/Exercises'a breakpoint → F5
-
-# 2) Analyzer + nullable
-cd ../analyzers-nullable
-dotnet build                                    # 18 uyarı (derleme başarılı)
+# 2) Analyzer + nullable (AnalyzersNullable/) — bu klasör BİLEREK uyarı üretir
+dotnet build                                    # 15 uyarı (derleme başarılı): CS0414, CS86xx, IDE0005/0044/0051/1006, CA1861
 dotnet build -p:TreatWarningsAsErrors=true      # aynı kod → derleme BAŞARISIZ
 dotnet build -p:WarningsAsErrors=nullable       # yalnızca nullable uyarıları hata
 dotnet format whitespace --verify-no-changes    # biçim kapısı: başarısız (çıkış kodu ≠ 0)
 dotnet format                                   # düzelt (dosyaları DEĞİŞTİRİR → sonra git checkout -- . ile geri alın)
+dotnet run -- 1.5 analyzers                     # uyarılı kodun çalışma zamanı davranışı (GetUserName(2) → null)
 
 # 3) Hot reload
-cd ../watch-demo && dotnet watch                # Greeter.cs'i değiştirip kaydedin
+dotnet watch -- 1.5 3                           # Exercises/ altında bir dosyayı değiştirip kaydedin
 ```
 
-| Proje | Amaç |
-|-------|------|
-| [`debugging-exercises/`](src/debugging-exercises/) | 9 egzersiz: döngü hatası, NRE, koleksiyon değişimi, closure, sayısal tuzaklar, **conditional breakpoint**, unutulan await, paylaşılan referans, Debug/Release farkı |
-| [`analyzers-nullable/`](src/analyzers-nullable/) | `CS86xx` nullable uyarıları, `CA`/`IDE` analyzer uyarıları, biçim ihlalleri; [`.editorconfig`](src/.editorconfig) ile |
-| [`watch-demo/`](src/watch-demo/) | `dotnet watch` + Hot Reload denemesi |
-| [`.vscode/`](src/.vscode/) | VS Code için `launch.json` / `tasks.json` örnekleri |
+| Klasör | Amaç |
+|--------|------|
+| [`Exercises/`](Exercises/) | 9 egzersiz: döngü hatası, NRE, koleksiyon değişimi, closure, sayısal tuzaklar, **conditional breakpoint**, unutulan await, paylaşılan referans, Debug/Release farkı |
+| [`AnalyzersNullable/`](AnalyzersNullable/) | `CS86xx` nullable uyarıları, `CA`/`IDE` analyzer uyarıları, biçim ihlalleri; klasöre özel [`.editorconfig`](AnalyzersNullable/.editorconfig) ile (`J01.DevFoundations.csproj` → `EnforceCodeStyleInBuild`) |
+
+> `J01` projesinde `AnalyzersNullable/` uyarıları **her derlemede** görünür; bunlar bilerek bırakılmıştır.
+
+#### Egzersiz çözümleri (spoiler!)
+
+<details>
+<summary>Önce egzersizleri debugger ile kendiniz çözmeye çalışın; sonra açın.</summary>
+
+Her çözümde üç şey var: **kök neden**, **hangi debugger özelliğiyle bulunur**, **düzeltme**.
+
+**1. Döngü: 1'den n'e toplam**
+- **Kök neden:** `for (var i = 1; i < n; i++)` — `n` dahil edilmiyor (**off-by-one**). `SumUpTo(1)` döngüye hiç girmez → 0.
+- **Debugger ile:** `sum += i` satırına breakpoint → F5/F10 ile ilerleyin; **Watch**'a `i` ve `sum` ekleyin. Son iterasyonda `i == n - 1` olduğunu görürsünüz.
+- **Düzeltme:** `i <= n`. (Kalıcı çözüm: sınır değerleri — `n = 0, 1, 10` — için birim testi yazmak, → J10.1.)
+
+**2. NullReferenceException zinciri**
+- **Kök neden:** "Zeynep"in `Address`'i `null`; `CityOf` içinde `c.Address!.City` — `!` operatörü derleyiciye "eminim, null değil" der ve uyarıyı susturur, ama null'ı ortadan kaldırmaz.
+- **Debugger ile:** **Exception Settings** (Ctrl+Alt+E) → `System.NullReferenceException`'ı işaretleyin; istisna fırlatıldığı anda durur. **Locals**'ta `c.Address == null` görülür; **Call Stack**'te `ShippingLabel → CityOf` zincirini izlersiniz.
+- **Düzeltme:** `c.Address?.City.ToUpperInvariant() ?? "adres yok"` — `!` yerine gerçek null kontrolü. Genel kural: `!`'i, null olamayacağını kanıtlayabildiğiniz yerlerde kullanın; "uyarıyı sustur" aracı değildir.
+
+**3. foreach sırasında koleksiyonu değiştirmek**
+- **Kök neden:** `List<T>` her değişiklikte iç `_version` sayacını artırır; enumerator `MoveNext`'te bunu kontrol eder ve değişmişse `InvalidOperationException` fırlatır. Belirti `foreach`'te çıkar, ama kök neden döngü gövdesindeki `Remove`'dur.
+- **Debugger ile:** Exception Settings'te `InvalidOperationException`'ı işaretleyin; **Call Stack**'te `List<T>.Enumerator.MoveNext` görünür; bir önceki çerçeveye geçince hangi `Remove` çağrısından sonra olduğu anlaşılır.
+- **Düzeltme:** `orders.RemoveAll(o => o.IsCancelled);` ya da `foreach (var o in orders.ToList())` (kopya üzerinde dön).
+
+**4. Döngüde yakalanan değişken (closure)**
+- **Kök neden:** `for` döngüsünde `i` **tek bir değişkendir**; lambda'lar değeri değil **değişkenin kendisini** yakalar. Lambda'lar döngü bittikten sonra çalışınca `i == 3` olduğu için hepsi `30` döner. (`foreach` değişkeni C# 5'ten beri her iterasyonda yenidir; `for` değişkeni değildir.)
+- **Debugger ile:** Lambda içine breakpoint → **Locals**'ta `this` altında derleyicinin ürettiği closure sınıfını (`<>c__DisplayClass…`) ve tek bir `i` alanını görürsünüz.
+- **Düzeltme:** Döngü içinde kopya al: `var copy = i; actions.Add(() => copy * 10);`.
+
+**5. Tamsayı bölme ve kayan nokta tuzakları**
+- **Kök neden:** (a) `percent / 100` → `int / int` = `0` (tamsayı bölme), indirim hiç uygulanmaz. (b) `values.Sum() / values.Length` → `int / int`; sonuç `double`'a sonradan çevrilse bile kesir kaybolmuştur. (c) `0.1 + 0.2 == 0.3` → ikili kayan noktada tam gösterilemeyen değerler; eşitlik karşılaştırması güvenilmez.
+- **Debugger ile:** **Immediate window**: `percent / 100` → `0`, `(decimal)percent / 100` → `0.10`, `0.1 + 0.2` → `0.30000000000000004`. İfadeleri çalışırken deneyip doğrulayın.
+- **Düzeltme:** `price - price * percent / 100m` (ya da `decimal` tipine çevirin); `values.Average()` / `(double)values.Sum() / values.Length`; para için `decimal`, kayan nokta karşılaştırmasında tolerans (`Math.Abs(a - b) < 1e-9`) kullanın (→ J2.1, J2.2).
+
+**6. 10.000 kayıttan birindeki bozuk veri**
+- **Kök neden:** `Id == 7345` olan kaydın `Quantity` değeri `-3` (veri kaynağı hatası).
+- **Debugger ile:** Döngüdeki `actual += …` satırına **koşullu breakpoint**: `order.Quantity < 0`. 10.000 iterasyon yerine tam o kayıtta durur. Alternatif: **tracepoint** (sağ tık → "Log a message": `{order.Id}: {order.Quantity}`) — durmadan Output'a yazar, `grep` benzeri filtreyle bakılır. Üçüncü yol: **Hit count** (örn. "7345. iterasyonda dur").
+- **Düzeltme:** Hata kaynağı **veri girişidir**: yükleme/doğrulama katmanında `Quantity > 0` kontrolü (veri sınırında doğrula) ve bu kontrolü kapsayan bir birim testi.
+
+**7. Unutulan await**
+- **Kök neden:** `SaveAsync` çağrılır ama beklenmez (`await` yok); `Count` kontrolü kayıt işlemi bitmeden yapılır. Sonucu bir değişkene atamak derleyici uyarısını (CS4014) susturur — yani bu hatanın bu biçimi derleyiciden kaçar.
+- **Debugger ile:** `Report` satırında **Watch**'a `task.Status` ekleyin → `WaitingForActivation`. **Parallel Tasks / Tasks** penceresi (VS: Debug → Windows) bekleyen task'ı gösterir. F10 ile `await` satırını geçerken kontrolün başka bir yere atlayıp geri döndüğünü gözlemleyin.
+- **Düzeltme:** `await repo.SaveAsync("kayıt-1");`. Önleme: `CS4014`'ü uyarı/hata yapmak (`.editorconfig`'te yapıldı), `Task` döndüren çağrıların sonucunu asla yok saymamak (→ J4).
+
+**8. Aynı nesneyi paylaşan iki "farklı" kullanıcı**
+- **Kök neden:** `"guest"` rolü için her çağrıda **aynı** `GuestDefaults` listesi döner; `aliGuest.Add("write")` paylaşılan listeyi değiştirir, Veli de etkilenir (referans tipi + paylaşılan değişken durum).
+- **Debugger ile:** **Watch** penceresinde `aliGuest` → sağ tık → **Make Object ID** → `{1#}`; `veliGuest` için de `{1#}` gelir → aynı nesne.
+- **Düzeltme:** Her çağrıda yeni liste ya da değiştirilemez görünüm: `=> [.. GuestDefaults]` veya `IReadOnlyList<string>` döndürmek (tasarım olarak "dışarıya değiştirilebilir iç durum sızdırmamak").
+
+**9. Debug'da doğru, Release'de farklı sonuç**
+- **Kök neden:** `Debug.Assert(NextId() > 0)` — `Debug.*` çağrıları `[Conditional("DEBUG")]` ile işaretlidir; **Release derlemesinde çağrı ve argüman ifadeleri tamamen silinir**. İfadenin yan etkisi (`NextId()` sayacı artırır) yalnızca Debug'da gerçekleşir.
+- **Debugger ile:** İki yapılandırmayı karşılaştırın: `dotnet run -- 9` ve `dotnet run -c Release -- 9`. IDE'de Release'de breakpoint'ler/Locals optimize edilmiş kodda eksik görünebilir.
+- **Düzeltme:** Assert/log ifadelerinde **yan etki olmasın**: `var id = NextId(); Debug.Assert(id > 0);`. Prodüksiyonda gerekli doğrulamalar `Debug.Assert` değil gerçek kontrol/istisna olmalı.
+
+</details>
 
 ---
 

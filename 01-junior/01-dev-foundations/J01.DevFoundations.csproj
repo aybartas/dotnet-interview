@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- J1: Geliştirici Temelleri — kod içeren konular (J1.2 ağ, J1.3 web, J1.5 debugging/analyzer) tek projede; klasör = konu.
+       J1.1 (Git) ve J1.4 (.NET CLI) yalnızca README'dir: komut satırı alıştırmalarıdır. Çalıştırma: dotnet run, ardından konu numarası (bkz. Program.cs).
+       Web SDK: J1.3 Kestrel uygulaması için gerekir; diğer konular düz console kodudur. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Junior.DevFoundations</RootNamespace>
+    <!-- J1.5 AnalyzersNullable: IDE0xxx stil kuralları varsayılanda yalnızca IDE'de görünür; bu ayar onları DERLEMEDE de çalıştırır.
+         Kural şiddetleri 05-ide-debugging/AnalyzersNullable/.editorconfig dosyasındadır. -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisMode>Default</AnalysisMode>
+    <!-- IDE0005 (kullanılmayan using) derlemede yalnızca XML doc üretimi açıkken raporlanır (bilinen kısıt); CS1591 gürültüsü kapalı. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+</Project>

@@ -1,6 +1,6 @@
 # J3.3 LINQ Temelleri — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan. Modül (J3) sorularının tamamı için J3.1 ve J3.2 dosyalarına da bakın.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan. Modül (J3) sorularının tamamı için J3.1 ve J3.2 dosyalarına da bakın.
 
 ### 1. ⭐ Deferred execution (ertelenmiş çalışma) nedir?
 LINQ sorgusu tanımlandığında çalışmaz; yalnızca **ne yapılacağını** tutan bir iterator nesnesi oluşur. Sorgu `foreach`, `ToList()`, `Count()`, `First()` gibi bir şey onu **enumerate** ettiğinde çalışır ve **her enumeration'da baştan** çalışır. Sonuçları: kaynak tanımdan sonra değişirse yeni hali görülür, yakalanan değişkenler enumeration anındaki değerleriyle okunur, yan etkili `Select` enumerate edilmedikçe hiç çalışmaz. Anlık görüntü gerekiyorsa `ToList()`/`ToArray()` ile somutlaştırılır.

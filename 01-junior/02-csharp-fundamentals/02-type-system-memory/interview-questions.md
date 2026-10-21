@@ -1,6 +1,6 @@
 # J2.2 Tip Sistemi & Bellek Modeli — Mülakat Soruları
 
-> Teori: [README.md](README.md) · Pratik: [src/](src/) · Test: [tests/](tests/). ⭐ = çok sık sorulan.
+> Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ Value type ile reference type farkı nedir?
 Asıl fark **kopyalama semantiğidir**: value type'ta atama/metoda geçirme **değeri kopyalar** (iki bağımsız kopya), reference type'ta **referansı kopyalar** (ikisi aynı nesneyi gösterir). Buna bağlı olarak: varsayılan `==` value type'ta alan değerlerine, reference type'ta referans eşitliğine bakar; value type `null` olamaz (`int?` ile olur); value type'lar `ValueType`'tan, reference type'lar doğrudan `Object`'ten türer. "Biri stack, biri heap" bir uygulama detayıdır ve çoğu zaman yanlıştır.

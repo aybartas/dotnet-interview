@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Test (xUnit v3 → Microsoft.Testing.Platform; VSTest paketleri artık gerekmez) -->
+    <!-- Yalnızca KONUSU test olan modüller (J10, M10…) kullanır; diğer modüllerde test projesi yoktur.
+         xUnit v3 → Microsoft.Testing.Platform (global.json'daki test runner ayarıyla); VSTest paketleri artık gerekmez. -->
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
   </ItemGroup>
 
