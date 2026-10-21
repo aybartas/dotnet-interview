@@ -16,4 +16,7 @@
     <Project Path="01-junior/04-async-basics/J04.AsyncBasics.csproj" />
     <Project Path="01-junior/05-build-run-basics/J05.BuildRunBasics.csproj" />
   </Folder>
+  <Folder Name="/06 Sertifika/">
+    <Project Path="06-certifications/01-az-900-azure-fundamentals/C01.AzureFundamentals.csproj" />
+  </Folder>
 </Solution>

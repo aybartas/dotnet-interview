@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- C1: Microsoft Azure Fundamentals (AZ-900) — sertifika pisti; konular tek console projesinde (klasör = konu).
+       Kod; SLA/kesinti, composite SLA, CapEx/OpEx ve fiyat modeli hesaplayıcıları gibi sınavda kavramı pekiştiren küçük araçlardır.
+       Çalıştırma: dotnet run, ardından konu ve bölüm numarası (bkz. Program.cs) -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Certification.AzureFundamentals</RootNamespace>
+    <!-- Yüzde ve para çıktıları tr-TR biçiminde yazılır (gerçek kültür verisi gerekir) -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+</Project>
