@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A .NET Junior → Mid → Senior interview-prep study repo. **All content is written in Turkish** — keep new prose in Turkish (technical terms and identifiers stay in English, as in the existing text). Target platform is **.NET 10 (LTS) / C# 14**; .NET 11 / C# 15 features may be mentioned but must be marked **(.NET 11)**.
 
-The repo started **docs-only** (`ROADMAP.md`, `README.md`, `CLAUDE.md`) and is being filled in one topic at a time. Content written so far: **J1 (`01-junior/01-dev-foundations/`) — all 5 topics** (theory README, runnable `src/`, `interview-questions.md`). The remaining `01-junior/` … `05-interview/` folders described in `ROADMAP.md → Repo Yapısı` are created as their topics are written. Root `Directory.Build.props` and `Directory.Packages.props` (central package management) already exist; the SDK is .NET 10 (`dotnet` CLI is needed to build/run the examples).
+The repo started **docs-only** (`ROADMAP.md`, `README.md`, `CLAUDE.md`) and is being filled in one topic at a time. Content written so far: **J1 (`01-junior/01-dev-foundations/`) — all 5 topics** and **J2 (`01-junior/02-csharp-fundamentals/`) — all 6 topics** (theory README, runnable `src/`, `interview-questions.md`). The remaining `01-junior/` … `05-interview/` folders described in `ROADMAP.md → Repo Yapısı` are created as their topics are written. Root `Directory.Build.props` and `Directory.Packages.props` (central package management) already exist; the SDK is .NET 10 (`dotnet` CLI is needed to build/run the examples).
 
 | File | Role |
 |------|------|
