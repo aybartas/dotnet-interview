@@ -103,7 +103,7 @@ The Azure certification content (**C1 = AZ-900**, **C2 = AI-200**) is its **own 
 │   ├── README.md          # theory — 8-heading template, but heading 5 is "Sınav perspektifi" (what the exam asks, traps, keywords)
 │   ├── <code>             # labs; `az` CLI labs are code blocks inside README (no scripts)
 │   └── quiz.md            # exam-style questions; answers + rationale in <details>
-└── 12-practice-exam/      # last topic: full-length practice exam, per-domain score table, exam strategy
+└── 13-practice-exam/      # last topic: full-length practice exam, per-domain score table, exam strategy
 ```
 
 - **`quiz.md` replaces `interview-questions.md`** (no interview-questions in this track). Question formats follow the real exam: single choice, multiple choice, yes/no table, ordering, scenario; for AI-200 also code/CLI/KQL completion and case studies. Every answer has a rationale. Distribute questions by the official domain weights.
