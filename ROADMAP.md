@@ -3712,7 +3712,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Pay-as-you-go** (taahhütsüz, saniye/dakika/saat veya işlem bazında), **reserved instances / savings plan** (1-3 yıl taahhütle indirim), **spot** (boşta kapasite, kesilebilir, çok ucuz), **free tier / ücretsiz hesap kredisi**, **dev/test fiyatlandırması**
   - Ne zaman hangisi: sabit 7/24 yük → reservation; değişken yük → pay-as-you-go; kesintiye dayanıklı toplu iş → spot (ayrıntılı maliyet → C1.11)
 - **Sınav tuzakları:** "MFA/şifre politikası kimin sorumluluğunda?" → **her zaman müşteri**; "işletim sistemi yaması" → IaaS'ta müşteri, PaaS/SaaS'ta Microsoft; hybrid ile multicloud; "baştan yatırım gerektirmeyen model" → OpEx/consumption
-- 🛠 **Pratik:** Aynı iş yükü (web uygulaması + veritabanı) için on-prem / IaaS / PaaS / SaaS **sorumluluk matrisini** doldurma alıştırması (README'de boş tablo + `<details>` çözüm); `az login` → `az account show` → ilk resource group'u açıp silme; **bütçe alarmı** kurma (Cost Management → Budgets) — öğrenirken fatura şoku yaşamamak için ilk iş.
+- 🛠 **Pratik:** Aynı iş yükü (web uygulaması + veritabanı) için on-prem / IaaS / PaaS / SaaS **sorumluluk matrisini** doldurma alıştırması (README'de boş tablo + `<details>` çözüm); `az login` → `az account show` → ilk resource group'u açıp silme; **bütçe alarmı** kurma (Cost Management → Budgets, `az consumption budget create`) — öğrenirken fatura şoku yaşamamak için ilk iş. `C01` projesinde: sorumluluk matrisi sorgu aracı (`dotnet run -- 1.1 kim os paas`), CapEx/OpEx ve fiyatlandırma modeli karşılaştırma hesapları (örnek fiyatlarla).
 - 📝 **Quiz:** sorumluluk matrisi, cloud modeli senaryoları, CapEx/OpEx, fiyatlandırma modeli seçimi (≈18 soru)
 
 #### C1.2 Cloud'un Faydaları · `02-cloud-benefits` ⭐
@@ -3755,7 +3755,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - Nitelikler: **olay tetiklemeli** çalışma, **otomatik ölçekleme** (sıfıra kadar), **çalışma süresi/çağrı başına ücret**, altyapı yönetimi yok
   - Serverless, PaaS'ın bir alt türü olarak düşünülür; Azure örnekleri: **Azure Functions** (kod), **Azure Logic Apps** (görsel iş akışı), serverless container (Container Apps) (→ C1.6)
 - **Sınav tuzakları:** "işletim sistemine tam erişim" → IaaS; "en az yönetim yükü" → SaaS (uygulama hazırsa) / PaaS (kendi kodunu çalıştıracaksan); ürün → model eşleştirme (Azure SQL Database = PaaS, VM üzerinde SQL Server = IaaS, Microsoft 365 = SaaS); "yalnızca kod çalışırken ödeme" → serverless
-- 🛠 **Pratik:** Aynı Todo uygulaması için IaaS (VM), PaaS (App Service) ve SaaS seçeneklerini **Pricing Calculator**'da fiyatlandırıp kontrol/maliyet/sorumluluk karşılaştırma tablosu çıkarma (README'de şablon).
+- 🛠 **Pratik:** Aynı Todo uygulaması için IaaS (VM), PaaS (App Service) ve SaaS seçeneklerini **Pricing Calculator**'da fiyatlandırıp kontrol/maliyet/sorumluluk karşılaştırma tablosu çıkarma (README'de şablon); `az` CLI ile F1 App Service ve küçük bir VM açıp farkı görme, ardından `az group delete`. `C01` projesinde: ürün → hizmet türü kataloğu (`dotnet run -- 1.3 tur sql`) ve serverless (çağrı + GB-saniye) ile 7/24 açık kaynak maliyet karşılaştırması.
 - 📝 **Quiz:** ürün → hizmet türü eşleştirme, kullanım senaryosu seçimi, serverless nitelikleri (≈15 soru)
 
 #### C1.4 Azure Temel Mimari Bileşenleri · `04-core-architecture` ⭐
