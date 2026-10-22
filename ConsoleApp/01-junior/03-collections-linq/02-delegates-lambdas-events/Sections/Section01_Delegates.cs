@@ -2,57 +2,57 @@ namespace Junior.CollectionsLinq.DelegatesLambdasEvents;
 
 public static class Section01_Delegates
 {
-    // 1) Delegate TİPİ: "şu imzaya sahip metotları tutabilen bir tip" (tip güvenli fonksiyon işaretçisi)
+    // 1) Delegate TYPE: "a type that can hold methods with this signature" (a type-safe function pointer)
     private delegate int BinaryOperation(int a, int b);
 
     public static void Run()
     {
-        Console.WriteLine("1) delegate = imza tipi; bir metoda (veya birkaçına) REFERANS tutar. Delegate bir NESNE'dir (System.MulticastDelegate).");
-        BinaryOperation op = Add;                                      // method group → delegate dönüşümü (new BinaryOperation(Add) kısaltması)
-        Console.WriteLine($"   BinaryOperation op = Add;  op(2, 3) = {op(2, 3)}  ·  op.Method.Name = {op.Method.Name}  ·  tip: {op.GetType().BaseType!.Name}");
+        Console.WriteLine("1) delegate = a signature type; it holds a REFERENCE to a method (or several). A delegate is an OBJECT (System.MulticastDelegate).");
+        BinaryOperation op = Add;                                      // method group → delegate conversion (shorthand for new BinaryOperation(Add))
+        Console.WriteLine($"   BinaryOperation op = Add;  op(2, 3) = {op(2, 3)}  ·  op.Method.Name = {op.Method.Name}  ·  type: {op.GetType().BaseType!.Name}");
 
-        Console.WriteLine("\n2) Hazır generic delegate'ler (kendi delegate tipini nadiren yazarsın):");
-        Func<int, int, int> add = Add;                                 // girdi(ler) + DÖNÜŞ değeri: Func<T1, T2, TResult>
-        Action<string> print = Console.WriteLine;                      // girdi, dönüş YOK (void): Action<T>
-        Predicate<int> isEven = n => n % 2 == 0;                       // bool dönen tek girdili: Predicate<T> (= Func<T,bool>)
+        Console.WriteLine("\n2) Built-in generic delegates (you rarely write your own delegate type):");
+        Func<int, int, int> add = Add;                                 // input(s) + RETURN value: Func<T1, T2, TResult>
+        Action<string> print = Console.WriteLine;                      // input, NO return (void): Action<T>
+        Predicate<int> isEven = n => n % 2 == 0;                       // single input returning bool: Predicate<T> (= Func<T,bool>)
         Console.WriteLine($"   Func: add(4,5) = {add(4, 5)}  ·  Predicate: isEven(4) = {isEven(4)}");
-        print("   Action<string> ile yazdırıldı (dönüş değeri yok)");
-        Console.WriteLine("   Func<> son tip parametresi DÖNÜŞ tipidir; Action<> void döner; Predicate<T> ≡ Func<T,bool> (eski API'lerde: List.FindAll)");
+        print("   printed via Action<string> (no return value)");
+        Console.WriteLine("   The last type parameter of Func<> is the RETURN type; Action<> returns void; Predicate<T> ≡ Func<T,bool> (in older APIs: List.FindAll)");
 
-        Console.WriteLine("\n3) Method group: metot adını (parantezsiz) delegate beklenen yere vermek:");
-        var words = new List<string> { "kedi", "köpek", "kuş" };
+        Console.WriteLine("\n3) Method group: passing a method name (without parentheses) where a delegate is expected:");
+        var words = new List<string> { "cat", "dog", "bird" };
         Console.WriteLine($"   words.ForEach(Console.WriteLine) →");
         words.ForEach(Console.WriteLine);
-        Console.WriteLine("   Method group, imzası uyuşan overload'a derleme zamanında bağlanır; belirsizse (birden çok overload) lambda ile açıkça yazın.");
+        Console.WriteLine("   A method group is bound at compile time to the overload whose signature matches; if ambiguous (multiple overloads), write it out explicitly with a lambda.");
 
-        Console.WriteLine("\n4) MULTICAST: delegate birden çok metodu zincirleyebilir (+=, -=); çağrıldığında SIRAYLA çalışır");
-        Action<string> chain = s => Console.WriteLine($"      1. abone: {s}");
-        chain += s => Console.WriteLine($"      2. abone: {s}");
-        chain += s => Console.WriteLine($"      3. abone: {s}");
-        Console.WriteLine($"   InvocationList uzunluğu = {chain.GetInvocationList().Length}");
-        chain("merhaba");
+        Console.WriteLine("\n4) MULTICAST: a delegate can chain several methods (+=, -=); when invoked they run IN ORDER");
+        Action<string> chain = s => Console.WriteLine($"      subscriber 1: {s}");
+        chain += s => Console.WriteLine($"      subscriber 2: {s}");
+        chain += s => Console.WriteLine($"      subscriber 3: {s}");
+        Console.WriteLine($"   InvocationList length = {chain.GetInvocationList().Length}");
+        chain("hello");
 
         Func<int> values = () => 1;
         values += () => 2;
         values += () => 3;
-        Console.WriteLine($"   Dönüş değerli multicast: Func<int> (1,2,3 zinciri) çağrısı → {values()}   ← YALNIZCA SON metodun dönüşü alınır (diğerleri atılır)");
+        Console.WriteLine($"   Multicast with return value: invoking Func<int> (chain of 1,2,3) → {values()}   ← ONLY THE LAST method's return value is used (the others are discarded)");
 
-        Console.WriteLine("\n5) Delegate'ler IMMUTABLE'dır: += yeni bir delegate nesnesi üretir ve değişkene atar.");
+        Console.WriteLine("\n5) Delegates are IMMUTABLE: += creates a new delegate object and assigns it to the variable.");
         Action a = () => { };
         var before = a;
         a += () => { };
-        Console.WriteLine($"   += sonrası aynı nesne mi? {ReferenceEquals(before, a)}   (false → yeni zincir)");
+        Console.WriteLine($"   same object after +=? {ReferenceEquals(before, a)}   (false → a new chain)");
 
-        Console.WriteLine("\n6) Null güvenliği: hiç abone yoksa delegate NULL'dır → çağrı NullReferenceException; ?.Invoke() güvenli:");
+        Console.WriteLine("\n6) Null safety: if there are no subscribers the delegate is NULL → invoking it throws NullReferenceException; ?.Invoke() is safe:");
         Action<string>? none = null;
-        none?.Invoke("kimse yok");                                     // sessizce atlanır
+        none?.Invoke("nobody here");                                   // silently skipped
         try { none!("x"); }
-        catch (NullReferenceException) { Console.WriteLine("   null delegate'i doğrudan çağırmak → NullReferenceException; `?.Invoke(...)` kullanın"); }
+        catch (NullReferenceException) { Console.WriteLine("   invoking a null delegate directly → NullReferenceException; use `?.Invoke(...)`"); }
 
         Console.WriteLine("""
 
-        Delegate nedir, ne işe yarar?  Davranışı DEĞER gibi taşımak: parametre olarak geçmek (strateji), geri çağrı (callback), olay (event), LINQ (Where(predicate)).
-        Delegate vs interface: tek metotluk davranış için delegate hafif; birden çok ilişkili metot/durum için interface.
+        What is a delegate and what is it for?  Carrying behavior like a VALUE: passing it as a parameter (strategy), callbacks, events, LINQ (Where(predicate)).
+        Delegate vs interface: a delegate is lightweight for single-method behavior; use an interface for multiple related methods/state.
         """);
     }
 

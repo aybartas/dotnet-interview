@@ -1,12 +1,12 @@
 namespace Junior.CollectionsLinq.CollectionsGenerics.Models;
 
-// Dictionary/HashSet anahtarı SÖZLEŞMESİ:
-//   1) a.Equals(b) ise a.GetHashCode() == b.GetHashCode() (tersi şart değil)
-//   2) Hash, nesne koleksiyondayken DEĞİŞMEMELİ (immutable key)
-//   3) Equals ve GetHashCode AYNI alanlara dayanmalı
-// Bozulursa Dictionary "yalan söyler": var olan anahtarı bulamaz, ya da O(1) yerine O(n) olur.
+// Dictionary/HashSet key CONTRACT:
+//   1) if a.Equals(b) then a.GetHashCode() == b.GetHashCode() (the reverse is not required)
+//   2) The hash must NOT CHANGE while the object is in the collection (immutable key)
+//   3) Equals and GetHashCode must rely on the SAME fields
+// If broken, Dictionary "lies": it cannot find an existing key, or becomes O(n) instead of O(1).
 
-/// <summary>DOĞRU: değişmez + tutarlı Equals/GetHashCode.</summary>
+/// <summary>CORRECT: immutable + consistent Equals/GetHashCode.</summary>
 public sealed class GoodKey(int id) : IEquatable<GoodKey>
 {
     public int Id { get; } = id;
@@ -15,7 +15,7 @@ public sealed class GoodKey(int id) : IEquatable<GoodKey>
     public override int GetHashCode() => Id.GetHashCode();
 }
 
-/// <summary>YANLIŞ #1: Equals override edildi, GetHashCode EDİLMEDİ → eşit anahtarlar farklı kovaya gider; arama başarısız.</summary>
+/// <summary>WRONG #1: Equals is overridden, GetHashCode is NOT → equal keys go to different buckets; lookup fails.</summary>
 #pragma warning disable CS0659
 public sealed class EqualsOnlyKey(int id)
 {
@@ -24,7 +24,7 @@ public sealed class EqualsOnlyKey(int id)
 }
 #pragma warning restore CS0659
 
-/// <summary>YANLIŞ #2: GetHashCode override edildi, Equals EDİLMEDİ → aynı kovaya düşer ama Equals referans karşılaştırır; arama başarısız.</summary>
+/// <summary>WRONG #2: GetHashCode is overridden, Equals is NOT → lands in the same bucket but Equals compares references; lookup fails.</summary>
 #pragma warning disable CS0661, CS0660
 public sealed class HashOnlyKey(int id)
 {
@@ -33,7 +33,7 @@ public sealed class HashOnlyKey(int id)
 }
 #pragma warning restore CS0661, CS0660
 
-/// <summary>YANLIŞ #3 (çalışır ama YAVAŞ): hep aynı hash → tüm anahtarlar tek kovada → arama O(1) yerine O(n) (zincir taraması).</summary>
+/// <summary>WRONG #3 (works but SLOW): always the same hash → all keys in one bucket → lookup is O(n) instead of O(1) (chain scan).</summary>
 public sealed class ConstantHashKey(int id) : IEquatable<ConstantHashKey>
 {
     public int Id { get; } = id;
@@ -42,7 +42,7 @@ public sealed class ConstantHashKey(int id) : IEquatable<ConstantHashKey>
     public override int GetHashCode() => 1;
 }
 
-/// <summary>YANLIŞ #4: hash'i değişebilir bir alandan türüyor (mutable key tuzağı, → J2.4).</summary>
+/// <summary>WRONG #4: the hash is derived from a mutable field (mutable key trap, → J2.4).</summary>
 public sealed class MutableKey(string name)
 {
     public string Name { get; set; } = name;
@@ -50,7 +50,7 @@ public sealed class MutableKey(string name)
     public override int GetHashCode() => Name.GetHashCode();
 }
 
-/// <summary>Özel karşılaştırma gerekiyorsa tipi değiştirmeden IEqualityComparer&lt;T&gt; verilir (ör. büyük/küçük harf duyarsız).</summary>
+/// <summary>When custom comparison is needed, an IEqualityComparer&lt;T&gt; is supplied without changing the type (e.g. case-insensitive).</summary>
 public sealed class CaseInsensitiveComparer : IEqualityComparer<string>
 {
     public bool Equals(string? x, string? y) => string.Equals(x, y, StringComparison.OrdinalIgnoreCase);

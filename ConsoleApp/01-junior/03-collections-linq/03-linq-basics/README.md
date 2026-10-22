@@ -96,7 +96,7 @@ Tuzaklar (hepsi Section02'de çıktıyla gösterilir): (1) tanımdan **sonra** k
 
 ### 3.8 20 rapor alıştırması ([`Section08`](Sections/Section08_Reports.cs), [`Reports.cs`](Reports/Reports.cs), [`ShopData.cs`](Data/ShopData.cs))
 
-6 müşteri, 10 ürün, 12 sipariş (teslim edilen cirosu **5.030 TL**, iptal oranı %16,7, hiç satılmamış ürün, hiç sipariş vermemiş müşteri) üzerinde: en çok satan ürün, kategori/müşteri/ay bazlı ciro, sayfalama, `Chunk`, `LeftJoin`, `CountBy`, top-1-per-group… **Önce metodun yorumundaki soruyu okuyup kendi sorgunuzu yazın**, sonra `dotnet run -- J3.3 8` çıktısıyla (sonuçlar veri setinden elle doğrulanmıştır; ciro toplamı 5.030 TL) karşılaştırın.
+6 müşteri, 10 ürün, 12 sipariş (teslim edilen cirosu **$5,030**, iptal oranı %16,7, hiç satılmamış ürün, hiç sipariş vermemiş müşteri) üzerinde: en çok satan ürün, kategori/müşteri/ay bazlı ciro, sayfalama, `Chunk`, `LeftJoin`, `CountBy`, top-1-per-group… **Önce metodun yorumundaki soruyu okuyup kendi sorgunuzu yazın**, sonra `dotnet run -- J3.3 8` çıktısıyla (sonuçlar veri setinden elle doğrulanmıştır; ciro toplamı $5,030) karşılaştırın.
 
 ---
 

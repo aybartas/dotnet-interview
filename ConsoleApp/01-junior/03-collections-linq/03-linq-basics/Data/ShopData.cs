@@ -12,33 +12,34 @@ public sealed record OrderItem(int OrderId, int ProductId, int Quantity, decimal
 public sealed record Order(int Id, int CustomerId, DateOnly Date, OrderStatus Status);
 
 /// <summary>
-/// Küçük, ELLE doğrulanabilir e-ticaret veri seti (6 müşteri, 10 ürün, 12 sipariş).
-/// Teslim edilen siparişlerin toplam cirosu = 5030 TL (9 sipariş) — raporların beklenen sonuçları buna göre elle doğrulanmıştır (Section08).
+/// A small e-commerce data set that can be verified BY HAND (6 customers, 10 products, 12 orders).
+/// Total revenue of delivered orders = $5030 (9 orders) — the expected results of the reports were verified by hand against this (Section08).
+/// The city names are deliberately Turkish: report 3 sorts them with the tr-TR culture (İ / I ordering).
 /// </summary>
 public sealed class ShopData
 {
     public IReadOnlyList<Customer> Customers { get; } =
     [
-        new(1, "Ayşe Yılmaz", "Ankara", Tier.Gold),
-        new(2, "Ali Demir", "İstanbul", Tier.Standard),
-        new(3, "Zeynep Kaya", "İzmir", Tier.Platinum),
-        new(4, "Mehmet Çelik", "Ankara", Tier.Standard),
-        new(5, "Elif Şahin", "İstanbul", Tier.Gold),
-        new(6, "Can Öztürk", "İzmir", Tier.Standard),          // hiç siparişi YOK
+        new(1, "Alice Johnson", "Ankara", Tier.Gold),
+        new(2, "Bob Smith", "İstanbul", Tier.Standard),
+        new(3, "Carol White", "İzmir", Tier.Platinum),
+        new(4, "David Brown", "Ankara", Tier.Standard),
+        new(5, "Emma Davis", "İstanbul", Tier.Gold),
+        new(6, "Frank Miller", "İzmir", Tier.Standard),         // has NO orders
     ];
 
     public IReadOnlyList<Product> Products { get; } =
     [
-        new(1, "Kalem", "Kırtasiye", 12.50m),
-        new(2, "Defter", "Kırtasiye", 40m),
-        new(3, "Çanta", "Aksesuar", 980m),
-        new(4, "Kulaklık", "Elektronik", 450m),
-        new(5, "Mouse", "Elektronik", 220m),
-        new(6, "Klavye", "Elektronik", 350m),
-        new(7, "Lamba", "Ev", 150m),
-        new(8, "Kupa", "Ev", 60m),
-        new(9, "Bardak", "Ev", 25m),
-        new(10, "Ajanda", "Kırtasiye", 90m),                    // hiç SATILMADI
+        new(1, "Pen", "Stationery", 12.50m),
+        new(2, "Notebook", "Stationery", 40m),
+        new(3, "Bag", "Accessories", 980m),
+        new(4, "Headphones", "Electronics", 450m),
+        new(5, "Mouse", "Electronics", 220m),
+        new(6, "Keyboard", "Electronics", 350m),
+        new(7, "Lamp", "Home", 150m),
+        new(8, "Mug", "Home", 60m),
+        new(9, "Glass", "Home", 25m),
+        new(10, "Planner", "Stationery", 90m),                  // NEVER SOLD
     ];
 
     public IReadOnlyList<Order> Orders { get; } =
@@ -63,13 +64,13 @@ public sealed class ShopData
         new(102, 4, 1, 450m),   new(102, 5, 1, 220m),                       // 670
         new(103, 3, 1, 980m),   new(103, 6, 1, 350m),                       // 1330
         new(104, 7, 2, 150m),   new(104, 8, 4, 60m),                        // 540
-        new(105, 6, 1, 350m),                                               // 350 (iptal)
+        new(105, 6, 1, 350m),                                               // 350 (cancelled)
         new(106, 9, 6, 25m),    new(106, 8, 2, 60m),                        // 270
         new(107, 4, 2, 450m),                                               // 900
-        new(108, 2, 5, 40m),    new(108, 1, 10, 12.50m),                    // 325 (bekliyor)
+        new(108, 2, 5, 40m),    new(108, 1, 10, 12.50m),                    // 325 (pending)
         new(109, 5, 2, 220m),   new(109, 6, 1, 350m),                       // 790
         new(110, 1, 20, 12.50m),                                            // 250
         new(111, 7, 1, 150m),                                               // 150
-        new(112, 3, 1, 980m),                                               // 980 (iptal)
+        new(112, 3, 1, 980m),                                               // 980 (cancelled)
     ];
 }

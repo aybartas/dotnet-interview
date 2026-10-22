@@ -7,41 +7,41 @@ public static class Section05_SubscriptionLeak
 {
     public static void Run()
     {
-        Console.WriteLine("Yayıncı, aboneye bir REFERANS tutar (event = delegate zinciri; her elemanın Target'ı abone nesnesi).");
-        Console.WriteLine("Yayıncı uzun yaşıyor ve abone abonelikten ÇIKMAZSA, abone ('çöp' olsa bile) GC tarafından toplanamaz → MEMORY LEAK.\n");
+        Console.WriteLine("The publisher holds a REFERENCE to the subscriber (event = a delegate chain; each element's Target is the subscriber object).");
+        Console.WriteLine("If the publisher lives long and the subscriber does NOT unsubscribe, the subscriber (even if it is 'garbage') cannot be collected by the GC → MEMORY LEAK.\n");
 
         var publisher = new LongLivedPublisher();
 
         var (weakLeaked, weakFixed) = CreateSubscribers(publisher);
 
-        Console.WriteLine($"   abone oluşturuldu: yayıncının abone sayısı = {publisher.SubscriberCount}");
+        Console.WriteLine($"   subscribers created: publisher's subscriber count = {publisher.SubscriberCount}");
         ForceGc();
-        Console.WriteLine($"   referanslar bırakıldı, GC çalıştı:");
-        Console.WriteLine($"     • aboneliğinden ÇIKMAYAN abone (leak)  hâlâ yaşıyor mu? {weakLeaked.IsAlive}   ← yayıncı tutuyor → SIZINTI");
-        Console.WriteLine($"     • Dispose ile ayrılan abone            hâlâ yaşıyor mu? {weakFixed.IsAlive}");
-        Console.WriteLine($"   yayıncının abone sayısı = {publisher.SubscriberCount} (sızan abone listede kaldı; her Tick'te çalışmaya devam eder!)");
+        Console.WriteLine($"   references dropped, GC ran:");
+        Console.WriteLine($"     • subscriber that did NOT unsubscribe (leak)  still alive? {weakLeaked.IsAlive}   ← the publisher holds it → LEAK");
+        Console.WriteLine($"     • subscriber that left via Dispose            still alive? {weakFixed.IsAlive}");
+        Console.WriteLine($"   publisher's subscriber count = {publisher.SubscriberCount} (the leaked subscriber stayed in the list; it keeps running on every Tick!)");
 
         publisher.RaiseTick();
         GC.KeepAlive(publisher);
 
         Console.WriteLine("""
 
-        Çözümler:
-          • Abone, işi bitince `-=` ile ayrılır (IDisposable.Dispose'ta; using ile garanti).
-          • Yayıncı ve abone AYNI ömürdeyse sorun yok (ör. form ve kendi butonu). Sorun: uzun ömürlü yayıncı (static event, singleton servis) + kısa ömürlü abone (sayfa, view-model, istek kapsamlı nesne).
-          • Zayıf olay desenleri (WeakReference / WeakEventManager) yayıncıyı abonenin ömrüne bağlamaz.
-          • Lambda ile abone olursanız -= için AYNI delegate nesnesine ihtiyacınız var (lambda'yı bir değişkende tutun; yeni bir lambda farklı nesnedir).
-          • static event'ler en riskli olanlardır: uygulama kapanana dek yaşar. Genellikle kaçının.
-        Belirti: bellek zamanla artar, kapatılmış ekranların handler'ları hâlâ çalışır ("hayalet" davranış). Teşhis: bellek profilleyici (dotMemory, dotnet-gcdump) → "yayıncı → abone" tutma yolu (retention path). Derin hali → M1.6, S2.5.
+        Solutions:
+          • The subscriber leaves with `-=` when done (in IDisposable.Dispose; guaranteed with using).
+          • If the publisher and subscriber have the SAME lifetime there is no problem (e.g. a form and its own button). The problem: a long-lived publisher (static event, singleton service) + a short-lived subscriber (page, view-model, request-scoped object).
+          • Weak event patterns (WeakReference / WeakEventManager) do not tie the publisher to the subscriber's lifetime.
+          • If you subscribe with a lambda you need the SAME delegate object for -= (keep the lambda in a variable; a new lambda is a different object).
+          • static events are the riskiest: they live until the application shuts down. Generally avoid them.
+        Symptom: memory grows over time, handlers of closed screens still run ("ghost" behavior). Diagnosis: a memory profiler (dotMemory, dotnet-gcdump) → the "publisher → subscriber" retention path. Deep dive → M1.6, S2.5.
         """);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static (WeakReference leaked, WeakReference fixedOne) CreateSubscribers(LongLivedPublisher publisher)
     {
-        var leaked = new ShortLivedSubscriber(publisher);            // Dispose ETMİYORUZ
+        var leaked = new ShortLivedSubscriber(publisher);            // we do NOT Dispose
         var fixedOne = new ShortLivedSubscriber(publisher);
-        fixedOne.Dispose();                                          // -= yaptı
+        fixedOne.Dispose();                                          // did -=
         return (new WeakReference(leaked), new WeakReference(fixedOne));
     }
 

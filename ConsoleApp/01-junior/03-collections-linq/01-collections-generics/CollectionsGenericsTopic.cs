@@ -5,16 +5,16 @@ public static class CollectionsGenericsTopic
     public static int Run(string[] args)
     {
         // J3.1 — Collections & Generics.
-        //   dotnet run -- J3.1          → bölüm listesi
-        //   dotnet run -- J3.1 5     → List.Contains vs HashSet vs Dictionary arama süresi
-        //   dotnet run -- J3.1 all   → hepsi
-        // Veri yapılarının TEORİSİ ve Big-O ispatları DSA pistinde (→ D2, D3); burada .NET API'lerinin doğru kullanımı.
+        //   dotnet run -- J3.1          → section list
+        //   dotnet run -- J3.1 5     → List.Contains vs HashSet vs Dictionary lookup time
+        //   dotnet run -- J3.1 all   → everything
+        // The THEORY of data structures and Big-O proofs live in the DSA track (→ D2, D3); here: correct use of the .NET APIs.
 
         if (args.Length == 0)
         {
-            Console.WriteLine("J3.1 Collections & Generics — bölümler:\n");
+            Console.WriteLine("J3.1 Collections & Generics — sections:\n");
             foreach (var s in Sections.All) Console.WriteLine($"  {s.Number,2}. {s.Title}");
-            Console.WriteLine("\nÇalıştırmak için: dotnet run -- J3.1 <numara> | all");
+            Console.WriteLine("\nTo run: dotnet run -- J3.1 <number> | all");
             return 0;
         }
 

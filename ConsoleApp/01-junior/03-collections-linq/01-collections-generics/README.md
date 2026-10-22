@@ -52,11 +52,11 @@ Veri yapılarının **teorisi ve Big-O ispatları DSA pistinde** (→ D2, D3); b
 ### 3.2 Arayüz hiyerarşisi ve public API'de read-only arayüz ⭐
 
 ```
-IEnumerable<T>                    sadece gezinme
+IEnumerable<T>                    enumeration only
   └ IReadOnlyCollection<T>        + Count
-      └ IReadOnlyList<T>          + [i] okuma
-ICollection<T>                    + Count, Add, Remove, Contains, Clear   (değiştirilebilir)
-  └ IList<T>                      + [i] okuma/yazma, Insert, RemoveAt, IndexOf
+      └ IReadOnlyList<T>          + read by [i]
+ICollection<T>                    + Count, Add, Remove, Contains, Clear   (modifiable)
+  └ IList<T>                      + read/write by [i], Insert, RemoveAt, IndexOf
 ```
 **Kural:** **parametre** olarak en genel arayüz (ihtiyaç duyulan minimum: `IEnumerable<T>`), **dönüş** olarak değiştirilemez arayüz (`IReadOnlyList<T>`, `IReadOnlyDictionary<K,V>`).
 
