@@ -132,26 +132,26 @@ Kullanım: değişken trafikli web katmanı, büyük hesaplama/toplu işler, con
 ```bash
 az login
 az group create --name rg-az900-c15 --location westeurope
-az vm image list --output table                     # kullanılabilir image takma adları (Ubuntu2404 vb.)
+az vm image list --output table                     # available image aliases (Ubuntu2404 etc.)
 
-# 1) Tek VM — gereken kaynakların birlikte oluştuğunu gör
+# 1) Single VM — see which resources get created together
 az vm create --resource-group rg-az900-c15 --name vm-c15 \
   --image Ubuntu2404 --size Standard_B1s \
   --admin-username azureuser --generate-ssh-keys
 az resource list --resource-group rg-az900-c15 \
-  --query "[].{Ad:name, Tur:type}" --output table
-# Beklenen: virtualMachines, disks (OS diski), networkInterfaces, networkSecurityGroups,
+  --query "[].{Name:name, Type:type}" --output table
+# Expected: virtualMachines, disks (OS disk), networkInterfaces, networkSecurityGroups,
 #           publicIPAddresses, virtualNetworks
 
-# 2) Stop ile deallocate farkı
-az vm stop --resource-group rg-az900-c15 --name vm-c15         # "VM stopped" → compute ücreti SÜRER
+# 2) Difference between stop and deallocate
+az vm stop --resource-group rg-az900-c15 --name vm-c15         # "VM stopped" → compute billing CONTINUES
 az vm show --resource-group rg-az900-c15 --name vm-c15 --show-details --query powerState --output tsv
-az vm deallocate --resource-group rg-az900-c15 --name vm-c15   # "VM deallocated" → compute ücreti DURUR
+az vm deallocate --resource-group rg-az900-c15 --name vm-c15   # "VM deallocated" → compute billing STOPS
 az vm show --resource-group rg-az900-c15 --name vm-c15 --show-details --query powerState --output tsv
-# Disk hâlâ var ve ücretlenir:
+# The disk still exists and is billed:
 az disk list --resource-group rg-az900-c15 --query "[].{Disk:name, GB:diskSizeGb, Sku:sku.name}" --output table
 
-# 3) İki instance'lı VM Scale Set + basit autoscale kuralı
+# 3) VM Scale Set with two instances + a simple autoscale rule
 az vmss create --resource-group rg-az900-c15 --name vmss-c15 \
   --image Ubuntu2404 --vm-sku Standard_B1s --instance-count 2 \
   --admin-username azureuser --generate-ssh-keys
@@ -164,7 +164,7 @@ az monitor autoscale rule create --resource-group rg-az900-c15 --autoscale-name 
   --condition "Percentage CPU < 30 avg 5m" --scale in 1
 az vmss list-instances --resource-group rg-az900-c15 --name vmss-c15 --output table
 
-# 4) Availability set: fault / update domain değerleri
+# 4) Availability set: fault / update domain values
 az vm availability-set create --resource-group rg-az900-c15 --name avset-c15 \
   --platform-fault-domain-count 2 --platform-update-domain-count 5
 az vm create --resource-group rg-az900-c15 --name vm-avset-1 \
@@ -173,7 +173,7 @@ az vm create --resource-group rg-az900-c15 --name vm-avset-1 \
 az vm get-instance-view --resource-group rg-az900-c15 --name vm-avset-1 \
   --query "{FaultDomain:instanceView.platformFaultDomain, UpdateDomain:instanceView.platformUpdateDomain}" --output table
 
-# 5) Temizlik — mutlaka
+# 5) Cleanup — mandatory
 az group delete --name rg-az900-c15 --yes --no-wait
 ```
 
