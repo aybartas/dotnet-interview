@@ -3,29 +3,29 @@ namespace Junior.CollectionsLinq.CollectionsGenerics;
 public static class Section08_DecisionTable
 {
     public static void Run() => Console.WriteLine("""
-        HANGİ KOLEKSİYON NE ZAMAN?  (Big-O ortalama; teori ve ispat → D2, D3)
+        WHICH COLLECTION WHEN?  (Big-O average; theory and proofs → D2, D3)
 
         ┌───────────────────────────┬──────────────────────┬────────────┬────────────┬───────────────────────────────────────────────┐
-        │ İhtiyaç                   │ Seçim                │ Arama      │ Ekleme     │ Not                                           │
+        │ Need                      │ Choice               │ Lookup     │ Insert     │ Note                                          │
         ├───────────────────────────┼──────────────────────┼────────────┼────────────┼───────────────────────────────────────────────┤
-        │ Sıralı liste, indeksle    │ List<T>              │ O(n)       │ O(1)* sona │ VARSAYILAN seçim. Boyut biliniyorsa capacity  │
-        │ Sabit boyut, ham hız      │ T[]  (Array)         │ O(n) / [i] │ —          │ Span<T> ile uyumlu; boyut değişmez            │
-        │ "Var mı?" / tekrarsız     │ HashSet<T>           │ O(1)       │ O(1)       │ Sıra GARANTİSİ yok; küme işlemleri            │
-        │ Anahtar → değer           │ Dictionary<K,V>      │ O(1)       │ O(1)       │ Anahtar sözleşmesi (Equals/GetHashCode)       │
-        │ Anahtarla SIRALI gezinme  │ SortedDictionary<K,V>│ O(log n)   │ O(log n)   │ Ekleme/silme çoksa; SortedList: arama hızlı   │
-        │ Sıralı + aralık sorgusu   │ SortedSet<T>         │ O(log n)   │ O(log n)   │ GetViewBetween, Min/Max                       │
-        │ İlk giren ilk çıkar       │ Queue<T>             │ —          │ O(1)       │ İş kuyruğu, BFS                               │
-        │ Son giren ilk çıkar       │ Stack<T>             │ —          │ O(1)       │ Undo, DFS, ifade ayrıştırma                   │
-        │ Öncelikli işleme          │ PriorityQueue<E,P>   │ —          │ O(log n)   │ Min-heap; zamanlayıcı, Dijkstra               │
-        │ Düğüm ortasına sık ekleme │ LinkedList<T>        │ O(n)       │ O(1)**     │ ** düğüm biliniyorsa; pratikte çoğu zaman List│
-        │ Çok thread'li erişim      │ Concurrent*          │ …          │ …          │ → M4                                          │
-        │ Değişmez                  │ Immutable* / Frozen* │ …          │ —          │ → M1; FrozenDictionary okuma-ağırlıklı        │
+        │ Ordered list, by index    │ List<T>              │ O(n)       │ O(1)* end  │ DEFAULT choice. Set capacity if size is known │
+        │ Fixed size, raw speed     │ T[]  (Array)         │ O(n) / [i] │ —          │ Works with Span<T>; size does not change      │
+        │ "Exists?" / no duplicates │ HashSet<T>           │ O(1)       │ O(1)       │ NO ordering guarantee; set operations         │
+        │ Key → value               │ Dictionary<K,V>      │ O(1)       │ O(1)       │ Key contract (Equals/GetHashCode)             │
+        │ SORTED iteration by key   │ SortedDictionary<K,V>│ O(log n)   │ O(log n)   │ Many inserts/removes; SortedList: fast lookup │
+        │ Sorted + range query      │ SortedSet<T>         │ O(log n)   │ O(log n)   │ GetViewBetween, Min/Max                       │
+        │ First in, first out       │ Queue<T>             │ —          │ O(1)       │ Job queue, BFS                                │
+        │ Last in, first out        │ Stack<T>             │ —          │ O(1)       │ Undo, DFS, expression parsing                 │
+        │ Priority processing       │ PriorityQueue<E,P>   │ —          │ O(log n)   │ Min-heap; scheduler, Dijkstra                 │
+        │ Frequent mid-list inserts │ LinkedList<T>        │ O(n)       │ O(1)**     │ ** if node is known; List often wins anyway   │
+        │ Multi-threaded access     │ Concurrent*          │ …          │ …          │ → M4                                          │
+        │ Immutable                 │ Immutable* / Frozen* │ …          │ —          │ → M1; FrozenDictionary is read-heavy          │
         └───────────────────────────┴──────────────────────┴────────────┴────────────┴───────────────────────────────────────────────┘
 
-        KISA KURALLAR
-          • Şüphedeysen List<T>. Anahtarla arıyorsan Dictionary. "Var mı?" soruyorsan HashSet.
-          • Public API: parametre IEnumerable<T> (veya en dar arayüz), dönüş IReadOnlyList<T>/IReadOnlyDictionary<K,V>.
-          • Çok sayıda eleman ve çok sayıda arama → hash tabanlı; birkaç eleman → List yeterli.
-          • Performans iddialarını ÖLÇÜN (Section 5): cache yerelliği nedeniyle küçük n'de List genelde LinkedList'ten ve bazen Dictionary'den hızlıdır.
+        QUICK RULES
+          • When in doubt, List<T>. Looking up by key? Dictionary. Asking "does it exist?" HashSet.
+          • Public API: parameter IEnumerable<T> (or the narrowest interface), return IReadOnlyList<T>/IReadOnlyDictionary<K,V>.
+          • Many items and many lookups → hash-based; a few items → List is enough.
+          • MEASURE performance claims (Section 5): because of cache locality, List is usually faster than LinkedList for small n, and sometimes faster than Dictionary.
         """);
 }

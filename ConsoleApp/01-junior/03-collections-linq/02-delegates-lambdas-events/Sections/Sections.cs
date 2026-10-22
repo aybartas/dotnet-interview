@@ -8,10 +8,10 @@ public static class Sections
     [
         new(1, "Delegate, Func / Action / Predicate, method group, multicast", Section01_Delegates.Run),
         new(2, "Lambda expression: expression vs statement lambda",          Section02_Lambdas.Run),
-        new(3, "Closure ve captured variable — döngüde closure tuzağı ⭐",   Section03_Closures.Run),
-        new(4, "event: neden çıplak delegate değil? EventHandler<T>",        Section04_Events.Run),
-        new(5, "Abonelik sızıntısı: unutulan abonelik memory leak",          Section05_SubscriptionLeak.Run),
+        new(3, "Closure and captured variable — the closure trap in loops ⭐", Section03_Closures.Run),
+        new(4, "event: why not a bare delegate? EventHandler<T>",            Section04_Events.Run),
+        new(5, "Subscription leak: a forgotten subscription is a memory leak", Section05_SubscriptionLeak.Run),
         new(6, "Local function vs lambda",                                   Section06_LocalFunctions.Run),
-        new(7, "Lambda ile strateji: indirim motoru",                        Section07_DiscountEngine.Run),
+        new(7, "Strategy with lambdas: a discount engine",                   Section07_DiscountEngine.Run),
     ];
 }

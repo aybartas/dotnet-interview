@@ -7,44 +7,44 @@ public static class Section02_Interfaces
     public static void Run()
     {
         Console.WriteLine("""
-        Arayüz hiyerarşisi (en dar → en geniş yetenek):
+        Interface hierarchy (narrowest → widest capability):
 
-          IEnumerable<T>            sadece GEZİNME (foreach, LINQ)          ← en az varsayım
+          IEnumerable<T>            ENUMERATION only (foreach, LINQ)          ← fewest assumptions
             └ IReadOnlyCollection<T>  + Count
-                └ IReadOnlyList<T>      + indeksle okuma  [i]
-          ICollection<T>            + Count, Add, Remove, Contains, Clear   ← DEĞİŞTİREBİLİR
-            └ IList<T>              + indeksle erişim/atama, Insert, RemoveAt, IndexOf
-          IDictionary<K,V> / IReadOnlyDictionary<K,V>   anahtar-değer
-          ISet<T> / IReadOnlySet<T>                      küme işlemleri
+                └ IReadOnlyList<T>      + read by index  [i]
+          ICollection<T>            + Count, Add, Remove, Contains, Clear   ← MODIFIABLE
+            └ IList<T>              + index get/set, Insert, RemoveAt, IndexOf
+          IDictionary<K,V> / IReadOnlyDictionary<K,V>   key-value
+          ISet<T> / IReadOnlySet<T>                      set operations
 
-        Parametre: EN GENEL arayüz (ihtiyacın olan minimum) → çağıran istediği koleksiyonu verebilir.   void Print(IEnumerable<int> items)
-        Dönüş    : yeteri kadar özel, ama DEĞİŞTİRİLEMEZ arayüz → API'nin içini sızdırmaz.            IReadOnlyList<Order> GetOrders()
+        Parameter: the MOST GENERAL interface (the minimum you need) → the caller can pass whichever collection they like.   void Print(IEnumerable<int> items)
+        Return   : specific enough, but a NON-MODIFIABLE interface → does not leak the API's internals.                      IReadOnlyList<Order> GetOrders()
         """);
 
         var leaky = new LeakyInventory();
-        leaky.Items.Clear();                                           // dışarıdan dahili listeyi BOŞALTTIK
-        Console.WriteLine($"LeakyInventory: Items.Clear() çağrıldı → Items.Count = {leaky.Items.Count}   ← sınıf kendi durumunu koruyamıyor");
+        leaky.Items.Clear();                                           // we EMPTIED the internal list from the outside
+        Console.WriteLine($"LeakyInventory: Items.Clear() was called → Items.Count = {leaky.Items.Count}   ← the class cannot protect its own state");
 
         var safe = new SafeInventory();
-        Console.WriteLine($"\nSafeInventory.ItemsView ({safe.ItemsView.GetType().Name}): arayüz yalnızca okumaya izin verir (safe.ItemsView.Add → derlenmez)");
-        ((List<string>)safe.ItemsView).Add("HİLE");                    // ama cast ile delinir! (IReadOnlyList = sözleşme, güvenlik duvarı değil)
-        Console.WriteLine($"   List<string>'e cast edip Add yapıldı → Count = {safe.ItemsView.Count}   ← sözleşme güvenliği, gerçek koruma DEĞİL");
+        Console.WriteLine($"\nSafeInventory.ItemsView ({safe.ItemsView.GetType().Name}): the interface only allows reading (safe.ItemsView.Add → does not compile)");
+        ((List<string>)safe.ItemsView).Add("CHEAT");                   // but a cast breaks through! (IReadOnlyList = a contract, not a firewall)
+        Console.WriteLine($"   Cast to List<string> and Add → Count = {safe.ItemsView.Count}   ← contract safety, NOT real protection");
 
         var safe2 = new SafeInventory();
-        Console.WriteLine($"SafeInventory.ItemsProtected ({safe2.ItemsProtected.GetType().Name}): cast edilse de değiştirilemez:");
-        try { ((IList<string>)safe2.ItemsProtected).Add("HİLE"); }
-        catch (NotSupportedException) { Console.WriteLine("   IList'e cast + Add → NotSupportedException ✓ (gerçek koruma)"); }
+        Console.WriteLine($"SafeInventory.ItemsProtected ({safe2.ItemsProtected.GetType().Name}): cannot be modified even when cast:");
+        try { ((IList<string>)safe2.ItemsProtected).Add("CHEAT"); }
+        catch (NotSupportedException) { Console.WriteLine("   cast to IList + Add → NotSupportedException ✓ (real protection)"); }
 
         var snapshot = safe2.Snapshot();
-        safe2.Add("kalemlik");
-        Console.WriteLine($"Snapshot(): kopya sonraki değişikliği görmez → snapshot {snapshot.Count} eleman, canlı liste {safe2.ItemsView.Count}");
+        safe2.Add("pencil case");
+        Console.WriteLine($"Snapshot(): the copy does not see later changes → snapshot has {snapshot.Count} items, live list has {safe2.ItemsView.Count}");
 
         Console.WriteLine("""
 
-        Neden read-only arayüz döndürülür?  (1) Encapsulation: sınıf invariant'ını (tekrarsızlık, sıralama, doğrulama) tek elden korur.
-        (2) Sözleşme netliği: "bu koleksiyonu değiştirme" niyeti tipte okunur. (3) Sonradan iç temsili (List → Array/ImmutableArray) değiştirmek kırıcı olmaz.
-        Seviyeler: IReadOnlyList (sözleşme) < AsReadOnly()/ReadOnlyCollection (sarmalayıcı) < Snapshot kopyası < ImmutableList/ImmutableArray (gerçek değişmezlik, → M1).
-        Çağıranın gelecekteki değişikliğini görüp görmemesi (canlı görünüm vs anlık görüntü) ayrıca tasarım kararıdır.
+        Why return a read-only interface?  (1) Encapsulation: the class protects its invariant (uniqueness, ordering, validation) in one place.
+        (2) Contract clarity: the "do not modify this collection" intent is readable in the type. (3) Changing the internal representation later (List → Array/ImmutableArray) is not a breaking change.
+        Levels: IReadOnlyList (contract) < AsReadOnly()/ReadOnlyCollection (wrapper) < Snapshot copy < ImmutableList/ImmutableArray (true immutability, → M1).
+        Whether the caller sees future changes (live view vs snapshot) is a separate design decision.
         """);
     }
 }

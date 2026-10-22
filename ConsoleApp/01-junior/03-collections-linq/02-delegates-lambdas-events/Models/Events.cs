@@ -8,10 +8,10 @@ public sealed class OrderCreatedEventArgs(Order order) : EventArgs
 }
 
 /// <summary>
-/// DOĞRU: `event` + EventHandler&lt;TEventArgs&gt;.
-///   • Dışarıdan yalnızca += ve -= yapılabilir (abone ol / ayrıl).
-///   • Olayı YALNIZCA yayıncı sınıf tetikleyebilir (Raise).
-///   • Dışarıdan `= null` ile TÜM aboneleri silmek ya da `Invoke` etmek DERLENMEZ.
+/// CORRECT: `event` + EventHandler&lt;TEventArgs&gt;.
+///   • From the outside only += and -= are possible (subscribe / unsubscribe).
+///   • ONLY the publisher class can raise the event (Raise).
+///   • Clearing ALL subscribers with `= null` or calling `Invoke` from the outside DOES NOT COMPILE.
 /// </summary>
 public class OrderService
 {
@@ -26,17 +26,17 @@ public class OrderService
         return order;
     }
 
-    // Standart desen: korumalı sanal tetikleyici + `?.Invoke` (abone yoksa null → thread-safe null kontrolü için yerel kopya)
+    // Standard pattern: protected virtual raiser + `?.Invoke` (null when there are no subscribers → `?.` does a thread-safe null check via a local copy)
     protected virtual void OnOrderCreated(OrderCreatedEventArgs e) => OrderCreated?.Invoke(this, e);
 
     public int SubscriberCount => OrderCreated?.GetInvocationList().Length ?? 0;
 }
 
 /// <summary>
-/// KÖTÜ: çıplak public delegate alanı. Dışarıdaki herkes:
-///   • `service.OnCreated = null;`  → diğer aboneleri SESSİZCE siler
-///   • `service.OnCreated?.Invoke(...)` → yayıncı yerine sahte olay üretir
-///   • `service.OnCreated = tek;`   → mevcut abonelerin üzerine yazar
+/// BAD: a bare public delegate field. Anyone on the outside can:
+///   • `service.OnCreated = null;`  → SILENTLY remove the other subscribers
+///   • `service.OnCreated?.Invoke(...)` → raise a fake event in place of the publisher
+///   • `service.OnCreated = single;`   → overwrite the existing subscribers
 /// </summary>
 public sealed class BadOrderService
 {
@@ -50,7 +50,7 @@ public sealed class BadOrderService
     }
 }
 
-/// <summary>Uzun ömürlü yayıncı (ör. uygulama genelinde tek örnek / static olay): aboneleri yaşadığı sürece canlı tutar.</summary>
+/// <summary>Long-lived publisher (e.g. an application-wide singleton / static event): keeps its subscribers alive for as long as it lives.</summary>
 public sealed class LongLivedPublisher
 {
     public event EventHandler? Tick;
@@ -58,7 +58,7 @@ public sealed class LongLivedPublisher
     public int SubscriberCount => Tick?.GetInvocationList().Length ?? 0;
 }
 
-/// <summary>Kısa ömürlü olması BEKLENEN abone. Abone olunca yayıncı ona referans tutar → abonelikten çıkmazsa GC toplayamaz.</summary>
+/// <summary>A subscriber EXPECTED to be short-lived. Once it subscribes the publisher holds a reference to it → if it never unsubscribes, the GC cannot collect it.</summary>
 public sealed class ShortLivedSubscriber : IDisposable
 {
     private readonly LongLivedPublisher _publisher;
@@ -67,10 +67,10 @@ public sealed class ShortLivedSubscriber : IDisposable
     public ShortLivedSubscriber(LongLivedPublisher publisher)
     {
         _publisher = publisher;
-        _publisher.Tick += OnTick;                    // yayıncı → abone referansı (event delegate'in Target'ı = this)
+        _publisher.Tick += OnTick;                    // publisher → subscriber reference (the event delegate's Target = this)
     }
 
     private void OnTick(object? sender, EventArgs e) => TickCount++;
 
-    public void Dispose() => _publisher.Tick -= OnTick;   // DOĞRU: abonelikten çık
+    public void Dispose() => _publisher.Tick -= OnTick;   // CORRECT: unsubscribe
 }
