@@ -5,51 +5,43 @@ Türkçe, uygulamalı bir .NET mülakat hazırlık reposu. Hedef platform **.NET
 ## Başlamak
 
 1. .NET 10 SDK'yı kurun (`dotnet --version` → `10.x`).
-2. **`DotnetInterview.slnx`** dosyasını Visual Studio'da açın (VS Code / Rider için de çalışır). Solution'da yalnızca **iki proje** var: **`ConsoleApp`** (konuların çoğu) ve **`WebApp`** (HTTP sunucusu gerektiren konular).
-3. Bir konuyu seçin: konu klasöründeki `README.md` teoridir, yanındaki `.cs` dosyaları kodudur, `interview-questions.md` mülakat sorularıdır.
+2. **`DotnetInterview.slnx`** dosyasını Visual Studio'da açın. Solution'da yalnızca **iki proje** var:
+   - **`ConsoleApp`** — konuların çoğu. **F5** → konu menüsü açılır: bir konu yazın (ör. `J3.2`), sonra bölüm numarası ya da `all`.
+   - **`WebApp`** — HTTP sunucusu gerektiren konular (şimdilik J1.3). `WebApp`'e sağ tık → *Debug → Start New Instance*; tarayıcı `http://localhost:5080`'i açar.
+3. Konunun anlatımı, konu klasöründeki `README.md`'dir; mülakat soruları aynı klasördeki `interview-questions.md` (sertifika pistinde `quiz.md`).
+
+Terminalden de aynı şekilde:
 
 ```bash
-dotnet build DotnetInterview.slnx            # tüm repo
-
 cd ConsoleApp
-dotnet run                                   # tüm konsol konularının listesi
-dotnet run -- J3.3                           # J3.3'ün bölüm listesi
-dotnet run -- J3.3 2                         # J3.3'ün 2. bölümü  (all: hepsi)
-dotnet run -- C1.2 seri 99.95 99.99          # bazı konuların kendi komutları vardır (konunun README'sine bakın)
-
-cd ../WebApp && dotnet run                   # web konuları (J1.3 → http://localhost:5080)
-docker compose up -d                         # (repo kökünde) yalnızca altyapı isteyen konular için, ör. C1.8 → Azurite
+dotnet run                          # menü
+dotnet run -- J3.2 4                # menüsüz: J3.2'nin 4. bölümü  (all: hepsi)
+cd ../WebApp && dotnet run          # web konuları
 ```
-
-Visual Studio'da `ConsoleApp`'e sağ tık → **Set as Startup Project**, sonra proje özelliklerindeki *Debug → Application arguments* alanına `J3.3 2` gibi bir değer yazıp F5 ile hata ayıklayabilirsiniz.
 
 ## Klasör yapısı
 
-**Tek console uygulaması + tek web uygulaması; bir konu = uygulamanın içinde bir klasör.** Modül başına proje, `src/`, `tests/`, `Directory.Build.props` yoktur. Konu ID'leri `J` (Junior), `M`, `S`, `D`, `C` (sertifika) ile başlar: `J2.3`, `C1.8`.
+**Bir console uygulaması + bir web uygulaması; konu = uygulamanın içinde bir klasör** (anlatım + varsa kod aynı yerde). Her konunun pratiği yoktur: kodsuz konularda yalnızca `README.md` ve sorular vardır.
 
 ```
-DotnetInterview.slnx                       # tek solution (ConsoleApp + WebApp)
-docker-compose.yml                         # altyapı (şimdilik Azurite); konular geldikçe servis eklenir
+DotnetInterview.slnx
 ConsoleApp/
-├── ConsoleApp.csproj
-├── Program.cs                             # tüm konsol konularının menüsü
+├── Program.cs                          # tüm konsol konularının menüsü
 ├── 01-junior/
-│   ├── 01-dev-foundations/                # modül = klasör
-│   │   ├── 01-git/                        # konu = klasör
-│   │   │   ├── README.md                  # teori
-│   │   │   └── interview-questions.md     # 10-20 soru + cevap
-│   │   └── 02-network-fundamentals/ …     # README + kod dosyaları + sorular
-│   ├── 02-csharp-fundamentals/ … 05-build-run-basics/
-│   └── …                                  # J6'dan sonrası sırayla doldurulur
+│   ├── 01-dev-foundations/             # modül
+│   │   ├── 01-git/                     # konu
+│   │   │   ├── README.md               # anlatım
+│   │   │   └── interview-questions.md  # 10-20 soru + cevap
+│   │   └── 02-network-fundamentals/    # README + kod + sorular
+│   └── 02-csharp-fundamentals/ … 05-build-run-basics/
 ├── 02-mid/  03-senior/  04-dsa/  05-interview/   # sırayla doldurulur
-└── 06-certifications/                     # Azure sertifika pisti (AZ-900, AI-200): seviyelerden bağımsız
+└── 06-certifications/                  # Azure sertifika pisti (AZ-900, AI-200)
 WebApp/
-├── WebApp.csproj
-├── Program.cs                             # web konularının AddServices / Map metotlarını çağırır
-└── 01-junior/01-dev-foundations/03-how-the-web-works/   # J1.3: Kestrel + ham HTTP isteği (curl / requests.http)
+├── Program.cs                          # web konularını çağırır
+└── 01-junior/01-dev-foundations/03-how-the-web-works/
 ```
 
-ROADMAP'teki `📁` yolları uygulama klasörüne göredir (ör. `01-junior/03-collections-linq/` → `ConsoleApp/01-junior/03-collections-linq/`).
+ROADMAP'teki `📁` yolları uygulama klasörüne göredir (ör. `01-junior/03-collections-linq/` → `ConsoleApp/01-junior/03-collections-linq/`). Konu ID'leri `J` (Junior), `M`, `S`, `D`, `C` (sertifika) ile başlar: `J2.3`, `C1.8`.
 
 | Seviye | Klasör | Durum |
 |--------|--------|-------|
@@ -70,7 +62,7 @@ Planın geri kalanı: [Genel Harita](ROADMAP.md#genel-harita) · [Çalışma Pla
 | Uzun anlatım (teori) | konunun `README.md`'si: *Ne? / Neden? / Nasıl? / Gerçek dünya senaryosu / Mülakat perspektifi / Yaygın hatalar / Performans & trade-off / Kaynaklar* |
 | Çalışan kod | konu klasöründeki `.cs` dosyaları (`ConsoleApp`; HTTP sunucusu gerektirenler `WebApp`) |
 | Mülakat soruları | konunun `interview-questions.md`'si + ROADMAP'teki modül 🎯 satırı (sertifika pistinde: `quiz.md` + 📝 satırı) |
-| Altyapı (veritabanı, broker…) | kökteki `docker-compose.yml` |
+| Altyapı (veritabanı, broker…) | ilk altyapı isteyen konu geldiğinde kökte `docker-compose.yml` |
 
 Repo bilerek yalındır: **test projesi yalnızca konusu test olan modüllerde** (J10, M10…) bulunur, komut satırı alıştırmaları script değil README'deki kod bloklarıdır.
 

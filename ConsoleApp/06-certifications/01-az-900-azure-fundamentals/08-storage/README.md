@@ -31,17 +31,7 @@ Bu konu sınavın beş sorusunu cevaplar:
 | Dosyaları nasıl taşırım/senkronlarım? | AzCopy · Storage Explorer · Azure File Sync |
 | Sunucuları/büyük veriyi nasıl taşırım? | Azure Migrate · Azure Data Box |
 
-Kod: `ConsoleApp` projesinde [`Sections/`](Sections/) altında 5 bölüm; 4. bölüm **Azurite** emülatörüne (Azure hesabı gerekmez) gerçek Blob Storage çağrıları yapar. Komutlar:
-
-```bash
-docker compose up -d          # repo kökünde: Azurite (Blob 10000, Queue 10001, Table 10002)
-cd ConsoleApp
-dotnet run -- C1.8 all         # tüm bölümler
-dotnet run -- C1.8 4           # yalnızca Blob demosu
-cd .. && docker compose down -v   # emülatörü durdur, veriyi sil
-```
-
-> Gerçek bir storage account'a karşı çalıştırmak için `AZURE_STORAGE_CONNECTION_STRING` ortam değişkenini tanımla; tanımlı değilse demo `UseDevelopmentStorage=true` (Azurite) kullanır.
+Kod: [`Sections/`](Sections/) altında 4 bölüm (servisler, redundancy matrisi, tier maliyet hesabı, taşıma aracı seçimi). Çalıştırmak için `ConsoleApp`'te `C1.8` konusunu seçin (`dotnet run -- C1.8 all`). Blob/AzCopy pratiği README'deki CLI laboratuvarındadır (3.7).
 
 ---
 
@@ -113,26 +103,7 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
 
 `Section03` 1 TB veri için üç farklı okuma yoğunluğunda aylık maliyeti hesaplar (örnek fiyatlar): az okunan veride Archive, orta yoğunlukta Cool, çok okunan veride Hot kazanır — **depolama ucuzladıkça erişim pahalılaşır**.
 
-### 3.4 Blob demosu — Azurite ile ([`Section04`](Sections/Section04_BlobDemo.cs))
-
-`Azure.Storage.Blobs` SDK'sıyla, Azure hesabı olmadan:
-
-1. Container oluşturma (`CreateIfNotExists`)
-2. Üç blob yükleme (`raporlar/…`, `yedekler/…`, `log/…` — `/` ile "sanal klasör")
-3. Listeleme (boyut + access tier)
-4. İndirme
-5. Eski yedeği **Cool → Archive**'a taşıma ve Archive'daki blob'u okuma denemesinin **409 BlobArchived** ile reddedildiğini görme
-6. Temizlik (container'ı silme)
-
-```text
-5) yedekler/db-2026-09.bak → Cool
-5) yedekler/db-2026-09.bak → Archive
-   Archive'daki blob'u okuma denemesi reddedildi: 409 BlobArchived
-```
-
-> Azurite kapalıysa bölüm açıklayıcı bir mesajla biter (çıkış kodu 2). Repo kökündeki `docker-compose.yml` Azurite'i `--skipApiVersionCheck` ile başlatır: yeni SDK sürümleri emülatörün henüz tanımadığı bir REST API sürümü isteyebilir.
-
-### 3.5 Azure Files ve Azure File Sync
+### 3.4 Azure Files ve Azure File Sync
 
 - **Azure Files:** bulutta tam yönetilen **SMB** (ve Premium'da **NFS**) dosya paylaşımı; Windows, Linux ve macOS'tan **ağ sürücüsü olarak bağlanır**; birden çok VM/kullanıcı aynı paylaşımı kullanır. Kullanım: dosya sunucusunu buluta taşımak, lift-and-shift uygulamaların paylaşılan klasörleri, paylaşılan yapılandırma/log klasörleri.
 - **Azure File Sync:** on-prem **Windows Server**'ı Azure Files paylaşımının **önbelleği** yapar:
@@ -140,7 +111,7 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
   - **Cloud tiering:** seyrek kullanılan dosyalar yalnızca bulutta tutulur, yerelde yer açılır (dosya adı görünür, açılınca indirilir).
   - Birden çok şubede aynı paylaşım; sunucu arızalanınca yeni sunucuya hızlı kurtarma.
 
-### 3.6 Dosya taşıma araçları ([`Section05`](Sections/Section05_MovingData.cs))
+### 3.5 Dosya taşıma araçları ([`Section04`](Sections/Section04_MovingData.cs))
 
 | Araç | Ne? | Ne zaman? |
 |---|---|---|
@@ -148,7 +119,7 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
 | **Azure Storage Explorer** | Blob, Files, Queue, Table, disk yönetimi için **grafik** masaüstü uygulaması (Windows/macOS/Linux; arka planda AzCopy) | Elle dosya yükleme/indirme, göz atma, erişim yönetimi |
 | **Azure File Sync** | Windows Server ↔ Azure Files **sürekli, iki yönlü senkron** | Şube dosya sunucuları, hybrid dosya paylaşımı |
 
-### 3.7 Migration seçenekleri
+### 3.6 Migration seçenekleri
 
 - **Azure Migrate:** buluta taşıma için **merkezi hub**: on-prem ortamı **keşfet** (discovery) → **değerlendir** (boyutlandırma, uyumluluk, tahmini maliyet) → **taşı**. Sunucular, veritabanları, web uygulamaları ve sanal masaüstleri için entegre araçlar içerir: *Discovery and assessment*, *Migration and modernization* (sunucu taşıma), *Data Migration Assistant*, *Azure Database Migration Service*, *Web app migration assistant*, Data Box. Ayrıca on-prem ile Azure maliyetini karşılaştıran **business case** üretir (→ C1.11).
 - **Azure Data Box:** veriyi **fiziksel cihazla** taşıma — Microsoft güvenli bir cihaz gönderir, veriyi yerelde kopyalarsın, cihaz Azure datacenter'ına döner ve veri storage account'a yüklenir; cihaz sonra NIST standartlarına göre güvenle silinir. Hem **içe** (on-prem → Azure) hem **dışa** (Azure → on-prem) aktarım.
@@ -157,7 +128,7 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
 
 Kaba hesap: 100 Mbps'lik bir hatla 40 TB, hattın tamamı bu işe ayrılsa bile **~37 gün** sürer; Data Box birkaç günlük kargo ve kopyalama süresiyle biter.
 
-### 3.8 Pratik — CLI ve AzCopy laboratuvarı
+### 3.7 Pratik — CLI ve AzCopy laboratuvarı
 
 Önce bütçe alarmının kurulu olduğundan emin ol (→ C1.1). Küçük bir Standard LRS hesabı ve birkaç KB'lık dosya **kuruşluk** maliyettir; laboratuvar sonunda her şey silinir.
 
@@ -291,4 +262,3 @@ Bir sigorta şirketi on yıllık dosya arşivini ve dosya sunucularını buluta 
 - [What is Azure Files?](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-introduction) · [Azure File Sync](https://learn.microsoft.com/en-us/azure/storage/file-sync/file-sync-introduction)
 - [Get started with AzCopy](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10) · [Azure Storage Explorer](https://azure.microsoft.com/products/storage/storage-explorer/)
 - [About Azure Migrate](https://learn.microsoft.com/en-us/azure/migrate/migrate-services-overview) · [Azure Data Box overview](https://learn.microsoft.com/en-us/azure/databox/data-box-overview) (yeni nesil 120/525 TB cihazlar) · [Data Box Heavy overview](https://learn.microsoft.com/en-us/azure/databox/data-box-heavy-overview) (emeklilik notu)
-- [Use the Azurite emulator](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite) · [Azure.Storage.Blobs (NuGet)](https://www.nuget.org/packages/Azure.Storage.Blobs)

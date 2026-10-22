@@ -22,16 +22,12 @@ using Junior.CSharpFundamentals.TypeSystemMemory;
 using Junior.DevFoundations.IdeDebugging.Exercises;
 using Junior.DevFoundations.NetworkFundamentals;
 
-// Tüm konsol konuları bu tek dosyadan çalışır. Bu dosyanın KENDİSİ "top-level statements" örneğidir (bkz. J2.1 Section01):
-// class ve Main yazmadık; derleyici üretti. `args` komut satırı argümanlarıdır, `return <int>` process exit code'udur,
-// `await` kullanınca derleyici Main'i `async Task<int>` yapar ("async all the way", bkz. J4).
+// Tüm konsol konuları bu tek dosyadan çalışır. Visual Studio'da F5 → konu menüsü açılır; bir konu seçin, sonra bölüm numarası veya "all" yazın.
+// Bu dosyanın KENDİSİ "top-level statements" örneğidir (bkz. J2.1 Section01): class ve Main yazmadık; derleyici üretti.
+// `args` komut satırı argümanlarıdır, `return <int>` process exit code'udur, `await` kullanınca Main `async Task<int>` olur (bkz. J4).
 //
 // J = Junior, C = Sertifika. HTTP sunucusu gerektiren konular WebApp projesindedir.
-//
-//   dotnet run                       → konu listesi
-//   dotnet run -- J3.2               → J3.2'nin bölüm listesi
-//   dotnet run -- J3.2 4             → J3.2'nin 4. bölümü  (all: hepsi)
-//   dotnet run -- C1.2 seri 99.95 99.99   → konuya özel argümanlar (bkz. konunun README'si)
+// Menüsüz kullanım (terminal):  dotnet run -- J3.2 4   ·   dotnet run -- C1.2 seri 99.95 99.99
 
 Topic[] topics =
 [
@@ -62,17 +58,47 @@ Topic[] topics =
     new("C1.11", "Azure'da Maliyet Yönetimi",                              CostManagementTopic.Run),
 ];
 
-if (args.Length == 0 || topics.FirstOrDefault(t => t.Id.Equals(args[0], StringComparison.OrdinalIgnoreCase)) is not { } topic)
+Topic? Find(string id) => topics.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+
+void PrintTopics()
 {
-    Console.WriteLine("Konular:\n");
+    Console.WriteLine("\nKonular:\n");
     foreach (var t in topics) Console.WriteLine($"  {t.Id,-5} {t.Title}");
-    Console.WriteLine("\nÇalıştırmak için: dotnet run -- <konu> [bölüm | all]   (README-only konular: J1.1 Git, J1.4 .NET CLI, C1.4–C1.7, C1.9–C1.10, C1.12–C1.15)");
-    return args.Length == 0 ? 0 : 1;
+    Console.WriteLine("\n  (Yalnızca README olan konular: J1.1 Git, J1.4 .NET CLI, C1.4–C1.7, C1.9–C1.10, C1.12–C1.15)");
 }
 
-if (topic.Id.StartsWith('C')) CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture = new CultureInfo("tr-TR");   // yüzde/para çıktıları tr-TR
+Task<int> RunTopic(Topic topic, string[] topicArgs)
+{
+    if (topic.Id.StartsWith('C')) CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture = new CultureInfo("tr-TR");   // yüzde/para çıktıları tr-TR
+    return topic.Run(topicArgs);
+}
 
-return await topic.Run(args[1..]);
+// Menüsüz: dotnet run -- J3.2 4
+if (args.Length > 0)
+{
+    if (Find(args[0]) is not { } direct) { PrintTopics(); return 1; }
+    return await RunTopic(direct, args[1..]);
+}
+
+// Menü: konu → (bölüm no | all | konuya özel komut) → tekrar
+Console.WriteLine("Not: static başlatma, JIT, ilk çağrı gibi demolar yalnızca süreç ilk açıldığında doğru görünür; temiz sonuç için programı yeniden başlatın.");
+while (true)
+{
+    PrintTopics();
+    Console.Write("\nKonu (ör. J3.2; boş = çıkış): ");
+    var id = Console.ReadLine()?.Trim();
+    if (string.IsNullOrEmpty(id)) return 0;
+    if (Find(id) is not { } topic) { Console.WriteLine($"Bilinmeyen konu: {id}"); continue; }
+
+    await RunTopic(topic, []);                       // bölüm / komut listesini yazar
+    while (true)
+    {
+        Console.Write($"\n{topic.Id} › bölüm no, all veya komut (boş = konu listesi): ");
+        var line = Console.ReadLine()?.Trim();
+        if (string.IsNullOrEmpty(line)) break;
+        await RunTopic(topic, line.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+    }
+}
 
 /// <summary>Bir konu: Id (ör. "J3.2"), başlık ve giriş noktası (kalan argümanları alır, exit code döner). Senkron konular için ikinci yapıcı var.</summary>
 public sealed record Topic(string Id, string Title, Func<string[], Task<int>> Run)

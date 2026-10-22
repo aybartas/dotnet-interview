@@ -2,7 +2,7 @@ using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.Storage;
 
-public static class Section05_MovingData
+public static class Section04_MovingData
 {
     public static void Run()
     {

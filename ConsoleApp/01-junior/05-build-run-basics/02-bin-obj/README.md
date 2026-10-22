@@ -43,7 +43,7 @@ Her .NET projesi derlenince iki klasör oluşur: **`obj/`** (MSBuild'in çalış
 | `*.dll` (diğerleri) | NuGet/proje bağımlılıkları |
 | `appsettings.json` | `CopyToOutputDirectory` ile kopyalanan içerik dosyaları |
 
-Programın çıktısı bu tabloyu kendi klasörüne uygular (boyutlarıyla). Listedeki `Azure.*`, `Microsoft.Identity.*` gibi diğer `.dll`'ler `Azure.Storage.Blobs` NuGet paketinin (C1.8) ve bağımlılıklarının kopyalarıdır: paket eklenince bağımlılık `.dll`'leri de `bin/`'e kopyalanır.
+Programın çıktısı bu tabloyu kendi klasörüne uygular (boyutlarıyla). Bu projede NuGet paketi olmadığı için başka `.dll` yoktur; paket ekleyince bağımlılık `.dll`'leri de `bin/`'e kopyalanır.
 
 ### 3.2 🛠 `runtimeconfig.json` ve `deps.json` ([`Section02`](Sections/Section02_RuntimeConfig.cs))
 

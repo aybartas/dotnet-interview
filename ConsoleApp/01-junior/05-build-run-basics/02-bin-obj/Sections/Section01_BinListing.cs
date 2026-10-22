@@ -22,7 +22,7 @@ public static class Section01_BinListing
 
         Eşleştirme tablosu (README 3.2): .dll = senin kodun · apphost = native başlatıcı · .pdb = debug sembolleri · .deps.json = bağımlılık manifesti
         · .runtimeconfig.json = runtime/framework ayarı · diğer .dll = NuGet bağımlılıkları · appsettings.json = CopyToOutputDirectory ile gelen içerik.
-        Diğer .dll'ler (Azure.*, Microsoft.Identity.* …) Azure.Storage.Blobs NuGet paketinin ve bağımlılıklarının kopyalarıdır: bir paket eklenince onun .dll'leri de bin/'e kopyalanır.
+        Bu projede NuGet paketi olmadığı için başka .dll yok; bir paket ekleyince (ör. Newtonsoft.Json) onun .dll'i de bin/'e kopyalanır.
         """);
     }
 

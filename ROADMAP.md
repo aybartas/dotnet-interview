@@ -84,7 +84,7 @@ WebApp/
 ├── WebApp.csproj
 ├── Program.cs                 # web konularının AddServices / Map metotlarını çağırır
 └── <seviye>/<NN-modül>/<NN-konu>/   # aynı biçim: README.md + endpoint kodu + interview-questions.md
-docker-compose.yml             # altyapı gereken konular için (DB, Redis, Keycloak, broker …); servisler ihtiyaç oldukça eklenir
+docker-compose.yml             # (ilk altyapı isteyen konu — J8 — geldiğinde eklenir) DB, Redis, Keycloak, broker …
 ```
 
 - **Konu ID'leri:** konsolda `dotnet run -- J3.2` (Junior), `M…`, `S…`, `D…`, `C1.8` (sertifika); `Program.cs`'e her konu tek satırla eklenir.
@@ -751,7 +751,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### J8. Veritabanı Temelleri
 
 > 📁 `01-junior/08-database-fundamentals/` · ⏱ ~3 hafta · Önkoşul: J1
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): PostgreSQL + pgAdmin + MongoDB + Redis.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): PostgreSQL + pgAdmin + MongoDB + Redis.
 > Veritabanı soruları **her seviyede** gelir: Junior'da kavram (ACID, index, JOIN), Mid'de mekanizma (isolation, plan, MVCC), Senior'da ölçek (replication, sharding). Bu modül o zeminin tamamı.
 
 #### J8.1 Veri Modelleme & İlişkisel Model · `01-relational-modeling`
@@ -1623,7 +1623,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M6. SQL & PostgreSQL Derinlemesine
 
 > 📁 `02-mid/06-sql-postgresql/` · ⏱ ~3 hafta · Önkoşul: J8, J9
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): PostgreSQL 18 (+ isteğe bağlı SQL Server).
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): PostgreSQL 18 (+ isteğe bağlı SQL Server).
 > J8'deki kavramların **mekanizması**: plan nasıl seçilir, MVCC nasıl çalışır, kilitler neden çakışır. Ölçek (replication, sharding, storage engine) → S4.
 
 #### M6.1 İleri SQL · `01-advanced-sql`
@@ -1784,7 +1784,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M8. NoSQL & Caching
 
 > 📁 `02-mid/08-nosql-caching/` · ⏱ ~3 hafta · Önkoşul: J8, M6
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): MongoDB (tek node'lu replica set — transaction için), Redis 8, Elasticsearch/OpenSearch.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): MongoDB (tek node'lu replica set — transaction için), Redis 8, Elasticsearch/OpenSearch.
 > Ölçekte MongoDB/Redis (sharding, cluster) → S4.6.
 
 #### M8.1 NoSQL Veri Modelleme Prensipleri · `01-nosql-modeling`
@@ -1876,7 +1876,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M9. Kimlik & Erişim Yönetimi: OAuth, OIDC, Keycloak
 
 > 📁 `02-mid/09-identity-access/` · ⏱ ~3 hafta · Önkoşul: J11
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): Keycloak 26 + PostgreSQL.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): Keycloak 26 + PostgreSQL.
 > Junior'da "JWT ile API koru" yeterliydi; Mid'de **akışı uçtan uca anlatmak, doğru IdP'yi seçmek ve güvenli entegre etmek** beklenir.
 
 #### M9.1 OAuth 2.0 → 2.1 Derinlemesine · `01-oauth2`
@@ -2099,7 +2099,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M12. Mesajlaşma & Message Broker'lar
 
 > 📁 `02-mid/12-messaging/` · ⏱ ~2 hafta · Önkoşul: M4, M11
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): RabbitMQ, Kafka (KRaft), Azure Service Bus emulator.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): RabbitMQ, Kafka (KRaft), Azure Service Bus emulator.
 > Event-driven mimari, outbox, saga ve Kafka derinlemesine → S6.
 
 #### M12.1 Mesajlaşma Kavramları · `01-messaging-concepts`
@@ -2185,7 +2185,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M13. Observability
 
 > 📁 `02-mid/13-observability/` · ⏱ ~2 hafta · Önkoşul: J6.5
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): OpenTelemetry Collector + Grafana LGTM (`grafana/otel-lgtm`) + Seq.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): OpenTelemetry Collector + Grafana LGTM (`grafana/otel-lgtm`) + Seq.
 > "Loglama zaten var" — ama **tek başına log yetmez.** Production teşhis metodolojisi, SLO ve APM seçimi → S8.
 
 #### M13.1 Üç Sinyal: Log, Metric, Trace · `01-three-signals`
@@ -2348,7 +2348,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M15. AI Engineering: Uygulama Geliştirme
 
 > 📁 `02-mid/15-ai-engineering/` · ⏱ ~3 hafta · Önkoşul: J13, M5.9
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): Ollama, Qdrant, PostgreSQL + pgvector.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): Ollama, Qdrant, PostgreSQL + pgvector.
 > .NET artık AI-first bir platform; 2026'da backend rollerinde bile soruluyor. Agent mimarisi, Agent Framework, eval ve LLMOps → S9.
 
 #### M15.1 Microsoft.Extensions.AI Derinlemesine · `01-microsoft-extensions-ai`
@@ -2810,7 +2810,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### S6. Dağıtık Sistemler & Microservices
 
 > 📁 `03-senior/06-distributed-systems/` · ⏱ ~3 hafta · Önkoşul: M12, S5
-> Altyapı (repo kökündeki `docker-compose.yml`'e eklenen servisler): Kafka, RabbitMQ, PostgreSQL, Redis, OpenTelemetry Collector.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): Kafka, RabbitMQ, PostgreSQL, Redis, OpenTelemetry Collector.
 
 #### S6.1 Microservice Temelleri & Ayrıştırma · `01-microservices`
 - Ne zaman microservice, ne zaman **monolit** — ekip yapısı (Conway yasası), bağımsız deploy, ölçek profili ⭐
@@ -3647,7 +3647,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 - **Sorular özgündür:** Gerçek sınav soruları Microsoft'un gizlilik sözleşmesi (NDA) kapsamındadır; "çıkmış soru" veya braindump kullanılmaz. Sorular **sınav formatında** ve resmî **konu ağırlıklarına** göre yazılır.
 - **Müfredat tarihlidir:** study guide'lar "skills measured as of …" ile tarihlenir; sınava girmeden önce resmî sayfayı kontrol et.
 - **Maliyet:** Laboratuvarlar ücretsiz katman/emülatörle ve **temizleme (cleanup) adımıyla** tasarlanır; her laboratuvar bütçe alarmı ve `az group delete` ile biter.
-- Proje yapısı: ayrı proje yok; kod `ConsoleApp/06-certifications/…` altında (SLA/TCO hesaplayıcıları, Azure SDK demoları; emülatörler kökteki `docker-compose.yml`'den); testler yok, quiz'ler `.md`'dir.
+- Proje yapısı: ayrı proje yok; kod `ConsoleApp/06-certifications/…` altında (SLA/TCO hesaplayıcıları, Azure SDK demoları gerektiğinde, emülatörler kökteki `docker-compose.yml`'den); testler yok, quiz'ler `.md`'dir.
 
 ---
 
@@ -3879,7 +3879,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Azure Migrate:** taşıma için **merkezi hub** — keşif, değerlendirme (boyutlandırma/maliyet), sunucu, veritabanı, web uygulaması ve VDI taşıma; entegre araçlar (Discovery and assessment, Server Migration, Data Migration Assistant, Database Migration Service, Web app migration assistant)
   - **Azure Data Box:** çok büyük veriyi **fiziksel cihazla** taşıma (Data Box Disk; yeni nesil Data Box ~120/525 TB; Data Box Heavy emekli — kapasiteler değişir); ağ bağlantısı yetersiz/pahalı/yoksa; içe ve dışa aktarma; cihaz verisi güvenle silinir
 - **Sınav tuzakları:** redundancy ↔ senaryo eşleştirme ("bölgesel felakette de okunabilir" → RA-GRS/RA-GZRS; "zone arızası, tek bölge" → ZRS); Archive'dan anında okuma yok; "on-prem dosya sunucusunu Azure ile senkronla, önbellekte tut" → File Sync; "terabaytlarca veri, ağ yok" → Data Box; "komut satırı" → AzCopy, "grafik araç" → Storage Explorer; "taşıma için değerlendirme" → Azure Migrate
-- 🛠 **Pratik:** `ConsoleApp` içinde (C1 klasörü) **Blob Storage** demosu (`Azure.Storage.Blobs`): container oluşturma, upload/download/listeleme, **access tier değiştirme** — yerelde **Azurite** emülatörüyle (Azure hesabı gerekmez); AzCopy ile yerel klasörü blob container'a kopyalama (`azcopy copy … --recursive`); Azure Files paylaşımı oluşturup bağlama; aynı storage account'u LRS ve GZRS olarak Pricing Calculator'da karşılaştırma.
+- 🛠 **Pratik:** `ConsoleApp` içinde (C1 klasörü) redundancy matrisi, access tier maliyet karşılaştırması ve taşıma aracı seçimi tabloları; `az storage` ile container/blob/**access tier değiştirme** ve AzCopy ile yerel klasörü blob container'a kopyalama (`azcopy copy … --recursive`) README'de CLI laboratuvarı; Azure Files paylaşımı oluşturup bağlama; aynı storage account'u LRS ve GZRS olarak Pricing Calculator'da karşılaştırma.
 - 📝 **Quiz:** servis seçimi, redundancy ve tier eşleştirme, taşıma/migration aracı seçimi (≈20 soru)
 
 #### C1.9 Kimlik ve Erişim: Microsoft Entra ID, Kimlik Doğrulama, RBAC · `09-identity-access` ⭐ *(geliştirici derinliği → M9, C2.11)*
@@ -4041,7 +4041,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 >
 > **Dil notu:** Study guide'ın hedef kitle tanımı Azure SDK'ları, veri servisleri, izleme, mesajlaşma, **vector veritabanları** ve **Python** bilgisi bekler. Bu repoda laboratuvarlar **C#/.NET** ile yazılır (aynı Azure SDK kavramları), her konunun README'sinde sınavdaki kod tamamlama sorularına hazırlık için **eşdeğer Python parçası** da verilir.
 > **Kapsam notu:** AZ-204'te olan ama AI-200 hedeflerinde **görünmeyen** konular (App Service ayrıntıları, Blob lifecycle, API Management, Event Hubs, Microsoft Graph) bu modülde yalnızca *(bağlam)* olarak geçer; derinliği → S6 (gateway), S8.3 (mimari). Associate sınavlarında **senaryo/vaka** ve **kod/CLI/KQL tamamlama** soruları vardır; quiz'ler bu biçimleri içerir. AI-200 için resmî practice assessment henüz yayımlanmamış olabilir — deneme sınavı (C2.14) bu boşluğu doldurur.
-> Gerçek sınav soruları NDA kapsamındadır — braindump kullanılmaz; sorular özgün yazılır, her cevabın gerekçesi vardır. Her laboratuvar emülatörle (modülün `docker-compose.yml`: Azurite, Cosmos DB emulator, Service Bus emulator, PostgreSQL + pgvector, Redis) veya en ucuz katmanla çalışır ve `az group delete` ile biter.
+> Gerçek sınav soruları NDA kapsamındadır — braindump kullanılmaz; sorular özgün yazılır, her cevabın gerekçesi vardır. Her laboratuvar emülatörle (kökteki `docker-compose.yml`: Azurite, Cosmos DB emulator, Service Bus emulator, PostgreSQL + pgvector, Redis) veya en ucuz katmanla çalışır ve `az group delete` ile biter.
 
 #### C2.1 Azure Container Registry ve ACR Tasks · `01-container-registry` ⭐
 - 📌 **Resmî hedef:** *Develop containerized solutions* — Azure Container Registry ile container image'larını **oluştur, sakla, sürümle ve yönet** · **ACR Tasks** ile image oluştur ve çalıştır
@@ -4218,7 +4218,7 @@ dotnet-interview/
 ├── README.md
 ├── ROADMAP.md                      # bu dosya
 ├── CLAUDE.md
-├── docker-compose.yml              # altyapı: Azurite bugün; PostgreSQL, Redis, broker … konular geldikçe
+├── docker-compose.yml              # (ilk altyapı konusu — J8 — geldiğinde eklenir): PostgreSQL, Redis, broker …
 │
 ├── ConsoleApp/                     # TEK console projesi: konsol konularının hepsi
 │   ├── ConsoleApp.csproj

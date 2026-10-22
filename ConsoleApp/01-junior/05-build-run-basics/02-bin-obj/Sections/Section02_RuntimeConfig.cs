@@ -33,7 +33,7 @@ public static class Section02_RuntimeConfig
         var libraries = deps.RootElement.GetProperty("libraries").EnumerateObject().Select(l => l.Name).ToList();
         Console.WriteLine($"runtimeTarget : {target}");
         Console.WriteLine($"libraries     : {libraries.Count} adet → {string.Join(", ", libraries)}");
-        Console.WriteLine("  (Kendi assembly'miz + NuGet paketi Azure.Storage.Blobs ve bağımlılıkları; hepsi bin/'e kopyalanır. Framework assembly'leri burada listelenmez.)");
+        Console.WriteLine("  (Bu projede yalnızca kendi assembly'miz; NuGet paketi eklenirse burada ve bin/'de görünür. Framework assembly'leri burada listelenmez.)");
 
         Console.WriteLine("""
 
