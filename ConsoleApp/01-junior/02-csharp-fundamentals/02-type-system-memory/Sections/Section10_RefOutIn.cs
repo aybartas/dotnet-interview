@@ -4,40 +4,40 @@ public static class Section10_RefOutIn
 {
     public static void Run()
     {
-        // ref: okunup YAZILABİLİR, çağıranda ÖNCEDEN atanmış olmalı
+        // ref: can be read and WRITTEN, must be assigned in advance by the caller
         int a = 1, b = 2;
         Swap(ref a, ref b);
         Console.WriteLine($"ref : Swap(ref a, ref b) → a={a}, b={b}");
 
-        // out: metot İÇİNDE atanması ZORUNLU, çağıranda önceden atanması gerekmez (birden çok değer döndürmek / TryXxx deseni)
+        // out: MUST be assigned INSIDE the method, the caller doesn't need to assign it in advance (returning multiple values / the TryXxx pattern)
         if (TryDivide(10, 4, out var quotient, out var remainder))
-            Console.WriteLine($"out : TryDivide(10, 4) → bölüm={quotient}, kalan={remainder}");
-        _ = int.TryParse("x", out _);                              // discard: out değerini umursama
+            Console.WriteLine($"out : TryDivide(10, 4) → quotient={quotient}, remainder={remainder}");
+        _ = int.TryParse("x", out _);                              // discard: don't care about the out value
 
-        // in: referansla geçir (KOPYALAMA yok) ama metot DEĞİŞTİREMEZ → büyük struct'lar için
+        // in: pass by reference (NO copying) but the method CANNOT MODIFY it → for large structs
         var big = new BigStruct { A = 1, B = 2, C = 3, D = 4 };
-        Console.WriteLine($"in  : Sum(in big) = {Sum(in big)}   (32 byte'lık struct kopyalanmadı; salt okunur referans)");
+        Console.WriteLine($"in  : Sum(in big) = {Sum(in big)}   (the 32-byte struct was not copied; read-only reference)");
 
-        // Referans tipi DEĞERLE geçirilince: referansın KOPYASI geçer
+        // When a reference type is passed BY VALUE: a COPY of the reference is passed
         var names = new List<string> { "a" };
         Reassign(names);
-        Console.WriteLine($"ref olmadan List yeniden atandı → çağıranda hâlâ [{string.Join(",", names)}]");
+        Console.WriteLine($"List reassigned without ref → the caller still has [{string.Join(",", names)}]");
         ReassignWithRef(ref names);
-        Console.WriteLine($"ref ile       List yeniden atandı → çağıranda [{string.Join(",", names)}]");
+        Console.WriteLine($"List reassigned with ref    → the caller has [{string.Join(",", names)}]");
 
-        // ref local & ref return: veri YERİNDE (kopyasız) erişim — dizi elemanına referans
+        // ref local & ref return: access data IN PLACE (no copy) — a reference to an array element
         var array = new[] { 10, 20, 30 };
         ref var second = ref array[1];
         second = 99;
-        Console.WriteLine($"ref local   : second = 99 → dizi [{string.Join(",", array)}]");
+        Console.WriteLine($"ref local   : second = 99 → array [{string.Join(",", array)}]");
         ref var found = ref Find(array, 30);
         found++;
-        Console.WriteLine($"ref return  : Find(array, 30)++ → dizi [{string.Join(",", array)}]");
+        Console.WriteLine($"ref return  : Find(array, 30)++ → array [{string.Join(",", array)}]");
 
         Console.WriteLine("""
 
-        ref  → oku + yaz, önceden atanmış         out → metot yazmak ZORUNDA, çağıranda atama şart değil       in → salt okunur referans (kopyasız)
-        Not: async metotlarda ve iterator'larda ref/out/in parametreler kullanılamaz. Modern kodda `out` yerine tuple/record döndürmek çoğu zaman daha okunaklıdır.
+        ref  → read + write, must be assigned beforehand       out → the method MUST write, the caller need not assign       in → read-only reference (no copy)
+        Note: ref/out/in parameters can't be used in async methods and iterators. In modern code, returning a tuple/record is often more readable than `out`.
         """);
     }
 
@@ -45,16 +45,16 @@ public static class Section10_RefOutIn
 
     private static bool TryDivide(int dividend, int divisor, out int quotient, out int remainder)
     {
-        if (divisor == 0) { quotient = remainder = 0; return false; }   // out'lar HER yolda atanmalı
+        if (divisor == 0) { quotient = remainder = 0; return false; }   // outs must be assigned on EVERY path
         quotient = dividend / divisor;
         remainder = dividend % divisor;
         return true;
     }
 
-    private static long Sum(in BigStruct s) => s.A + s.B + s.C + s.D;   // s.A = 5; → ✗ CS8332: in parametresi değiştirilemez
+    private static long Sum(in BigStruct s) => s.A + s.B + s.C + s.D;   // s.A = 5; → ✗ CS8332: an in parameter can't be modified
 
-    private static void Reassign(List<string> list) => list = ["yeni"];
-    private static void ReassignWithRef(ref List<string> list) => list = ["yeni"];
+    private static void Reassign(List<string> list) => list = ["new"];
+    private static void ReassignWithRef(ref List<string> list) => list = ["new"];
 
     private static ref int Find(int[] items, int value)
     {

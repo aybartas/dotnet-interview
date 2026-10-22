@@ -1,62 +1,62 @@
 namespace Junior.CSharpFundamentals.ProgramAnatomy.AccessModifiers;
 
-/// <summary>Her erişim düzeyinden BİRER üye taşıyan tip (J2.1 erişim belirleyicileri deneyi). Hangi koddan hangisine erişilebildiğini derleyici denetler.</summary>
+/// <summary>A type carrying ONE member of each access level (J2.1 access modifiers experiment). The compiler checks which code can reach which member.</summary>
 public class Vault
 {
-    private string PrivateMember => "private";                     // yalnızca Vault'un kendisi
-    private protected string PrivateProtectedMember => "private protected";  // Vault + AYNI assembly'deki türeyenler
-    protected string ProtectedMember => "protected";                // Vault + türeyenler (HERHANGİ bir assembly)
-    internal string InternalMember => "internal";                   // aynı assembly'deki HERKES (türeyen olmak gerekmez)
-    protected internal string ProtectedInternalMember => "protected internal";  // aynı assembly'deki herkes VEYA (başka assembly'de) türeyenler
-    public string PublicMember => "public";                         // herkes
+    private string PrivateMember => "private";                     // only Vault itself
+    private protected string PrivateProtectedMember => "private protected";  // Vault + derived types in the SAME assembly
+    protected string ProtectedMember => "protected";                // Vault + derived types (in ANY assembly)
+    internal string InternalMember => "internal";                   // EVERYONE in the same assembly (no need to be derived)
+    protected internal string ProtectedInternalMember => "protected internal";  // everyone in the same assembly OR (in another assembly) derived types
+    public string PublicMember => "public";                         // everyone
 
-    /// <summary>Aynı sınıf içinden altısına da erişilebilir.</summary>
+    /// <summary>All six can be reached from inside the same class.</summary>
     public string ReadAllFromSameClass() =>
         string.Join(", ", PrivateMember, PrivateProtectedMember, ProtectedMember, InternalMember, ProtectedInternalMember, PublicMember);
 }
 
-/// <summary>AYNI assembly'de, Vault'tan TÜREYEN sınıf: private HARİÇ hepsine erişir.</summary>
+/// <summary>A class in the SAME assembly that DERIVES from Vault: reaches everything EXCEPT private.</summary>
 public class SameAssemblyDerived : Vault
 {
     public string Peek() => string.Join(", ",
-        PrivateProtectedMember,      // ✅ aynı assembly + türeyen
-        ProtectedMember,             // ✅ türeyen
-        InternalMember,              // ✅ aynı assembly
+        PrivateProtectedMember,      // ✅ same assembly + derived
+        ProtectedMember,             // ✅ derived
+        InternalMember,              // ✅ same assembly
         ProtectedInternalMember,     // ✅
         PublicMember);               // ✅
 #if SHOW_ERRORS
-    public string PeekError() => PrivateMember;   // ✗ CS0122: private yalnızca Vault içinde
+    public string PeekError() => PrivateMember;   // ✗ CS0122: private is only inside Vault
 #endif
 }
 
-/// <summary>AYNI assembly'de, Vault'tan TÜREMEYEN sınıf: protected ve private protected'a erişemez.</summary>
+/// <summary>A class in the SAME assembly that does NOT derive from Vault: can't reach protected or private protected.</summary>
 public class SameAssemblyOther
 {
     public static string Peek(Vault v) => string.Join(", ",
-        v.InternalMember,            // ✅ aynı assembly
-        v.ProtectedInternalMember,   // ✅ protected internal'ın "internal" yarısı
+        v.InternalMember,            // ✅ same assembly
+        v.ProtectedInternalMember,   // ✅ the "internal" half of protected internal
         v.PublicMember);             // ✅
 #if SHOW_ERRORS
-    public static string PeekErrors(Vault v) => v.ProtectedMember + v.PrivateProtectedMember;   // ✗ CS1540 / CS0122: türeyen değiliz
+    public static string PeekErrors(Vault v) => v.ProtectedMember + v.PrivateProtectedMember;   // ✗ CS1540 / CS0122: we are not derived
 #endif
 }
 
-// Varsayılan erişim: tip için 'internal' (aşağıda yazılmadı), üye için 'private'.
+// Default access: 'internal' for a type (not written below), 'private' for a member.
 class DefaultAccessType            // → internal class
 {
     int field = 7;                 // → private
     public int ReadField() => field;
 }
 
-/// <summary>Bu tip public; ama içerdiği DefaultAccessType internal → dışarıya sızdıramaz (CS0050/CS0051 tutarlılık kuralı).</summary>
+/// <summary>This type is public; but the DefaultAccessType it contains is internal → it can't leak it outside (CS0050/CS0051 consistency rule).</summary>
 public static class Factory
 {
     public static string DescribeDefaults() =>
-        $"tip varsayılanı: {(typeof(DefaultAccessType).IsNotPublic ? "internal" : "public")}, " +
-        $"üye varsayılanı: {(typeof(DefaultAccessType).GetField("field", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.IsPrivate ? "private" : "?")}";
+        $"type default: {(typeof(DefaultAccessType).IsNotPublic ? "internal" : "public")}, " +
+        $"member default: {(typeof(DefaultAccessType).GetField("field", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.IsPrivate ? "private" : "?")}";
 }
 
-/// <summary>InternalsVisibleTo ile yalnızca BELİRLİ dost assembly’lere (tipik olarak test projesine) açılabilir. Başka bir assembly'den bu tipe erişim CS0122 verir.</summary>
+/// <summary>With InternalsVisibleTo it can be opened ONLY to specific friend assemblies (typically the test project). Accessing this type from any other assembly gives CS0122.</summary>
 internal static class PriceRules
 {
     internal static decimal AddVat(decimal net) => Math.Round(net * 1.20m, 2);

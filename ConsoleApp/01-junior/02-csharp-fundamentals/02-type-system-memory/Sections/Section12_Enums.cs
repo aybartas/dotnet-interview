@@ -4,41 +4,41 @@ public static class Section12_Enums
 {
     public static void Run()
     {
-        Console.WriteLine("enum = adlandırılmış tamsayı sabitleri (varsayılan taban tip int; byte/short/long da olabilir)");
+        Console.WriteLine("enum = named integer constants (the default underlying type is int; byte/short/long are possible too)");
         var status = OrderStatus.Shipped;
         Console.WriteLine($"   {status} = {(int)status}; sizeof underlying = {sizeof(int)}; Enum.GetUnderlyingType = {Enum.GetUnderlyingType(typeof(OrderStatus)).Name}");
 
-        // TUZAK: Enum her tamsayıdan cast edilebilir — GEÇERSİZ değer üretebilirsiniz!
+        // PITFALL: an enum can be cast from any integer — you can produce an INVALID value!
         var bogus = (OrderStatus)99;
-        Console.WriteLine($"\n(OrderStatus)99 → \"{bogus}\"; Enum.IsDefined = {Enum.IsDefined(bogus)}   (cast exception ATMAZ)");
+        Console.WriteLine($"\n(OrderStatus)99 → \"{bogus}\"; Enum.IsDefined = {Enum.IsDefined(bogus)}   (the cast does NOT throw)");
 
-        // Parse: TryParse'ı tercih edin; sayısal metin ("99") de kabul edilir → IsDefined ile doğrulayın
+        // Parse: prefer TryParse; numeric text ("99") is also accepted → validate with IsDefined
         Console.WriteLine($"\nEnum.TryParse(\"shipped\", ignoreCase: true) → {Enum.TryParse<OrderStatus>("shipped", true, out var parsed)} ({parsed})");
-        Console.WriteLine($"Enum.TryParse(\"99\")                         → {Enum.TryParse<OrderStatus>("99", out var numeric)} ({numeric}) ← ✗ geçersiz ama 'başarılı'!  IsDefined: {Enum.IsDefined(numeric)}");
-        Console.WriteLine($"Enum.TryParse(\"Bilinmeyen\")                  → {Enum.TryParse<OrderStatus>("Bilinmeyen", out _)}");
+        Console.WriteLine($"Enum.TryParse(\"99\")                         → {Enum.TryParse<OrderStatus>("99", out var numeric)} ({numeric}) ← ✗ invalid but 'successful'!  IsDefined: {Enum.IsDefined(numeric)}");
+        Console.WriteLine($"Enum.TryParse(\"Unknown\")                    → {Enum.TryParse<OrderStatus>("Unknown", out _)}");
 
-        // switch expression + default: yeni enum değeri eklenince/geçersiz değerde çalışma zamanında patlayan dal bırakın
+        // switch expression + default: leave a branch that blows up at run time when a new enum value is added / on an invalid value
         Console.WriteLine($"\nswitch: {Label(OrderStatus.Pending)}, {Label(OrderStatus.Shipped)}");
         try { Label((OrderStatus)99); }
-        catch (ArgumentOutOfRangeException ex) { Console.WriteLine($"switch default dalı: {ex.GetType().Name} (geçersiz değeri sessizce yutmak yerine ÖNE ÇIKARIN)"); }
+        catch (ArgumentOutOfRangeException ex) { Console.WriteLine($"switch default branch: {ex.GetType().Name} (SURFACE the invalid value instead of silently swallowing it)"); }
 
-        Console.WriteLine("\n[Flags]: bit alanı olarak birleştirilebilir enum — değerler 2'nin kuvveti olmalı");
+        Console.WriteLine("\n[Flags]: an enum that can be combined as a bit field — values must be powers of 2");
         var perm = Permissions.Read | Permissions.Write;
-        Console.WriteLine($"   Read|Write = {(int)perm} → ToString: {perm}   (FlagsAttribute olmasaydı '3' yazardı)");
+        Console.WriteLine($"   Read|Write = {(int)perm} → ToString: {perm}   (without FlagsAttribute it would print '3')");
         Console.WriteLine($"   HasFlag(Write)={perm.HasFlag(Permissions.Write)}  (perm & Execute) != 0 → {(perm & Permissions.Execute) != 0}");
-        perm |= Permissions.Execute;                       // bayrak ekle
-        perm &= ~Permissions.Write;                        // bayrak kaldır
+        perm |= Permissions.Execute;                       // add a flag
+        perm &= ~Permissions.Write;                        // remove a flag
         Console.WriteLine($"   |= Execute, &= ~Write → {perm}");
-        Console.WriteLine($"   Permissions.All = {Permissions.All} ({(int)Permissions.All}); None = {Permissions.None}  (0 değeri için 'None' tanımlayın)");
+        Console.WriteLine($"   Permissions.All = {Permissions.All} ({(int)Permissions.All}); None = {Permissions.None}  (define 'None' for the value 0)");
         Console.WriteLine($"   Enum.TryParse(\"Read, Execute\") → {Enum.TryParse<Permissions>("Read, Execute", out var multi)} ({multi})");
     }
 
     private static string Label(OrderStatus s) => s switch
     {
-        OrderStatus.Pending => "beklemede",
-        OrderStatus.Shipped => "kargoda",
-        OrderStatus.Delivered => "teslim edildi",
-        _ => throw new ArgumentOutOfRangeException(nameof(s), s, "tanımsız durum"),
+        OrderStatus.Pending => "pending",
+        OrderStatus.Shipped => "shipped",
+        OrderStatus.Delivered => "delivered",
+        _ => throw new ArgumentOutOfRangeException(nameof(s), s, "undefined status"),
     };
 
     private enum OrderStatus { Pending = 1, Shipped = 2, Delivered = 3 }

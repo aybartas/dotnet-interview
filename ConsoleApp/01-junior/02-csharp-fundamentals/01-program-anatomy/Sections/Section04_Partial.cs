@@ -6,15 +6,15 @@ public static class Section04_Partial
 {
     public static void Run()
     {
-        // partial class: tek tip, birden çok dosyada. Invoice.cs (elle yazılan) + Invoice.Generated.cs (kod üretici çıktısı gibi).
+        // partial class: a single type across multiple files. Invoice.cs (hand-written) + Invoice.Generated.cs (like code generator output).
         var invoice = new Invoice("INV-001", 100m);
         Console.WriteLine(invoice.Describe());
 
-        // partial METOT: bildirim bir dosyada, uygulama başka dosyada. Source generator'lar tam olarak bunu kullanır:
-        //   [GeneratedRegex(...)] static partial Regex Digits();   → derleyici, metodun GÖVDESİNİ derleme sırasında üretir.
-        var m = Generated.Digits().Match("Sipariş no: 4521");
-        Console.WriteLine($"\n[GeneratedRegex] partial metodu → eşleşme: {m.Value}");
-        Console.WriteLine("Bu metodun üretilen kaynağını IDE'de F12 ile (Analyzers → ...RegexGenerator) görebilirsiniz.");
+        // partial METHOD: the declaration is in one file, the implementation in another. Source generators use exactly this:
+        //   [GeneratedRegex(...)] static partial Regex Digits();   → the compiler generates the method BODY at compile time.
+        var m = Generated.Digits().Match("Order no: 4521");
+        Console.WriteLine($"\n[GeneratedRegex] partial method → match: {m.Value}");
+        Console.WriteLine("You can see this method's generated source in the IDE with F12 (Analyzers → ...RegexGenerator).");
     }
 }
 

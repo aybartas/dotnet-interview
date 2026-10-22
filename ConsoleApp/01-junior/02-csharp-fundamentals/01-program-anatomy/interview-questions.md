@@ -15,7 +15,7 @@
 `protected internal` bir **VEYA**'dır (protected ∪ internal): daha açıktır. `private protected` bir **VE**'dir (protected ∩ internal): yalnızca **aynı assembly içindeki** türeyen sınıflar erişebilir, daha kapalıdır. Örnek: başka assembly'deki türeyen sınıf, `protected internal` üyeye erişir ama `private protected` üyeye erişemez.
 
 ### 5. `InternalsVisibleTo` ne işe yarar?
-`internal` tipleri/üyeleri belirli "dost" assembly'lere açar; tipik kullanım test projesidir (`<InternalsVisibleTo Include="Proje.Tests" />`). Public yüzeyi şişirmeden iç mantığı test etmeyi sağlar. Public yapılan her şey geriye dönük uyumluluk sözleşmesine dönüştüğü için, test edebilmek uğruna `public` yapmaktan iyidir.
+`internal` tipleri/üyeleri belirli "dost" assembly'lere açar; tipik kullanım test projesidir (`<InternalsVisibleTo Include="MyProject.Tests" />`). Public yüzeyi şişirmeden iç mantığı test etmeyi sağlar. Public yapılan her şey geriye dönük uyumluluk sözleşmesine dönüştüğü için, test edebilmek uğruna `public` yapmaktan iyidir.
 
 ### 6. `static class` nedir? static constructor ne zaman çalışır?
 `static class` örneklenemez ve yalnızca static üye taşır. Static constructor parametresizdir, elle çağrılamaz; tip ilk kullanılmadan önce runtime tarafından **bir kez** ve thread-safe çalıştırılır (`const`'a erişim tetiklemez). İçinde exception fırlarsa tip kalıcı olarak kullanılamaz hale gelir: her erişimde `TypeInitializationException`. Tam zamanlama (`beforefieldinit`) → S1.2.

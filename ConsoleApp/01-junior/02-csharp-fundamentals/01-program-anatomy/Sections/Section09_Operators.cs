@@ -4,42 +4,42 @@ public static class Section09_Operators
 {
     public static void Run()
     {
-        // ÖNCELİK (yüksek → düşük, kısaltılmış): () · x++ · ! ~ ++x · * / % · + - · << >> · < > <= >= is as · == != · & · ^ · | · && · || · ?? · ?: · = (atama)
+        // PRECEDENCE (high → low, abbreviated): () · x++ · ! ~ ++x · * / % · + - · << >> · < > <= >= is as · == != · & · ^ · | · && · || · ?? · ?: · = (assignment)
         Console.WriteLine($"2 + 3 * 4 = {2 + 3 * 4}      (2 + 3) * 4 = {(2 + 3) * 4}");
-        Console.WriteLine($"true || false && false = {true || (false && false)}   (&& , || 'dan önce: şüphede PARANTEZ kullanın)");
+        Console.WriteLine($"true || false && false = {true || (false && false)}   (&& binds tighter than ||: when in doubt use PARENTHESES)");
 
-        // Tamsayı bölme ve mod
-        Console.WriteLine($"7 / 2 = {7 / 2}   7 / 2.0 = {7 / 2.0}   7 % 3 = {7 % 3}   -7 % 3 = {-7 % 3}   (mod işareti SOL operandı izler)");
+        // Integer division and modulo
+        Console.WriteLine($"7 / 2 = {7 / 2}   7 / 2.0 = {7 / 2.0}   7 % 3 = {7 % 3}   -7 % 3 = {-7 % 3}   (the sign of the modulo follows the LEFT operand)");
 
-        // SHORT-CIRCUIT: && ve || sağ tarafı gerekmedikçe DEĞERLENDİRMEZ. & ve | (mantıksal hali) İKİ tarafı da değerlendirir.
+        // SHORT-CIRCUIT: && and || DO NOT evaluate the right side unless needed. & and | (the logical form) evaluate BOTH sides.
         Console.WriteLine("\n&& (short-circuit):");
         var r1 = Left(false) && Right(true);
-        Console.WriteLine($"  sonuç = {r1}   → Right çağrılmadı\n& (non-short-circuit):");
+        Console.WriteLine($"  result = {r1}   → Right was not called\n& (non-short-circuit):");
         var r2 = Left(false) & Right(true);
-        Console.WriteLine($"  sonuç = {r2}   → Right yine de çağrıldı");
+        Console.WriteLine($"  result = {r2}   → Right was called anyway");
 
-        // Short-circuit'in asıl faydası: null-guard
+        // The real benefit of short-circuit: the null guard
         string? text = null;
-        if (text != null && text.Length > 0)              // text null ise Length'e hiç dokunulmaz → NullReferenceException yok
-            Console.WriteLine("dolu");
+        if (text != null && text.Length > 0)              // if text is null, Length is never touched → no NullReferenceException
+            Console.WriteLine("non-empty");
         else
-            Console.WriteLine("\nnull-guard: text != null && text.Length > 0 → güvenli (null için false)");
-        // if (text != null & text.Length > 0)            // ✗ & ile text.Length yine değerlendirilir → NullReferenceException
+            Console.WriteLine("\nnull guard: text != null && text.Length > 0 → safe (false for null)");
+        // if (text != null & text.Length > 0)            // ✗ with & text.Length is still evaluated → NullReferenceException
 
-        // Bitwise & | ^ ~ << >> (tamsayılarda): bayrak (flags) işlemlerinin temeli
+        // Bitwise & | ^ ~ << >> (on integers): the basis of flag operations
         const int Read = 0b001, Write = 0b010, Exec = 0b100;
         var perms = Read | Write;
-        Console.WriteLine($"\nperms = {Convert.ToString(perms, 2).PadLeft(3, '0')}  Write var mı? {(perms & Write) != 0}  Exec var mı? {(perms & Exec) != 0}  Write kaldır: {Convert.ToString(perms & ~Write, 2).PadLeft(3, '0')}");
+        Console.WriteLine($"\nperms = {Convert.ToString(perms, 2).PadLeft(3, '0')}  has Write? {(perms & Write) != 0}  has Exec? {(perms & Exec) != 0}  remove Write: {Convert.ToString(perms & ~Write, 2).PadLeft(3, '0')}");
 
-        // ++ önek/sonek farkı
+        // prefix/postfix ++ difference
         var n = 5;
-        Console.WriteLine($"n=5: n++ → {n++} (sonra n={n}),  ++n → {++n}");
+        Console.WriteLine($"n=5: n++ → {n++} (then n={n}),  ++n → {++n}");
 
-        // null birleştirme
+        // null coalescing
         string? name = null;
-        Console.WriteLine($"name ?? \"anonim\" = {name ?? "anonim"}");
+        Console.WriteLine($"name ?? \"anonymous\" = {name ?? "anonymous"}");
     }
 
-    private static bool Left(bool v) { Console.WriteLine($"  Left({v}) çağrıldı"); return v; }
-    private static bool Right(bool v) { Console.WriteLine($"  Right({v}) çağrıldı"); return v; }
+    private static bool Left(bool v) { Console.WriteLine($"  Left({v}) called"); return v; }
+    private static bool Right(bool v) { Console.WriteLine($"  Right({v}) called"); return v; }
 }

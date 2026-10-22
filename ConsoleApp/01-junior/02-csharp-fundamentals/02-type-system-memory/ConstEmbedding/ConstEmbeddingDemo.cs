@@ -1,13 +1,13 @@
 namespace Junior.CSharpFundamentals.TypeSystemMemory.ConstEmbedding;
 
 /// <summary>
-/// const gömülmesini IL'de görün: iki metot aynı biçimde Config'e bakar, ama derleyici birine DEĞERİ yazar, diğerine ALAN OKUMASI.
-/// (Gerçek senaryoda Config başka bir assembly'dedir; ikinci assembly'li deney README'de.)
+/// See const embedding in the IL: two methods look at Config the same way, but the compiler writes the VALUE into one and a FIELD READ into the other.
+/// (In a real scenario Config lives in another assembly; the experiment with a second assembly is in the README.)
 /// </summary>
 public static class ConstEmbeddingDemo
 {
-    public static int ReadConst() => Config.MaxRetries;       // IL: ldc.i4.3 → 3 literal olarak gömüldü
-    public static int ReadReadonly() => Config.Timeout;       // IL: ldsfld Timeout → çalışırken alan okunur
+    public static int ReadConst() => Config.MaxRetries;       // IL: ldc.i4.3 → 3 is embedded as a literal
+    public static int ReadReadonly() => Config.Timeout;       // IL: ldsfld Timeout → the field is read at run time
 
     public static void Run()
     {
@@ -19,9 +19,9 @@ public static class ConstEmbeddingDemo
 
         Console.WriteLine("""
 
-        const → çağıranın IL'ine DEĞER yazılır; Config başka bir assembly'de olsaydı ve yalnızca o güncellenseydi,
-                çağıran yeniden derlenmediği sürece ESKİ değeri kullanmaya devam ederdi.
-        static readonly → çağıran her seferinde alanı okur; güncellenen assembly'nin değerini görür.
+        const → the VALUE is written into the caller's IL; if Config were in another assembly and only that one were updated,
+                the caller would keep using the OLD value until it is recompiled.
+        static readonly → the caller reads the field every time; it sees the updated assembly's value.
         """);
     }
 
@@ -30,9 +30,9 @@ public static class ConstEmbeddingDemo
         var il = typeof(ConstEmbeddingDemo).GetMethod(methodName)!.GetMethodBody()!.GetILAsByteArray()!;
         var meaning = il[0] switch
         {
-            >= 0x16 and <= 0x1E => $"ldc.i4.{il[0] - 0x16}  → {il[0] - 0x16} IL'in İÇİNE yazılı (gömülü literal)",
-            0x1F => $"ldc.i4.s {il[1]}  → {il[1]} IL'in İÇİNE yazılı (gömülü literal)",
-            0x7E => "ldsfld  → static alan çalışırken okunur",
+            >= 0x16 and <= 0x1E => $"ldc.i4.{il[0] - 0x16}  → {il[0] - 0x16} is written INTO the IL (embedded literal)",
+            0x1F => $"ldc.i4.s {il[1]}  → {il[1]} is written INTO the IL (embedded literal)",
+            0x7E => "ldsfld  → the static field is read at run time",
             _ => "?",
         };
         Console.WriteLine($"{methodName,-14} IL: {Convert.ToHexString(il),-14} {meaning}");

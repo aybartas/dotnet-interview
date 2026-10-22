@@ -4,36 +4,36 @@ public static class Section11_Tuples
 {
     public static void Run()
     {
-        // ValueTuple: hafif, adlandırılabilir, VALUE TYPE (struct) çok değerli dönüş
+        // ValueTuple: lightweight, nameable, VALUE TYPE (struct) multi-value return
         (int Min, int Max) range = MinMax([4, 9, 2, 7]);
-        Console.WriteLine($"adlandırılmış eleman: Min={range.Min}, Max={range.Max}; arka planda Item1/Item2: {range.Item1}/{range.Item2}");
-        Console.WriteLine($"tip: {range.GetType()}   → System.ValueTuple<int,int> (struct; eski System.Tuple<> bir CLASS idi)");
+        Console.WriteLine($"named elements: Min={range.Min}, Max={range.Max}; behind the scenes Item1/Item2: {range.Item1}/{range.Item2}");
+        Console.WriteLine($"type: {range.GetType()}   → System.ValueTuple<int,int> (a struct; the old System.Tuple<> was a CLASS)");
 
-        // Deconstruction: parçalara ayırma
+        // Deconstruction: splitting into parts
         var (min, max) = MinMax([4, 9, 2, 7]);
-        var (name, _, city) = ("Ayşe", 30, "Ankara");                // _ = discard
+        var (name, _, city) = ("Alice", 30, "London");               // _ = discard
         Console.WriteLine($"deconstruct: min={min}, max={max}; name={name}, city={city}");
 
-        // Değişken takası
+        // Swapping variables
         var (x, y) = (1, 2);
         (x, y) = (y, x);
         Console.WriteLine($"swap: x={x}, y={y}");
 
-        // Eşitlik: eleman eleman (==, != C# 7.3+)
+        // Equality: element by element (==, != C# 7.3+)
         Console.WriteLine($"(1, \"a\") == (1, \"a\") → {(1, "a") == (1, "a")}");
 
-        // Kendi tipinizi deconstruct edilebilir yapın
-        var p = new Person("Ali", "Veli", 25);
+        // Make your own type deconstructable
+        var p = new Person("John", "Smith", 25);
         var (first, last, age) = p;
-        Console.WriteLine($"Deconstruct metodu: {first} {last} {age}");
+        Console.WriteLine($"Deconstruct method: {first} {last} {age}");
 
-        // Tuple vs record: tuple isimleri DERLEME zamanı süsüdür (çalışma zamanı metadata'sında yok), API sınırında record/class daha iyi
-        var t1 = (Ad: "A", Yas: 1);
-        (string Isim, int Boy) t2 = t1;                              // isimler uyuşmasa da yapı uyuşuyorsa atanır (isimler uyarı verebilir)
-        Console.WriteLine($"isimler derleme zamanı: t1.Ad → t2.Isim = {t2.Isim}");
+        // Tuple vs record: tuple names are COMPILE-time decoration (not in the run-time metadata); a record/class is better at an API boundary
+        var t1 = (Name: "A", Age: 1);
+        (string Title, int Height) t2 = t1;                          // assignable if the structure matches even if the names don't (the names may produce a warning)
+        Console.WriteLine($"names are compile-time: t1.Name → t2.Title = {t2.Title}");
 
-        // Mutable: ValueTuple alanları değiştirilebilir bir struct → Section04 tuzakları geçerli
-        Console.WriteLine("\nNe zaman? Özel/yerel çok değerli dönüş → tuple. Public API sınırı, anlamlı domain kavramı → record/class (isimli tip, belgeleme, evrim kolaylığı).");
+        // Mutable: ValueTuple fields are a mutable struct → the Section04 pitfalls apply
+        Console.WriteLine("\nWhen? Private/local multi-value return → tuple. Public API boundary, meaningful domain concept → record/class (named type, documentation, easier evolution).");
     }
 
     private static (int Min, int Max) MinMax(int[] values) => (values.Min(), values.Max());
