@@ -6,13 +6,13 @@ public static class Section06_CollectionExpressions
 {
     public static void Run()
     {
-        // ESKİ yazımlar (hepsi farklı sözdizimi)
+        // OLD syntaxes (all different)
         int[] oldArray = new int[] { 1, 2, 3 };
         var oldList = new List<int> { 1, 2, 3 };
         var oldImmutable = ImmutableArray.Create(1, 2, 3);
-        Console.WriteLine($"eski: array={oldArray.Length}, list={oldList.Count}, immutable={oldImmutable.Length}   (üç tip, üç farklı sözdizimi)");
+        Console.WriteLine($"old: array={oldArray.Length}, list={oldList.Count}, immutable={oldImmutable.Length}   (three types, three different syntaxes)");
 
-        // YENİ: tek sözdizimi — hedef tip belirler
+        // NEW: a single syntax — the target type decides
         int[] array = [1, 2, 3];
         List<int> list = [1, 2, 3];
         ImmutableArray<int> immutable = [1, 2, 3];
@@ -20,32 +20,32 @@ public static class Section06_CollectionExpressions
         Span<int> span = [1, 2, 3];
         IEnumerable<int> sequence = [1, 2, 3];
         IReadOnlyList<int> readOnly = [1, 2, 3];
-        Console.WriteLine($"yeni: array={array.Length}, list={list.Count}, immutable={immutable.Length}, set={set.Count} (tekrar atıldı), span={span.Length}, IEnumerable={sequence.Count()}, IReadOnlyList={readOnly.Count}");
+        Console.WriteLine($"new: array={array.Length}, list={list.Count}, immutable={immutable.Length}, set={set.Count} (duplicate dropped), span={span.Length}, IEnumerable={sequence.Count()}, IReadOnlyList={readOnly.Count}");
 
-        // Boş koleksiyon
+        // Empty collection
         List<string> empty = [];
-        Console.WriteLine($"boş: [] → {empty.Count} eleman (List<string>); Array için `[]` → Array.Empty'ye benzer paylaşılan boş dizi");
+        Console.WriteLine($"empty: [] → {empty.Count} elements (List<string>); for an Array, `[]` → a shared empty array similar to Array.Empty");
 
-        // Spread (..): bir koleksiyonun elemanlarını İÇERİ YAY — birleştirme için Concat/AddRange yerine
+        // Spread (..): spread the elements of a collection INTO another — instead of Concat/AddRange for merging
         int[] first = [1, 2], second = [4, 5];
         int[] merged = [.. first, 3, .. second];
         Console.WriteLine($"spread: [.. [1,2], 3, .. [4,5]] → [{string.Join(",", merged)}]");
 
-        // Gerçekçi kullanım: koşullu eleman ekleme
+        // Realistic use: conditionally adding an element
         var isAdmin = true;
         string[] baseRoles = ["user"];
         string[] roles = [.. baseRoles, .. isAdmin ? new[] { "admin" } : []];
-        Console.WriteLine($"koşullu: roles = [{string.Join(",", roles)}]");
+        Console.WriteLine($"conditional: roles = [{string.Join(",", roles)}]");
 
-        // Parametre olarak
-        Console.WriteLine($"metot argümanı: Sum([1,2,3]) = {Sum([1, 2, 3])}   (hedef tip IEnumerable<int>)");
+        // As a method argument
+        Console.WriteLine($"method argument: Sum([1,2,3]) = {Sum([1, 2, 3])}   (target type IEnumerable<int>)");
 
         Console.WriteLine("""
 
-        Hedef tipli (target-typed): `[...]` kendi başına tip DEĞİLDİR; atandığı/geçirildiği tipe göre oluşur (array, List<T>, Span<T>, ImmutableArray<T>, IEnumerable<T>…).
-        `var x = [1,2,3];` DERLENMEZ (CS9176: hedef tip yok) — açık tip yazın.
-        Derleyici hedef tipe göre en verimli kodu üretir (Span için stack, array için doğrudan boyutlu tahsis; List<T> için kapasiteli) — AddRange döngüsünden iyi.
-        Dictionary gibi anahtar-değer koleksiyonları için collection expression kullanılamaz; index initializer kullanın: new() { ["a"] = 1 }.
+        Target-typed: `[...]` is NOT a type on its own; it is built according to the type it is assigned/passed to (array, List<T>, Span<T>, ImmutableArray<T>, IEnumerable<T>…).
+        `var x = [1,2,3];` does NOT COMPILE (CS9176: no target type) — write an explicit type.
+        The compiler generates the most efficient code for the target type (stack for Span, directly sized allocation for arrays, with capacity for List<T>) — better than an AddRange loop.
+        Collection expressions can't be used for key-value collections like Dictionary; use an index initializer: new() { ["a"] = 1 }.
         """);
     }
 

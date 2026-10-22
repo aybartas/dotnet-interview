@@ -4,42 +4,42 @@ public static class Section03_Filters
 {
     public static void Run()
     {
-        Console.WriteLine("1) Filter: catch yalnızca KOŞUL doğruysa devreye girer; değilse exception hiç yakalanmamış gibi yoluna devam eder");
+        Console.WriteLine("1) Filter: catch is engaged only if the CONDITION is true; otherwise the exception carries on as if it had never been caught");
         foreach (var status in new[] { 404, 503 })
         {
             try { throw new HttpFailure(status); }
-            catch (HttpFailure ex) when (ex.StatusCode == 404) { Console.WriteLine($"   {status} → 404 filtresi yakaladı (bulunamadı işlemi)"); }
-            catch (HttpFailure ex) when (ex.StatusCode >= 500) { Console.WriteLine($"   {status} → 5xx filtresi yakaladı (tekrar denenebilir)"); }
+            catch (HttpFailure ex) when (ex.StatusCode == 404) { Console.WriteLine($"   {status} → the 404 filter caught it (not-found handling)"); }
+            catch (HttpFailure ex) when (ex.StatusCode >= 500) { Console.WriteLine($"   {status} → the 5xx filter caught it (can be retried)"); }
         }
 
-        Console.WriteLine("\n2) Filter, stack çözülmeden ÖNCE çalışır → debugger/dump'ta fırlatma noktasının stack'i ve yerel değişkenleri KORUNUR.");
-        Console.WriteLine("   Sıralama deneyi (iç finally ile filter hangisi önce?):");
+        Console.WriteLine("\n2) The filter runs BEFORE the stack unwinds → the stack and locals at the throw point are PRESERVED in a debugger/dump.");
+        Console.WriteLine("   Ordering experiment (which comes first, the inner finally or the filter?):");
         try { Outer(); }
-        catch (Exception ex) when (Log("filter çalıştı", ex)) { Console.WriteLine("   catch gövdesi çalıştı"); }
-        Console.WriteLine("   → Önce FILTER, sonra iç finally, sonra catch gövdesi. (Koşulu catch İÇİNDE `if` ile kontrol etseydik, koşul iç finally'den SONRA —stack çözüldükten sonra— değerlendirilirdi.)");
+        catch (Exception ex) when (Log("filter ran", ex)) { Console.WriteLine("   catch body ran"); }
+        Console.WriteLine("   → FILTER first, then the inner finally, then the catch body. (Had we checked the condition with an `if` INSIDE the catch, it would have been evaluated AFTER the inner finally —after the stack unwound.)");
 
-        Console.WriteLine("\n3) 'Loglayıp yakalamadan geçir' deseni: filter her zaman false döner, exception AKIŞI BOZULMAZ ve stack bozulmaz");
+        Console.WriteLine("\n3) The 'log without catching' pattern: the filter always returns false, the exception FLOW is not disturbed and the stack is intact");
         try
         {
-            try { throw new InvalidOperationException("iç hata"); }
-            catch (Exception ex) when (LogAndContinue(ex)) { /* asla girmez */ }
+            try { throw new InvalidOperationException("inner error"); }
+            catch (Exception ex) when (LogAndContinue(ex)) { /* never enters */ }
         }
-        catch (InvalidOperationException) { Console.WriteLine("   dış catch yakaladı (exception filter sayesinde stack ve davranış değişmedi)"); }
+        catch (InvalidOperationException) { Console.WriteLine("   the outer catch caught it (thanks to the exception filter, neither stack nor behaviour changed)"); }
 
         Console.WriteLine("""
 
-        Neden filter, catch içinde if + throw; yerine?
-          • stack çözülmeden değerlendirilir → daha iyi tanılama (dump, debugger "first chance")
-          • yakalanmayacak exception'ı hiç yakalamamış gibi bırakır (rethrow maliyeti ve stack riski yok)
-          • tipik kullanım: HTTP status, hata kodu, InnerException tipi, retry'lanabilir hata ayrımı, CancellationToken kontrolü
-        Filter içinde exception fırlatmayın (yutulur ve false sayılır); filter hızlı ve yan etkisiz olmalı (log yan etkisi kabul edilebilir).
+        Why a filter instead of if + throw; inside catch?
+          • evaluated before the stack unwinds → better diagnostics (dump, debugger "first chance")
+          • leaves an exception that won't be handled as if it had never been caught (no rethrow cost, no stack risk)
+          • typical uses: HTTP status, error code, InnerException type, telling retryable errors apart, CancellationToken checks
+        Don't throw exceptions inside a filter (they are swallowed and treated as false); a filter must be fast and side-effect free (a log side effect is acceptable).
         """);
     }
 
     private static void Outer()
     {
-        try { throw new InvalidOperationException("kök"); }
-        finally { Console.WriteLine("   iç finally çalıştı"); }
+        try { throw new InvalidOperationException("root"); }
+        finally { Console.WriteLine("   inner finally ran"); }
     }
 
     private static bool Log(string message, Exception ex)
@@ -51,7 +51,7 @@ public static class Section03_Filters
     private static bool LogAndContinue(Exception ex)
     {
         Console.WriteLine($"   [log] {ex.Message}");
-        return false;                                  // false → bu catch EŞLEŞMEZ, exception yoluna devam eder
+        return false;                                  // false → this catch does NOT MATCH, the exception carries on
     }
 
     private sealed class HttpFailure(int statusCode) : Exception($"HTTP {statusCode}")

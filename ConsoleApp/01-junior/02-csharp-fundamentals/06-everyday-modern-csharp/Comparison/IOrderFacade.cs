@@ -1,8 +1,8 @@
 namespace Junior.CSharpFundamentals.ModernCSharp.Comparison;
 
 /// <summary>
-/// İki stilin (C# 7 ve C# 14) AYNI davranışı verdiğini kanıtlayan nötr sözleşme: girdi/çıktı yalnızca ilkel tiplerdir,
-/// böylece iki farklı domain modeli aynı senaryolarla (Section10) sınanır.
+/// A neutral contract proving that the two styles (C# 7 and C# 14) produce the SAME behaviour: inputs/outputs are primitive types only,
+/// so two different domain models are tested with the same scenarios (Section10).
 /// </summary>
 public interface IOrderFacade
 {

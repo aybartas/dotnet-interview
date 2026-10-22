@@ -7,15 +7,15 @@ public static class ExceptionHandlingTopic
     private static async Task<int> RunAsync(string[] args)
     {
         // J2.5 — Exception Handling.
-        //   dotnet run -- J2.5          → bölüm listesi
+        //   dotnet run -- J2.5          → section list
         //   dotnet run -- J2.5 4     → throw vs throw ex ⭐
-        //   dotnet run -- J2.5 all   → hepsi
+        //   dotnet run -- J2.5 all   → all sections
 
         if (args.Length == 0)
         {
-            Console.WriteLine("J2.5 Exception Handling — bölümler:\n");
+            Console.WriteLine("J2.5 Exception Handling — sections:\n");
             foreach (var s in Sections.All) Console.WriteLine($"  {s.Number,2}. {s.Title}");
-            Console.WriteLine("\nÇalıştırmak için: dotnet run -- J2.5 <numara> | all");
+            Console.WriteLine("\nTo run: dotnet run -- J2.5 <number> | all");
             return 0;
         }
 

@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Junior.CSharpFundamentals.ModernCSharp.Comparison;
 
-/// <summary>"Anlamlı satır" sayacı: boş satırlar ve yalnızca yorum olan satırlar sayılmaz. (Süslü parantez-only satırlar SAYILIR: gerçek bir kod satırıdır.)</summary>
+/// <summary>"Meaningful line" counter: blank lines and comment-only lines are not counted. (Brace-only lines ARE counted: they are real lines of code.)</summary>
 public static class LineCounter
 {
     public static int Count(string path)
@@ -10,7 +10,7 @@ public static class LineCounter
                .Select(l => l.Trim())
                .Count(l => l.Length > 0 && !l.StartsWith("//", StringComparison.Ordinal));
 
-    /// <summary>Kaynak klasörü: bu dosyanın (LineCounter.cs) yolundan türetilir — çağıranın dosyası değil.</summary>
+    /// <summary>Source folder: derived from the path of this file (LineCounter.cs) — not the caller's file.</summary>
     public static string StyleDirectory(string folder)
         => Path.Combine(Path.GetDirectoryName(ThisFile())!, "..", folder);
 

@@ -5,22 +5,22 @@ public static class Section04_SwitchExpression
     public static void Run()
     {
         foreach (var day in new[] { DayOfWeek.Monday, DayOfWeek.Saturday })
-            Console.WriteLine($"   {day,-9} → eski switch: {OldStyle(day),-8} yeni switch expression: {Describe(day)}");
+            Console.WriteLine($"   {day,-9} → old switch: {OldStyle(day),-8} new switch expression: {Describe(day)}");
 
-        Console.WriteLine($"\n   Puan 95 → {Grade(95)}, 72 → {Grade(72)}, 10 → {Grade(10)}   (relational pattern aralıkları)");
+        Console.WriteLine($"\n   Score 95 → {Grade(95)}, 72 → {Grade(72)}, 10 → {Grade(10)}   (relational pattern ranges)");
         Console.WriteLine($"   (IsWeekend, Hour) = (true, 11)  → {Greeting(true, 11)}");
         Console.WriteLine($"   (IsWeekend, Hour) = (false, 8)  → {Greeting(false, 8)}");
 
         try { _ = Parse("x"); }
-        catch (ArgumentOutOfRangeException ex) { Console.WriteLine($"   eşleşme yok → throw expression: {ex.GetType().Name}"); }
+        catch (ArgumentOutOfRangeException ex) { Console.WriteLine($"   no match → throw expression: {ex.GetType().Name}"); }
 
         Console.WriteLine("""
 
-        switch STATEMENT (eski): her dal `break;`, değişkeni önceden tanımla, değer atamayı unutabilirsin, hepsi ifade değil deyim
-        switch EXPRESSION     : bir DEĞER üretir → doğrudan atanır/döndürülür; `=>`; `_` discard (varsayılan); `when` guard;
-                                dallar ifade olduğundan "unutulan atama" yok; derleyici **kapsamlılık (exhaustiveness)** uyarısı verir (CS8509):
-                                enum'un bir değeri atlanırsa uyarı. Eşleşme yoksa çalışma zamanında SwitchExpressionException fırlar.
-        Dal sırası ÖNEMLİDİR: önce özel, sonra genel (öncekini gölgeleyen dal derleme hatası: CS8510).
+        switch STATEMENT (old): every branch needs `break;`, you declare the variable beforehand, you can forget the assignment, they're statements not expressions
+        switch EXPRESSION     : produces a VALUE → assigned/returned directly; `=>`; `_` discard (default); `when` guard;
+                                since branches are expressions there's no "forgotten assignment"; the compiler gives an **exhaustiveness** warning (CS8509):
+                                a warning if an enum value is left out. If nothing matches, SwitchExpressionException is thrown at run time.
+        Branch order MATTERS: specific first, then general (a branch that shadows an earlier one is a compile error: CS8510).
         """);
     }
 
@@ -31,10 +31,10 @@ public static class Section04_SwitchExpression
         {
             case DayOfWeek.Saturday:
             case DayOfWeek.Sunday:
-                result = "hafta sonu";
+                result = "weekend";
                 break;
             default:
-                result = "hafta içi";
+                result = "weekday";
                 break;
         }
         return result;
@@ -42,8 +42,8 @@ public static class Section04_SwitchExpression
 
     private static string Describe(DayOfWeek day) => day switch
     {
-        DayOfWeek.Saturday or DayOfWeek.Sunday => "hafta sonu",
-        _ => "hafta içi",
+        DayOfWeek.Saturday or DayOfWeek.Sunday => "weekend",
+        _ => "weekday",
     };
 
     private static string Grade(int score) => score switch
@@ -57,16 +57,16 @@ public static class Section04_SwitchExpression
 
     private static string Greeting(bool isWeekend, int hour) => (isWeekend, hour) switch
     {
-        (true, < 12) => "Günaydın, iyi hafta sonları!",
-        (true, _) => "İyi hafta sonları!",
-        (false, < 9) => "Erken kalkan yol alır",
-        (false, _) => "İyi çalışmalar",
+        (true, < 12) => "Good morning, enjoy your weekend!",
+        (true, _) => "Enjoy your weekend!",
+        (false, < 9) => "The early bird catches the worm",
+        (false, _) => "Have a good day at work",
     };
 
     private static int Parse(string s) => s switch
     {
-        "bir" => 1,
-        "iki" => 2,
-        _ => throw new ArgumentOutOfRangeException(nameof(s), s, "bilinmeyen sayı"),
+        "one" => 1,
+        "two" => 2,
+        _ => throw new ArgumentOutOfRangeException(nameof(s), s, "unknown number"),
     };
 }

@@ -1,26 +1,26 @@
 namespace Junior.CSharpFundamentals.ExceptionHandling.Domain;
 
-// ═════════ Custom exception hiyerarşisi (domain) ═════════
-// Ne zaman custom exception?
-//   • Çağıranın exception TİPİNE göre farklı davranması gerekiyorsa (catch (InsufficientFundsException) → kullanıcıya "bakiye yetersiz").
-//   • Ek veri taşıması gerekiyorsa (hangi hesap, ne kadar eksik) — mesajı string ayrıştırmak yerine property ile.
-// Ne zaman DEĞİL?  Yeni bir tip yalnızca farklı bir MESAJ içinse; framework'ün hazır tipi (ArgumentException, InvalidOperationException…) yeterliyse.
+// ═════════ Custom exception hierarchy (domain) ═════════
+// When is a custom exception warranted?
+//   • When the caller needs to behave differently depending on the exception TYPE (catch (InsufficientFundsException) → tell the user "insufficient balance").
+//   • When it needs to carry extra data (which account, how much is missing) — via a property instead of parsing the message string.
+// When NOT?  A new type just for a different MESSAGE; or when a built-in framework type (ArgumentException, InvalidOperationException…) is enough.
 //
-// Kurallar: (1) adı 'Exception' ile biter, (2) System.Exception'dan (ApplicationException'dan DEĞİL) türet,
-// (3) en az standart ctor'lar (mesaj, mesaj+inner), (4) ek bilgi → salt okunur property, (5) hiyerarşiyi basit tut (kök → birkaç alt tip).
+// Rules: (1) the name ends with 'Exception', (2) derive from System.Exception (NOT from ApplicationException),
+// (3) at least the standard ctors (message, message+inner), (4) extra info → read-only property, (5) keep the hierarchy simple (root → a few subtypes).
 
-/// <summary>Domain kurallarının ihlalini temsil eden tüm exception'ların kökü. Üst katman tek catch ile "iş kuralı hatası"nı ayırt edebilir.</summary>
+/// <summary>Root of all exceptions that represent a domain rule violation. The upper layer can tell a "business rule error" apart with a single catch.</summary>
 public abstract class DomainException : Exception
 {
     protected DomainException(string message) : base(message) { }
     protected DomainException(string message, Exception inner) : base(message, inner) { }
 
-    /// <summary>Makine okunur hata kodu (API yanıtı, loglama, i18n için).</summary>
+    /// <summary>Machine-readable error code (for API responses, logging, i18n).</summary>
     public abstract string Code { get; }
 }
 
 public sealed class InsufficientFundsException(string accountId, decimal balance, decimal requested)
-    : DomainException($"Hesap {accountId}: bakiye {balance:N2}, istenen {requested:N2}")
+    : DomainException($"Account {accountId}: balance {balance:N2}, requested {requested:N2}")
 {
     public string AccountId { get; } = accountId;
     public decimal Balance { get; } = balance;
@@ -29,7 +29,7 @@ public sealed class InsufficientFundsException(string accountId, decimal balance
     public override string Code => "INSUFFICIENT_FUNDS";
 }
 
-public sealed class OrderNotFoundException(int orderId) : DomainException($"Sipariş bulunamadı: {orderId}")
+public sealed class OrderNotFoundException(int orderId) : DomainException($"Order not found: {orderId}")
 {
     public int OrderId { get; } = orderId;
     public override string Code => "ORDER_NOT_FOUND";
@@ -38,12 +38,12 @@ public sealed class OrderNotFoundException(int orderId) : DomainException($"Sipa
 public sealed class ValidationFailedException : DomainException
 {
     public ValidationFailedException(IReadOnlyDictionary<string, string> errors)
-        : base($"{errors.Count} doğrulama hatası: {string.Join("; ", errors.Select(e => $"{e.Key}: {e.Value}"))}")
+        : base($"{errors.Count} validation error(s): {string.Join("; ", errors.Select(e => $"{e.Key}: {e.Value}"))}")
         => Errors = errors;
 
     public IReadOnlyDictionary<string, string> Errors { get; }
     public override string Code => "VALIDATION_FAILED";
 }
 
-/// <summary>Altyapı hatasını (DB, ağ) domain diline çevirirken orijinal hatayı InnerException olarak SAKLAR (bilgi kaybı yok).</summary>
+/// <summary>When translating an infrastructure error (DB, network) into the domain language, KEEPS the original error as InnerException (no information loss).</summary>
 public sealed class OrderRepositoryException(string message, Exception inner) : Exception(message, inner);
