@@ -4,8 +4,8 @@ namespace Certification.AzureFundamentals.CloudServiceTypes;
 
 public static class CloudServiceTypesTopic
 {
-    public static int Run(string[] args) => args is ["tur", .. var words]
+    public static int Run(string[] args) => args is ["lookup", .. var words]
         ? ServiceCatalog.Lookup(string.Join(' ', words))
-        : SectionRunner.Run("1.3", "Cloud Hizmet Türleri: IaaS, PaaS, SaaS, Serverless", Sections.All, args,
-            "Ürün sor: dotnet run -- C1.3 tur <ürün>   (ör. tur sql · tur functions · tur aks · tur m365)");
+        : SectionRunner.Run("1.3", "Cloud Service Types: IaaS, PaaS, SaaS, Serverless", Sections.All, args,
+            "Ask about a product: dotnet run -- C1.3 lookup <product>   (e.g. lookup sql · lookup functions · lookup aks · lookup m365)");
 }

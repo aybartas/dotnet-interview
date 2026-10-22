@@ -3,25 +3,25 @@ using Certification.AzureFundamentals.Shared;
 namespace Certification.AzureFundamentals.CloudBenefits;
 
 /// <summary>
-/// Aynı 24 saatlik yükü dört stratejiyle karşılamak: sabit küçük, sabit büyük (zirveye göre),
-/// elle/zamanlanmış ölçekleme (scalability) ve otomatik ölçekleme (elasticity). Birim: "instance" (ör. VM veya App Service instance'ı).
-/// İkinci gün aynı yük + beklenmedik bir kampanya zirvesi: elasticity'nin asıl farkı orada görünür.
+/// Meeting the same 24-hour load with four strategies: small fixed, large fixed (sized for the peak),
+/// manual/scheduled scaling (scalability) and autoscaling (elasticity). Unit: "instance" (e.g. a VM or an App Service instance).
+/// On the second day the same load plus an unexpected campaign spike: that is where the real difference of elasticity shows.
 /// </summary>
 public static class Section04_ScalingSimulation
 {
-    // Saat başına gereken instance sayısı (gündüz yoğun bir iş uygulaması)
+    // Instances required per hour (a business application that is busy during the day)
     private static readonly int[] NormalDay = [2, 2, 2, 2, 2, 3, 4, 6, 8, 9, 10, 10, 9, 9, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2];
-    // Aynı gün, 13:00-16:00 arası habersiz başlayan bir kampanya
+    // Same day, with an unannounced campaign between 13:00 and 16:00
     private static readonly int[] SpikeDay = [2, 2, 2, 2, 2, 3, 4, 6, 8, 9, 10, 10, 9, 15, 18, 18, 12, 8, 7, 6, 5, 4, 3, 2];
 
-    /// <summary>Plan: o günün ihtiyacına göre 24 saatlik kapasite dizisini üretir.</summary>
+    /// <summary>Plan: produces the 24-hour capacity array for that day's need.</summary>
     private sealed record Strategy(string Name, string Kind, Func<int[], int[]> Plan);
 
     private static int[] EveryHour(Func<int, int> capacity) => [.. Enumerable.Range(0, 24).Select(capacity)];
 
     /// <summary>
-    /// Autoscale kuralı metriğe birkaç dakikada bir bakar: kapasiteyi ihtiyaç + 1 (pay) yapar, ama cool-down nedeniyle
-    /// bir saatte en fazla 4 instance ekleyebilir; azaltmada sınır yok. min 2, max 20.
+    /// The autoscale rule looks at the metric every few minutes: it sets capacity to need + 1 (headroom), but because of the cool-down
+    /// it can add at most 4 instances per hour; there is no limit when scaling in. min 2, max 20.
     /// </summary>
     private static int[] Autoscale(int[] need)
     {
@@ -34,47 +34,47 @@ public static class Section04_ScalingSimulation
 
     private static readonly Strategy[] Strategies =
     [
-        new("Sabit 4", "ölçekleme yok", _ => EveryHour(_ => 4)),
-        new("Sabit 10", "zirveye göre boyutlama", _ => EveryHour(_ => 10)),
-        new("Elle", "scalability: 08:00'de 10'a çıkar, 20:00'de 4'e in", _ => EveryHour(h => h is >= 8 and < 20 ? 10 : 4)),
-        new("Autoscale", "elasticity: ihtiyaç + 1, saatte en fazla +4 (min 2, max 20)", Autoscale),
+        new("Fixed 4", "no scaling", _ => EveryHour(_ => 4)),
+        new("Fixed 10", "sized for the peak", _ => EveryHour(_ => 10)),
+        new("Manual", "scalability: up to 10 at 08:00, back to 4 at 20:00", _ => EveryHour(h => h is >= 8 and < 20 ? 10 : 4)),
+        new("Autoscale", "elasticity: need + 1, at most +4 per hour (min 2, max 20)", Autoscale),
     ];
 
     public static void Run()
     {
-        Simulate("1. gün — her günkü yük", NormalDay);
-        Simulate("2. gün — 13:00'te habersiz kampanya", SpikeDay);
+        Simulate("Day 1 — the usual load", NormalDay);
+        Simulate("Day 2 — unannounced campaign at 13:00", SpikeDay);
 
         Console.WriteLine("""
 
-        Gözlemler:
-          • Sabit küçük kapasite ucuz ama gündüz yetersiz; sabit büyük kapasite paranın büyük kısmını boşa harcar
-            ve ÖNGÖRÜLMEYEN zirvede o da yetmez.
-          • Yük her gün aynıysa elle/zamanlanmış ölçekleme (scalability) autoscale'a yaklaşır; yalnızca rampa saatlerinde kaçırır.
-          • Elasticity'nin asıl farkı BEKLENMEDİK yükte: autoscale kampanya zirvesini insan müdahalesi olmadan karşılar
-            ve zirve bitince kendiliğinden küçülür. Ani sıçramanın ilk saati (cool-down sınırı) eksik kalabilir —
-            gerçekte bunu min instance sayısı, eşikler ve öngörülen günler için zamanlanmış kurallarla kapatırsın.
+        Observations:
+          • Small fixed capacity is cheap but insufficient during the day; large fixed capacity wastes most of the money
+            and is not enough either at an UNFORESEEN peak.
+          • If the load is the same every day, manual/scheduled scaling (scalability) comes close to autoscale; it only misses during the ramp hours.
+          • The real difference of elasticity is UNEXPECTED load: autoscale absorbs the campaign peak without human intervention
+            and shrinks on its own when the peak is over. The first hour of a sudden jump (cool-down limit) may fall short —
+            in practice you close that gap with a minimum instance count, thresholds and scheduled rules for predicted days.
 
         Vertical vs horizontal:
-          • Scale UP/DOWN (dikey): aynı makineyi büyütmek/küçültmek (daha çok CPU/RAM). Basit; ama bir ÜST SINIRI vardır
-            (en büyük VM boyutu) ve VM'de boyut değişimi genellikle yeniden başlatma gerektirir; tek makine = tek arıza noktası.
-          • Scale OUT/IN (yatay): instance SAYISINI artırmak/azaltmak (VM Scale Sets, App Service instance sayısı).
-            Pratikte sınırsıza yakın büyür ve HA'ya da katkı verir; uygulamanın durumsuz (stateless) tasarlanması gerekir.
+          • Scale UP/DOWN (vertical): making the same machine bigger/smaller (more CPU/RAM). Simple; but it has an UPPER LIMIT
+            (the largest VM size), resizing a VM usually requires a restart; a single machine = a single point of failure.
+          • Scale OUT/IN (horizontal): increasing/decreasing the NUMBER of instances (VM Scale Sets, App Service instance count).
+            Grows practically without limit and also contributes to HA; the application must be designed stateless.
         """);
     }
 
     private static void Simulate(string title, int[] need)
     {
-        Console.WriteLine($"\n{title} — saatlik instance kapasitesi (! = ihtiyacın altında → yavaşlama/hata):\n");
+        Console.WriteLine($"\n{title} — instance capacity per hour (! = below the need → slowdown/errors):\n");
         var hours = Enumerable.Range(0, 24).ToArray();
         Table.Print(["", .. hours.Select(h => h.ToString("00"))],
         [
-            ["İhtiyaç", .. need.Select(n => n.ToString())],
+            ["Need", .. need.Select(n => n.ToString())],
             .. Strategies.Select(s => (IReadOnlyList<string>)[s.Name, .. s.Plan(need).Select((c, h) => Cell(c, need[h]))]),
         ], indent: " ");
 
         Console.WriteLine();
-        Table.Print(["Strateji", "Instance-saat (maliyet)", "Yetersiz saat", "Boşta instance-saat", "Ne gösteriyor?"],
+        Table.Print(["Strategy", "Instance-hours (cost)", "Hours short", "Idle instance-hours", "What it shows"],
             Strategies.Select(s =>
             {
                 var caps = s.Plan(need);
@@ -87,7 +87,7 @@ public static class Section04_ScalingSimulation
                     s.Kind,
                 ];
             }));
-        Console.WriteLine($"   Gerçek ihtiyaç: {need.Sum()} instance-saat.");
+        Console.WriteLine($"   Actual need: {need.Sum()} instance-hours.");
     }
 
     private static string Cell(int capacity, int needed) => capacity < needed ? $"{capacity}!" : capacity.ToString();

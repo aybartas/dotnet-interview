@@ -33,9 +33,9 @@ Bu konu AZ-900'ün ilk alanının temelidir ve dört soruyu cevaplar:
 Kod: `ConsoleApp` projesinde [`Sections/`](Sections/) altında 5 bölüm ve bir sorumluluk "soru-cevap" aracı. `ConsoleApp` klasöründe:
 
 ```bash
-dotnet run -- C1.1              # bölüm listesi
-dotnet run -- C1.1 all          # tüm bölümler
-dotnet run -- C1.1 kim os paas  # "PaaS'ta işletim sistemi kimin sorumluluğunda?" → Microsoft
+dotnet run -- C1.1              # section list
+dotnet run -- C1.1 all          # all sections
+dotnet run -- C1.1 who os paas  # "Who is responsible for the operating system in PaaS?" → Microsoft
 ```
 
 ---
@@ -100,8 +100,8 @@ Tabloyu ezberlemek yerine **üç kural** yeterli:
 Soru-cevap aracı:
 
 ```bash
-dotnet run -- C1.1 kim hesap saas         # Hesaplar ve kimlikler · SaaS → Müşteri
-dotnet run -- C1.1 kim fiziksel-ag iaas   # Fiziksel ağ · IaaS → Microsoft
+dotnet run -- C1.1 who account saas           # Accounts and identities · SaaS → Customer
+dotnet run -- C1.1 who physical-network iaas  # Physical network · IaaS → Microsoft
 ```
 
 > **Pratik — sorumluluk matrisi alıştırması.** Bir şirketin "web uygulaması + veritabanı" iş yükü dört farklı biçimde çalıştırılıyor. Her hücreye **M** (müşteri), **MS** (Microsoft) veya **P** (paylaşımlı) yaz:
@@ -180,28 +180,28 @@ dotnet run -- C1.1 kim fiziksel-ag iaas   # Fiziksel ağ · IaaS → Microsoft
 Azure CLI ile (yerelde `az` kurulu veya portaldaki **Cloud Shell**'de; Cloud Shell'de `az login` gerekmez). Bu laboratuvar **ücretsizdir**: boş bir resource group fatura üretmez.
 
 ```bash
-# 1) Giriş ve hangi abonelikte olduğunu doğrula
+# 1) Sign in and verify which subscription you are on
 az login
 az account show --output table
-az account list --output table                   # birden çok abonelik varsa
-# az account set --subscription "<abonelik adı veya id>"
+az account list --output table                   # if you have several subscriptions
+# az account set --subscription "<subscription name or id>"
 
-# 2) Region'ları gör (→ C1.4) ve ilk resource group'u aç
+# 2) List the regions (→ C1.4) and create your first resource group
 az account list-locations --output table
 az group create --name rg-az900-c11 --location westeurope
 az group list --output table
 
-# 3) Temizlik — her laboratuvarın son adımı
+# 3) Cleanup — the last step of every lab
 az group delete --name rg-az900-c11 --yes --no-wait
-az group list --output table                     # silindiğini doğrula
+az group list --output table                     # verify it is gone
 ```
 
 **Bütçe alarmı — öğrenmeye başlarken ilk iş.** Ücretli kaynak açacağın laboratuvarlardan önce aylık bir bütçe tanımla; harcama eşiği aşınca (ör. %50, %80, %100) e-posta gelsin. Bütçeler **Cost Management → Budgets** altında tanımlanır ve abonelik veya resource group kapsamında olabilir. CLI ile de bütçe oluşturulabilir:
 
 ```bash
-# Aylık 10 birimlik bütçe (start-date ayın ilk günü olmalı)
+# Monthly budget of 10 units (start-date must be the first day of a month)
 az consumption budget create \
-  --budget-name aylik-ogrenme-butcesi \
+  --budget-name monthly-learning-budget \
   --amount 10 \
   --category cost \
   --time-grain monthly \

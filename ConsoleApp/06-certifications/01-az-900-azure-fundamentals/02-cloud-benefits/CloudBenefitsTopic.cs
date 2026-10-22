@@ -6,14 +6,14 @@ public static class CloudBenefitsTopic
 {
     public static int Run(string[] args) => args switch
     {
-        ["kesinti", var sla] => SlaCalculator.Downtime(sla),
-        [var mode and ("seri" or "paralel"), .. var slas] => SlaCalculator.Composite(mode, slas),
-        _ => SectionRunner.Run("1.2", "Cloud'un Faydaları", Sections.All, args,
+        ["downtime", var sla] => SlaCalculator.Downtime(sla),
+        [var mode and ("serial" or "parallel"), .. var slas] => SlaCalculator.Composite(mode, slas),
+        _ => SectionRunner.Run("1.2", "Benefits of the Cloud (HA, scale, SLA…)", Sections.All, args,
             """
-            Hesaplayıcılar:
-              dotnet run -- C1.2 kesinti 99.95               → SLA'nın günlük/haftalık/aylık/yıllık kesinti bütçesi
-              dotnet run -- C1.2 seri 99.95 99.99            → seri bağlı bileşenlerin composite SLA'sı
-              dotnet run -- C1.2 paralel 99.94 99.94         → yedekli (paralel) bileşenlerin composite SLA'sı
+            Calculators:
+              dotnet run -- C1.2 downtime 99.95              → daily/weekly/monthly/yearly downtime budget of an SLA
+              dotnet run -- C1.2 serial 99.95 99.99          → composite SLA of components chained in series
+              dotnet run -- C1.2 parallel 99.94 99.94        → composite SLA of redundant (parallel) components
             """),
     };
 }

@@ -6,8 +6,8 @@ public static class Section02_SharedResponsibility
 {
     public static void Run()
     {
-        Console.WriteLine("Hangi katman kimin sorumluluğunda? (Microsoft'un shared responsibility tablosu)\n");
-        Table.Print(["Katman", "On-prem", "IaaS", "PaaS", "SaaS"],
+        Console.WriteLine("Which layer is whose responsibility? (Microsoft's shared responsibility table)\n");
+        Table.Print(["Layer", "On-prem", "IaaS", "PaaS", "SaaS"],
             ResponsibilityMatrix.Layers.Select(l => (IReadOnlyList<string>)
             [
                 l.Name,
@@ -19,15 +19,15 @@ public static class Section02_SharedResponsibility
 
         Console.WriteLine("""
 
-        Üç kural (tabloyu ezberlemek yerine bunları hatırla):
-          1. Veri, cihazlar, hesaplar ve kimlikler HER ZAMAN müşteride — SaaS'ta bile.
-          2. Fiziksel host, fiziksel ağ ve datacenter bulutta HER ZAMAN Microsoft'ta.
-          3. Arada kalanlar (OS, ağ kontrolleri, uygulama, kimlik altyapısı) IaaS → PaaS → SaaS geçtikçe Microsoft'a kayar.
+        Three rules (remember these instead of memorizing the table):
+          1. Data, devices, accounts and identities are ALWAYS the customer's — even in SaaS.
+          2. Physical host, physical network and datacenter are ALWAYS Microsoft's in the cloud.
+          3. The ones in between (OS, network controls, applications, identity infrastructure) shift to Microsoft going IaaS → PaaS → SaaS.
 
-        Sınav tarzı örnekler:
+        Exam-style examples:
         """);
 
-        foreach (var (layer, model) in new[] { ("hesap", "saas"), ("os", "iaas"), ("os", "paas"), ("fiziksel-ag", "iaas"), ("uygulama", "paas"), ("veri", "paas") })
+        foreach (var (layer, model) in new[] { ("account", "saas"), ("os", "iaas"), ("os", "paas"), ("physical-network", "iaas"), ("app", "paas"), ("data", "paas") })
         {
             Console.Write("   ");
             ResponsibilityMatrix.Answer(layer, model);

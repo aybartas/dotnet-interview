@@ -1,6 +1,6 @@
 namespace Certification.AzureFundamentals.Shared;
 
-/// <summary>Konsola hizalı tablo yazan küçük yardımcı (sütun genişlikleri içerikten hesaplanır).</summary>
+/// <summary>Small helper that prints an aligned table to the console (column widths are computed from the content).</summary>
 public static class Table
 {
     public static void Print(IReadOnlyList<string> headers, IEnumerable<IReadOnlyList<string>> rows, string indent = "   ")

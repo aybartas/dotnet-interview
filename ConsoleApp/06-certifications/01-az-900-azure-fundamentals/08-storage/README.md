@@ -134,7 +134,7 @@ Kaba hesap: 100 Mbps'lik bir hatla 40 TB, hattın tamamı bu işe ayrılsa bile 
 
 ```bash
 RG=rg-az900-c18
-ST=stc18$RANDOM                         # Azure genelinde benzersiz olmalı
+ST=stc18$RANDOM                         # must be unique across Azure
 az group create --name $RG --location westeurope
 
 # 1) Storage account (Standard general-purpose v2, LRS)
@@ -143,28 +143,28 @@ az storage account create --resource-group $RG --name $ST \
 az storage account show --resource-group $RG --name $ST \
   --query "{sku:sku.name, kind:kind, tier:accessTier, blob:primaryEndpoints.blob}" -o table
 
-# 2) Container + blob upload + tier değiştirme (--auth-mode key: CLI hesap anahtarını kendisi alır)
-az storage container create --account-name $ST --name yedekler --auth-mode key
-echo "ornek yedek" > yedek.txt
-az storage blob upload --account-name $ST --container-name yedekler --name yedek.txt --file yedek.txt --auth-mode key
-az storage blob set-tier --account-name $ST --container-name yedekler --name yedek.txt --tier Cool --auth-mode key
-az storage blob list --account-name $ST --container-name yedekler --auth-mode key \
-  --query "[].{ad:name, tier:properties.blobTier}" -o table
+# 2) Container + blob upload + change tier (--auth-mode key: the CLI fetches the account key itself)
+az storage container create --account-name $ST --name backups --auth-mode key
+echo "sample backup" > backup.txt
+az storage blob upload --account-name $ST --container-name backups --name backup.txt --file backup.txt --auth-mode key
+az storage blob set-tier --account-name $ST --container-name backups --name backup.txt --tier Cool --auth-mode key
+az storage blob list --account-name $ST --container-name backups --auth-mode key \
+  --query "[].{name:name, tier:properties.blobTier}" -o table
 
-# 3) AzCopy: yerel klasörü container'a kopyala (kısa ömürlü SAS ile)
-mkdir -p rapor && for i in 1 2 3; do echo "rapor $i" > rapor/r$i.txt; done
-SAS=$(az storage container generate-sas --account-name $ST --name yedekler \
+# 3) AzCopy: copy a local folder to the container (with a short-lived SAS)
+mkdir -p reports && for i in 1 2 3; do echo "report $i" > reports/r$i.txt; done
+SAS=$(az storage container generate-sas --account-name $ST --name backups \
   --permissions acdlrw --expiry $(date -u -d '+1 hour' +%Y-%m-%dT%H:%MZ) --auth-mode key -o tsv)
-azcopy copy "./rapor" "https://$ST.blob.core.windows.net/yedekler?$SAS" --recursive
-azcopy list "https://$ST.blob.core.windows.net/yedekler?$SAS"
+azcopy copy "./reports" "https://$ST.blob.core.windows.net/backups?$SAS" --recursive
+azcopy list "https://$ST.blob.core.windows.net/backups?$SAS"
 
-# 4) Azure Files paylaşımı (5 GiB kota)
-az storage share-rm create --resource-group $RG --storage-account $ST --name paylasim --quota 5
+# 4) Azure Files share (5 GiB quota)
+az storage share-rm create --resource-group $RG --storage-account $ST --name myshare --quota 5
 az storage share-rm list --resource-group $RG --storage-account $ST -o table
-# Bağlama: portalda paylaşımın "Connect" sekmesi Windows/Linux/macOS için hazır betik üretir
-# (SMB 445 portu birçok ev/şirket ağında kapalıdır — bağlanamazsan sebebi bu olabilir).
+# Mounting: the share's "Connect" tab in the portal generates a ready-made script for Windows/Linux/macOS
+# (SMB port 445 is blocked on many home/corporate networks — if you cannot connect, this may be why).
 
-# 5) Temizlik
+# 5) Cleanup
 az group delete --name $RG --yes --no-wait
 ```
 

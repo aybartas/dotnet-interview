@@ -33,9 +33,9 @@ Bulut hizmetleri, sağlayıcının yığının **ne kadarını** yönettiğine g
 Kod: `ConsoleApp` projesinde [`Sections/`](Sections/) altında 4 bölüm ve bir **ürün → hizmet türü** kataloğu ([`ServiceCatalog.cs`](ServiceCatalog.cs)). `ConsoleApp` klasöründe:
 
 ```bash
-dotnet run -- C1.3 all              # tüm bölümler
-dotnet run -- C1.3 tur sql          # "SQL" hangi türde? → VM'de SQL Server = IaaS, SQL Database / MI = PaaS
-dotnet run -- C1.3 tur functions    # Azure Functions → PaaS (serverless)
+dotnet run -- C1.3 all                 # all sections
+dotnet run -- C1.3 lookup sql          # which type is "SQL"? → SQL Server on a VM = IaaS, SQL Database / MI = PaaS
+dotnet run -- C1.3 lookup functions    # Azure Functions → PaaS (serverless)
 ```
 
 ---
@@ -173,21 +173,21 @@ Sonuç: Kontrol IaaS → SaaS yönünde azalır; yönetim yükü de onunla birli
 ```bash
 az group create --name rg-az900-c13 --location westeurope
 
-# PaaS: App Service (F1 = ücretsiz katman). OS yok, sunucu yok; yalnızca bir web uygulaması.
-az webapp list-runtimes --os linux --output table              # geçerli runtime değerleri
+# PaaS: App Service (F1 = free tier). No OS, no server; just a web app.
+az webapp list-runtimes --os linux --output table              # valid runtime values
 az appservice plan create --resource-group rg-az900-c13 --name plan-c13 --sku F1 --is-linux
 az webapp create --resource-group rg-az900-c13 --plan plan-c13 \
   --name todo-c13-$RANDOM --runtime "DOTNETCORE:10.0"
 az webapp list --resource-group rg-az900-c13 --query "[].defaultHostName" --output tsv
 
-# IaaS: VM (ücretli!). OS'u sen seçersin; yama, güvenlik duvarı, yazılım kurulumu artık senin işin.
+# IaaS: VM (paid!). You choose the OS; patching, firewall, software installation are now your job.
 az vm create --resource-group rg-az900-c13 --name vm-c13 \
   --image Ubuntu2404 --size Standard_B1s \
   --admin-username azureuser --generate-ssh-keys
 az vm list --resource-group rg-az900-c13 --show-details --output table
-# (İstersen) ssh azureuser@<publicIp> → sudo apt update && sudo apt upgrade  ← IaaS'ta bu sorumluluk sende
+# (Optional) ssh azureuser@<publicIp> → sudo apt update && sudo apt upgrade  ← in IaaS this responsibility is yours
 
-# Temizlik — mutlaka
+# Cleanup — mandatory
 az group delete --name rg-az900-c13 --yes --no-wait
 ```
 
