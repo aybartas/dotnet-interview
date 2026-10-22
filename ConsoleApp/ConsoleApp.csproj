@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Türkçe kültür deneyleri (tr-TR, "Türkçe I problemi", sıralama) gerçek ICU verisi ister -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <!-- J2.1 XML doc deneyi + J1.5: IDE0xxx stil kuralları derlemede de çalışsın (kural şiddetleri ilgili konu klasöründeki .editorconfig'de) -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisMode>Default</AnalysisMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- J4: konular yerel bir Kestrel API'ye HTTP çağrısı yapar (console uygulaması içinde, rastgele port) -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <!-- C1.8: Blob Storage demosu (yerelde Azurite: repo kökünde docker compose up -d) -->
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.30.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- J5.2: CopyToOutputDirectory — bin/<config>/<tfm>/ klasörüne appsettings.json adıyla kopyalanır (Link: konu klasörü yolu çıktıya taşınmaz) -->
+    <None Include="01-junior/05-build-run-basics/02-bin-obj/appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

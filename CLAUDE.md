@@ -6,15 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A .NET Junior → Mid → Senior interview-prep study repo. **All content is written in Turkish** — keep new prose in Turkish (technical terms and identifiers stay in English, as in the existing text). Target platform is **.NET 10 (LTS) / C# 14**; .NET 11 / C# 15 features may be mentioned but must be marked **(.NET 11)**.
 
-The repo started **docs-only** (`ROADMAP.md`, `README.md`, `CLAUDE.md`) and is being filled in one topic at a time. Content written so far: **J1 (`01-junior/01-dev-foundations/`) — all 5 topics**, **J2 (`01-junior/02-csharp-fundamentals/`) — all 6 topics** and **J3 (`01-junior/03-collections-linq/`) — all 3 topics**, **J4 (`01-junior/04-async-basics/`) — all 3 topics** and **J5 (`01-junior/05-build-run-basics/`) — all 3 topics** (each topic: theory `README.md`, runnable code inside the module project, `interview-questions.md`); certification track: **C1 (`06-certifications/01-az-900-azure-fundamentals/`, project `C01.AzureFundamentals`) — all 15 topics C1.1–C1.15** (each topic: `README.md` + `quiz.md`; C01 code only where the topic's 🛠 line asks for it — C1.1–C1.3, C1.8 with Azurite via the module `docker-compose.yml`, C1.11). The remaining `01-junior/` … `05-interview/` folders described in `ROADMAP.md → Repo Yapısı` are created as their topics are written. The whole repo is **one solution** — `DotnetInterview.slnx` at the root (open this in Visual Studio) — plus root `Directory.Build.props`, `Directory.Packages.props` (central package management) and `global.json`; the SDK is .NET 10 (`dotnet` CLI is needed to build/run the examples).
+The repo started **docs-only** (`ROADMAP.md`, `README.md`, `CLAUDE.md`) and is being filled in one topic at a time. Content written so far: **J1 — all 5 topics**, **J2 — all 6**, **J3 — all 3**, **J4 — all 3**, **J5 — all 3** (each topic: theory `README.md`, runnable code, `interview-questions.md`); certification track: **C1 (AZ-900) — all 15 topics C1.1–C1.15** (each topic: `README.md` + `quiz.md`; code only where the topic's 🛠 line asks for it — C1.1–C1.3, C1.8 with Azurite via the root `docker-compose.yml`, C1.11). The remaining `02-mid/` … `05-interview/` folders described in `ROADMAP.md → Repo Yapısı` are created as their topics are written.
 
-| File | Role |
-|------|------|
-| `ROADMAP.md` | ~4.2k lines, the master plan: 6 tracks, 51 modules, ~300 topics. Each topic's theory outline and the scope of its code project live here. |
-| `README.md` | For the human studying: how to work through it, folder layout, where theory vs. practice lives, how to author a new topic. |
+**The whole repo is one solution — `DotnetInterview.slnx` — with exactly two projects: `ConsoleApp` and `WebApp`.** No `Directory.Build.props`, `Directory.Packages.props`, `global.json`, per-module projects or class libraries. The SDK is .NET 10 (`dotnet` CLI is needed to build/run the examples).
+
+| File / folder | Role |
+|---------------|------|
+| `ROADMAP.md` | ~4.3k lines, the master plan: 6 tracks, 51 modules, ~300 topics. Each topic's theory outline and the scope of its code live here. |
+| `README.md` | For the human studying: how to work through it, folder layout, where theory vs. practice lives. |
 | `CLAUDE.md` | This file. |
-| `DotnetInterview.slnx` | The single solution (all module projects). |
-| `01-junior/…` | Module projects; each topic folder holds README + code + `interview-questions.md`. |
+| `DotnetInterview.slnx` | The single solution (`ConsoleApp` + `WebApp`). |
+| `ConsoleApp/` | The one console project: every console topic (code + README + questions). |
+| `WebApp/` | The one web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …). |
+| `docker-compose.yml` | Root-level infra for topics that need it (Azurite today; PostgreSQL, Redis, brokers … are added as topics arrive). |
 
 When adding content, the usual task is "write topic X" — see [Writing a topic](#writing-a-topic).
 
@@ -22,8 +26,8 @@ When adding content, the usual task is "write topic X" — see [Writing a topic]
 
 `ROADMAP.md` is organized by seniority, and the folder layout mirrors it exactly:
 
-| Level | ID prefix | Folder | Notes |
-|-------|-----------|--------|-------|
+| Level | ID prefix | Folder (inside `ConsoleApp/` or `WebApp/`) | Notes |
+|-------|-----------|--------------------------------------------|-------|
 | Junior | `J1`–`J13` | `01-junior/` | ends with `capstone/` |
 | Mid | `M1`–`M15` | `02-mid/` | ends with `capstone/` |
 | Senior | `S1`–`S10` | `03-senior/` | ends with `capstone/` |
@@ -31,14 +35,14 @@ When adding content, the usual task is "write topic X" — see [Writing a topic]
 | Interview | `I1`–`I6` | `05-interview/` | |
 | Certification track | `C1`–`C2` | `06-certifications/` | **Level-independent**: C1 = AZ-900, C2 = AI-200 (Azure). Exam-oriented: theory + labs + exam-style quizzes (see [Certification track](#certification-track-06-certifications)) |
 
-- A **module** (`### J8. Veritabanı Temelleri`) = a folder (`01-junior/08-database-fundamentals/`). Its header blockquote lists folder, duration (`⏱`), prerequisites; infra-heavy modules mention a shared module-level `docker-compose.yml`.
-- A **topic** (`#### J8.4 Transaction & ACID · \`04-transactions-acid\``) = a subfolder and one independent code project. The folder name is part of the heading.
+- A **module** (`### J8. Veritabanı Temelleri`) = a folder (`01-junior/08-database-fundamentals/`). Its header blockquote lists folder (`📁`), duration (`⏱`), prerequisites; infra-heavy modules mention the root `docker-compose.yml`. **`📁` paths in ROADMAP are relative to the app folder**: console topics live under `ConsoleApp/`, web topics under `WebApp/` with the same path.
+- A **topic** (`#### J8.4 Transaction & ACID · \`04-transactions-acid\``) = a subfolder. The folder name is part of the heading.
 - Every topic ends with a `- 🛠 **Kod:** ...` line describing the code its topic folder will contain; every J/M/S module ends with a `🎯 **Mülakat:** ...` line. `⭐` marks frequently-asked topics.
 - The same subject recurs at deeper levels (e.g. DB: J8 → M6/M8 → S4). Cross-references use IDs in plain text: `(→ M6.3)`. Don't duplicate content across levels — put each sub-topic at the level where it's typically asked and cross-reference.
 
 ## Folder layout and where content lives
 
-**One module = one .NET project; one topic = one folder inside that project.** There are no per-topic projects and no `src/` or `tests/` folders. Folder names are **never invented** — they are written in the ROADMAP headings. A topic heading like
+**One repo = one console app + one web app; one topic = one folder inside the app that runs it.** There are no per-module or per-topic projects and no `src/` or `tests/` folders. Folder names are **never invented** — they are written in the ROADMAP headings. A topic heading like
 
 ```markdown
 #### J3.2 Delegates, Lambdas & Events · `02-delegates-lambdas-events`
@@ -47,20 +51,23 @@ When adding content, the usual task is "write topic X" — see [Writing a topic]
 combined with its module's `📁 01-junior/03-collections-linq/` line resolves to:
 
 ```
-01-junior/03-collections-linq/                 # module = ONE project
-├── J03.CollectionsLinq.csproj                 # project type fits the module: Console, Web, Web API, Worker…
-├── Program.cs                                 # (console modules) topic menu: dotnet run -- 3.2 [section|all]
-├── Topic.cs                                   # record Topic(Id, Title, Func<string[], int> Run)
-├── docker-compose.yml                         # module-level infra, only where the module says so
-└── 02-delegates-lambdas-events/               # topic = folder
-    ├── README.md                              # THEORY — follows the template in ROADMAP.md
-    ├── DelegatesLambdasEventsTopic.cs         # topic entry point: Run(args) → section menu
-    ├── Sections/ Section01_*.cs … Sections.cs # runnable demos (console modules)
-    ├── Models/ …                              # supporting types
-    └── interview-questions.md                 # 10-20 Q&A
+ConsoleApp/
+├── ConsoleApp.csproj
+├── Program.cs                                      # topic menu for ALL console topics: dotnet run -- J3.2 [section|all]
+├── Properties/launchSettings.json                  # J5.3 lesson
+└── 01-junior/03-collections-linq/02-delegates-lambdas-events/   # topic = folder
+    ├── README.md                                   # THEORY — follows the template in ROADMAP.md
+    ├── DelegatesLambdasEventsTopic.cs              # topic entry point: Run(args) → section menu
+    ├── Sections/ Section01_*.cs … Sections.cs      # runnable demos
+    ├── Models/ …                                   # supporting types
+    └── interview-questions.md                      # 10-20 Q&A
+WebApp/
+├── WebApp.csproj
+├── Program.cs                                      # calls each web topic's AddServices(builder) / Map(app)
+└── 01-junior/01-dev-foundations/03-how-the-web-works/   # web topic: README + endpoint code + requests.http + questions
 ```
 
-The solution (`DotnetInterview.slnx`) groups projects into solution folders by level (`/01 Junior/`, `/02 Mid/` …, `/06 Sertifika/` for the certification track); **every new module project must be added to it**, plus root files under `/00 Kök Dosyalar/`.
+`DotnetInterview.slnx` holds just the two projects; **never add a project for a new module or topic**.
 
 Where each kind of content belongs — keep this split, don't blur it:
 
@@ -69,37 +76,47 @@ Where each kind of content belongs — keep this split, don't blur it:
 | What to learn (outline) | ROADMAP topic bullets; `⭐` = frequently asked |
 | Long-form theory | topic `README.md`, template: *Ne? / Neden? / Nasıl? / Gerçek dünya senaryosu / Mülakat perspektifi / Yaygın hatalar / Performans & trade-off / Kaynaklar* |
 | What to build | the topic's `🛠 **Kod:**` line — the topic folder's code implements exactly that scope |
-| Running code | topic folder inside the module project |
+| Running code | topic folder inside `ConsoleApp` (or `WebApp` if it needs an HTTP server) |
 | Interview Q&A | module's `🎯 **Mülakat:**` line + topic `interview-questions.md` (certification track: `📝 **Sınav:**` line + topic `quiz.md`) |
-| Infra | module-level `docker-compose.yml` |
+| Infra | root `docker-compose.yml` |
 
 **Lean rules (do not add things the user did not ask for):**
 - **No tests** unless the topic itself is about testing (J10, M10 …). Verification of other topics = the demo's printed output. Do not create `*.Tests` projects, `tests/` folders or `xunit` references elsewhere.
-- **No shell/PowerShell scripts, `.vscode/`, per-topic `global.json`, `SOLUTIONS.md`** etc. Command-line exercises (git, curl, tcpdump, `dotnet new` …) are written as code blocks inside the topic `README.md`; exercise solutions go into a `<details>` block at the end of the README.
-- **No module-level README** (the ROADMAP already describes the module).
-- Code-free modules (Kubernetes, CI/CD, Azure IaC…) get no project; their files appear as plain items in the solution folder.
-- Extra projects only when the lesson *is* an assembly/process boundary or the module needs a different host (e.g. J7: Web API + a small console client). Example: `01-junior/02-csharp-fundamentals-lib/J02.Lib.csproj` (access modifiers, `const` embedding).
+- **No shell/PowerShell scripts, `.vscode/`, `global.json`, `Directory.*.props`, `SOLUTIONS.md`** etc. Command-line exercises (git, curl, tcpdump, `dotnet new` …) are written as code blocks inside the topic `README.md`; exercise solutions go into a `<details>` block at the end of the README.
+- **No module-level README or csproj** (the ROADMAP already describes the module).
+- **No extra projects.** Experiments that need a second assembly (e.g. `internal` across assemblies, `const` embedding) are shown in-assembly where possible and otherwise written as a README exercise (`dotnet new classlib` in an empty folder). Only capstones (layered architecture) may add projects.
+- Code-free modules (Kubernetes, CI/CD, Azure IaC…) get README-only topic folders.
 
-Conventions: root `Directory.Build.props` + `Directory.Packages.props` (central package management); project name `J<NN>.<ModuleName>` (so Solution Explorer sorts by module), `RootNamespace` `Junior.<ModuleName>`, and **one namespace per topic** (`Junior.CollectionsLinq.LinqBasics`) — this is what keeps same-named demo types (`Order`, `Customer` …) from colliding inside one project; topics never use each other's types (module-level helpers shared by all topics go into a `Shared/` folder, e.g. J04's `LocalApi`, `SectionRunner`); capstones are layered multi-project folders added to the same solution.
+Conventions:
+- Project settings live in the two `.csproj` files (`net10.0`, nullable, implicit usings; `ConsoleApp` also `InvariantGlobalization=false`, `GenerateDocumentationFile`, `EnforceCodeStyleInBuild`, the Kestrel `FrameworkReference` for J4's local API, `Azure.Storage.Blobs` with an explicit version). Folder-scoped analyzer settings go into an `.editorconfig` inside the topic folder.
+- **One namespace per topic** (`Junior.CollectionsLinq.LinqBasics`) — this is what keeps same-named demo types (`Order`, `Customer` …) from colliding inside one project; topics never use each other's types (module-level helpers shared by that module's topics go into a `Shared/` folder inside the module, e.g. J04's `LocalApi`, `SectionRunner`).
+- **Topic IDs** are prefixed: `J1.2`, `M5.1`, `C1.8` (case-insensitive on the command line).
+- Capstones are the only place for layered multi-project folders (added to the same solution).
 
 ```bash
-dotnet build DotnetInterview.slnx                   # whole repo
-cd <level>/<module> && docker compose up -d        # only for modules with shared infra
-cd <level>/<module> && dotnet run                  # topic list
-cd <level>/<module> && dotnet run -- 3.2 [4|all]   # one topic / one section / all sections
+dotnet build DotnetInterview.slnx                     # whole repo
+docker compose up -d                                  # repo root; only for topics that need infra (Azurite for C1.8)
+cd ConsoleApp && dotnet run                           # topic list
+cd ConsoleApp && dotnet run -- J3.2 [4|all]           # one topic / one section / all sections
+cd WebApp && dotnet run                               # web topics (http://localhost:5080)
 ```
 
-Gotchas when merging topics into one project: `GlobalUsings.cs` is **project-wide** (a `global using System.Diagnostics;` can make `Trace` ambiguous — fix with a `using Trace = …` alias in the affected file); project properties such as `InvariantGlobalization=false`, `GenerateDocumentationFile` apply to the whole module (folder-scoped analyzer settings go into an `.editorconfig` inside the topic folder); the topic's old top-level `Program.cs` becomes `<Topic>Topic.cs` with `public static int Run(string[] args)` (async topics wrap `RunAsync(args).GetAwaiter().GetResult()`); a type named like its own namespace (`Exercises`) must live in that namespace.
+Gotchas of the single console project:
+- `GlobalUsings.cs` is **project-wide** (J02's `global using System.Diagnostics;` can make `Trace` ambiguous elsewhere — fix with a `using Trace = …` alias in the affected file); `ConsoleApp.csproj` properties apply to every topic.
+- `ConsoleApp/Program.cs` is async (`return await topic.Run(...)`): `Topic` accepts either `Func<string[], int>` or `Func<string[], Task<int>>`; async topics return `Task<int>`, topics that call async code from a sync `Run` wrap `RunAsync(args).GetAwaiter().GetResult()`. A topic's `Run(string[] args)` receives the arguments *after* the topic id.
+- Topics that re-launch themselves (J4.2 async-void) pass the prefixed id (`J4.2`); J5 locates the project directory by `ConsoleApp.csproj` (`ProjectLocator`).
+- A type named like its own namespace (`Exercises`) must live in that namespace; type names must not clash with a project-wide global using (alias them).
+- Culture: `Program.cs` sets tr-TR only for `C…` topics; other topics use the machine culture.
+- Web topics: `WebApp/Program.cs` calls `Topic.AddServices(builder)` and `Topic.Map(app)`; J1.3 uses global middleware + `MapFallback`, so a second web topic must move to route groups.
 
 ## Certification track (`06-certifications/`)
 
-The Azure certification content (**C1 = AZ-900**, **C2 = AI-200**) is its **own track**, separate from Junior/Mid/Senior (the former J13 "Cloud & Azure" and M15 "Azure ile Uygulama Geliştirme" were moved here; the level modules were renumbered). Same project rules as everywhere (module = one project, topic = folder), with these differences:
+The Azure certification content (**C1 = AZ-900**, **C2 = AI-200**) is its **own track**, separate from Junior/Mid/Senior (the former J13 "Cloud & Azure" and M15 "Azure ile Uygulama Geliştirme" were moved here; the level modules were renumbered). Same folder rules as everywhere (topic = folder inside `ConsoleApp`), with these differences:
 
 ```
-06-certifications/01-az-900-azure-fundamentals/     # module C1 → project C01.AzureFundamentals
-├── C01.AzureFundamentals.csproj                     # console: SLA/TCO calculators, SDK demos (Azurite…)
-├── Program.cs  Topic.cs
-├── 01-cloud-concepts/
+ConsoleApp/06-certifications/01-az-900-azure-fundamentals/     # C1
+├── Shared/                                          # Section/SectionRunner/Table helpers for the C1 topics
+├── 01-cloud-computing/
 │   ├── README.md          # theory — 8-heading template, but heading 5 is "Sınav perspektifi" (what the exam asks, traps, keywords)
 │   ├── <code>             # labs; `az` CLI labs are code blocks inside README (no scripts)
 │   └── quiz.md            # exam-style questions; answers + rationale in <details>
@@ -108,7 +125,7 @@ The Azure certification content (**C1 = AZ-900**, **C2 = AI-200**) is its **own 
 
 - **`quiz.md` replaces `interview-questions.md`** (no interview-questions in this track). Question formats follow the real exam: single choice, multiple choice, yes/no table, ordering, scenario; for AI-200 also code/CLI/KQL completion and case studies. Every answer has a rationale. Distribute questions by the official domain weights.
 - **Never reproduce real exam questions / braindumps** (NDA). Write original, exam-format questions. State the exam "skills measured as of …" date and tell the reader to re-check the official study guide.
-- Labs must be **cheap and clean**: free tier/emulators where possible (Azurite, Cosmos DB emulator, Service Bus emulator via the module `docker-compose.yml`), always end with a cleanup step (`az group delete`) and mention a budget alarm.
+- Labs must be **cheap and clean**: free tier/emulators where possible (Azurite, Cosmos DB emulator, Service Bus emulator via the root `docker-compose.yml`), always end with a cleanup step (`az group delete`) and mention a budget alarm.
 - Still lean: no test projects, no scripts. The ROADMAP topic lines are `📝 **Quiz:**` (in addition to `🛠 **Kod:**`) and each cert module ends with a `📝 **Sınav:**` line (typical exam questions) instead of `🎯 **Mülakat:**`.
 - Each topic lists its **📌 official objective** (which study-guide bullet it covers). AI-200 labs are written in C#, with an equivalent Python snippet in the README, because the exam audience profile expects Python.
 - Fact-check Azure/cert claims (exam weights, retirements, service names) against the official study guide before writing; record sources in ROADMAP `## 2026 Radarı` / `Kaynaklar`.
@@ -117,14 +134,14 @@ The Azure certification content (**C1 = AZ-900**, **C2 = AI-200**) is its **own 
 
 When asked to implement a topic, derive everything from the ROADMAP rather than inventing it:
 
-1. Locate the topic heading; take the topic folder name from the heading and the module path from the module's `📁` line. If the module project does not exist yet, create `J<NN>.<ModuleName>.csproj` (project type per module — see ROADMAP), `Program.cs` + `Topic.cs` (copy the pattern from J03), and add the project to `DotnetInterview.slnx`.
+1. Locate the topic heading; take the topic folder name from the heading and the module path from the module's `📁` line. Create the folder under `ConsoleApp/` (or `WebApp/` if it needs an HTTP server). **Do not create a project.**
 2. Create the topic folder with `README.md`, the code, and `interview-questions.md` (certification track: `quiz.md` instead — see above). **No `src/`, no `tests/`** (tests only if the topic is about testing).
-3. Write `README.md` from the topic's bullets — they are effectively its outline — using the 8-heading template above, in Turkish. Command-line exercises go in as code blocks (no scripts).
-4. Write the code to the scope in the `🛠 **Kod:**` line, no more and no less. Many of those lines ask for a *deliberately broken* case to diagnose (bad probe, wrong env var, OOM) — implement that too, it is the point of the exercise. Console topics follow the section pattern: `Sections/SectionNN_*.cs` (`Run()`), `Sections/Sections.cs` (list), `<Topic>Topic.cs` (`Run(args)`: list / `<n>` / `all`), registered in the module `Program.cs`.
+3. Write `README.md` from the topic's bullets — they are effectively its outline — using the 8-heading template above, in Turkish. Start it with `> 📁 \`ConsoleApp/<path>/\`` (or `WebApp/…`). Command-line exercises go in as code blocks (no scripts).
+4. Write the code to the scope in the `🛠 **Kod:**` line, no more and no less. Many of those lines ask for a *deliberately broken* case to diagnose (bad probe, wrong env var, OOM) — implement that too, it is the point of the exercise. Console topics follow the section pattern: `Sections/SectionNN_*.cs` (`Run()`), `Sections/Sections.cs` (list), `<Topic>Topic.cs` (`Run(args)`: list / `<n>` / `all`), one namespace per topic. **Register the topic with one line in `ConsoleApp/Program.cs`** (`new("J8.2", "Title", SqlBasicsTopic.Run)`); a web topic exposes `AddServices`/`Map` and is called from `WebApp/Program.cs`.
 5. Put the module's `🎯` questions plus topic-specific ones into `interview-questions.md`, with answers.
-6. If the topic needs infra, extend the module's existing `docker-compose.yml`; don't add a per-topic compose file.
+6. If the topic needs infra, add the service to the root `docker-compose.yml`; don't add a per-topic compose file.
 7. Cross-reference instead of duplicating: if a sub-topic belongs to a deeper level, link it as `(→ M6.3)`.
-8. Build the whole solution (`dotnet build DotnetInterview.slnx`) and run the new topic (`dotnet run -- <id> all`) before committing; update the "Content written so far" sentence at the top of this file.
+8. Build the whole solution (`dotnet build DotnetInterview.slnx`) and run the new topic (`cd ConsoleApp && dotnet run -- <id> all`) before committing; update the "Content written so far" sentence at the top of this file. After renaming/moving files, check relative links in the Markdown files.
 
 ## Editing ROADMAP.md — consistency invariants
 
@@ -135,7 +152,7 @@ When adding, removing, renaming, or renumbering a module or topic, update **all*
 3. `## Repo Yapısı` tree (module-level folders only) and folder numbers
 4. `## Çalışma Planı` weekly tables (module + parallel DSA column); keep each level intro's `Süre: ~N ay` consistent with the sum of module `⏱` estimates
 5. `## 2026 Radarı` table's "Roadmap'te" column if the moved topic is referenced there
-6. `README.md`: the level table, its links into ROADMAP anchors, and — if the folder convention or the theory/practice split changes — the "Klasör yapısı" and "Teorik ve pratik anlatımlar nerede?" sections, which must stay consistent with this file (and with ROADMAP's "Her modül klasörünün şablonu" / "Repo Yapısı"); also add new module projects to `DotnetInterview.slnx`
+6. `README.md`: the level table, its links into ROADMAP anchors, and — if the folder convention or the theory/practice split changes — the "Klasör yapısı" and "Teorik ve pratik anlatımlar nerede?" sections, which must stay consistent with this file (and with ROADMAP's "Her konunun yeri" / "Repo Yapısı")
 7. The `Güncelleme` date in the header and the `Son güncelleme` footer
 
 **Anchor rules (GitHub slugs):** linked headings are lowercased, punctuation (`.`, `&`, `:`, `/`, `'`, `—`, `#`) is dropped, spaces become `-` — so `### J5. Build & Run Temelleri` → `#j5-build--run-temelleri`. **Never start a word with capital `İ` in a linked heading** (module headings, level headings, `## 2026 Radarı`): it lowercases to `i̇` (i + combining dot) and breaks the anchor. Rephrase instead (e.g. "API Tasarımı & Protokoller", "CLR & Runtime Derinlemesine").
@@ -144,4 +161,4 @@ When adding, removing, renaming, or renumbering a module or topic, update **all*
 
 ## Commits
 
-Conventional-commit style with a `docs:` prefix for content changes, a short subject, and a body that summarizes per-level/per-module what changed.
+Conventional-commit style with a `docs:` prefix for content changes (`refactor:` for structure changes), a short subject, and a body that summarizes per-level/per-module what changed.

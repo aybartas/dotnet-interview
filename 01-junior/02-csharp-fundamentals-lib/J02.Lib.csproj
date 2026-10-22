@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <!-- J2.1 (erişim belirleyicileri) ve J2.2 (const gömülmesi) deneyleri İKİ ayrı assembly gerektirir:
-       "assembly sınırı" ancak başka bir projeyle gösterilebilir. Bu sınıf kütüphanesi o sınırın öbür yanıdır. -->
-  <PropertyGroup>
-    <RootNamespace>Junior.CSharpFundamentals.Lib</RootNamespace>
-  </PropertyGroup>
-
-</Project>
