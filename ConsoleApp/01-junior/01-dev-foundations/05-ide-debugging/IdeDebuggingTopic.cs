@@ -1,30 +1,46 @@
+using System.Globalization;
 using Junior.DevFoundations.IdeDebugging.AnalyzersNullable;
 
-// Not: Exercises sınıfı ile aynı isimli namespace'te durmak zorundayız (Exercises.All çözümlemesi için).
+// Note: we have to live in the same-named namespace as the Exercises class (to resolve Exercises.All).
 namespace Junior.DevFoundations.IdeDebugging.Exercises;
 
 public static class IdeDebuggingTopic
 {
     public static int Run(string[] args)
     {
-        // J1.5 — Debugger alıştırmaları. Her egzersiz BİLEREK hatalıdır.
+        // Culture-independent number formatting (1.5 instead of 1,5) regardless of the machine culture.
+        var previous = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+        try
+        {
+            return RunCore(args);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previous;
+        }
+    }
+
+    private static int RunCore(string[] args)
+    {
+        // J1.5 — Debugger exercises. Every exercise is DELIBERATELY buggy.
         //
-        //   dotnet run -- J1.5          → egzersiz listesi
-        //   dotnet run -- J1.5 3        → 3. egzersizi çalıştır (hata/yanlış sonuç görürsünüz)
-        //   dotnet run -- J1.5 3 --hint → ipucu (hangi debugger özelliğini kullanmalısınız?)
-        //   dotnet run -- J1.5 all      → hepsini sırayla çalıştır (yakalanamayan hatalar özetlenir)
-        //   dotnet run -- J1.5 analyzers → nullable/analyzer uyarılı kod (AnalyzersNullable/) — uyarılar için: dotnet build
+        //   dotnet run -- J1.5          → exercise list
+        //   dotnet run -- J1.5 3        → run exercise 3 (you will see an error / a wrong result)
+        //   dotnet run -- J1.5 3 --hint → hint (which debugger feature should you use?)
+        //   dotnet run -- J1.5 all      → run all of them in order (bugs that go uncaught are summarized)
+        //   dotnet run -- J1.5 analyzers → code with nullable/analyzer warnings (AnalyzersNullable/) — for the warnings: dotnet build
         //
-        // Hedef: kodu satır satır OKUYARAK değil, DEBUGGER ile bulmak (F5 → breakpoint → inceleme).
-        // IDE'de: ConsoleApp projesini başlangıç projesi yapın (Debug argümanları: J1.5 3), RunOne'a breakpoint koyun, F11 ile içeri girin.
+        // Goal: find the bugs with the DEBUGGER, not by READING the code line by line (F5 → breakpoint → inspect).
+        // In the IDE: make the ConsoleApp project the startup project (debug arguments: J1.5 3), put a breakpoint in RunOne, step in with F11.
 
         if (args is ["analyzers"])
         {
-            // Uyarıları üretmek için tipler yeterli; çalıştırınca da kısa bir çıktı verir.
-            // Not: GetUserName(2) çalışma zamanında null döndürür — derleyicinin CS8603 ile uyardığı tam olarak bu.
+            // The types are enough to produce the warnings; running it also prints a short output.
+            // Note: GetUserName(2) returns null at run time — exactly what the compiler warns about with CS8603.
             var service = new UserService { Name = "demo" };
             Console.WriteLine($"1 → {service.GetUserName(1)}");
-            Console.WriteLine($"2 → {service.GetUserName(2) ?? "(null döndü)"}");
+            Console.WriteLine($"2 → {service.GetUserName(2) ?? "(returned null)"}");
             Console.WriteLine($"Style demo: IsAllowed(admin) = {new StyleViolations().IsAllowed("admin")}");
             return 0;
         }
@@ -33,10 +49,10 @@ public static class IdeDebuggingTopic
 
         if (args.Length == 0)
         {
-            Console.WriteLine("Debugger egzersizleri:\n");
+            Console.WriteLine("Debugger exercises:\n");
             foreach (var e in exercises)
                 Console.WriteLine($"  {e.Number}. {e.Title,-40} → {e.Skill}");
-            Console.WriteLine("\nÇalıştırmak için:  dotnet run -- J1.5 <numara>   (ipucu için --hint ekleyin)  |  analyzers");
+            Console.WriteLine("\nTo run:  dotnet run -- J1.5 <number>   (add --hint for a hint)  |  analyzers");
             return 0;
         }
 
@@ -49,13 +65,13 @@ public static class IdeDebuggingTopic
 
         if (!int.TryParse(args[0], out var number) || exercises.FirstOrDefault(e => e.Number == number) is not { } selected)
         {
-            Console.Error.WriteLine($"Geçersiz egzersiz: {args[0]}");
+            Console.Error.WriteLine($"Invalid exercise: {args[0]}");
             return 1;
         }
 
         if (args.Contains("--hint"))
         {
-            Console.WriteLine($"[{selected.Number}] {selected.Title}\nBeceri: {selected.Skill}\nİpucu: {selected.Hint}");
+            Console.WriteLine($"[{selected.Number}] {selected.Title}\nSkill: {selected.Skill}\nHint: {selected.Hint}");
             return 0;
         }
 
@@ -71,10 +87,10 @@ public static class IdeDebuggingTopic
             }
             catch (Exception ex)
             {
-                // Egzersiz çöktü. Debugger olmadan sadece mesajı görürsünüz; "first-chance exception" ayarıyla
-                // istisna FIRLATILDIĞI satırda durmanız gerekir. (Exception Settings / Ctrl+Alt+E)
-                Console.WriteLine($"  ✗ İSTİSNA: {ex.GetType().Name}: {ex.Message}");
-                Console.WriteLine($"    (fırlatıldığı yer: {ex.StackTrace?.Split('\n').FirstOrDefault()?.Trim()})");
+                // The exercise crashed. Without a debugger you only see the message; with the "first-chance exception" setting
+                // you should stop on the line where the exception was THROWN. (Exception Settings / Ctrl+Alt+E)
+                Console.WriteLine($"  ✗ EXCEPTION: {ex.GetType().Name}: {ex.Message}");
+                Console.WriteLine($"    (thrown at: {ex.StackTrace?.Split('\n').FirstOrDefault()?.Trim()})");
             }
         }
     }

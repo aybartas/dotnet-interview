@@ -1,11 +1,11 @@
-# J1.5 — Örnek .editorconfig (AnalyzersNullable klasörüne özel)
+# J1.5 — Sample .editorconfig (specific to the AnalyzersNullable folder)
 #
-# .editorconfig; IDE'nin, `dotnet format`'ın ve DERLEYİCİNİN okuduğu, repoyla birlikte giden biçim + analyzer kuralları dosyasıdır.
-# "Bende güzel görünüyordu" tartışmasını bitirir: kural dosyada, herkes aynı kurala tabi. Dosya, bulunduğu klasör ve altı için geçerlidir;
-# `root = true` yukarıdaki .editorconfig dosyalarına bakmayı durdurur.
+# .editorconfig is the formatting + analyzer rules file that the IDE, `dotnet format` and the COMPILER read, and that ships with the repo.
+# It ends the "it looked fine on my machine" argument: the rule lives in the file, everyone is subject to the same rule. The file applies to its folder and below;
+# `root = true` stops the lookup of .editorconfig files further up.
 root = true
 
-# ─────────────────────────────── Tüm dosyalar ───────────────────────────────
+# ─────────────────────────────── All files ───────────────────────────────
 [*]
 charset = utf-8
 indent_style = space
@@ -17,28 +17,28 @@ trim_trailing_whitespace = true
 [*.{csproj,props,targets,json,yml,yaml,slnx}]
 indent_size = 2
 
-# ─────────────────────────────── C# biçim ve stil ───────────────────────────────
+# ─────────────────────────────── C# formatting and style ───────────────────────────────
 [*.cs]
 # --- using / namespace ---
 dotnet_sort_system_directives_first = true
 csharp_style_namespace_declarations = file_scoped:suggestion
 
-# --- Süslü parantez ve girinti (Allman stili) ---
+# --- Braces and indentation (Allman style) ---
 csharp_new_line_before_open_brace = all
 csharp_indent_case_contents = true
 
-# --- var kullanımı ---
+# --- var usage ---
 csharp_style_var_for_built_in_types = true:suggestion
 csharp_style_var_when_type_is_apparent = true:suggestion
 csharp_style_var_elsewhere = true:suggestion
 
-# --- Ifade gövdeli üyeler, desen eşleme ---
+# --- Expression-bodied members, pattern matching ---
 csharp_style_expression_bodied_methods = when_on_single_line:suggestion
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_prefer_collection_expression = when_types_loosely_match:suggestion
 
-# --- Adlandırma kuralları (IDE1006) ---
-# Kural 1: interface'ler 'I' ile başlar
+# --- Naming rules (IDE1006) ---
+# Rule 1: interfaces start with 'I'
 dotnet_naming_rule.interfaces_start_with_i.symbols = interfaces
 dotnet_naming_rule.interfaces_start_with_i.style = begins_with_i
 dotnet_naming_rule.interfaces_start_with_i.severity = suggestion
@@ -46,7 +46,7 @@ dotnet_naming_symbols.interfaces.applicable_kinds = interface
 dotnet_naming_style.begins_with_i.required_prefix = I
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
-# Kural 2: private alanlar '_camelCase'
+# Rule 2: private fields are '_camelCase'
 dotnet_naming_rule.private_fields_underscore.symbols = private_fields
 dotnet_naming_rule.private_fields_underscore.style = underscore_camel
 dotnet_naming_rule.private_fields_underscore.severity = suggestion
@@ -55,28 +55,28 @@ dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 dotnet_naming_style.underscore_camel.required_prefix = _
 dotnet_naming_style.underscore_camel.capitalization = camel_case
 
-# ─────────────────────────────── Analyzer önem dereceleri ───────────────────────────────
-# Önem derecesi: none | silent | suggestion | warning | error
-# Format:  dotnet_diagnostic.<KURAL-ID>.severity = <derece>
+# ─────────────────────────────── Analyzer severities ───────────────────────────────
+# Severity: none | silent | suggestion | warning | error
+# Format:  dotnet_diagnostic.<RULE-ID>.severity = <severity>
 
-# Nullable: null referans uyarıları (CS86xx). Varsayılan 'warning'. Ciddiye alıyorsanız 'error' yapın.
-dotnet_diagnostic.CS8600.severity = warning   # null'ı non-nullable'a çevirme
-dotnet_diagnostic.CS8602.severity = warning   # null olabilecek referansı dereference etme
-dotnet_diagnostic.CS8603.severity = warning   # null döndürme olasılığı
-dotnet_diagnostic.CS8604.severity = warning   # null olabilecek argüman
-dotnet_diagnostic.CS8618.severity = warning   # non-nullable alan constructor'da başlatılmadı
+# Nullable: null reference warnings (CS86xx). Default is 'warning'. If you take them seriously, make them 'error'.
+dotnet_diagnostic.CS8600.severity = warning   # converting null to non-nullable
+dotnet_diagnostic.CS8602.severity = warning   # dereferencing a possibly null reference
+dotnet_diagnostic.CS8603.severity = warning   # possible null return
+dotnet_diagnostic.CS8604.severity = warning   # possibly null argument
+dotnet_diagnostic.CS8618.severity = warning   # non-nullable field not initialized in the constructor
 
-# Unutulan await (egzersiz 7'nin derleyici uyarısı)
+# Forgotten await (the compiler warning for exercise 7)
 dotnet_diagnostic.CS4014.severity = warning
 
-# ─────────────────────────────── Sadece AnalyzersNullable klasörü ───────────────────────────────
-# Bu .editorconfig yalnızca bulunduğu klasör ve altı için geçerlidir; J01'in diğer konuları etkilenmez.
-# Burada bilerek uyarı üretsin diye bazı stil kurallarını 'warning' yapıyoruz. Gerçek projede
-# sıkılaştırmayı TÜM repo için ve kademeli yapın.
+# ─────────────────────────────── AnalyzersNullable folder only ───────────────────────────────
+# This .editorconfig applies only to its own folder and below; the other J01 topics are unaffected.
+# Here we deliberately raise some style rules to 'warning' so they produce warnings. In a real project
+# tighten things for the WHOLE repo and do it gradually.
 [*.cs]
-dotnet_diagnostic.IDE0005.severity = warning   # Kullanılmayan using
-dotnet_diagnostic.IDE0051.severity = warning   # Kullanılmayan private üye
-dotnet_diagnostic.IDE0044.severity = warning   # Alan 'readonly' olabilir
-dotnet_diagnostic.IDE1006.severity = warning   # Adlandırma kuralı ihlali
-dotnet_diagnostic.CA1822.severity = warning    # Üye 'static' olabilir (instance durumu kullanmıyor)
-dotnet_diagnostic.CA1861.severity = warning    # Sabit dizi argümanı: her çağrıda yeniden allocate edilir
+dotnet_diagnostic.IDE0005.severity = warning   # unused using
+dotnet_diagnostic.IDE0051.severity = warning   # unused private member
+dotnet_diagnostic.IDE0044.severity = warning   # field can be 'readonly'
+dotnet_diagnostic.IDE1006.severity = warning   # naming rule violation
+dotnet_diagnostic.CA1822.severity = warning    # member can be 'static' (doesn't use instance state)
+dotnet_diagnostic.CA1861.severity = warning    # constant array argument: re-allocated on every call

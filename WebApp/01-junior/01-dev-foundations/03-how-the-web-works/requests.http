@@ -1,26 +1,26 @@
-### J1.3 — İstek koleksiyonu
-### VS Code (REST Client / Humao eklentisi), JetBrains Rider ve Visual Studio 2022+ bu dosyayı doğrudan çalıştırır.
-### Önce uygulamayı başlatın:  dotnet run            (HTTPS denemeleri için:  dotnet run -- --https)
-### Her istek ### ile ayrılır; "Send Request" / yeşil ok ile çalıştırın. Sunucu konsolunda HAM isteği görün.
+### J1.3 — Request collection
+### VS Code (REST Client / Humao extension), JetBrains Rider and Visual Studio 2022+ run this file directly.
+### Start the app first:  dotnet run            (for the HTTPS experiments:  dotnet run -- --https)
+### Requests are separated by ###; run them with "Send Request" / the green arrow. See the RAW request in the server console.
 
 @host = http://localhost:5080
 @secureHost = https://localhost:5443
 
-### 1) En basit GET — sunucu gördüğü ham isteği geri yazar
-GET {{host}}/hello?name=dotnet&lang=tr
+### 1) The simplest GET — the server writes back the raw request it saw
+GET {{host}}/hello?name=dotnet&lang=en
 Accept: text/plain
-X-Demo: merhaba
+X-Demo: hello
 
-### 2) POST + JSON body — Content-Type ve Content-Length header'larına dikkat
+### 2) POST + JSON body — note the Content-Type and Content-Length headers
 POST {{host}}/orders
 Content-Type: application/json
 
 {
-  "product": "kitap",
+  "product": "book",
   "quantity": 2
 }
 
-### 3) Status code aileleri — 2xx / 3xx / 4xx / 5xx
+### 3) Status code families — 2xx / 3xx / 4xx / 5xx
 GET {{host}}/status/200
 
 ###
@@ -29,13 +29,13 @@ GET {{host}}/status/404
 ###
 GET {{host}}/status/503
 
-### 4) Yönlendirme: 302 (geçici) ve 301 (kalıcı) — Location header'ını inceleyin
+### 4) Redirect: 302 (temporary) and 301 (permanent) — inspect the Location header
 GET {{host}}/redirect
 
 ###
 GET {{host}}/redirect-permanent
 
-### 5) Idempotency: POST 3 kez → sayaç 3 artar (idempotent DEĞİL)
+### 5) Idempotency: POST 3 times → the counter goes up by 3 (NOT idempotent)
 POST {{host}}/counter/increment
 
 ###
@@ -44,7 +44,7 @@ POST {{host}}/counter/increment
 ###
 GET {{host}}/counter
 
-### 5b) PUT 3 kez → sonuç hep aynı (idempotent)
+### 5b) PUT 3 times → the result is always the same (idempotent)
 PUT {{host}}/counter/42
 
 ###
@@ -53,28 +53,28 @@ PUT {{host}}/counter/42
 ###
 GET {{host}}/counter
 
-### 6) Cookie: önce set edin, sonra okuyun (bu istemci cookie'yi saklar; curl'de -c/-b gerekir)
+### 6) Cookie: set it first, then read it (this client stores the cookie; with curl you need -c/-b)
 GET {{host}}/cookie/set
 
 ###
 GET {{host}}/cookie/read
 
-### 7) Conditional GET: yanıttaki ETag değerini aşağıdaki If-None-Match'e yapıştırın → 304 Not Modified
+### 7) Conditional GET: paste the ETag value from the response into the If-None-Match below → 304 Not Modified
 GET {{host}}/cache/etag
 
 ###
 GET {{host}}/cache/etag
-If-None-Match: "BURAYA-ETAG"
+If-None-Match: "PASTE-ETAG-HERE"
 
-### 8) CORS preflight'ı elle simüle edin (tarayıcının gönderdiği OPTIONS isteği)
+### 8) Simulate the CORS preflight by hand (the OPTIONS request the browser sends)
 OPTIONS {{host}}/cors/data
 Origin: http://localhost:3000
 Access-Control-Request-Method: PUT
 Access-Control-Request-Headers: content-type
 
-### 8b) İzin verilmeyen origin → yanıtta Access-Control-Allow-Origin YOK (isteği sunucu işler, ENGELİ TARAYICI yapar)
+### 8b) Disallowed origin → there is NO Access-Control-Allow-Origin in the response (the server processes the request, the BROWSER does the BLOCKING)
 GET {{host}}/cors/data
 Origin: http://evil.example
 
-### 9) HTTPS (dotnet run -- --https gerekir) — yanıtta Strict-Transport-Security (HSTS) header'ı var
+### 9) HTTPS (requires dotnet run -- --https) — the response carries the Strict-Transport-Security (HSTS) header
 GET {{secureHost}}/hello

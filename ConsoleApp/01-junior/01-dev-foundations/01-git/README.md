@@ -51,16 +51,16 @@ A ← B ← C ← D        main
 ### Günlük komut seti
 
 ```bash
-git status                       # neredeyim, ne değişti?
-git add -p                       # değişiklikleri parça parça stage'le (bilinçli commit için en iyi alışkanlık)
+git status                       # where am I, what changed?
+git add -p                       # stage changes piece by piece (the best habit for deliberate commits)
 git commit -m "feat: ..."
-git switch -c feature/login      # yeni branch aç ve geç (eski: git checkout -b)
+git switch -c feature/login      # create a new branch and switch to it (old: git checkout -b)
 git switch main
-git log --oneline --graph --all  # geçmişin şekli
+git log --oneline --graph --all  # the shape of the history
 git diff                         # working tree ↔ index
 git diff --staged                # index ↔ son commit
-git restore dosya.cs             # working tree'deki değişikliği at (⚠ geri dönüşü yok)
-git restore --staged dosya.cs    # stage'den çıkar (değişiklik diskte kalır)
+git restore file.cs              # discard the change in the working tree (⚠ no way back)
+git restore --staged file.cs     # unstage (the change stays on disk)
 ```
 
 ---
@@ -81,7 +81,7 @@ git restore --staged dosya.cs    # stage'den çıkar (değişiklik diskte kalır
 İkisi de "bir branch'teki işi başka branch'e al" işini yapar, **geçmişin şeklini** farklı bırakır.
 
 ```
-Başlangıç:
+Start:
         E ← F          feature
        /
 A ← B ← C ← D          main
@@ -120,14 +120,14 @@ A ← B ← C ← D ← E′ ← F′
 Aynı satırlar iki tarafta farklı değiştirildiğinde Git karar veremez ve dosyayı işaretler:
 
 ```
-<<<<<<< HEAD                       ← "bizim" taraf (merge'de: bulunduğunuz branch)
+<<<<<<< HEAD                       ← "ours" side (in a merge: the branch you are on)
         return Math.Round(...);
-||||||| ortak ata                  ← (diff3 stilinde) ikisinin çıktığı orijinal
+||||||| common ancestor            ← (diff3 style) the original both sides branched from
         return price - ...;
 =======
         if (percent is < 0 ...) throw ...;
         return price - ...;
->>>>>>> feature/validation         ← "onların" taraf
+>>>>>>> feature/validation         ← "theirs" side
 ```
 
 Adımlar: dosyayı açın → **iki tarafın niyetini** anlayıp birleştirin (çoğu zaman biri diğerini silmez, ikisi de kalır) → işaretleri silin → `git add` → `git commit` (merge) veya `git rebase --continue` (rebase). Vazgeçmek için `git merge --abort` / `git rebase --abort`.
@@ -141,8 +141,8 @@ Adımlar: dosyayı açın → **iki tarafın niyetini** anlayıp birleştirin (�
 **🛠 Alıştırma — merge çakışması üretin ve çözün** (boş bir klasörde; global git ayarınıza dokunmaz):
 
 ```bash
-git init -b main && git config user.name Alistirma && git config user.email a@example.com
-git config merge.conflictStyle diff3            # ortak atayı da gösterir
+git init -b main && git config user.name Practice && git config user.email a@example.com
+git config merge.conflictStyle diff3            # also shows the common ancestor
 
 cat > Calculator.cs <<'CS'
 public static class Calculator
@@ -152,15 +152,15 @@ public static class Calculator
 CS
 git add . && git commit -m "chore: Calculator"
 
-git switch -c feature/validation                # 1. geliştirici: doğrulama ekler
+git switch -c feature/validation                # developer 1: adds validation
 sed -i 's|=> price - price \* percent / 100;|{ if (percent is < 0 or > 100) throw new ArgumentOutOfRangeException(nameof(percent)); return price - price * percent / 100; }|' Calculator.cs
-git commit -am "feat: indirim yüzdesi doğrulaması"
+git commit -am "feat: discount percent validation"
 
-git switch main                                 # 2. geliştirici: AYNI satırı yuvarlar
+git switch main                                 # developer 2: rounds the SAME line
 sed -i 's|=> price - price \* percent / 100;|=> Math.Round(price - price * percent / 100, 2);|' Calculator.cs
-git commit -am "feat: indirimli fiyat 2 basamağa yuvarlanır"
+git commit -am "feat: discounted price is rounded to 2 decimals"
 
-git merge feature/validation                    # ÇAKIŞMA! Calculator.cs'i açın, iki değişikliği birleştirin
+git merge feature/validation                    # CONFLICT! Open Calculator.cs and combine the two changes
 git add Calculator.cs && git commit             # merge commit
 git log --oneline --graph --all
 ```
@@ -170,23 +170,23 @@ Vazgeçmek için `git merge --abort`. Ayrıca deneyin: `git log --merge`, `git d
 **🛠 Alıştırma — aynı çakışmayı rebase ile yaşayın** (yukarıdaki repoyu `git reset --hard` ile ya da yeni bir klasörde başlatın):
 
 ```bash
-git init -b main && git config user.name Alistirma && git config user.email a@example.com
+git init -b main && git config user.name Practice && git config user.email a@example.com
 echo 'public static class Pricing { public static decimal Total(decimal net) => net * 1.18m; }' > Pricing.cs
 git add . && git commit -m "chore: Pricing"
 
-git switch -c feature/currency                  # 2 commit: yuvarlama + yeni sınıf
+git switch -c feature/currency                  # 2 commits: rounding + a new class
 echo 'public static class Pricing { public static decimal Total(decimal net) => Math.Round(net * 1.18m, 2); }' > Pricing.cs
-git commit -am "feat: toplam yuvarlanır"
+git commit -am "feat: total is rounded"
 echo 'public static class Currency { public static string Format(decimal v) => v.ToString("C2"); }' >> Pricing.cs
-git commit -am "feat: para birimi formatlayıcı"
+git commit -am "feat: currency formatter"
 
-git switch main                                 # main: AYNI satırı değiştirir
+git switch main                                 # main: changes the SAME line
 echo 'public static class Pricing { public const decimal VatRate = 1.20m; public static decimal Total(decimal net) => net * VatRate; }' > Pricing.cs
-git commit -am "refactor: KDV oranı sabite taşındı"
+git commit -am "refactor: VAT rate moved to a constant"
 
-git switch feature/currency && git rebase main  # rebase ORTASINDASINIZ: çakışmayı çözün
-git add Pricing.cs && git rebase --continue     # 2. commit de çakışabilir; aynısını tekrarlayın
-git log --oneline --graph --all                 # doğrusal geçmiş — commit'ler YENİ hash aldı
+git switch feature/currency && git rebase main  # you are IN THE MIDDLE of a rebase: resolve the conflict
+git add Pricing.cs && git rebase --continue     # the 2nd commit may conflict too; repeat the same
+git log --oneline --graph --all                 # linear history — the commits got NEW hashes
 ```
 
 Vazgeçmek için `git rebase --abort`. Merge senaryosuyla **geçmişin şeklini** karşılaştırın; paylaşılmış branch'te rebase yapılmaz.
@@ -196,10 +196,10 @@ Vazgeçmek için `git rebase --abort`. Merge senaryosuyla **geçmişin şeklini*
 **`git stash`** — yarım kalmış işi geçici bir rafa kaldırır (acil bir hata düzeltmesi için branch değiştirmeniz gerektiğinde):
 
 ```bash
-git stash push -m "login formu yarım"    # değişiklikleri rafa kaldır (izlenmeyen dosyalar için -u)
+git stash push -m "login form half done"  # shelve the changes (use -u for untracked files)
 git stash list
-git stash pop                            # en üsttekini geri getir ve rafdan sil
-git stash apply stash@{1}                # geri getir ama rafta bırak
+git stash pop                            # bring back the top one and drop it from the stash
+git stash apply stash@{1}                # bring it back but keep it in the stash
 ```
 
 **`git cherry-pick <hash>`** — başka bir branch'teki **tek bir commit'i** bulunduğunuz branch'e kopyalar (yeni hash ile). Tipik kullanım: `main`'deki bir hata düzeltmesini `release/1.4` branch'ine de taşımak (hotfix backport). Aşırı kullanmayın: aynı değişiklik iki farklı commit olarak iki yerde yaşar, ileride merge'de gürültü yaratabilir.
@@ -208,10 +208,10 @@ git stash apply stash@{1}                # geri getir ama rafta bırak
 
 ```bash
 git bisect start
-git bisect bad                    # şu anki HEAD hatalı
-git bisect good v1.3.0            # bu etiket sağlamdı
-# Git ortadaki commit'e geçti → uygulamayı/testi çalıştır → git bisect good|bad
-git bisect run dotnet test        # ya da tamamını otomatikleştir: exit 0 = iyi, 1-127 (125 hariç) = kötü, 125 = atla
+git bisect bad                    # the current HEAD is faulty
+git bisect good v1.3.0            # this tag was fine
+# Git moved to the middle commit → run the app/test → git bisect good|bad
+git bisect run dotnet test        # or automate it all: exit 0 = good, 1-127 (except 125) = bad, 125 = skip
 git bisect reset
 ```
 
@@ -220,22 +220,22 @@ Bisect'in etkili çalışması **küçük commit'lere** ve her commit'in derlene
 **🛠 Alıştırma — bisect ile suçlu commit'i bulun** (40 commit'te biri KDV'yi sessizce bozuyor):
 
 ```bash
-git init -b main && git config user.name Alistirma && git config user.email a@example.com
+git init -b main && git config user.name Practice && git config user.email a@example.com
 printf '#!/usr/bin/env bash\nsource ./vat.env\n[[ $(( 100 * (100 + VAT_PERCENT) / 100 )) -eq 118 ]]\n' > check.sh && chmod +x check.sh
-echo "VAT_PERCENT=18" > vat.env && git add . && git commit -m "chore: ilk commit"
+echo "VAT_PERCENT=18" > vat.env && git add . && git commit -m "chore: initial commit"
 
-BUG_AT=$(( RANDOM % 30 + 6 ))                   # her seferinde farklı: ezberlenemesin
+BUG_AT=$(( RANDOM % 30 + 6 ))                   # different every time: so it can't be memorized
 for i in $(seq 1 40); do
-  echo "- değişiklik $i" >> CHANGELOG.md
-  if [ "$i" -eq "$BUG_AT" ]; then echo "VAT_PERCENT=8" > vat.env; msg="refactor: konfigürasyon temizliği (#$i)"
-  else msg="docs: changelog güncellemesi (#$i)"; fi
+  echo "- change $i" >> CHANGELOG.md
+  if [ "$i" -eq "$BUG_AT" ]; then echo "VAT_PERCENT=8" > vat.env; msg="refactor: configuration cleanup (#$i)"
+  else msg="docs: changelog update (#$i)"; fi
   git add . && git commit -qm "$msg"
 done
 
-git bisect start HEAD "$(git rev-list --max-parents=0 HEAD)"   # kötü = HEAD, iyi = ilk commit
-git bisect run ./check.sh                       # otomatik; elle için her adımda ./check.sh + git bisect good|bad
+git bisect start HEAD "$(git rev-list --max-parents=0 HEAD)"   # bad = HEAD, good = first commit
+git bisect run ./check.sh                       # automatic; manually: ./check.sh + git bisect good|bad at each step
 git bisect reset
-echo "gerçek hatalı commit: #$BUG_AT"
+echo "actual faulty commit: #$BUG_AT"
 ```
 
 `check.sh` çıkış kodu sözleşmesi: `0` = iyi, `1` = kötü, `125` = atla. 40 commit için en fazla ~6 adım (`log₂ 40`).
@@ -252,10 +252,10 @@ echo "gerçek hatalı commit: #$BUG_AT"
 | `revert <hash>` | **ileri** gider | — | — | Eski commit'in etkisini tersine çeviren **yeni** commit eklenir |
 
 ```bash
-git reset --soft HEAD~1      # "son commit'i geri al, ama işimi stage'de bırak" → mesajı düzeltip tekrar commit'lemek için
-git reset --hard origin/main # yerel main'i uzaktakine eşitle, yerel değişiklikleri ÇÖPE AT
-git revert abc1234           # abc1234'ün etkisini geri alan yeni commit
-git revert -m 1 <merge-hash> # bir MERGE commit'ini geri alırken hangi üstün korunacağı (-m 1 = ilk üst)
+git reset --soft HEAD~1      # "undo the last commit but leave my work staged" → to fix the message and commit again
+git reset --hard origin/main # make local main equal to the remote, THROW AWAY local changes
+git revert abc1234           # a new commit that undoes the effect of abc1234
+git revert -m 1 <merge-hash> # when reverting a MERGE commit, which parent to keep (-m 1 = first parent)
 ```
 
 **Paylaşılmış geçmişi neden yeniden yazmamalı?** `reset` + `push --force` geçmişten commit'i siler. Aynı commit'i `pull` etmiş meslektaşlarınızın yerel geçmişinde o commit hâlâ vardır; sonraki push'larında "silinen" commit'i geri getirirler ya da anlaşılmaz çakışmalar yaşarlar. **`revert` geçmişi ileri taşır**, kimsenin elindeki geçmişi geçersiz kılmaz — paylaşılmış branch'te tek güvenli geri alma yoludur.
@@ -269,7 +269,7 @@ git revert -m 1 <merge-hash> # bir MERGE commit'ini geri alırken hangi üstün 
 ```
 main ──●──────────────────●── (merge)
         \                /
-         feature/x ●──●─┘   ← PR: review → CI yeşil → onay → merge
+         feature/x ●──●─┘   ← PR: review → CI green → approval → merge
 ```
 
 1. `main`'den kısa ömürlü feature branch aç.
@@ -300,9 +300,9 @@ Seçim ölçütü: *Deploy sıklığınız* ve *aynı anda kaç sürümü destek
 **Conventional Commits** commit mesajına makine tarafından okunabilir yapı verir:
 
 ```
-<tip>(<kapsam>): <kısa açıklama>
+<type>(<scope>): <short description>
 
-[gövde: NEDEN değişti]
+[body: WHY it changed]
 
 [BREAKING CHANGE: ...]
 ```
@@ -329,17 +329,17 @@ Build çıktıları ve kişisel/IDE dosyaları repoya girmez:
 ```gitignore
 bin/
 obj/
-*.user          # kişisel IDE ayarları
-.vs/            # Visual Studio önbelleği
+*.user          # personal IDE settings
+.vs/            # Visual Studio cache
 .idea/          # Rider
 *.suo
 TestResults/
-appsettings.Development.json   # (projeye bağlı) yerel gizli ayarlar varsa
+appsettings.Development.json   # (project-dependent) if there are local secret settings
 ```
 
 - Hazır şablon: `dotnet new gitignore` (en güncel resmî .NET şablonunu üretir).
 - **Gizli bilgiler (connection string, API key) hiçbir koşulda commit'lenmez.** Yanlışlıkla commit'lendiyse anahtarı **iptal edin/yenileyin** — geçmişten silmek yetmez (başka klonlarda ve cache'lerde kalır). Yerelde `dotnet user-secrets` kullanılır (→ J6.3, J11.4).
-- Zaten izlenen bir dosyayı sonradan `.gitignore`'a eklemek işe yaramaz; önce `git rm --cached dosya` gerekir.
+- Zaten izlenen bir dosyayı sonradan `.gitignore`'a eklemek işe yaramaz; önce `git rm --cached file` gerekir.
 
 ---
 
@@ -348,12 +348,12 @@ appsettings.Development.json   # (projeye bağlı) yerel gizli ayarlar varsa
 **"Cuma akşamı prod'da fatura toplamı yanlış."**
 
 1. Müşteri şikâyeti geldi; son iki haftada ~150 commit girmiş. Hatalı sürümü (`v2.3.1`) ve son sağlam sürümü (`v2.2.0`) biliyorsunuz.
-2. `git bisect start v2.3.1 v2.2.0` ile 7-8 adımda suçlu commit'i bulursunuz: "refactor: konfigürasyon temizliği" — KDV oranı yanlışlıkla değişmiş (tam olarak yukarıdaki bisect alıştırmasının senaryosu).
+2. `git bisect start v2.3.1 v2.2.0` ile 7-8 adımda suçlu commit'i bulursunuz: "refactor: configuration cleanup" — KDV oranı yanlışlıkla değişmiş (tam olarak yukarıdaki bisect alıştırmasının senaryosu).
 3. Fix'i hemen yayınlamak için yarım işinizi `git stash` ile rafa kaldırırsınız.
 4. `main`'den `hotfix/vat-rate` branch'i açar, düzeltir, PR açar, review + CI'dan sonra merge edersiniz.
 5. Aynı düzeltme eski bir `release/2.2` hattında da destekleniyorsa `git cherry-pick` ile backport edilir.
 6. Hatalı commit çok başka şeyle iç içeyse ve acil geri alınması gerekiyorsa: `git revert <hash>` (asla `reset --hard` + `push --force`).
-7. Sonra `git stash pop` ile işinize dönersiniz. Kalıcı çözüm: aynı hatayı yakalayacak bir test eklenir ve commit mesajı `fix(billing): KDV oranı 18'e geri alındı` olur → otomatik changelog'da görünür.
+7. Sonra `git stash pop` ile işinize dönersiniz. Kalıcı çözüm: aynı hatayı yakalayacak bir test eklenir ve commit mesajı `fix(billing): restore VAT rate to 18` olur → otomatik changelog'da görünür.
 
 ---
 
@@ -383,7 +383,7 @@ Sık sorulanlar ([`interview-questions.md`](interview-questions.md)'de cevaplar�
 | Gizli bilgiyi commit'leyip "sonra silerim" demek | Geçmişte kalır. Anahtarı **iptal edin**. |
 | Çakışmayı çözüp derlememek/test etmemek | Semantik çakışma main'i kırar. |
 | `git pull` ile istemeden merge commit üretmek | `git config --global pull.rebase true` veya `git pull --ff-only` alışkanlığı. |
-| Detached HEAD'de commit atıp branch açmadan ayrılmak | Commit'ler "kaybolur". `git switch -c kurtar` ya da `reflog`. |
+| Detached HEAD'de commit atıp branch açmadan ayrılmak | Commit'ler "kaybolur". `git switch -c rescue` ya da `reflog`. |
 | Binary/büyük dosyaları repoya koymak | Repo şişer, geçmişten temizlemek zordur. Git LFS veya artifact depolama. |
 
 ---
