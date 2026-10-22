@@ -7,7 +7,7 @@ public static class Section12_XmlDocs
         // XML comments written with `///`: (1) show up as descriptions in IntelliSense, (2) <GenerateDocumentationFile>
         // in the csproj produces a .xml file, (3) Swashbuckle/OpenAPI reads this file and carries the
         // endpoint descriptions into Swagger UI (→ J7.5), (4) tools like docfx generate a documentation site.
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, "ProgramAnatomy.xml");
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, typeof(Section12_XmlDocs).Assembly.GetName().Name + ".xml");
         Console.WriteLine($"Generated XML file: {xmlPath}  (exists: {File.Exists(xmlPath)})");
 
         if (File.Exists(xmlPath))
