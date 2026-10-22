@@ -6,18 +6,18 @@ public static class Section04_ForgottenToken
 {
     private const int StageMs = 300;
 
-    // DOĞRU: token her aşamaya geçiriliyor
+    // CORRECT: the token is passed to every stage
     private static async Task PipelineAsync(CancellationToken ct)
     {
-        await Task.Delay(StageMs, ct);       // aşama 1
-        await Task.Delay(StageMs, ct);       // aşama 2
-        await Task.Delay(StageMs, ct);       // aşama 3
+        await Task.Delay(StageMs, ct);       // stage 1
+        await Task.Delay(StageMs, ct);       // stage 2
+        await Task.Delay(StageMs, ct);       // stage 3
     }
 
-    // HATALI: token'ı alıyor ama alt çağrılara geçirmeyi UNUTUYOR
+    // WRONG: it accepts the token but FORGETS to pass it to the sub-calls
     private static async Task ForgetfulPipelineAsync(CancellationToken ct)
     {
-        await Task.Delay(StageMs);           // ← ct YOK: iptal duyulmaz
+        await Task.Delay(StageMs);           // ← NO ct: cancellation is not heard
         await Task.Delay(StageMs);
         await Task.Delay(StageMs);
     }
@@ -28,33 +28,33 @@ public static class Section04_ForgottenToken
         var sw = Stopwatch.StartNew();
         var task = pipeline(cts.Token);
         await Task.Delay(100);
-        cts.Cancel();                                         // 100 ms'de iptal
+        cts.Cancel();                                         // cancel at 100 ms
         try { await task; } catch (OperationCanceledException) { }
         return sw.ElapsedMilliseconds;
     }
 
     public static async Task Run()
     {
-        Console.WriteLine($"3 aşamalı iş ({3 * StageMs} ms). 100 ms'de iptal ediliyor. 'İptalden kaç ms sonra durdu?' ölçülür:\n");
+        Console.WriteLine($"3-stage job ({3 * StageMs} ms). Cancelled at 100 ms. We measure 'how many ms after the start did it stop?':\n");
 
         var good = await TimeToCancel(PipelineAsync);
-        Console.WriteLine($"   token alt çağrılara geçiriliyor → {good,4} ms'de durdu     ✓ iptale hemen tepki");
+        Console.WriteLine($"   token is passed to the sub-calls → stopped at {good,4} ms     ✓ reacts to cancellation immediately");
 
         var bad = await TimeToCancel(ForgetfulPipelineAsync);
-        Console.WriteLine($"   token geçirmeyi UNUTMUŞ         → {bad,4} ms'de bitti      ✗ iptal tamamen görmezden gelindi (işin tamamı yapıldı)");
+        Console.WriteLine($"   forgot to pass the token         → finished at {bad,4} ms      ✗ cancellation completely ignored (all of the work was done)");
 
         Console.WriteLine("""
 
-        Token'ı geçirmeyi unutmak sessiz bir hatadır: derleme uyarısı vermez, test geçer, ama kullanıcı iptal edince iş sürer.
-        Savunma: CA2016 ("CancellationToken'ı ileri geçir") analyzer kuralı — varsayılan şiddeti düşüktür (öneri); .editorconfig ile warning yapın. Kod incelemesinde 'ct' arayın.
+        Forgetting to pass the token is a silent bug: no compiler warning, the test passes, but when the user cancels the work continues.
+        Defence: the CA2016 analyzer rule ("Forward the CancellationToken parameter") — its default severity is low (suggestion); make it a warning via .editorconfig. Look for 'ct' in code reviews.
 
-        Token kabul eden tipik API'ler:
+        Typical APIs that accept a token:
           • HttpClient        : GetAsync(url, ct), GetStringAsync(url, ct), SendAsync(request, ct)
           • EF Core           : ToListAsync(ct), FirstOrDefaultAsync(ct), SaveChangesAsync(ct)
           • Stream / File     : ReadAsync(buffer, ct), File.ReadAllTextAsync(path, ct)
-          • Task / eşitleme   : Task.Delay(ms, ct), SemaphoreSlim.WaitAsync(ct), Task.Run(work, ct)
-          • Channel / akış    : reader.ReadAsync(ct), IAsyncEnumerable.WithCancellation(ct)
-        CPU döngüsünde (token alan API yok) kendin kontrol et: ct.ThrowIfCancellationRequested() — her N iterasyonda bir.
+          • Task / sync       : Task.Delay(ms, ct), SemaphoreSlim.WaitAsync(ct), Task.Run(work, ct)
+          • Channel / stream  : reader.ReadAsync(ct), IAsyncEnumerable.WithCancellation(ct)
+        In a CPU loop (no API that takes a token) check it yourself: ct.ThrowIfCancellationRequested() — once every N iterations.
         """);
     }
 }

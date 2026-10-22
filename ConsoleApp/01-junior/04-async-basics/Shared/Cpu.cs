@@ -1,6 +1,6 @@
 namespace Junior.AsyncBasics.Shared;
 
-/// <summary>Demolarda "CPU-bound iş" olarak kullanılan basit, deterministik hesap (asal sayma). İşlemciyi gerçekten meşgul eder.</summary>
+/// <summary>Simple, deterministic computation (prime counting) used as the "CPU-bound work" in the demos. It really keeps the CPU busy.</summary>
 public static class Cpu
 {
     public static int CountPrimes(int upTo)

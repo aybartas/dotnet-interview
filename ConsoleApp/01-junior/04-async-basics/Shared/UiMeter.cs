@@ -3,8 +3,8 @@ using System.Diagnostics;
 namespace Junior.AsyncBasics.Shared;
 
 /// <summary>
-/// "UI thread duyarlılığı" ölçer: tek thread'li bağlamda bir zamanlayıcı (20 ms'de bir "tık") çalışırken verilen iş de AYNI thread'de koşar.
-/// İş thread'i bloklarsa tıklar duraklar (donmuş UI); bloklamazsa tıklar akmaya devam eder.
+/// Measures "UI thread responsiveness": while a timer (a "tick" every 20 ms) runs on a single-threaded context, the given work runs on the SAME thread.
+/// If the work blocks the thread, the ticks stall (frozen UI); if it does not block, the ticks keep flowing.
 /// </summary>
 public static class UiMeter
 {
@@ -20,10 +20,10 @@ public static class UiMeter
             catch (OperationCanceledException) { }
         });
 
-        await Task.Delay(60);                                 // zamanlayıcı ısınsın
+        await Task.Delay(60);                                 // let the timer warm up
         var before = ticks;
         var sw = Stopwatch.StartNew();
-        await ui.InvokeAsync(work);                           // iş, "UI thread"inde başlar
+        await ui.InvokeAsync(work);                           // the work starts on the "UI thread"
         var ms = sw.ElapsedMilliseconds;
         var during = ticks - before;
 

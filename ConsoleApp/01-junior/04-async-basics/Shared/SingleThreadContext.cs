@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 namespace Junior.AsyncBasics.Shared;
 
 /// <summary>
-/// Klasik UI iş parçacığının (WinForms/WPF) ve eski ASP.NET'in davranışını taklit eden tek thread'li SynchronizationContext.
-/// <c>await</c>'ten sonra devam kodu bu thread'e geri gönderilir (Post). Thread bloklanırsa devam kodları çalışamaz → deadlock / "donmuş UI".
-/// ASP.NET Core'un böyle bir context'i YOKTUR; bu sınıf yalnızca etkiyi güvenle göstermek içindir.
+/// A single-threaded SynchronizationContext that mimics the behaviour of the classic UI thread (WinForms/WPF) and legacy ASP.NET.
+/// After an <c>await</c>, the continuation is posted back to this thread (Post). If the thread is blocked, continuations cannot run → deadlock / "frozen UI".
+/// ASP.NET Core has NO such context; this class exists only to demonstrate the effect safely.
 /// </summary>
 public sealed class SingleThreadContext : SynchronizationContext, IDisposable
 {
@@ -16,7 +16,7 @@ public sealed class SingleThreadContext : SynchronizationContext, IDisposable
 
     public SingleThreadContext(string name = "UI")
     {
-        _thread = new Thread(Loop) { IsBackground = true, Name = name };   // background: deadlock olsa bile process kapanabilsin
+        _thread = new Thread(Loop) { IsBackground = true, Name = name };   // background: so the process can still exit even if there is a deadlock
         _thread.Start();
     }
 
@@ -29,7 +29,7 @@ public sealed class SingleThreadContext : SynchronizationContext, IDisposable
             callback(state);
     }
 
-    /// <summary>İşi bu context'in thread'inde başlatır; dönen Task işin tamamlanmasını temsil eder.</summary>
+    /// <summary>Starts the work on this context's thread; the returned Task represents the completion of the work.</summary>
     public Task<T> InvokeAsync<T>(Func<Task<T>> work)
     {
         var tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);

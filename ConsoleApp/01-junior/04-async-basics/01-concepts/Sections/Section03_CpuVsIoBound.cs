@@ -5,13 +5,13 @@ namespace Junior.AsyncBasics.Concepts;
 
 public static class Section03_CpuVsIoBound
 {
-#pragma warning disable CS1998 // Bu "async" metotta await yok — bilerek: async anahtar kelimesi işi başka thread'e TAŞIMAZ
+#pragma warning disable CS1998 // This "async" method has no await — on purpose: the async keyword does NOT move the work to another thread
     private static async Task<int> FakeAsyncCpu(int size) => Cpu.CountPrimes(size);
 #pragma warning restore CS1998
 
     public static async Task Run()
     {
-        // ── CPU-bound: işlemci çalışır; çözüm = daha çok çekirdek (Task.Run / Parallel) ──
+        // ── CPU-bound: the processor works; solution = more cores (Task.Run / Parallel) ──
         const int size = 200_000;
         var cores = Environment.ProcessorCount;
 
@@ -22,18 +22,18 @@ public static class Section03_CpuVsIoBound
         sw.Restart();
         await Task.WhenAll(Enumerable.Range(0, cores).Select(_ => Task.Run(() => Cpu.CountPrimes(size))));
         var parallel = sw.ElapsedMilliseconds;
-        Console.WriteLine($"CPU-bound ({cores} iş, asal sayma): sıralı {sequential} ms → Task.Run + WhenAll {parallel} ms   (işlemci meşgul; çekirdek eklemek hızlandırır)");
+        Console.WriteLine($"CPU-bound ({cores} jobs, prime counting): sequential {sequential} ms → Task.Run + WhenAll {parallel} ms   (CPU is busy; adding cores speeds it up)");
 
-        // ── I/O-bound: iş BEKLEMEKten ibaret (ağ, disk, veritabanı); işlemci boş; çözüm = thread tutmadan beklemek (async) ──
+        // ── I/O-bound: the work consists of WAITING (network, disk, database); the CPU is idle; solution = wait without holding a thread (async) ──
         var threadsBefore = ThreadPool.ThreadCount;
         sw.Restart();
-        await Task.WhenAll(Enumerable.Range(0, 200).Select(_ => Task.Delay(300)));      // 200 "ağ çağrısı"
-        Console.WriteLine($"I/O-bound (200 eşzamanlı 300 ms bekleme): {sw.ElapsedMilliseconds} ms toplam, thread sayısı {threadsBefore} → {ThreadPool.ThreadCount}");
-        Console.WriteLine("   (sıralı bekleseydik 60 sn; 200 thread açsaydık ~200 MB stack — async: thread yok, sadece bekleyen task nesneleri)");
+        await Task.WhenAll(Enumerable.Range(0, 200).Select(_ => Task.Delay(300)));      // 200 "network calls"
+        Console.WriteLine($"I/O-bound (200 concurrent 300 ms waits): {sw.ElapsedMilliseconds} ms total, thread count {threadsBefore} → {ThreadPool.ThreadCount}");
+        Console.WriteLine("   (waiting sequentially would take 60 s; 200 threads would cost ~200 MB of stack — async: no threads, just waiting task objects)");
 
-        // ── Yanılgı: "async yaparsam CPU işi hızlanır" ──
+        // ── Misconception: "if I make it async, the CPU work gets faster" ──
         sw.Restart();
-        var task = FakeAsyncCpu(size * 2);                  // await YOK: metot çağıran thread'de SENKRON çalışır
+        var task = FakeAsyncCpu(size * 2);                  // NO await: the method runs SYNCHRONOUSLY on the calling thread
         var returnedAfter = sw.ElapsedMilliseconds;
         await task;
 
@@ -42,19 +42,19 @@ public static class Section03_CpuVsIoBound
         var offloadReturnedAfter = sw.ElapsedMilliseconds;
         await offloaded;
 
-        Console.WriteLine($"\nYanılgı: 'async' CPU işini arka plana almaz. async metot çağrısı {returnedAfter} ms sonra döndü (çağıran bloklandı); Task.Run {offloadReturnedAfter} ms'de döndü.");
+        Console.WriteLine($"\nMisconception: 'async' does not move CPU work to the background. The async method call returned after {returnedAfter} ms (the caller was blocked); Task.Run returned in {offloadReturnedAfter} ms.");
 
         Console.WriteLine("""
 
-        Hangi iş, hangi araç?
-        ┌────────────────┬───────────────────────────────┬──────────────────────────────────────────────┐
-        │ İş türü        │ Darboğaz                      │ Araç                                         │
-        ├────────────────┼───────────────────────────────┼──────────────────────────────────────────────┤
-        │ I/O-bound      │ ağ, disk, DB (bekleme)        │ async/await (GetStringAsync, ReadAsync…)     │
-        │ CPU-bound      │ işlemci (hesap, sıkıştırma)   │ Parallel.For / PLINQ / Task.Run (UI/arka plan)│
-        └────────────────┴───────────────────────────────┴──────────────────────────────────────────────┘
-        ASP.NET Core'da CPU-bound işi Task.Run ile istek thread'inden başka havuz thread'ine atmak KAZANÇ SAĞLAMAZ
-        (aynı havuz); yalnızca arka plan servisine/kuyruğa taşımak (→ M12) anlamlıdır.
+        Which work, which tool?
+        ┌────────────────┬───────────────────────────────┬─────────────────────────────────────────────────┐
+        │ Work type      │ Bottleneck                    │ Tool                                            │
+        ├────────────────┼───────────────────────────────┼─────────────────────────────────────────────────┤
+        │ I/O-bound      │ network, disk, DB (waiting)   │ async/await (GetStringAsync, ReadAsync…)        │
+        │ CPU-bound      │ processor (compute, compress) │ Parallel.For / PLINQ / Task.Run (UI/background) │
+        └────────────────┴───────────────────────────────┴─────────────────────────────────────────────────┘
+        In ASP.NET Core, pushing CPU-bound work from the request thread to another pool thread with Task.Run GAINS NOTHING
+        (same pool); only moving it to a background service/queue (→ M12) makes sense.
         """);
     }
 }
