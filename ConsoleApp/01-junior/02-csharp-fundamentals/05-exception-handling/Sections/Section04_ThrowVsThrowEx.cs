@@ -6,28 +6,28 @@ public static class Section04_ThrowVsThrowEx
 {
     public static void Run()
     {
-        Console.WriteLine("Zincir:  Entry() → Middle() → ThrowSite()  ← hata GERÇEKTE burada fırlatılıyor. Entry catch'te yeniden fırlatıyor.\n");
+        Console.WriteLine("Chain:  Entry() → Middle() → ThrowSite()  ← this is where the error is ACTUALLY thrown. Entry rethrows in its catch.\n");
 
-        Show("catch { throw; }                       (DOĞRU)", Rethrow.Capture(Rethrow.Mode.ThrowKeyword));
-        Show("catch (Exception ex) { throw ex; }     (YANLIŞ — stack trace KAYBOLUR)", Rethrow.Capture(Rethrow.Mode.ThrowEx));
+        Show("catch { throw; }                       (CORRECT)", Rethrow.Capture(Rethrow.Mode.ThrowKeyword));
+        Show("catch (Exception ex) { throw ex; }     (WRONG — the stack trace is LOST)", Rethrow.Capture(Rethrow.Mode.ThrowEx));
 
         var wrapped = Rethrow.Capture(Rethrow.Mode.Wrap);
-        Show("catch (...) { throw new X(\"..\", ex); } (sarmalama — inner KORUNUR)", wrapped);
-        Console.WriteLine("      └─ InnerException stack'i:");
+        Show("catch (...) { throw new X(\"..\", ex); } (wrapping — inner is PRESERVED)", wrapped);
+        Console.WriteLine("      └─ InnerException stack:");
         PrintFrames(wrapped.InnerException!, indent: "         ");
 
         Show("ExceptionDispatchInfo.Capture(ex).Throw()", Rethrow.Capture(Rethrow.Mode.DispatchInfo));
 
         Console.WriteLine("""
 
-        SONUÇ
-          • `throw;`   → orijinal stack trace korunur. Yeniden fırlatmanın DOĞRU yolu.
-          • `throw ex;` → stack trace catch noktasından yeniden başlar; ThrowSite/Middle kaybolur → hatanın NEREDE doğduğunu bulamazsınız.
-          • Bağlam eklemek istiyorsanız yeni exception + `innerException` parametresi (hiçbir bilgi kaybolmaz).
-          • ExceptionDispatchInfo: catch'te yakalanan exception'ı başka bir yerden/thread'den orijinal stack'iyle fırlatmak için
-            (async altyapısı Task.Exception'ı `await`'te bu mekanizmayla yeniden fırlatır).
-          • Hiç yakalamayacaksanız catch yazmayın; yalnızca bir şey YAPACAKSANIZ (log, temizlik, dönüştürme) yakalayın.
-          • `throw;` yalnızca catch bloğunun içinde geçerlidir.
+        CONCLUSION
+          • `throw;`   → the original stack trace is preserved. The CORRECT way to rethrow.
+          • `throw ex;` → the stack trace restarts at the catch point; ThrowSite/Middle disappear → you can't tell WHERE the error originated.
+          • If you want to add context: a new exception + the `innerException` parameter (no information is lost).
+          • ExceptionDispatchInfo: to throw an exception caught in a catch from somewhere else/another thread with its original stack
+            (the async infrastructure rethrows Task.Exception at `await` with this mechanism).
+          • If you won't handle it at all, don't write a catch; catch only if you will DO something (log, clean up, translate).
+          • `throw;` is valid only inside a catch block.
         """);
     }
 
@@ -36,7 +36,7 @@ public static class Section04_ThrowVsThrowEx
         Console.WriteLine($"▶ {title}");
         Console.WriteLine($"   {ex.GetType().Name}: {ex.Message}");
         PrintFrames(ex, indent: "   ");
-        Console.WriteLine($"   ThrowSite stack'te var mı? → {ex.StackTrace?.Contains("ThrowSite") == true}\n");
+        Console.WriteLine($"   Is ThrowSite in the stack? → {ex.StackTrace?.Contains("ThrowSite") == true}\n");
     }
 
     private static void PrintFrames(Exception ex, string indent)

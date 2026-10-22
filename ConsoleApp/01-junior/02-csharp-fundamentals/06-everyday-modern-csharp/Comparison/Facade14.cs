@@ -5,7 +5,7 @@ namespace Junior.CSharpFundamentals.ModernCSharp.Comparison;
 
 public sealed class Facade14 : IOrderFacade
 {
-    public string StyleName => "C# 14 tarzı";
+    public string StyleName => "C# 14 style";
 
     private static Order Build(string tier, string name, string email, string? city, IReadOnlyList<(string Product, int Qty, decimal Price)> lines, OrderStatus status = OrderStatus.Pending)
         => new("ORD-1",
@@ -29,15 +29,15 @@ public sealed class Facade14 : IOrderFacade
 
     public bool IdenticalOrdersAreEqual()
     {
-        (string, int, decimal)[] lines = [("Kalem", 2, 12.5m)];
-        return Build("Gold", "Ayşe", "a@x.com", "Ankara", lines, OrderStatus.Paid)
-            .Equals(Build("Gold", "Ayşe", "a@x.com", "Ankara", lines, OrderStatus.Paid));
+        (string, int, decimal)[] lines = [("Pen", 2, 12.5m)];
+        return Build("Gold", "Alice", "a@x.com", "London", lines, OrderStatus.Paid)
+            .Equals(Build("Gold", "Alice", "a@x.com", "London", lines, OrderStatus.Paid));
     }
 
     public string RenameIfPresent(bool customerExists, string newName)
     {
-        Customer? customer = customerExists ? new("eski", CustomerTier.Standard) : null;
-        customer?.Name = newName;                                   // C# 14: null-conditional ASSIGNMENT (customer null ise atama hiç yapılmaz)
-        return customer?.Name ?? "(müşteri yok)";
+        Customer? customer = customerExists ? new("old", CustomerTier.Standard) : null;
+        customer?.Name = newName;                                   // C# 14: null-conditional ASSIGNMENT (if customer is null the assignment is never performed)
+        return customer?.Name ?? "(no customer)";
     }
 }

@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
-// "C# 7 TARZI" sipariş modeli. Bu dosya BİLEREK eski alışkanlıklarla yazılmıştır
-// (derleyici hâlâ C# 14 olsa da stil C# 7 dönemidir): block-scoped namespace, açık using'ler, elle Equals/GetHashCode/ToString,
-// elle immutability (readonly alan + ctor + WithXxx metotları), switch STATEMENT, if + throw null kontrolleri, string.Format/StringBuilder.
-// `#nullable disable`: C# 7 döneminde nullable reference types YOKTU; bu yüzden bu dosyada null analizi kapalıdır (oblivious).
-// Aynı model: ../Csharp14Style/Domain.cs. Satır sayısı ve okunabilirliği karşılaştırın (Section 10).
+// The order model in "C# 7 STYLE". This file is written with old habits ON PURPOSE
+// (the compiler is still C# 14, but the style is from the C# 7 era): block-scoped namespace, explicit usings, hand-written Equals/GetHashCode/ToString,
+// manual immutability (readonly field + ctor + WithXxx methods), switch STATEMENT, if + throw null checks, string.Format/StringBuilder.
+// `#nullable disable`: nullable reference types did NOT exist in the C# 7 era; that's why null analysis is turned off in this file (oblivious).
+// The same model: ../Csharp14Style/Domain.cs. Compare line count and readability (Section 10).
 // ═══════════════════════════════════════════════════════════════════════════════════════
 #nullable disable
 namespace Junior.CSharpFundamentals.ModernCSharp.Csharp7Style
@@ -209,7 +209,7 @@ namespace Junior.CSharpFundamentals.ModernCSharp.Csharp7Style
                     next = OrderStatus.Cancelled;
                     break;
                 default:
-                    throw new InvalidOperationException(string.Format("'{0}' durumundaki sipariş için '{1}' işlemi geçersiz", Status, action));
+                    throw new InvalidOperationException(string.Format("Action '{1}' is invalid for an order in '{0}' state", Status, action));
             }
             return WithStatus(next);
         }
@@ -221,7 +221,7 @@ namespace Junior.CSharpFundamentals.ModernCSharp.Csharp7Style
             {
                 city = Customer.Address.City;
             }
-            return city ?? "adres yok";
+            return city ?? "no address";
         }
 
         public bool Equals(Order other)
@@ -251,13 +251,13 @@ namespace Junior.CSharpFundamentals.ModernCSharp.Csharp7Style
         {
             var inv = CultureInfo.InvariantCulture;
             var sb = new StringBuilder();
-            sb.AppendLine(string.Format(inv, "SİPARİŞ {0} — {1} <{2}>", Id, Customer.Name, Customer.Email));
-            sb.AppendLine(string.Format(inv, "{0} müşteri · {1}", Customer.Tier, ShippingLabel()));
+            sb.AppendLine(string.Format(inv, "ORDER {0} — {1} <{2}>", Id, Customer.Name, Customer.Email));
+            sb.AppendLine(string.Format(inv, "{0} customer · {1}", Customer.Tier, ShippingLabel()));
             foreach (var line in _lines)
             {
                 sb.AppendLine(string.Format(inv, "  {0} × {1} = {2}", line.Quantity, line.Product, line.Total.ToString("F2", inv)));
             }
-            sb.Append(string.Format(inv, "Ara toplam: {0} · İndirim %{1} → {2}",
+            sb.Append(string.Format(inv, "Subtotal: {0} · Discount {1}% → {2}",
                 Subtotal.ToString("F2", inv), (DiscountRate * 100).ToString("0", inv), Total.ToString("F2", inv)));
             return sb.ToString();
         }

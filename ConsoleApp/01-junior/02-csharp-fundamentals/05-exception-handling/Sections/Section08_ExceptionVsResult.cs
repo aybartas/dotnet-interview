@@ -6,34 +6,34 @@ public static class Section08_ExceptionVsResult
 {
     public static void Run()
     {
-        Console.WriteLine("Aynı iş kuralı iki biçimde:\n");
+        Console.WriteLine("The same business rule in two forms:\n");
 
-        Console.WriteLine("A) Exception: çağıran try/catch yazmak ZORUNDA DEĞİL (unutabilir) ve imza hatayı göstermez");
+        Console.WriteLine("A) Exception: the caller is NOT FORCED to write try/catch (may forget) and the signature doesn't reveal the error");
         try { _ = AccountService.WithdrawOrThrow(balance: 100m, amount: 250m); }
-        catch (InsufficientFundsException ex) { Console.WriteLine($"   yakalandı: {ex.Message}"); }
+        catch (InsufficientFundsException ex) { Console.WriteLine($"   caught: {ex.Message}"); }
 
-        Console.WriteLine("\nB) Result: imza 'başarısız olabilir' der; çağıran iki durumu da ele almak zorunda (Match)");
+        Console.WriteLine("\nB) Result: the signature says 'may fail'; the caller must handle both cases (Match)");
         var ok = AccountService.TryWithdraw(100m, 40m);
         var fail = AccountService.TryWithdraw(100m, 250m);
-        Console.WriteLine($"   {ok.Match(v => $"kalan bakiye {v:N2}", e => $"hata: {e}")}");
-        Console.WriteLine($"   {fail.Match(v => $"kalan bakiye {v:N2}", e => $"hata: {e}")}");
+        Console.WriteLine($"   {ok.Match(v => $"remaining balance {v:N2}", e => $"error: {e}")}");
+        Console.WriteLine($"   {fail.Match(v => $"remaining balance {v:N2}", e => $"error: {e}")}");
 
         Console.WriteLine("""
 
-        Hangisi ne zaman?
-        ┌────────────────────────────┬──────────────────────────────────┬─────────────────────────────────────────┐
-        │                            │ Exception                        │ Result / Try-deseni / null              │
-        ├────────────────────────────┼──────────────────────────────────┼─────────────────────────────────────────┤
-        │ Hata türü                  │ Beklenmeyen, programcı/ortam hatası│ BEKLENEN iş sonucu (doğrulama, kayıt yok)│
-        │ Sık mı gerçekleşir?        │ Nadir                            │ Normal akışın parçası olabilir          │
-        │ Performans                 │ Fırlatma pahalı                  │ Ucuz (sıradan dönüş değeri)             │
-        │ Çağıranı zorlama           │ Hayır (unutulabilir)             │ Evet (tipten ele alması gerekir)        │
-        │ Derin çağrı zincirinde     │ Otomatik yukarı yayılır          │ Her seviyede taşıma gerekir (Map/Bind)  │
-        │ Örnek                      │ DB bağlantısı koptu, bug, null   │ Parse, "kullanıcı bulunamadı", yetersiz bakiye│
-        └────────────────────────────┴──────────────────────────────────┴─────────────────────────────────────────┘
-        Pratik: framework/altyapı ve gerçekten istisnai durumlar → exception; iş kuralı sonuçları → Result ya da Try deseni (int.TryParse).
-        İkisi bir arada da kullanılır: domain Result döner, en dış katman (API) gerekirse HTTP koduna çevirir; beklenmeyen hata exception olarak kalır.
-        Result pattern, ROP, OneOf/ErrorOr kütüphaneleri ve tartışması → M11.6.
+        Which one when?
+        ┌──────────────────────┬──────────────────────────────────────────┬───────────────────────────────────────────────────┐
+        │                      │ Exception                                │ Result / Try pattern / null                       │
+        ├──────────────────────┼──────────────────────────────────────────┼───────────────────────────────────────────────────┤
+        │ Kind of failure      │ Unexpected: programmer/environment error │ EXPECTED business outcome (validation, not found) │
+        │ Happens often?       │ Rarely                                   │ Can be part of the normal flow                    │
+        │ Performance          │ Throwing is expensive                    │ Cheap (an ordinary return value)                  │
+        │ Forces the caller    │ No (can be forgotten)                    │ Yes (the type requires handling it)               │
+        │ In a deep call chain │ Propagates up automatically              │ Must be carried at every level (Map/Bind)         │
+        │ Example              │ DB connection lost, bug, null            │ Parse, "user not found", insufficient balance     │
+        └──────────────────────┴──────────────────────────────────────────┴───────────────────────────────────────────────────┘
+        In practice: framework/infrastructure and truly exceptional situations → exception; business-rule outcomes → Result or the Try pattern (int.TryParse).
+        They can also be combined: the domain returns Result, the outermost layer (API) translates it to an HTTP code if needed; unexpected errors stay exceptions.
+        Result pattern, ROP, the OneOf/ErrorOr libraries and the debate around them → M11.6.
         """);
     }
 }

@@ -4,38 +4,38 @@ public static class Section07_PrimaryConstructors
 {
     public static void Run()
     {
-        // ESKİ: alan + ctor + atama boilerplate'i
-        var oldStyle = new GreeterOld(new Logger(), "Merhaba");
-        // YENİ: primary constructor — parametreler sınıfın İÇİNDE kullanılabilir (yakalanır)
-        var newStyle = new Greeter(new Logger(), "Merhaba");
-        Console.WriteLine($"eski  : {oldStyle.Greet("Ayşe")}");
-        Console.WriteLine($"yeni  : {newStyle.Greet("Ayşe")}");
+        // OLD: field + ctor + assignment boilerplate
+        var oldStyle = new GreeterOld(new Logger(), "Hello");
+        // NEW: primary constructor — the parameters can be used INSIDE the class (they are captured)
+        var newStyle = new Greeter(new Logger(), "Hello");
+        Console.WriteLine($"old   : {oldStyle.Greet("Alice")}");
+        Console.WriteLine($"new   : {newStyle.Greet("Alice")}");
 
-        // Class'ta primary ctor parametresi PROPERTY DEĞİLDİR (yakalanan bir gizli alan); record'da ise property'dir
+        // In a class a primary ctor parameter is NOT A PROPERTY (it's a captured hidden field); in a record it IS a property
         var prop = typeof(Greeter).GetProperty("Prefix");
-        Console.WriteLine($"\nclass primary ctor parametresi property mi?  typeof(Greeter).GetProperty(\"Prefix\") = {(prop is null ? "null (HAYIR)" : "var")}");
-        Console.WriteLine($"record primary ctor parametresi property mi? typeof(Point).GetProperty(\"X\")      = {(typeof(Point).GetProperty("X") is null ? "null" : "VAR (otomatik init property)")}");
+        Console.WriteLine($"\nis a class primary ctor parameter a property?  typeof(Greeter).GetProperty(\"Prefix\") = {(prop is null ? "null (NO)" : "exists")}");
+        Console.WriteLine($"is a record primary ctor parameter a property? typeof(Point).GetProperty(\"X\")      = {(typeof(Point).GetProperty("X") is null ? "null" : "EXISTS (automatic init property)")}");
 
-        // Parametreyi property'ye açmak ve doğrulamak
+        // Exposing a parameter as a property and validating it
         var account = new Account("ACC-1", 100m);
-        Console.WriteLine($"\ndoğrulama: {account.Id} bakiye {account.Balance}");
+        Console.WriteLine($"\nvalidation: {account.Id} balance {account.Balance}");
         try { _ = new Account("", 1m); }
-        catch (ArgumentException ex) { Console.WriteLine($"   boş id → {ex.GetType().Name}"); }
+        catch (ArgumentException ex) { Console.WriteLine($"   empty id → {ex.GetType().Name}"); }
 
-        // Primary ctor + yakalanan parametrenin mutasyonu = sürpriz
+        // Primary ctor + mutating the captured parameter = surprise
         var counter = new Counter(10);
         counter.Increment(); counter.Increment();
-        Console.WriteLine($"\nyakalanan parametre DEĞİŞKENDİR: Counter(10) iki artış sonrası = {counter.Value}  (parametre state olarak kullanılıyor — dikkat)");
+        Console.WriteLine($"\nthe captured parameter is a VARIABLE: Counter(10) after two increments = {counter.Value}  (the parameter is used as state — careful)");
 
         Console.WriteLine("""
 
-        Kural özeti:
-          • class/struct primary constructor (C# 12): parametre SINIF GÖVDESİNDE görünür; otomatik property/alan ÜRETİLMEZ. Gerekirse `public string X { get; } = x;`
-          • record primary constructor: parametre → init-only PROPERTY + Deconstruct + Equals (otomatik)
-          • Parametreyi alanlara ATMADAN doğrudan kullanmak, parametrenin "yakalanıp" gizli alan olmasına yol açar (derleyici uyarır: CS9124 aynı parametre hem yakalanıp hem property başlatıcıda kullanılırsa)
-          • Doğrulama için parametreyi property başlatıcısında kontrol edin: `public string Id { get; } = !string.IsNullOrEmpty(id) ? id : throw new ArgumentException(…)`
-          • DI ile en yaygın kullanım: `class OrderService(IRepo repo, ILogger<OrderService> logger)` — boilerplate yok (→ J6.2)
-          • Yakalanan parametre mutable'dır: `count++` gibi değiştirmek state'i gizler; immutable tutun
+        Summary of the rules:
+          • class/struct primary constructor (C# 12): the parameter is visible in the CLASS BODY; no automatic property/field is GENERATED. If needed: `public string X { get; } = x;`
+          • record primary constructor: parameter → init-only PROPERTY + Deconstruct + Equals (automatic)
+          • Using a parameter directly WITHOUT copying it into fields makes the parameter be "captured" into a hidden field (the compiler warns: CS9124 if the same parameter is both captured and used in a property initializer)
+          • For validation, check the parameter in the property initializer: `public string Id { get; } = !string.IsNullOrEmpty(id) ? id : throw new ArgumentException(…)`
+          • The most common use with DI: `class OrderService(IRepo repo, ILogger<OrderService> logger)` — no boilerplate (→ J6.2)
+          • A captured parameter is mutable: changing it like `count++` hides state; keep it immutable
         """);
     }
 
@@ -72,13 +72,13 @@ public static class Section07_PrimaryConstructors
 
     private sealed class Account(string id, decimal balance)
     {
-        public string Id { get; } = !string.IsNullOrWhiteSpace(id) ? id : throw new ArgumentException("Id boş olamaz", nameof(id));
+        public string Id { get; } = !string.IsNullOrWhiteSpace(id) ? id : throw new ArgumentException("Id cannot be empty", nameof(id));
         public decimal Balance { get; } = balance;
     }
 
     private sealed class Counter(int start)
     {
         public int Value => start;
-        public void Increment() => start++;                // yakalanan parametreyi DEĞİŞTİRİYOR
+        public void Increment() => start++;                // MUTATES the captured parameter
     }
 }

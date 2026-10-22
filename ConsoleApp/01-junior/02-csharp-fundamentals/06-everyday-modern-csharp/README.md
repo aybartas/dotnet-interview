@@ -41,9 +41,9 @@ Kodun merkezi: **aynı sipariş domain modeli iki kez yazıldı** — [`Csharp7S
 public record Person(string First, string Last, int Age);        // positional record
 var p2 = p1 with { Age = 31 };                                    // non-destructive mutation
 var (first, last, age) = p1;                                      // Deconstruct
-p1 == p2                                                          // DEĞER eşitliği
+p1 == p2                                                          // VALUE equality
 ```
-Derleyici üretir: init-only property'ler, ctor, `Deconstruct`, `Equals`/`GetHashCode`, `ToString` (`Person { First = Ayşe, … }`), `==`/`!=`, `with` desteği.
+Derleyici üretir: init-only property'ler, ctor, `Deconstruct`, `Equals`/`GetHashCode`, `ToString` (`Person { First = Alice, … }`), `==`/`!=`, `with` desteği.
 
 | | `class` | `record` | `record struct` / `readonly record struct` |
 |---|---------|----------|-----------------------------|
@@ -70,7 +70,7 @@ public sealed class OrderDto { public required string Id { get; init; } public r
 | constant | `x is null`, `x is 0` |
 | **relational** (C# 9) | `x is > 5`, `score is >= 0 and < 100` |
 | **logical** | `and`, `or`, `not` → `x is not null`, `day is Saturday or Sunday` |
-| **property** | `o is { Total: > 1000 }`, iç içe: `o is { Customer.Address.City: "Ankara" }` |
+| **property** | `o is { Total: > 1000 }`, iç içe: `o is { Customer.Address.City: "London" }` |
 | positional / tuple | `(tier, subtotal) switch { (Gold, > 1000m) => … }` |
 | list (C# 11) | `arr is [1, .., 3]`, `[var first, .., var last]` |
 
