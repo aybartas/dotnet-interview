@@ -7,14 +7,14 @@ using System.Text;
 namespace Junior.DevFoundations.NetworkFundamentals;
 
 /// <summary>
-/// Çok sayıda KISA ÖMÜRLÜ TCP bağlantısı açıp kapatır ve işletim sisteminin TIME_WAIT sayacının büyümesini gösterir.
+/// Opens and closes many SHORT-LIVED TCP connections and shows the operating system's TIME_WAIT counter growing.
 ///
-/// Neden? Bağlantıyı İLK kapatan taraf (active close) TIME_WAIT durumuna girer ve ~2×MSL (Linux'ta 60 sn) boyunca
-/// o (yerel IP, yerel port, uzak IP, uzak port) dörtlüsünü tutar — gecikmiş paketlerin yeni bağlantıya karışmaması için.
-/// İstemci her istekte yeni bağlantı açıp ilk o kapatırsa, TIME_WAIT soketleri birikir ve EPHEMERAL PORT havuzu tükenir:
+/// Why? The side that closes the connection FIRST (active close) enters TIME_WAIT and holds that
+/// (local IP, local port, remote IP, remote port) quadruple for ~2×MSL (60 s on Linux) — so delayed packets don't leak into a new connection.
+/// If the client opens a new connection per request and closes it first, TIME_WAIT sockets pile up and the EPHEMERAL PORT pool is exhausted:
 ///     "Cannot assign requested address" / SocketException (AddressNotAvailable)
-/// .NET'te klasik karşılığı: her istekte `new HttpClient()` → "HttpClient socket exhaustion" (→ J7.5, M5.9).
-/// Çözüm: bağlantıyı yeniden kullan (keep-alive / connection pooling) — `--reuse` ile farkı görün.
+/// The classic .NET equivalent: `new HttpClient()` on every request → "HttpClient socket exhaustion" (→ J7.5, M5.9).
+/// The fix: reuse the connection (keep-alive / connection pooling) — see the difference with `--reuse`.
 /// </summary>
 public static class TimeWaitDemo
 {
@@ -26,16 +26,16 @@ public static class TimeWaitDemo
         var port = ((IPEndPoint)listener.LocalEndpoint).Port;
         var server = Task.Run(() => ServeAsync(listener, cts.Token));
 
-        Console.WriteLine($"Yerel test sunucusu: 127.0.0.1:{port}");
+        Console.WriteLine($"Local test server: 127.0.0.1:{port}");
         PrintEphemeralRange();
 
         int before = CountTimeWait(port);
-        Console.WriteLine($"Başlangıçta bu porta ait TIME_WAIT sayısı: {FormatCount(before)}\n");
+        Console.WriteLine($"TIME_WAIT count for this port at the start: {FormatCount(before)}\n");
 
         var sw = Stopwatch.StartNew();
         if (reuse)
         {
-            Console.WriteLine($"MOD: bağlantıyı YENİDEN KULLAN — 1 bağlantı, {connections:N0} istek");
+            Console.WriteLine($"MODE: REUSE the connection — 1 connection, {connections:N0} requests");
             using var client = new TcpClient();
             await client.ConnectAsync(IPAddress.Loopback, port);
             await using var stream = client.GetStream();
@@ -49,7 +49,7 @@ public static class TimeWaitDemo
         }
         else
         {
-            Console.WriteLine($"MOD: her istekte YENİ bağlantı — {connections:N0} kısa ömürlü bağlantı (istemci ilk kapatır)");
+            Console.WriteLine($"MODE: a NEW connection per request — {connections:N0} short-lived connections (the client closes first)");
             for (int i = 1; i <= connections; i++)
             {
                 using var client = new TcpClient();
@@ -57,18 +57,18 @@ public static class TimeWaitDemo
                 await using var stream = client.GetStream();
                 var ping = Encoding.ASCII.GetBytes("ping\n");
                 await stream.WriteAsync(ping);
-                var buf = new byte[5];                      // sunucu cevabı: "pong\n" = tam 5 byte
-                await stream.ReadExactlyAsync(buf);         // TCP bayt akışı: kısmi okumaya karşı tam 5 byte bekle
-                // using bloğu biter → client.Dispose() → FIN gönderen İLK taraf biz = TIME_WAIT bize kalır.
+                var buf = new byte[5];                      // server reply: "pong\n" = exactly 5 bytes
+                await stream.ReadExactlyAsync(buf);         // TCP is a byte stream: wait for exactly 5 bytes to guard against partial reads
+                // the using block ends → client.Dispose() → we are the FIRST to send FIN = TIME_WAIT is left to us.
 
                 if (i % 100 == 0)
-                    Console.WriteLine($"  {i,6:N0} bağlantı sonrası TIME_WAIT: {FormatCount(CountTimeWait(port))}");
+                    Console.WriteLine($"  TIME_WAIT after {i,6:N0} connections: {FormatCount(CountTimeWait(port))}");
             }
         }
         sw.Stop();
 
         int after = CountTimeWait(port);
-        Console.WriteLine($"\nSüre: {sw.ElapsedMilliseconds} ms · TIME_WAIT: {FormatCount(before)} → {FormatCount(after)}");
+        Console.WriteLine($"\nDuration: {sw.ElapsedMilliseconds} ms · TIME_WAIT: {FormatCount(before)} → {FormatCount(after)}");
         PrintExplanation(reuse, after - before, connections, sw.Elapsed);
 
         cts.Cancel();
@@ -76,7 +76,7 @@ public static class TimeWaitDemo
         await server;
     }
 
-    /// <summary>Basit sunucu: satır oku, "pong" yaz; istemci kapatınca (EOF) kendi ucunu kapat.</summary>
+    /// <summary>Simple server: read a line, write "pong"; when the client closes (EOF) close its own end.</summary>
     private static async Task ServeAsync(TcpListener listener, CancellationToken ct)
     {
         try
@@ -100,9 +100,9 @@ public static class TimeWaitDemo
         catch (Exception ex) when (ex is OperationCanceledException or SocketException or ObjectDisposedException) { }
     }
 
-    // ── İşletim sistemi sayacını okuma ─────────────────────────────────────────────
+    // ── Reading the operating system counter ─────────────────────────────────────────────
 
-    /// <summary>`ss -tan state time-wait dport = :PORT` çıktısındaki satır sayısı. ss yoksa -1 döner.</summary>
+    /// <summary>Number of lines in the output of `ss -tan state time-wait dport = :PORT`. Returns -1 if ss is missing.</summary>
     private static int CountTimeWait(int port)
     {
         try
@@ -122,43 +122,43 @@ public static class TimeWaitDemo
         }
         catch (Win32Exception)
         {
-            return -1;   // `ss` bu makinede yok (Windows/macOS)
+            return -1;   // `ss` doesn't exist on this machine (Windows/macOS)
         }
     }
 
-    private static string FormatCount(int n) => n < 0 ? "(ölçülemedi)" : n.ToString("N0");
+    private static string FormatCount(int n) => n < 0 ? "(could not be measured)" : n.ToString("N0");
 
     private static void PrintEphemeralRange()
     {
         const string path = "/proc/sys/net/ipv4/ip_local_port_range";
         if (!File.Exists(path))
         {
-            Console.WriteLine("Ephemeral port aralığı: (Linux dışı sistem; Windows: `netsh int ipv4 show dynamicport tcp`)");
+            Console.WriteLine("Ephemeral port range: (non-Linux system; Windows: `netsh int ipv4 show dynamicport tcp`)");
             return;
         }
         var parts = File.ReadAllText(path).Split(['\t', ' '], StringSplitOptions.RemoveEmptyEntries);
         var (lo, hi) = (int.Parse(parts[0]), int.Parse(parts[1]));
-        Console.WriteLine($"Ephemeral port aralığı: {lo}–{hi}  ({hi - lo + 1:N0} port)");
+        Console.WriteLine($"Ephemeral port range: {lo}–{hi}  ({hi - lo + 1:N0} ports)");
     }
 
     private static void PrintExplanation(bool reuse, int delta, int connections, TimeSpan elapsed)
     {
         if (delta < 0 && !reuse)
         {
-            Console.WriteLine("`ss` bulunamadı. Elle ölçmek için başka bir terminalde:  netstat -an | grep TIME_WAIT | wc -l   (Windows: netstat -an | find /c \"TIME_WAIT\")");
+            Console.WriteLine("`ss` not found. To measure by hand, in another terminal:  netstat -an | grep TIME_WAIT | wc -l   (Windows: netstat -an | find /c \"TIME_WAIT\")");
             return;
         }
 
         if (reuse)
         {
-            Console.WriteLine($"→ {connections:N0} istek TEK bağlantıda gitti; TIME_WAIT en fazla 1 (kapanışta). Keep-alive / connection pooling budur.");
+            Console.WriteLine($"→ {connections:N0} requests went over a SINGLE connection; TIME_WAIT is at most 1 (at close). This is what keep-alive / connection pooling is.");
             return;
         }
 
-        Console.WriteLine($"→ {connections:N0} bağlantı = ~{delta:N0} TIME_WAIT soketi. Her biri ~60 sn (Linux) bir ephemeral portu rehin tutar.");
+        Console.WriteLine($"→ {connections:N0} connections = ~{delta:N0} TIME_WAIT sockets. Each holds an ephemeral port hostage for ~60 s (Linux).");
         var perSec = connections / Math.Max(elapsed.TotalSeconds, 0.001);
-        Console.WriteLine($"→ Bu hızda ({perSec:N0} bağlantı/sn) port havuzu yaklaşık {28_232 / perSec:F0} sn'de biter (varsayılan ~28k port için).");
-        Console.WriteLine("  Havuz bitince yeni bağlantılar 'Cannot assign requested address' ile düşer. Aynı mantık `new HttpClient()` kullanım hatasının kökenidir.");
-        Console.WriteLine("  Kendiniz görün:  `ss -tan state time-wait | wc -l`  ve 60 sn sonra tekrar bakın; `dotnet run -- time-wait 500 --reuse` ile karşılaştırın.");
+        Console.WriteLine($"→ At this rate ({perSec:N0} connections/s) the port pool runs out in about {28_232 / perSec:F0} s (for the default ~28k ports).");
+        Console.WriteLine("  Once the pool is exhausted new connections fail with 'Cannot assign requested address'. The same logic is the root of the `new HttpClient()` misuse.");
+        Console.WriteLine("  See for yourself:  `ss -tan state time-wait | wc -l`  and look again after 60 s; compare with `dotnet run -- J1.2 time-wait 500 --reuse`.");
     }
 }

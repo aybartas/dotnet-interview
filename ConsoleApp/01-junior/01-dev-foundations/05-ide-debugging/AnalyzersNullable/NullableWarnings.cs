@@ -1,42 +1,42 @@
-// BİLEREK uyarı üreten kod. Her uyarının kodunu (CS86xx) IDE'de/derleme çıktısında bulup NEDEN çıktığını açıklayın,
-// sonra DÜZELTİN. Hedef: 0 uyarı.
+// Code that DELIBERATELY produces warnings. Find the code of each warning (CS86xx) in the IDE / build output and explain WHY it appears,
+// then FIX it. Goal: 0 warnings.
 //
-// Nullable referans tipleri (<Nullable>enable</Nullable>):
-//   string   → asla null olmamalı (derleyici bunu takip eder)
-//   string?  → null olabilir (kullanmadan önce kontrol etmelisin)
-// Bunlar derleme zamanı ipuçlarıdır; çalışma zamanında bir koruma EKLEMEZ. Ama NullReferenceException'ı kodu çalıştırmadan yakalar.
+// Nullable reference types (<Nullable>enable</Nullable>):
+//   string   → must never be null (the compiler tracks this)
+//   string?  → may be null (you must check before using it)
+// These are compile-time hints; they add NO protection at run time. But they catch NullReferenceException without running the code.
 
 namespace Junior.DevFoundations.IdeDebugging.AnalyzersNullable;
 
 public class UserService
 {
-    // CS8618: Non-nullable 'Name' constructor çıkışında null olabilir → ya başlatın, ya 'required' yapın, ya string? yapın.
+    // CS8618: Non-nullable 'Name' may be null on constructor exit → either initialize it, make it 'required', or make it string?.
     public string Name { get; set; }
 
-    private readonly Dictionary<int, string> _users = new() { [1] = "ayse" };
+    private readonly Dictionary<int, string> _users = new() { [1] = "alice" };
 
-    // CS8603: Olası null referans döndürme. TryGetValue başarısız olursa 'name' null'dır.
+    // CS8603: Possible null reference return. If TryGetValue fails, 'name' is null.
     public string GetUserName(int id)
     {
         _users.TryGetValue(id, out var name);
         return name;
     }
 
-    // CS8600: null literal'i non-nullable türe dönüştürme.
+    // CS8600: Converting a null literal to a non-nullable type.
     public string FirstOrDefaultName()
     {
         string name = null;
-        return name ?? "bilinmiyor";
+        return name ?? "unknown";
     }
 
-    // CS8602: Olası null referansın başvurusunu kaldırma. 'Find' null dönebilir (string?).
+    // CS8602: Dereference of a possibly null reference. 'Find' may return null (string?).
     public int NameLength(int id)
     {
         var name = Find(id);
         return name.Length;
     }
 
-    // CS8604: Olası null başvuru argümanı. 'Find' string? döner ama Print string bekler.
+    // CS8604: Possible null reference argument. 'Find' returns string? but Print expects string.
     public void ShowUser(int id)
     {
         Print(Find(id));

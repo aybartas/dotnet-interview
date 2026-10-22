@@ -20,10 +20,10 @@
 Web, **istemci–sunucu** modeline dayanır: istemci (tarayıcı, mobil uygulama, başka bir servis) bir **istek (request)** gönderir, sunucu bir **yanıt (response)** döner. Bu konuşmanın dili **HTTP**'dir; adres çözümlemesini **DNS**, güvenli taşımayı **TLS**, iletimi ise **TCP** (J1.2) yapar.
 
 ```
-Uygulama (L7)   HTTP isteği/yanıtı
+Application (L7) HTTP request/response
                 TLS   ← HTTPS = HTTP + TLS
-Taşıma (L4)     TCP  (HTTP/3'te QUIC/UDP)
-Ağ (L3)         IP
+Transport (L4)   TCP  (QUIC/UDP in HTTP/3)
+Network (L3)     IP
                 DNS: "api.example.com" → 93.184.216.34
 ```
 
@@ -49,16 +49,16 @@ HTTP'nin iki temel özelliği:
 `https://www.example.com:443/products?id=5#reviews` yazıldığında sırasıyla:
 
 ```
-1. URL ayrıştırılır     scheme=https  host=www.example.com  port=443  path=/products  query=?id=5  fragment=#reviews
-                         (fragment SUNUCUYA GİTMEZ; sadece tarayıcıda kalır)
-2. Önbellek kontrolü    Tarayıcı cache / HSTS listesi / service worker
-3. DNS çözümleme        www.example.com → 93.184.216.34
-4. TCP bağlantısı       SYN → SYN-ACK → ACK                      (1 RTT)   (→ J1.2)
-5. TLS handshake        sertifika doğrulama, anahtar değişimi    (TLS 1.3: 1 RTT)
-6. HTTP isteği          GET /products?id=5 HTTP/1.1  + header'lar
-7. Sunucu işler         (load balancer → reverse proxy → uygulama → DB)
-8. HTTP yanıtı          200 OK + header'lar + HTML
-9. Tarayıcı render      HTML'i ayrıştırır, CSS/JS/görsel için 3-8'i tekrarlar (çoğu mevcut bağlantıyı yeniden kullanarak)
+1. Parse the URL        scheme=https  host=www.example.com  port=443  path=/products  query=?id=5  fragment=#reviews
+                         (the fragment is NOT sent to the server; it stays in the browser)
+2. Cache check          Browser cache / HSTS list / service worker
+3. DNS resolution       www.example.com → 93.184.216.34
+4. TCP connection       SYN → SYN-ACK → ACK                      (1 RTT)   (→ J1.2)
+5. TLS handshake        certificate validation, key exchange     (TLS 1.3: 1 RTT)
+6. HTTP request         GET /products?id=5 HTTP/1.1  + headers
+7. Server processes     (load balancer → reverse proxy → application → DB)
+8. HTTP response        200 OK + headers + HTML
+9. Browser renders      parses the HTML, repeats 3-8 for CSS/JS/images (mostly reusing the existing connection)
 ```
 
 **URL anatomisi:**
@@ -74,8 +74,8 @@ HTTP'nin iki temel özelliği:
 İnsan-okunur ad → IP adresi. Çözümleme **zincirleme ve önbellekli** yürür:
 
 ```
-tarayıcı cache → işletim sistemi cache / hosts dosyası → yerel DNS resolver (ISP/şirket/8.8.8.8)
-   → root (.) → TLD (.com) → authoritative name server (example.com'un kendi DNS'i) → cevap
+browser cache → OS cache / hosts file → local DNS resolver (ISP/company/8.8.8.8)
+   → root (.) → TLD (.com) → authoritative name server (example.com's own DNS) → answer
 ```
 
 | Kayıt tipi | Anlamı |
@@ -98,16 +98,16 @@ HTTP/1.1 düz metin bir protokoldür:
 
 ```http
 POST /orders?source=web HTTP/1.1          ← request line: METHOD  PATH+QUERY  VERSION
-Host: api.example.com                     ← header'lar: Ad: Değer
+Host: api.example.com                     ← headers: Name: Value
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOi...
 Content-Length: 29
-                                          ← BOŞ SATIR: header'ların sonu
-{"product":"kitap","quantity":2}          ← body (opsiyonel)
+                                          ← BLANK LINE: end of the headers
+{"product":"book","quantity":2}           ← body (optional)
 ```
 
 ```http
-HTTP/1.1 201 Created                      ← status line: VERSION  KOD  AÇIKLAMA
+HTTP/1.1 201 Created                      ← status line: VERSION  CODE  REASON
 Content-Type: application/json
 Location: /orders/42
                                           
@@ -167,7 +167,7 @@ Bu klasördeki Kestrel uygulaması (3.11) gelen isteği tam bu biçimde konsola 
 
 ```
 1. GET /cache/etag                     →  200 OK, ETag: "abc", body
-2. GET /cache/etag  If-None-Match: "abc" →  304 Not Modified (body YOK → bant genişliği tasarrufu)
+2. GET /cache/etag  If-None-Match: "abc" →  304 Not Modified (NO body → saves bandwidth)
 ```
 
 ### 3.6 Cookie, session ve stateless HTTP
@@ -175,9 +175,9 @@ Bu klasördeki Kestrel uygulaması (3.11) gelen isteği tam bu biçimde konsola 
 HTTP durumsuz olduğu için "oturum" şöyle kurulur:
 
 ```
-1. Giriş:   POST /login  →  200 + Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Lax
-2. Sonra:   GET /orders  →  Cookie: session=abc123       (tarayıcı otomatik ekler)
-3. Sunucu:  abc123 → kullanıcı kaydını bulur (sunucu tarafında session store: bellek / Redis / DB)
+1. Login:   POST /login  →  200 + Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Lax
+2. Later:   GET /orders  →  Cookie: session=abc123       (the browser adds it automatically)
+3. Server:  abc123 → finds the user record (server-side session store: memory / Redis / DB)
 ```
 
 | Cookie özelliği | Koruma |
@@ -210,10 +210,10 @@ Sürüm tarayıcıyla sunucu arasında TLS handshake'inde **ALPN** ile pazarlık
 **TLS 1.3 handshake (özet):**
 
 ```
-İstemci ──ClientHello (desteklenen cipher'lar, anahtar payı, ALPN)──────────▶ Sunucu
-İstemci ◀──ServerHello + SERTİFİKA + imza + anahtar payı ───────────────────  Sunucu
-   (istemci sertifikayı doğrular, iki taraf ortak oturum anahtarını türetir)
-İstemci ──Finished──▶  ◀──Finished──     ← bundan sonra veri ŞİFRELİ (simetrik anahtar)
+Client ──ClientHello (supported ciphers, key share, ALPN)──────────────────▶ Server
+Client ◀──ServerHello + CERTIFICATE + signature + key share ────────────────  Server
+   (the client validates the certificate, both sides derive the shared session key)
+Client ──Finished──▶  ◀──Finished──     ← from here on data is ENCRYPTED (symmetric key)
 ```
 
 - Asimetrik şifreleme (sertifika/anahtar değişimi) yavaştır ama sadece handshake'te; veri akışı hızlı simetrik şifreyle (AES-GCM) korunur.
@@ -221,7 +221,7 @@ Sürüm tarayıcıyla sunucu arasında TLS handshake'inde **ALPN** ile pazarlık
 
 **Sertifika ve zincir:**
 - Sertifika: "bu açık anahtar `www.example.com`'a ait" beyanı; bir **Certificate Authority (CA)** tarafından imzalanır.
-- **Zincir:** `Sunucu (leaf) sertifikası` ← imzalayan `Intermediate CA` ← imzalayan `Root CA`. Root CA'lar işletim sistemi/tarayıcının **güvenilir kök deposunda** bulunur; istemci zinciri köke kadar doğrular.
+- **Zincir:** `Server (leaf) certificate` ← imzalayan `Intermediate CA` ← imzalayan `Root CA`. Root CA'lar işletim sistemi/tarayıcının **güvenilir kök deposunda** bulunur; istemci zinciri köke kadar doğrular.
 - Doğrulama hataları: süresi dolmuş, host adı sertifikayla uyuşmuyor (`CN`/`SAN`), zincir eksik (intermediate sunulmamış), güvenilmeyen kök (kendi imzalı = self-signed).
 - Geliştirme: `dotnet dev-certs https --trust` yerel self-signed sertifika üretip güvenilir yapar. Production'da Let's Encrypt, kurumsal CA veya bulut yönetimli sertifika.
 - **HSTS** (`Strict-Transport-Security: max-age=31536000; includeSubDomains`): Tarayıcıya "bu siteye bundan sonra **sadece HTTPS** ile gel" der; HTTP→HTTPS yönlendirme sırasındaki ilk düz HTTP isteğini ve downgrade saldırısını (SSL stripping) ortadan kaldırır. Uygulama HTTPS yanıtlarına ekler. ASP.NET Core'da `app.UseHsts()` + `UseHttpsRedirection()` (→ J6, J11.4).
@@ -249,7 +249,7 @@ HTTP/1.1 204 No Content
 Access-Control-Allow-Origin: http://localhost:3000
 Access-Control-Allow-Methods: GET,POST,PUT
 Access-Control-Allow-Headers: Content-Type,X-Demo
-Access-Control-Max-Age: 600            ← preflight sonucu 10 dk önbellekte (her istekte tekrarlanmaz)
+Access-Control-Max-Age: 600            ← preflight result cached for 10 min (not repeated on every request)
 ```
 Preflight onaylanırsa tarayıcı gerçek isteği gönderir.
 
@@ -273,7 +273,7 @@ Uygulama `WebApp` projesindedir (`WebApp` klasöründen çalıştırın; `Progra
 
 ```bash
 dotnet run                       # http://localhost:5080
-dotnet run -- --https            # ayrıca https://localhost:5443 (önce: dotnet dev-certs https --trust)
+dotnet run -- --https            # also https://localhost:5443 (first: dotnet dev-certs https --trust)
 ```
 
 | Dosya | Ne için? |
@@ -285,24 +285,24 @@ dotnet run -- --https            # ayrıca https://localhost:5443 (önce: dotnet
 Uygulama çalışırken ikinci terminalden `curl` ile inceleyin (`-k`: güvenilmeyen geliştirme sertifikasını atla — **sadece yerel deney**, prod'da asla):
 
 ```bash
-curl -v http://localhost:5080/hello -o /dev/null            # '>' istek, '<' yanıt header'ları; '*' bağlantı bilgisi
-curl -I http://localhost:5080/hello                         # HEAD: GET'in body'siz hali (safe + idempotent)
+curl -v http://localhost:5080/hello -o /dev/null            # '>' request, '<' response headers; '*' connection info
+curl -I http://localhost:5080/hello                         # HEAD: GET without the body (safe + idempotent)
 curl -kv https://localhost:5443/hello -o /dev/null 2>&1 | grep -E 'ALPN|SSL connection|TLSv|subject:|issuer:|using HTTP'
-curl -k --http1.1 -sI https://localhost:5443/hello | head -1   # HTTP/1.1 ile HTTP/2 karşılaştırması (ALPN pazarlığı)
+curl -k --http1.1 -sI https://localhost:5443/hello | head -1   # comparing HTTP/1.1 and HTTP/2 (ALPN negotiation)
 curl -k --http2   -sI https://localhost:5443/hello | head -1
-curl -k -sI https://localhost:5443/hello | grep -i strict-transport   # HSTS yalnızca HTTPS yanıtında
+curl -k -sI https://localhost:5443/hello | grep -i strict-transport   # HSTS only on the HTTPS response
 
-curl -si http://localhost:5080/redirect | grep -E '^HTTP|^[Ll]ocation'   # yönlendirmeyi takip ETMEDEN
-curl -sL -w '(son status: %{http_code}, yönlendirme: %{num_redirects})\n' http://localhost:5080/redirect   # -L ile
+curl -si http://localhost:5080/redirect | grep -E '^HTTP|^[Ll]ocation'   # WITHOUT following the redirect
+curl -sL -w '(last status: %{http_code}, redirects: %{num_redirects})\n' http://localhost:5080/redirect   # with -L
 
-curl -c jar.txt http://localhost:5080/cookie/set; echo      # -c yazar, -b gönderir
-curl -b jar.txt http://localhost:5080/cookie/read; echo     # jar ile: sunucu tanır
-curl http://localhost:5080/cookie/read; echo                # jar olmadan: HTTP stateless
+curl -c jar.txt http://localhost:5080/cookie/set; echo      # -c writes, -b sends
+curl -b jar.txt http://localhost:5080/cookie/read; echo     # with the jar: the server recognizes you
+curl http://localhost:5080/cookie/read; echo                # without the jar: HTTP is stateless
 
 ETAG=$(curl -s -D - -o /dev/null http://localhost:5080/cache/etag | grep -i '^etag' | awk '{print $2}' | tr -d '\r')
 curl -si -H "If-None-Match: $ETAG" http://localhost:5080/cache/etag | head -1   # 304 Not Modified
 
-curl -k -o /dev/null -w 'dns: %{time_namelookup}s | tcp: %{time_connect}s | tls: %{time_appconnect}s | ilk bayt: %{time_starttransfer}s | toplam: %{time_total}s | %{http_version}\n' https://localhost:5443/hello
+curl -k -o /dev/null -w 'dns: %{time_namelookup}s | tcp: %{time_connect}s | tls: %{time_appconnect}s | first byte: %{time_starttransfer}s | total: %{time_total}s | %{http_version}\n' https://localhost:5443/hello
 ```
 
 ---

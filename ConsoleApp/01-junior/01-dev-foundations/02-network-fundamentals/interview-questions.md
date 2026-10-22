@@ -51,7 +51,7 @@ L4 yalnızca IP/port/protokol (TCP/UDP) görür; karar bağlantı bazındadır, 
 `10.0.0.0/8`, `172.16.0.0/12` ve `192.168.0.0/16` internete yönlendirilmeyen özel adreslerdir. NAT, router'ın iç ağdaki birçok private IP'yi tek bir public IP arkasında (IP:port eşleme tablosu tutarak) internete çıkarmasıdır; dışarıdan içeri doğrudan bağlantıyı da engellediğinden port yönlendirme gerekir.
 
 ### 17. `/24` ne demek? `10.0.1.0/24` kaç adres içerir?
-İlk 24 bit ağ kısmı, kalan 8 bit host kısmıdır: `2^8 = 256` adres (ağ ve broadcast adresleri hariç 254 kullanılabilir). Genel formül `2^(32 − önek)`.
+İlk 24 bit ağ kısmı, kalan 8 bit host kısmıdır: `2^8 = 256` adres (ağ ve broadcast adresleri hariç 254 kullanılabilir). Genel formül `2^(32 − prefix)`.
 
 ### 18. Bir servise erişemiyorum. Nasıl teşhis edersin?
 Aşağıdan yukarıya: (1) `nslookup`/`dig` ile isim çözülüyor mu; (2) `ping`/`traceroute` ile IP'ye ulaşılıyor mu (ICMP engelli olabilir); (3) `nc -zv host port` ile port açık mı — **refused** (servis kapalı) mi **timeout** (firewall/security group) mu; (4) `curl -v` ile TLS ve HTTP cevabı; (5) gerekirse `tcpdump`/Wireshark ile paketleri izleyip SYN'e SYN-ACK dönüp dönmediğine bakarım. Sunucu tarafında `ss -ltnp` ile servisin doğru arayüz/portta dinlediğini doğrularım.

@@ -99,8 +99,8 @@ Varsayılan olarak debugger yalnızca **işlenmeyen** (unhandled) istisnada duru
 ### 3.3 `dotnet watch` ve Hot Reload
 
 ```bash
-# ConsoleApp klasöründe; 3. egzersizi çalıştırır ve dosya değişikliğini izler
-dotnet watch -- J1.5 3       # (dotnet watch run -- J1.5 3 ile aynı)
+# In the ConsoleApp folder; runs exercise 3 and watches for file changes
+dotnet watch -- J1.5 3       # (same as dotnet watch run -- J1.5 3)
 ```
 
 - **Hot Reload:** Çalışan uygulamada **kod değişikliğini yeniden başlatmadan** uygular (durum/bellek korunur; çalışan bir web uygulamasında/döngüde değişiklik anında görünür). Metot gövdesi değişiklikleri sorunsuz uygulanır. Denemek için `Exercises/` altındaki bir egzersizin metot gövdesini değiştirip kaydedin.
@@ -122,9 +122,9 @@ Her kuralın **önem derecesi (severity)** vardır: `none` < `silent` < `suggest
 
 ```ini
 [*.cs]
-dotnet_diagnostic.CS8602.severity = error     # tek tek
-dotnet_analyzer_diagnostic.category-Style.severity = suggestion   # kategori bazında
-csharp_style_namespace_declarations = file_scoped:suggestion      # stil tercihi + önem derecesi
+dotnet_diagnostic.CS8602.severity = error     # one by one
+dotnet_analyzer_diagnostic.category-Style.severity = suggestion   # by category
+csharp_style_namespace_declarations = file_scoped:suggestion      # style preference + severity
 ```
 
 Örnek tam dosya: [`AnalyzersNullable/.editorconfig`](AnalyzersNullable/.editorconfig) — biçim (girinti, satır sonu), `using`/`var`/namespace stili, **adlandırma kuralları** (interface `I…`, private alan `_camelCase`) ve analyzer önem dereceleri. `.editorconfig` **repoyla birlikte commit'lenir**; IDE'ler, `dotnet format` ve derleyici aynı dosyayı okur → "benim makinemde farklı biçimleniyor" biter.
@@ -133,17 +133,17 @@ csharp_style_namespace_declarations = file_scoped:suggestion      # stil tercihi
 
 ```xml
 <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-<AnalysisMode>Default</AnalysisMode>   <!-- Default < Recommended < All: açık CA kuralı sayısı artar -->
+<AnalysisMode>Default</AnalysisMode>   <!-- Default < Recommended < All: the number of enabled CA rules grows -->
 ```
 
 ### 3.5 `dotnet format` ve `TreatWarningsAsErrors`
 
 ```bash
-dotnet format                         # biçim + stil + analyzer düzeltmelerini UYGULAR (dosyaları değiştirir)
-dotnet format whitespace              # yalnızca boşluk/girinti/satır sonu
-dotnet format style                   # IDE stil kuralları
+dotnet format                         # APPLIES format + style + analyzer fixes (modifies the files)
+dotnet format whitespace              # whitespace/indentation/line endings only
+dotnet format style                   # IDE style rules
 dotnet format analyzers --severity warn
-dotnet format --verify-no-changes     # DEĞİŞTİRMEZ; değişiklik gerekiyorsa sıfırdan farklı çıkış kodu ile BAŞARISIZ olur → CI kapısı
+dotnet format --verify-no-changes     # does NOT modify; FAILS with a non-zero exit code if changes are needed → CI gate
 ```
 
 **Uyarılar ve hatalar:**
@@ -163,9 +163,9 @@ Mantık: **Uyarı = yarım hata.** 500 uyarılı projede 501.'yi kimse fark etme
 `<Nullable>enable</Nullable>` (yeni projelerde varsayılan; bu repoda `ConsoleApp.csproj`'ta) ile derleyici **null akışını takip eder**:
 
 ```csharp
-string  name = "Ayşe";     // asla null olmamalı
-string? note = null;       // null olabilir → kullanmadan önce kontrol et
-note.Length;               // CS8602: olası null başvuru
+string  name = "Alice";    // must never be null
+string? note = null;       // may be null → check before use
+note.Length;               // CS8602: possible null dereference
 ```
 
 Bu **derleme zamanı** ipucudur; çalışma zamanında koruma eklemez (`!` ile susturulabilir, reflection/serileştirme ile delinebilir). Ama `NullReferenceException`'ın büyük kısmını **çalışmadan** yakalar.
@@ -185,23 +185,23 @@ Bu **derleme zamanı** ipucudur; çalışma zamanında koruma eklemez (`!` ile s
 Kod `ConsoleApp` projesindedir (`ConsoleApp` klasöründen çalıştırın):
 
 ```bash
-# 1) Debugger egzersizleri — 9 bilerek hatalı program (Exercises/)
-dotnet run -- J1.5                # liste
-dotnet run -- J1.5 6              # 6. egzersiz
-dotnet run -- J1.5 6 --hint       # ipucu · çözümler: aşağıdaki "Egzersiz çözümleri" (önce kendiniz deneyin!)
-# IDE'de: ConsoleApp'i başlangıç projesi yapın, Debug argümanlarına "J1.5 6" yazın → Exercises/'a breakpoint → F5
-# Egzersiz 9 (Debug/Release): dotnet run -c Release -- J1.5 9
+# 1) Debugger exercises — 9 deliberately buggy programs (Exercises/)
+dotnet run -- J1.5                # list
+dotnet run -- J1.5 6              # exercise 6
+dotnet run -- J1.5 6 --hint       # hint · solutions: "Exercise solutions" below (try it yourself first!)
+# In the IDE: make ConsoleApp the startup project, put "J1.5 6" in the Debug arguments → breakpoint in Exercises/ → F5
+# Exercise 9 (Debug/Release): dotnet run -c Release -- J1.5 9
 
-# 2) Analyzer + nullable (AnalyzersNullable/) — bu klasör BİLEREK uyarı üretir
-dotnet build                                    # 15 uyarı (derleme başarılı): CS0414, CS86xx, IDE0005/0044/0051/1006, CA1861
-dotnet build -p:TreatWarningsAsErrors=true      # aynı kod → derleme BAŞARISIZ
-dotnet build -p:WarningsAsErrors=nullable       # yalnızca nullable uyarıları hata
-dotnet format whitespace --verify-no-changes    # biçim kapısı: başarısız (çıkış kodu ≠ 0)
-dotnet format                                   # düzelt (dosyaları DEĞİŞTİRİR → sonra git checkout -- . ile geri alın)
-dotnet run -- J1.5 analyzers                     # uyarılı kodun çalışma zamanı davranışı (GetUserName(2) → null)
+# 2) Analyzer + nullable (AnalyzersNullable/) — this folder DELIBERATELY produces warnings
+dotnet build                                    # 15 warnings (build succeeds): CS0414, CS86xx, IDE0005/0044/0051/1006, CA1861
+dotnet build -p:TreatWarningsAsErrors=true      # same code → build FAILS
+dotnet build -p:WarningsAsErrors=nullable       # only nullable warnings become errors
+dotnet format whitespace --verify-no-changes    # formatting gate: fails (exit code ≠ 0)
+dotnet format                                   # fix (MODIFIES the files → then undo with git checkout -- .)
+dotnet run -- J1.5 analyzers                     # run-time behavior of the warning-laden code (GetUserName(2) → null)
 
 # 3) Hot reload
-dotnet watch -- J1.5 3                           # Exercises/ altında bir dosyayı değiştirip kaydedin
+dotnet watch -- J1.5 3                           # change a file under Exercises/ and save
 ```
 
 | Klasör | Amaç |
@@ -224,9 +224,9 @@ Her çözümde üç şey var: **kök neden**, **hangi debugger özelliğiyle bul
 - **Düzeltme:** `i <= n`. (Kalıcı çözüm: sınır değerleri — `n = 0, 1, 10` — için birim testi yazmak, → J10.1.)
 
 **2. NullReferenceException zinciri**
-- **Kök neden:** "Zeynep"in `Address`'i `null`; `CityOf` içinde `c.Address!.City` — `!` operatörü derleyiciye "eminim, null değil" der ve uyarıyı susturur, ama null'ı ortadan kaldırmaz.
+- **Kök neden:** Carol'ın `Address`'i `null`; `CityOf` içinde `c.Address!.City` — `!` operatörü derleyiciye "eminim, null değil" der ve uyarıyı susturur, ama null'ı ortadan kaldırmaz.
 - **Debugger ile:** **Exception Settings** (Ctrl+Alt+E) → `System.NullReferenceException`'ı işaretleyin; istisna fırlatıldığı anda durur. **Locals**'ta `c.Address == null` görülür; **Call Stack**'te `ShippingLabel → CityOf` zincirini izlersiniz.
-- **Düzeltme:** `c.Address?.City.ToUpperInvariant() ?? "adres yok"` — `!` yerine gerçek null kontrolü. Genel kural: `!`'i, null olamayacağını kanıtlayabildiğiniz yerlerde kullanın; "uyarıyı sustur" aracı değildir.
+- **Düzeltme:** `c.Address?.City.ToUpperInvariant() ?? "no address"` — `!` yerine gerçek null kontrolü. Genel kural: `!`'i, null olamayacağını kanıtlayabildiğiniz yerlerde kullanın; "uyarıyı sustur" aracı değildir.
 
 **3. foreach sırasında koleksiyonu değiştirmek**
 - **Kök neden:** `List<T>` her değişiklikte iç `_version` sayacını artırır; enumerator `MoveNext`'te bunu kontrol eder ve değişmişse `InvalidOperationException` fırlatır. Belirti `foreach`'te çıkar, ama kök neden döngü gövdesindeki `Remove`'dur.
@@ -251,16 +251,16 @@ Her çözümde üç şey var: **kök neden**, **hangi debugger özelliğiyle bul
 **7. Unutulan await**
 - **Kök neden:** `SaveAsync` çağrılır ama beklenmez (`await` yok); `Count` kontrolü kayıt işlemi bitmeden yapılır. Sonucu bir değişkene atamak derleyici uyarısını (CS4014) susturur — yani bu hatanın bu biçimi derleyiciden kaçar.
 - **Debugger ile:** `Report` satırında **Watch**'a `task.Status` ekleyin → `WaitingForActivation`. **Parallel Tasks / Tasks** penceresi (VS: Debug → Windows) bekleyen task'ı gösterir. F10 ile `await` satırını geçerken kontrolün başka bir yere atlayıp geri döndüğünü gözlemleyin.
-- **Düzeltme:** `await repo.SaveAsync("kayıt-1");`. Önleme: `CS4014`'ü uyarı/hata yapmak (`.editorconfig`'te yapıldı), `Task` döndüren çağrıların sonucunu asla yok saymamak (→ J4).
+- **Düzeltme:** `await repo.SaveAsync("record-1");`. Önleme: `CS4014`'ü uyarı/hata yapmak (`.editorconfig`'te yapıldı), `Task` döndüren çağrıların sonucunu asla yok saymamak (→ J4).
 
 **8. Aynı nesneyi paylaşan iki "farklı" kullanıcı**
-- **Kök neden:** `"guest"` rolü için her çağrıda **aynı** `GuestDefaults` listesi döner; `aliGuest.Add("write")` paylaşılan listeyi değiştirir, Veli de etkilenir (referans tipi + paylaşılan değişken durum).
-- **Debugger ile:** **Watch** penceresinde `aliGuest` → sağ tık → **Make Object ID** → `{1#}`; `veliGuest` için de `{1#}` gelir → aynı nesne.
+- **Kök neden:** `"guest"` rolü için her çağrıda **aynı** `GuestDefaults` listesi döner; `aliceGuest.Add("write")` paylaşılan listeyi değiştirir, Bob da etkilenir (referans tipi + paylaşılan değişken durum).
+- **Debugger ile:** **Watch** penceresinde `aliceGuest` → sağ tık → **Make Object ID** → `{1#}`; `bobGuest` için de `{1#}` gelir → aynı nesne.
 - **Düzeltme:** Her çağrıda yeni liste ya da değiştirilemez görünüm: `=> [.. GuestDefaults]` veya `IReadOnlyList<string>` döndürmek (tasarım olarak "dışarıya değiştirilebilir iç durum sızdırmamak").
 
 **9. Debug'da doğru, Release'de farklı sonuç**
 - **Kök neden:** `Debug.Assert(NextId() > 0)` — `Debug.*` çağrıları `[Conditional("DEBUG")]` ile işaretlidir; **Release derlemesinde çağrı ve argüman ifadeleri tamamen silinir**. İfadenin yan etkisi (`NextId()` sayacı artırır) yalnızca Debug'da gerçekleşir.
-- **Debugger ile:** İki yapılandırmayı karşılaştırın: `dotnet run -- 9` ve `dotnet run -c Release -- 9`. IDE'de Release'de breakpoint'ler/Locals optimize edilmiş kodda eksik görünebilir.
+- **Debugger ile:** İki yapılandırmayı karşılaştırın: `dotnet run -- J1.5 9` ve `dotnet run -c Release -- J1.5 9`. IDE'de Release'de breakpoint'ler/Locals optimize edilmiş kodda eksik görünebilir.
 - **Düzeltme:** Assert/log ifadelerinde **yan etki olmasın**: `var id = NextId(); Debug.Assert(id > 0);`. Prodüksiyonda gerekli doğrulamalar `Debug.Assert` değil gerçek kontrol/istisna olmalı.
 
 </details>
@@ -269,7 +269,7 @@ Her çözümde üç şey var: **kök neden**, **hangi debugger özelliğiyle bul
 
 ## 4. Gerçek dünya senaryosu
 
-**"Sadece 'Zeynep' siparişinde API 500 dönüyor, diğerleri çalışıyor."**
+**"Sadece 'Carol' siparişinde API 500 dönüyor, diğerleri çalışıyor."**
 
 1. Log: `NullReferenceException at CityOf(...)` — ama hangi referans null? Satırda dört nokta var (`c.Address!.City.ToUpperInvariant()`).
 2. Yerelde sorunu yeniden üretin; **Exception Settings**'te `NullReferenceException`'ı işaretleyin, F5. İstisna fırlatıldığı satırda durur; **Locals**: `c.Address == null`.

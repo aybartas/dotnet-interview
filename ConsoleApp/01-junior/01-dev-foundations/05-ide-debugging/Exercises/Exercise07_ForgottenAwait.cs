@@ -3,9 +3,9 @@ namespace Junior.DevFoundations.IdeDebugging.Exercises;
 public sealed class Exercise07_ForgottenAwait : Exercise
 {
     public override int Number => 7;
-    public override string Title => "Unutulan await";
-    public override string Skill => "Debugger'da async akış: Tasks penceresi, F10'un 'await'te davranışı";
-    public override string Hint => "SaveAsync çağrısından sonraki satıra gelindiğinde Task'ın durumu ne? Watch'a 'task.Status' ekleyin. (Neden derleyici uyarısı yok? Sonucu bir değişkene atamak CS4014'ü susturur.)";
+    public override string Title => "The forgotten await";
+    public override string Skill => "Async flow in the debugger: the Tasks window, how F10 behaves at an 'await'";
+    public override string Hint => "When execution reaches the line after the SaveAsync call, what is the Task's state? Add 'task.Status' to Watch. (Why is there no compiler warning? Assigning the result to a variable silences CS4014.)";
 
     public override void Run()
     {
@@ -16,11 +16,11 @@ public sealed class Exercise07_ForgottenAwait : Exercise
     {
         var repo = new SlowRepository();
 
-        var task = repo.SaveAsync("kayıt-1");        // ← await yok!
+        var task = repo.SaveAsync("record-1");        // ← no await!
 
-        Report("kaydedilen kayıt sayısı", expected: 1, actual: repo.Count);
-        await task;                                   // sonradan beklenir, ama kontrol çoktan yapıldı
-        Console.WriteLine($"  (bekledikten sonra Count = {repo.Count})");
+        Report("number of saved records", expected: 1, actual: repo.Count);
+        await task;                                   // awaited later, but the check has already been made
+        Console.WriteLine($"  (Count after awaiting = {repo.Count})");
     }
 
     private sealed class SlowRepository
@@ -29,7 +29,7 @@ public sealed class Exercise07_ForgottenAwait : Exercise
 
         public async Task SaveAsync(string item)
         {
-            await Task.Delay(100);                   // veritabanı gecikmesi simülasyonu
+            await Task.Delay(100);                   // simulates database latency
             Count++;
         }
     }
