@@ -9,48 +9,48 @@ public static class Section01_CommandsAndLaunchSettings
     {
         Console.WriteLine("""
         ┌──────────────────┬───────────────────────────────────┬──────────────────────────────────┬──────────────────────────────┐
-        │ Komut            │ Ne yapar                          │ Çıktı                            │ Ne zaman                     │
+        │ Command          │ What it does                      │ Output                           │ When                         │
         ├──────────────────┼───────────────────────────────────┼──────────────────────────────────┼──────────────────────────────┤
-        │ dotnet restore   │ Bağımlılıkları çözer/indirir      │ obj/project.assets.json          │ CI'da explicit adım          │
-        │ dotnet build     │ Derler (implicit restore)         │ bin/<config>/<tfm>/              │ Geliştirme, derleme doğrulama│
-        │ dotnet run       │ Build eder VE çalıştırır          │ Çalışan process                  │ SADECE geliştirme            │
-        │ dotnet watch     │ Değişimde yeniden çalıştırır      │ —                                │ Geliştirme döngüsü           │
-        │ dotnet publish   │ DAĞITIMA HAZIR klasör üretir      │ bin/<config>/<tfm>/publish/      │ DEPLOYMENT                   │
-        │ dotnet test      │ Testleri derleyip çalıştırır      │ Test sonuçları                   │ CI                           │
-        │ dotnet pack      │ NuGet paketi üretir               │ .nupkg                           │ Kütüphane yayını             │
+        │ dotnet restore   │ Resolves/downloads dependencies   │ obj/project.assets.json          │ Explicit step in CI          │
+        │ dotnet build     │ Compiles (implicit restore)       │ bin/<config>/<tfm>/              │ Development, build validation│
+        │ dotnet run       │ Builds AND runs                   │ A running process                │ Development ONLY             │
+        │ dotnet watch     │ Re-runs on change                 │ —                                │ Development loop             │
+        │ dotnet publish   │ Produces a DEPLOYMENT-READY folder│ bin/<config>/<tfm>/publish/      │ DEPLOYMENT                   │
+        │ dotnet test      │ Builds and runs the tests         │ Test results                     │ CI                           │
+        │ dotnet pack      │ Produces a NuGet package          │ .nupkg                           │ Publishing a library         │
         └──────────────────┴───────────────────────────────────┴──────────────────────────────────┴──────────────────────────────┘
-        Varsayılan yapılandırma: build/run = Debug, publish = Release (.NET 8+).
+        Default configuration: build/run = Debug, publish = Release (.NET 8+).
         """);
 
         var demoEnv = Environment.GetEnvironmentVariable("DEMO_ENV");
         var processName = Path.GetFileNameWithoutExtension(Environment.ProcessPath!);
-        Console.WriteLine($"Bu program nasıl başlatıldı?  ProcessPath = {Environment.ProcessPath}");
-        Console.WriteLine($"DEMO_ENV ortam değişkeni      = {(demoEnv is null ? "(tanımsız)" : $"\"{demoEnv}\"")}");
+        Console.WriteLine($"How was this program started?  ProcessPath = {Environment.ProcessPath}");
+        Console.WriteLine($"DEMO_ENV environment variable  = {(demoEnv is null ? "(not set)" : $"\"{demoEnv}\"")}");
 
         var launchSettingsInBin = File.Exists(Path.Combine(AppContext.BaseDirectory, "launchSettings.json"));
         var projectDir = ProjectLocator.FindProjectDirectory();
         var launchSettingsInSource = projectDir is not null && File.Exists(Path.Combine(projectDir, "Properties", "launchSettings.json"));
-        Console.WriteLine($"launchSettings.json kaynakta (Properties/) var mı? {launchSettingsInSource}  ·  çıktı klasöründe (bin/) var mı? {launchSettingsInBin}");
+        Console.WriteLine($"Is launchSettings.json in the source (Properties/)? {launchSettingsInSource}  ·  in the output folder (bin/)? {launchSettingsInBin}");
 
         Console.WriteLine($"""
 
-        Gözlem:
-          • `dotnet run`, Properties/launchSettings.json'daki profili okur ve DEMO_ENV'i uygulamaya VERİR → yukarıda {(demoEnv is null ? "tanımsız görünüyorsa program dotnet run ile değil doğrudan başlatılmıştır" : "değer göründü: dotnet run profile'ı uyguladı")}.
-          • Doğrudan çalıştırınca (bin/Debug/net10.0/{typeof(Section01_CommandsAndLaunchSettings).Assembly.GetName().Name} veya `dotnet <dll>`) launchSettings.json HİÇ okunmaz → DEMO_ENV tanımsız.
-          • launchSettings.json yalnızca Visual Studio / `dotnet run` içindir; bin/ ve publish çıktısına GİRMEZ.
-            Production ayarları ortam değişkeni (ASPNETCORE_ENVIRONMENT, bağlantı dizesi…), appsettings.<Ortam>.json veya gizli depodan (Key Vault) gelir.
+        Observations:
+          • `dotnet run` reads the profile in Properties/launchSettings.json and GIVES DEMO_ENV to the app → above {(demoEnv is null ? "it shows as not set, which means the program was started directly, not with dotnet run" : "a value showed up: dotnet run applied the profile")}.
+          • When run directly (bin/Debug/net10.0/{typeof(Section01_CommandsAndLaunchSettings).Assembly.GetName().Name} or `dotnet <dll>`) launchSettings.json is NEVER read → DEMO_ENV is not set.
+          • launchSettings.json is only for Visual Studio / `dotnet run`; it does NOT go into bin/ or the publish output.
+            Production settings come from environment variables (ASPNETCORE_ENVIRONMENT, connection string…), appsettings.<Environment>.json or a secret store (Key Vault).
 
-        Deneyin:
-            dotnet run -- J5.3 1                                                    → DEMO_ENV dolu (launchSettings)
-            dotnet bin/Debug/net10.0/{typeof(Section01_CommandsAndLaunchSettings).Assembly.GetName().Name}.dll J5.3 1   → DEMO_ENV tanımsız
-            dotnet run --no-launch-profile -- J5.3 1                                → launchSettings'i hiç kullanma
+        Try it:
+            dotnet run -- J5.3 1                                                    → DEMO_ENV is set (launchSettings)
+            dotnet bin/Debug/net10.0/{typeof(Section01_CommandsAndLaunchSettings).Assembly.GetName().Name}.dll J5.3 1   → DEMO_ENV is not set
+            dotnet run --no-launch-profile -- J5.3 1                                → don't use launchSettings at all
 
-        ⭐ `dotnet run` neden production'da kullanılmaz?
-          1. SDK gerektirir (sunucuda/container'da derleme araçları = büyük image, büyük saldırı yüzeyi).
-          2. Her çalıştırmada build/up-to-date kontrolü yapar (yavaş başlangıç, beklenmedik yeniden derleme).
-          3. Kaynak kod ve build araçları sunucuda durur.
-          4. launchSettings.json (geliştirme profili) devreye girer — üretim ayarı DEĞİL.
-          Üretim: `dotnet publish` çıktısı + yalnızca runtime (framework-dependent) ya da self-contained/AOT.
+        ⭐ Why isn't `dotnet run` used in production?
+          1. It needs the SDK (build tools on the server/in the container = big image, big attack surface).
+          2. It does a build/up-to-date check on every run (slow startup, unexpected rebuilds).
+          3. Source code and build tools sit on the server.
+          4. launchSettings.json (a development profile) kicks in — it is NOT a production setting.
+          Production: the `dotnet publish` output + only the runtime (framework-dependent) or self-contained/AOT.
         """);
     }
 }

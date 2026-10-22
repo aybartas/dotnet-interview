@@ -12,38 +12,38 @@ public static class Section04_DebugVsRelease
         var configuration = assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration ?? "?";
         var optimizerDisabled = debuggable?.IsJITOptimizerDisabled ?? false;
 
-        Console.WriteLine($"Bu .dll'in derleme yapılandırması     : {configuration}");
-        Console.WriteLine($"JIT optimizasyonu kapalı mı?          : {optimizerDisabled}   (DebuggableAttribute.IsJITOptimizerDisabled)");
+        Console.WriteLine($"Build configuration of this .dll      : {configuration}");
+        Console.WriteLine($"Is JIT optimization disabled?         : {optimizerDisabled}   (DebuggableAttribute.IsJITOptimizerDisabled)");
 
 #if DEBUG
-        Console.WriteLine("DEBUG sembolü tanımlı mı?             : EVET (#if DEBUG bloğu derlendi)");
+        Console.WriteLine("Is the DEBUG symbol defined?          : YES (the #if DEBUG block was compiled)");
 #else
-        Console.WriteLine("DEBUG sembolü tanımlı mı?             : HAYIR (#if DEBUG bloğu derlemeden SİLİNDİ)");
+        Console.WriteLine("Is the DEBUG symbol defined?          : NO (the #if DEBUG block was REMOVED at compile time)");
 #endif
 
         var assertRan = false;
-        Debug.Assert(Mark(ref assertRan), "Debug.Assert argümanı");         // [Conditional("DEBUG")]: Release'de çağrı VE argüman ifadesi silinir
-        Console.WriteLine($"Debug.Assert içindeki ifade çalıştı mı: {assertRan}   (Release'de false → yan etkili ifadeyi Assert'e koymayın!)\n");
+        Debug.Assert(Mark(ref assertRan), "Debug.Assert argument");         // [Conditional("DEBUG")]: in Release both the call AND the argument expression are removed
+        Console.WriteLine($"Did the expression inside Debug.Assert run: {assertRan}   (false in Release → don't put side-effecting expressions in Assert!)\n");
 
         var addIl = IlDisassembler.Disassemble(typeof(Samples).GetMethod(nameof(Samples.AddWithLocal))!);
-        Console.WriteLine($"AddWithLocal IL'i ('var result = a + b; return result;') — {addIl.Count} komut, {addIl.Count(l => l.Contains(" nop"))} adet 'nop':");
+        Console.WriteLine($"IL of AddWithLocal ('var result = a + b; return result;') — {addIl.Count} instructions, {addIl.Count(l => l.Contains(" nop"))} 'nop':");
         foreach (var line in addIl) Console.WriteLine($"     {line}");
 
         Console.WriteLine("""
 
-        Karşılaştırmak için iki kez çalıştırın:
-            dotnet run -- J5.1 4                 (Debug: nop'lar + gereksiz yerel değişken IL'de durur, optimizasyon kapalı)
-            dotnet run -c Release -- J5.1 4      (Release: IL sadeleşir, DEBUG sembolü yok, JIT optimizasyonu açık)
+        Run it twice to compare:
+            dotnet run -- J5.1 4                 (Debug: nops + the redundant local stay in the IL, optimization is off)
+            dotnet run -c Release -- J5.1 4      (Release: IL gets simpler, no DEBUG symbol, JIT optimization is on)
 
         Debug vs Release:
-          • Derleyici optimizasyonu : Debug KAPALI (nop'lar, geçici değişkenler) · Release AÇIK (IL sadeleşir)
-          • JIT optimizasyonu       : Debug kapalı (tier-0 / minopts) · Release açık (tiered → tier-1)
-          • DEBUG sembolü           : Debug'da tanımlı (#if DEBUG çalışır) · Release'de tanımlı değil
-          • Debug.Assert, [Conditional("DEBUG")] : Debug'da çalışır · Release'de çağrı VE argüman ifadeleri SİLİNİR
-          • Debugger deneyimi       : Debug: satır satır, her değişken görünür · Release: değişkenler "optimized away", satırlar atlar
-          • Hız / boyut             : Debug yavaş ve büyük · Release hızlı ve küçük
-        • `dotnet build` / `dotnet run` varsayılanı Debug; `dotnet publish` varsayılanı Release (.NET 8+). Üretime Debug çıktısı gitmemeli.
-        • "Debug'da çalışıyor, Release'de çalışmıyor" gerçek bir sorun sınıfıdır (yan etkili assert, zamanlama/race, #if DEBUG farkı). İkisini de test edin.
+          • Compiler optimization  : Debug OFF (nops, temporaries) · Release ON (IL gets simpler)
+          • JIT optimization       : Debug off (tier-0 / minopts) · Release on (tiered → tier-1)
+          • DEBUG symbol           : defined in Debug (#if DEBUG works) · not defined in Release
+          • Debug.Assert, [Conditional("DEBUG")] : run in Debug · call AND argument expressions are REMOVED in Release
+          • Debugger experience    : Debug: line by line, every variable visible · Release: variables "optimized away", lines jump around
+          • Speed / size           : Debug slow and large · Release fast and small
+        • `dotnet build` / `dotnet run` default to Debug; `dotnet publish` defaults to Release (.NET 8+). Debug output must not go to production.
+        • "Works in Debug, fails in Release" is a real class of problems (side-effecting asserts, timing/races, #if DEBUG differences). Test both.
         """);
     }
 

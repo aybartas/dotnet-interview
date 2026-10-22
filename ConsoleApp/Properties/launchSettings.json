@@ -3,7 +3,7 @@
     "ConsoleApp": {
       "commandName": "Project",
       "environmentVariables": {
-        "DEMO_ENV": "launchSettings.json'dan geldi"
+        "DEMO_ENV": "came from launchSettings.json"
       }
     }
   }

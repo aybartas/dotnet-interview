@@ -5,29 +5,29 @@ public static class Section04_CopyAndClean
     public static void Run()
     {
         var path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-        Console.WriteLine($"1) appsettings.json bin/'de var mı? {File.Exists(path)}   (kaynakta: 02-bin-obj/appsettings.json)");
-        if (File.Exists(path)) Console.WriteLine($"   içerik: {File.ReadAllText(path).ReplaceLineEndings(" ").Trim()}");
+        Console.WriteLine($"1) Is appsettings.json in bin/? {File.Exists(path)}   (in the source: 02-bin-obj/appsettings.json)");
+        if (File.Exists(path)) Console.WriteLine($"   content: {File.ReadAllText(path).ReplaceLineEndings(" ").Trim()}");
 
         Console.WriteLine("""
 
-           csproj'ta:
+           In the csproj:
              <None Include="02-bin-obj/appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
 
-           CopyToOutputDirectory değerleri:
-             Never           → kopyalanmaz (varsayılan)
-             PreserveNewest  → kaynak daha yeniyse kopyalar (genellikle doğrusu)
-             Always          → her derlemede kopyalar
-           Web projelerinde appsettings.json bunu SDK sayesinde otomatik alır; kendi içerik dosyanız (şablon, sertifika, SQL betiği) için bunu yazarsınız.
-           Dosya bin/'e gelmezse uygulama çalışırken "dosya bulunamadı" der — en sık nedeni bu satırın unutulmasıdır.
+           CopyToOutputDirectory values:
+             Never           → not copied (default)
+             PreserveNewest  → copies if the source is newer (usually the right choice)
+             Always          → copies on every build
+           In web projects appsettings.json gets this automatically from the SDK; for your own content files (template, certificate, SQL script) you write it yourself.
+           If the file doesn't reach bin/, the app says "file not found" at run time — the most common cause is forgetting this line.
 
-        2) bin/ ve obj/ neden .gitignore'da?
-             • İkisi de kaynaktan ÜRETİLEBİLİR (build çıktısı) → depoya girerse gürültü, merge çakışması, makineye özel yollar, şişme.
-             • Standart .NET .gitignore: bin/ obj/  (+ .vs/, *.user). Bu repoda da öyle.
+        2) Why are bin/ and obj/ in .gitignore?
+             • Both can be GENERATED from source (build output) → in the repo they mean noise, merge conflicts, machine-specific paths, bloat.
+             • Standard .NET .gitignore: bin/ obj/  (+ .vs/, *.user). Same in this repo.
 
-        3) dotnet clean ne zaman gerekir?
-             dotnet clean      → bin/<config>/ içindeki ve obj/'daki üretilmiş dosyaları siler (obj/project.assets.json'ı silmez)
-             Gerekçeler: "bende derleniyor ama eski .dll çalışıyor" şüphesi, paket/SDK değişimi sonrası tuhaf hatalar, boyut temizliği.
-             Kökten temizlik: bin/ ve obj/ klasörlerini elle silip yeniden `dotnet build` (restore dahil). Sorun çözmenin ilk sırası: bin/obj sil → yeniden derle.
+        3) When is dotnet clean needed?
+             dotnet clean      → deletes generated files in bin/<config>/ and obj/ (does not delete obj/project.assets.json)
+             Reasons: the "it builds but the old .dll runs" suspicion, odd errors after a package/SDK change, freeing disk space.
+             Thorough cleanup: delete the bin/ and obj/ folders by hand and run `dotnet build` again (restore included). First step of troubleshooting: delete bin/obj → rebuild.
         """);
     }
 }

@@ -20,15 +20,15 @@
 "Kod derlenince ne oluyor?" sorusunun junior düzeyi cevabı **tek bir hat**tır:
 
 ```
-C# kaynak kod
-  → [Roslyn derleyici]  → IL + metadata içeren .dll (assembly)
-  → [MSBuild]           → bin/ klasörüne .dll + apphost(.exe) + .deps.json + .runtimeconfig.json
-  → [çalıştırma]        → apphost → hostfxr → hostpolicy → CoreCLR (runtime)
-  → [JIT]               → IL'i metodun ilk çağrısında native makine koduna çevirir
-  → CPU çalıştırır
+C# source code
+  → [Roslyn compiler]   → .dll (assembly) containing IL + metadata
+  → [MSBuild]           → .dll + apphost(.exe) + .deps.json + .runtimeconfig.json into the bin/ folder
+  → [execution]         → apphost → hostfxr → hostpolicy → CoreCLR (runtime)
+  → [JIT]               → turns IL into native machine code on a method's first call
+  → CPU runs it
 ```
 
-Roslyn, IL, apphost ve deployment modellerinin derin hali → M2. Konunun kodu [`Sections/`](Sections/) altında 6 bölümdür (`dotnet run -- J5.1 <numara>`, `ConsoleApp` klasöründe); kod, **kendi .dll'ini ve IL'ini inceleyen** bir programdır.
+Roslyn, IL, apphost ve deployment modellerinin derin hali → M2. Konunun kodu [`Sections/`](Sections/) altında 6 bölümdür (`dotnet run -- J5.1 <number>`, `ConsoleApp` klasöründe); kod, **kendi .dll'ini ve IL'ini inceleyen** bir programdır.
 
 ---
 
@@ -61,10 +61,10 @@ Roslyn, IL, apphost ve deployment modellerinin derin hali → M2. Konunun kodu [
 **IL (Intermediate Language, CIL)**, derleyicinin ürettiği **yığın (stack) tabanlı, platformdan bağımsız ara dildir.** `a + b`:
 
 ```
-IL_0000: ldarg.0     ; ilk argümanı yığına koy
-IL_0001: ldarg.1     ; ikinciyi yığına koy
-IL_0002: add         ; ikisini çek, topla, sonucu yığına koy
-IL_0003: ret         ; yığındaki değeri döndür
+IL_0000: ldarg.0     ; push the first argument onto the stack
+IL_0001: ldarg.1     ; push the second one onto the stack
+IL_0002: add         ; pop both, add them, push the result
+IL_0003: ret         ; return the value on the stack
 ```
 
 - **Neden var?** Dil ve platform bağımsızlığı: C#, F#, VB aynı IL'e derlenir; aynı `.dll` x64, ARM64, Windows, Linux'ta çalışır. Platforma özel kısmı (makine kodu) JIT hedef makinede üretir.
@@ -112,10 +112,10 @@ Derleyici dil "şeker"lerini daha basit koda açar; IL'de `foreach`/`using` diye
 
 ```csharp
 foreach (var item in list) sum += item;
-// ≈ derleyicinin açtığı:
-var e = list.GetEnumerator();           // List<T>.Enumerator: struct (kutulanmaz)
+// ≈ what the compiler expands it to:
+var e = list.GetEnumerator();           // List<T>.Enumerator: a struct (not boxed)
 try { while (e.MoveNext()) { var item = e.Current; sum += item; } }
-finally { e.Dispose(); }                // foreach HER ZAMAN dispose eder
+finally { e.Dispose(); }                // foreach ALWAYS disposes
 
 using var r = new Resource();
 // ≈  var r = new Resource(); try { ... } finally { if (r != null) r.Dispose(); }

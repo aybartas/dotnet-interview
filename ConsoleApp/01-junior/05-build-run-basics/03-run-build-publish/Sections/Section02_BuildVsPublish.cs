@@ -5,9 +5,9 @@ using Junior.BuildRunBasics.Shared;
 namespace Junior.BuildRunBasics.RunBuildPublish;
 
 /// <summary>
-/// 🛠 J5.3: Aynı projeyi `dotnet build` ve `dotnet publish` ile çıkar; iki klasörü karşılaştırıp farkları listele.
-/// Bu bölüm dotnet CLI'ı kendisi çalıştırır (SDK gerekir; her komut birkaç saniye sürer). İki klasörü ELLE karşılaştırmak için:
-///   dotnet run -- J5.3 compare &lt;klasörA&gt; &lt;klasörB&gt;
+/// 🛠 J5.3: Produce the same project with `dotnet build` and `dotnet publish`; compare the two folders and list the differences.
+/// This section runs the dotnet CLI itself (the SDK is required; each command takes a few seconds). To compare two folders BY HAND:
+///   dotnet run -- J5.3 compare &lt;folderA&gt; &lt;folderB&gt;
 /// </summary>
 public static class Section02_BuildVsPublish
 {
@@ -16,7 +16,7 @@ public static class Section02_BuildVsPublish
         var projectDir = ProjectLocator.FindProjectDirectory();
         if (projectDir is null)
         {
-            Console.WriteLine("Proje klasörü bulunamadı (publish edilmiş kopyadan çalışıyorsunuz): bu bölüm kaynak projeyi build/publish eder.");
+            Console.WriteLine("Project folder not found (you are running from a published copy): this section builds/publishes the source project.");
             return;
         }
 
@@ -29,11 +29,11 @@ public static class Section02_BuildVsPublish
 
         try
         {
-            Console.WriteLine($"Çalışma klasörü: {work}  (bölüm sonunda silinir)\n");
+            Console.WriteLine($"Working folder: {work}  (deleted at the end of the section)\n");
             Console.WriteLine("1) dotnet build   -c Release -o <A>");
             Dotnet($"build \"{csproj}\" -c Release -o \"{build}\"");
 
-            Console.WriteLine("2) dotnet publish -c Release -o <B>              (framework-dependent, varsayılan)");
+            Console.WriteLine("2) dotnet publish -c Release -o <B>              (framework-dependent, default)");
             Dotnet($"publish \"{csproj}\" -c Release -o \"{publish}\"");
 
             Console.WriteLine($"3) dotnet publish -c Release -r {rid} --self-contained false -p:PublishSingleFile=true -o <C>");
@@ -44,8 +44,8 @@ public static class Section02_BuildVsPublish
 
             if (singleOk && Directory.Exists(single))
             {
-                Console.WriteLine("\n── B (publish) ↔ C (publish, tek dosya) ──");
-                CompareDirectories(publish, single, "publish", "tek dosya");
+                Console.WriteLine("\n── B (publish) ↔ C (publish, single file) ──");
+                CompareDirectories(publish, single, "publish", "single file");
             }
         }
         finally
@@ -55,16 +55,16 @@ public static class Section02_BuildVsPublish
 
         Console.WriteLine("""
 
-        Çıkarımlar:
-          • Basit bir framework-dependent console uygulamasında build ve publish çıktıları BENZERDİR: ikisi de .dll + apphost + .pdb + .deps.json + .runtimeconfig.json.
-            Farkı yaratan, publish'in ekstra yapabildikleridir:
-          • Konum ve varsayılan yapılandırma: build → bin/Debug/net10.0/ (Debug); publish → bin/Release/net10.0/publish/ (Release, optimizasyonlu IL).
-          • Publish "dağıtım birimi"dir: yalnızca çalışmak için gerekenleri toplar (web projelerinde wwwroot/statik dosyalar, web.config); geliştirme dosyaları
-            (launchSettings.json, obj/, kaynak kod) girmez. Build klasörü ise IDE/test çalıştırma içindir.
-          • Yalnızca publish'in sunduğu seçenekler: tek dosya (PublishSingleFile), self-contained (-r + runtime dahil), trimming, ReadyToRun, Native AOT.
-            Yukarıdaki 3. adım bunun küçük bir örneğidir: .dll, .deps.json ve .runtimeconfig.json tek çalıştırılabilir dosyaya gömülür (ayrı dosya olarak görünmezler).
-            Boyut ~65-70 MB'a çıkar: bu SDK tek dosya isteğinde .NET runtime'ını da pakete katmış görünüyor — tek dosya + self-contained ayrımını
-            -p:SelfContained=true/false ile AÇIKÇA belirtin (ayrıntı → M2.5).
+        Takeaways:
+          • For a simple framework-dependent console app the build and publish outputs are SIMILAR: both are .dll + apphost + .pdb + .deps.json + .runtimeconfig.json.
+            What makes the difference is the extra things publish can do:
+          • Location and default configuration: build → bin/Debug/net10.0/ (Debug); publish → bin/Release/net10.0/publish/ (Release, optimized IL).
+          • Publish is the "unit of deployment": it collects only what is needed to run (in web projects wwwroot/static files, web.config); development files
+            (launchSettings.json, obj/, source code) are left out. The build folder is for the IDE/running tests.
+          • Options only publish offers: single file (PublishSingleFile), self-contained (-r + runtime included), trimming, ReadyToRun, Native AOT.
+            Step 3 above is a small example: the .dll, .deps.json and .runtimeconfig.json are embedded into a single executable (they don't show up as separate files).
+            The size grows to ~65-70 MB: this SDK seems to bundle the .NET runtime too when single file is requested — state the single-file vs self-contained
+            distinction EXPLICITLY with -p:SelfContained=true/false (details → M2.5).
         """);
     }
 
@@ -81,7 +81,7 @@ public static class Section02_BuildVsPublish
         var stderr = process.StandardError.ReadToEndAsync();
         process.WaitForExit();
         var ok = process.ExitCode == 0;
-        Console.WriteLine($"   → {(ok ? "tamam" : $"BAŞARISIZ (çıkış kodu {process.ExitCode})")} ({sw.Elapsed.TotalSeconds:N1} sn)");
+        Console.WriteLine($"   → {(ok ? "ok" : $"FAILED (exit code {process.ExitCode})")} ({sw.Elapsed.TotalSeconds:N1} s)");
         if (!ok)
         {
             var lines = (stdout.Result + stderr.Result).Split('\n', StringSplitOptions.RemoveEmptyEntries).Take(4);
@@ -90,28 +90,28 @@ public static class Section02_BuildVsPublish
         return ok;
     }
 
-    /// <summary>İki klasörün dosya listesini (ad + boyut) karşılaştırır. `dotnet run -- J5.3 compare A B` buraya gelir.</summary>
+    /// <summary>Compares the file lists (name + size) of two folders. `dotnet run -- J5.3 compare A B` ends up here.</summary>
     public static int CompareDirectories(string a, string b, string labelA = "A", string labelB = "B")
     {
         if (!Directory.Exists(a) || !Directory.Exists(b))
         {
-            Console.Error.WriteLine("Klasörlerden biri yok: " + (Directory.Exists(a) ? b : a));
+            Console.Error.WriteLine("One of the folders does not exist: " + (Directory.Exists(a) ? b : a));
             return 1;
         }
 
         var filesA = List(a);
         var filesB = List(b);
-        Console.WriteLine($"   {labelA}: {filesA.Count} dosya, {ProjectLocator.HumanSize(filesA.Values.Sum())}   ·   {labelB}: {filesB.Count} dosya, {ProjectLocator.HumanSize(filesB.Values.Sum())}");
+        Console.WriteLine($"   {labelA}: {filesA.Count} files, {ProjectLocator.HumanSize(filesA.Values.Sum())}   ·   {labelB}: {filesB.Count} files, {ProjectLocator.HumanSize(filesB.Values.Sum())}");
 
         var onlyA = filesA.Keys.Except(filesB.Keys).Order().ToList();
         var onlyB = filesB.Keys.Except(filesA.Keys).Order().ToList();
         var different = filesA.Keys.Intersect(filesB.Keys).Where(k => filesA[k] != filesB[k]).Order().ToList();
         var same = filesA.Keys.Intersect(filesB.Keys).Count(k => filesA[k] == filesB[k]);
 
-        Console.WriteLine($"   Her ikisinde de aynı boyutta: {same} dosya");
-        foreach (var f in onlyA) Console.WriteLine($"   yalnızca {labelA} içinde : {f,-40} {ProjectLocator.HumanSize(filesA[f])}");
-        foreach (var f in onlyB) Console.WriteLine($"   yalnızca {labelB} içinde : {f,-40} {ProjectLocator.HumanSize(filesB[f])}");
-        foreach (var f in different) Console.WriteLine($"   boyut farklı  : {f,-40} {labelA}={ProjectLocator.HumanSize(filesA[f])}  {labelB}={ProjectLocator.HumanSize(filesB[f])}");
+        Console.WriteLine($"   Same size in both: {same} files");
+        foreach (var f in onlyA) Console.WriteLine($"   only in {labelA} : {f,-40} {ProjectLocator.HumanSize(filesA[f])}");
+        foreach (var f in onlyB) Console.WriteLine($"   only in {labelB} : {f,-40} {ProjectLocator.HumanSize(filesB[f])}");
+        foreach (var f in different) Console.WriteLine($"   size differs   : {f,-40} {labelA}={ProjectLocator.HumanSize(filesA[f])}  {labelB}={ProjectLocator.HumanSize(filesB[f])}");
         return 0;
     }
 
