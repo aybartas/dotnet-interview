@@ -5,42 +5,43 @@ Türkçe, uygulamalı bir .NET mülakat hazırlık reposu. Hedef platform **.NET
 ## Başlamak
 
 1. .NET 10 SDK'yı kurun (`dotnet --version` → `10.x`).
-2. **`DotnetInterview.slnx`** dosyasını Visual Studio'da açın (VS Code / Rider için de çalışır). Tek solution'da tüm modüller proje olarak, seviyelere göre klasörlenmiş görünür.
-3. Bir konuyu seçin: konu klasöründeki `README.md` teoridir, yanındaki `.cs` dosyaları kodudur, `interview-questions.md` mülakat sorularıdır.
+2. **`DotnetInterview.slnx`** dosyasını Visual Studio'da açın. Solution'da yalnızca **iki proje** var:
+   - **`ConsoleApp`** — konuların çoğu. **F5** → konu menüsü açılır: bir konu yazın (ör. `J3.2`), sonra bölüm numarası ya da `all`.
+   - **`WebApp`** — HTTP sunucusu gerektiren konular (şimdilik J1.3). `WebApp`'e sağ tık → *Debug → Start New Instance*; tarayıcı `http://localhost:5080`'i açar.
+3. Konunun anlatımı, konu klasöründeki `README.md`'dir; mülakat soruları aynı klasördeki `interview-questions.md` (sertifika pistinde `quiz.md`).
+
+Terminalden de aynı şekilde:
 
 ```bash
-dotnet build DotnetInterview.slnx            # tüm repo
-
-cd 01-junior/03-collections-linq             # bir modül = bir proje
-dotnet run                                   # konu listesi
-dotnet run -- 3.3                            # 3.3'ün bölüm listesi
-dotnet run -- 3.3 2                          # 3.3'ün 2. bölümü  (all: hepsi)
+cd ConsoleApp
+dotnet run                          # menü
+dotnet run -- J3.2 4                # menüsüz: J3.2'nin 4. bölümü  (all: hepsi)
+cd ../WebApp && dotnet run          # web konuları
 ```
-
-Visual Studio'da modülün projesine sağ tık → **Set as Startup Project**, sonra proje özelliklerindeki *Debug → Application arguments* alanına `3.3 2` gibi bir değer yazıp F5 ile hata ayıklayabilirsiniz.
 
 ## Klasör yapısı
 
-**Bir modül = bir .NET projesi, bir konu = projenin içinde bir klasör.** Ayrı `src/` veya `tests/` klasörü yoktur.
+**Bir console uygulaması + bir web uygulaması; konu = uygulamanın içinde bir klasör** (anlatım + varsa kod aynı yerde). Her konunun pratiği yoktur: kodsuz konularda yalnızca `README.md` ve sorular vardır.
 
 ```
-DotnetInterview.slnx                     # tek solution
-01-junior/
-├── 01-dev-foundations/                  # J01.DevFoundations (Web SDK: Kestrel + console demoları)
-│   ├── J01.DevFoundations.csproj
-│   ├── Program.cs                       # konu menüsü
-│   ├── 01-git/                          # konu = klasör
-│   │   ├── README.md                    # teori
-│   │   └── interview-questions.md       # 10-20 soru + cevap
-│   └── 02-network-fundamentals/ …       # README + kod dosyaları + sorular
-├── 02-csharp-fundamentals/              # J02.CSharpFundamentals
-├── 02-csharp-fundamentals-lib/          # J02.Lib (assembly sınırı deneyleri için küçük kütüphane)
-├── 03-collections-linq/                 # J03.CollectionsLinq
-├── 04-async-basics/                     # J04.AsyncBasics (Web SDK: yerel Kestrel API'ye çağrılar)
-└── 05-build-run-basics/                 # J05.BuildRunBasics
-02-mid/  03-senior/  04-dsa/  05-interview/   # sırayla doldurulur
-06-certifications/                        # Azure sertifika pisti (AZ-900, AI-200): seviyelerden bağımsız
+DotnetInterview.slnx
+ConsoleApp/
+├── Program.cs                          # tüm konsol konularının menüsü
+├── 01-junior/
+│   ├── 01-dev-foundations/             # modül
+│   │   ├── 01-git/                     # konu
+│   │   │   ├── README.md               # anlatım
+│   │   │   └── interview-questions.md  # 10-20 soru + cevap
+│   │   └── 02-network-fundamentals/    # README + kod + sorular
+│   └── 02-csharp-fundamentals/ … 05-build-run-basics/
+├── 02-mid/  03-senior/  04-dsa/  05-interview/   # sırayla doldurulur
+└── 06-certifications/                  # Azure sertifika pisti (AZ-900, AI-200)
+WebApp/
+├── Program.cs                          # web konularını çağırır
+└── 01-junior/01-dev-foundations/03-how-the-web-works/
 ```
+
+ROADMAP'teki `📁` yolları uygulama klasörüne göredir (ör. `01-junior/03-collections-linq/` → `ConsoleApp/01-junior/03-collections-linq/`). Konu ID'leri `J` (Junior), `M`, `S`, `D`, `C` (sertifika) ile başlar: `J2.3`, `C1.8`.
 
 | Seviye | Klasör | Durum |
 |--------|--------|-------|
@@ -59,9 +60,9 @@ Planın geri kalanı: [Genel Harita](ROADMAP.md#genel-harita) · [Çalışma Pla
 |----|--------|
 | Ne öğrenilecek (ana hat) | [`ROADMAP.md`](ROADMAP.md) — konu maddeleri, ⭐ = sık sorulan |
 | Uzun anlatım (teori) | konunun `README.md`'si: *Ne? / Neden? / Nasıl? / Gerçek dünya senaryosu / Mülakat perspektifi / Yaygın hatalar / Performans & trade-off / Kaynaklar* |
-| Çalışan kod | konu klasöründeki `.cs` dosyaları (modül projesinin içinde) |
+| Çalışan kod | konu klasöründeki `.cs` dosyaları (`ConsoleApp`; HTTP sunucusu gerektirenler `WebApp`) |
 | Mülakat soruları | konunun `interview-questions.md`'si + ROADMAP'teki modül 🎯 satırı (sertifika pistinde: `quiz.md` + 📝 satırı) |
-| Altyapı (veritabanı, broker…) | gereken modülde `docker-compose.yml` |
+| Altyapı (veritabanı, broker…) | ilk altyapı isteyen konu geldiğinde kökte `docker-compose.yml` |
 
 Repo bilerek yalındır: **test projesi yalnızca konusu test olan modüllerde** (J10, M10…) bulunur, komut satırı alıştırmaları script değil README'deki kod bloklarıdır.
 

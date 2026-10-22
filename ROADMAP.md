@@ -13,7 +13,7 @@
 
 | # | Bölüm | İçerik |
 |---|-------|--------|
-| 1 | [Bu Roadmap Nasıl Kullanılır?](#bu-roadmap-nasıl-kullanılır) | Yapı, ID sistemi, her konunun klasör şablonu |
+| 1 | [Bu Roadmap Nasıl Kullanılır?](#bu-roadmap-nasıl-kullanılır) | Yapı, ID sistemi, konu klasörlerinin yeri ve şablonu |
 | 2 | [Seviyeler ve Çıkış Kriterleri](#seviyeler-ve-çıkış-kriterleri) | Junior/Mid/Senior'dan ne beklenir |
 | 3 | [Genel Harita](#genel-harita) | Tüm modüller tek bakışta |
 | 4 | [Seviye 1 — Junior](#seviye-1--junior) | J1–J13 · temeller, ilk API, ilk veritabanı, ilk container |
@@ -61,31 +61,36 @@ Metin içi çapraz referanslar bu ID'lerle yapılır: **(→ M6.3)** "bu konunun
 
 | İşaret | Anlamı |
 |--------|--------|
-| 🛠 **Kod** | Bu konunun klasöründe (modül projesinin içinde) yazılacak çalıştırılabilir kodun kapsamı |
+| 🛠 **Kod** | Bu konunun klasöründe (`ConsoleApp` veya `WebApp` içinde) yazılacak çalıştırılabilir kodun kapsamı |
 | 🎯 **Mülakat** | Modül sonunda cevaplayabilmen gereken tipik sorular |
 | 📝 **Quiz / Sınav** | (Sertifika pistinde) sınav tarzı quiz ve modülün tipik sınav soruları |
 | ⭐ | Mülakatlarda **çok sık** sorulan klasik konu |
 | **(.NET 11)** | Kasım 2026'da gelen / önizlemedeki özellik — bil ama production'da .NET 10 varsay |
 | 🟢 🟡 🔴 | (DSA pistinde) Junior / Mid / Senior zorluk seviyesi |
 
-### Her modül klasörünün şablonu
+### Her konunun yeri: tek console + tek web uygulaması
 
-**Bir modül = bir .NET projesi.** Modül klasöründe `.csproj` durur; her konu o projenin içinde bir klasördür (ayrı `src/` veya `tests/` klasörü yoktur). Tüm repo tek bir solution'dır (`DotnetInterview.slnx`).
+**Repo iki projeden oluşur** (tek solution, `DotnetInterview.slnx`): **`ConsoleApp`** (konsol konularının hepsi) ve **`WebApp`** (HTTP sunucusu gerektiren konular: J1.3, J6, J7, M3, M5 …). Seviye, modül ve konu **klasördür**; modül başına proje, `src/`, `tests/`, `Directory.Build.props` yoktur. Aşağıdaki `📁` yolları **uygulama klasörüne göredir**: konsol konuları `ConsoleApp/` altında, web konuları `WebApp/` altında aynı yolla bulunur.
 
 ```
-<seviye>/<NN-modül>/
-├── J0X.ModülAdı.csproj     # proje tipi modülün gereğine göre: Console, Web, Web API, Worker…
-├── Program.cs              # (console modülleri) konu menüsü: dotnet run -- <konu> [bölüm]
-├── docker-compose.yml      # yalnızca altyapı gereken modüllerde (DB, Redis, Keycloak, broker)
-└── <NN-konu>/
+ConsoleApp/
+├── ConsoleApp.csproj
+├── Program.cs                 # TÜM konsol konularının menüsü: dotnet run -- J3.2 [bölüm | all]
+└── <seviye>/<NN-modül>/<NN-konu>/
     ├── README.md               # kavramsal anlatım (aşağıdaki şablon)
-    ├── <kod dosyaları>         # konunun kodu (Sections/, Models/ …)
+    ├── <kod dosyaları>         # konunun kodu (<Konu>Topic.cs, Sections/, Models/ …)
     └── interview-questions.md  # 10-20 soru + cevap
+WebApp/
+├── WebApp.csproj
+├── Program.cs                 # web konularının AddServices / Map metotlarını çağırır
+└── <seviye>/<NN-modül>/<NN-konu>/   # aynı biçim: README.md + endpoint kodu + interview-questions.md
+docker-compose.yml             # (ilk altyapı isteyen konu — J8 — geldiğinde eklenir) DB, Redis, Keycloak, broker …
 ```
 
-- **Test projesi yoktur**; yalnızca konusu test olan modüller (J10, M10…) test projesi içerir. Diğer konularda doğrulama, kodun çıktısını okumakla yapılır.
-- **Script yoktur** (`.sh` vb.): komut satırı alıştırmaları README'de kod bloğu olarak anlatılır.
-- Kod içermeyen modüller (ör. Kubernetes, CI/CD) proje açmaz; dosyaları solution'da klasör olarak görünür.
+- **Konu ID'leri:** konsolda `dotnet run -- J3.2` (Junior), `M…`, `S…`, `D…`, `C1.8` (sertifika); `Program.cs`'e her konu tek satırla eklenir.
+- **Test projesi yoktur**; yalnızca konusu test olan modüller (J10, M10…) için gerektiğinde eklenir. Diğer konularda doğrulama, kodun çıktısını okumakla yapılır.
+- **Script yoktur** (`.sh` vb.): komut satırı alıştırmaları README'de kod bloğu olarak anlatılır; **ikinci assembly** gerektiren deneyler (ör. `internal` sınırı) de böyle: README'de `dotnet new classlib` alıştırması.
+- Kod içermeyen modüller (ör. Kubernetes, CI/CD) klasör açmaz ya da yalnızca README'lerden oluşur.
 
 Her konunun `README.md`'si şu şablonu izler:
 
@@ -746,7 +751,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### J8. Veritabanı Temelleri
 
 > 📁 `01-junior/08-database-fundamentals/` · ⏱ ~3 hafta · Önkoşul: J1
-> Modül klasöründe ortak `docker-compose.yml`: PostgreSQL + pgAdmin + MongoDB + Redis.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): PostgreSQL + pgAdmin + MongoDB + Redis.
 > Veritabanı soruları **her seviyede** gelir: Junior'da kavram (ACID, index, JOIN), Mid'de mekanizma (isolation, plan, MVCC), Senior'da ölçek (replication, sharding). Bu modül o zeminin tamamı.
 
 #### J8.1 Veri Modelleme & İlişkisel Model · `01-relational-modeling`
@@ -1618,7 +1623,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M6. SQL & PostgreSQL Derinlemesine
 
 > 📁 `02-mid/06-sql-postgresql/` · ⏱ ~3 hafta · Önkoşul: J8, J9
-> Modül klasöründe ortak `docker-compose.yml`: PostgreSQL 18 (+ isteğe bağlı SQL Server).
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): PostgreSQL 18 (+ isteğe bağlı SQL Server).
 > J8'deki kavramların **mekanizması**: plan nasıl seçilir, MVCC nasıl çalışır, kilitler neden çakışır. Ölçek (replication, sharding, storage engine) → S4.
 
 #### M6.1 İleri SQL · `01-advanced-sql`
@@ -1779,7 +1784,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M8. NoSQL & Caching
 
 > 📁 `02-mid/08-nosql-caching/` · ⏱ ~3 hafta · Önkoşul: J8, M6
-> Modül klasöründe ortak `docker-compose.yml`: MongoDB (tek node'lu replica set — transaction için), Redis 8, Elasticsearch/OpenSearch.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): MongoDB (tek node'lu replica set — transaction için), Redis 8, Elasticsearch/OpenSearch.
 > Ölçekte MongoDB/Redis (sharding, cluster) → S4.6.
 
 #### M8.1 NoSQL Veri Modelleme Prensipleri · `01-nosql-modeling`
@@ -1871,7 +1876,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M9. Kimlik & Erişim Yönetimi: OAuth, OIDC, Keycloak
 
 > 📁 `02-mid/09-identity-access/` · ⏱ ~3 hafta · Önkoşul: J11
-> Modül klasöründe ortak `docker-compose.yml`: Keycloak 26 + PostgreSQL.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): Keycloak 26 + PostgreSQL.
 > Junior'da "JWT ile API koru" yeterliydi; Mid'de **akışı uçtan uca anlatmak, doğru IdP'yi seçmek ve güvenli entegre etmek** beklenir.
 
 #### M9.1 OAuth 2.0 → 2.1 Derinlemesine · `01-oauth2`
@@ -2094,7 +2099,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M12. Mesajlaşma & Message Broker'lar
 
 > 📁 `02-mid/12-messaging/` · ⏱ ~2 hafta · Önkoşul: M4, M11
-> Modül klasöründe ortak `docker-compose.yml`: RabbitMQ, Kafka (KRaft), Azure Service Bus emulator.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): RabbitMQ, Kafka (KRaft), Azure Service Bus emulator.
 > Event-driven mimari, outbox, saga ve Kafka derinlemesine → S6.
 
 #### M12.1 Mesajlaşma Kavramları · `01-messaging-concepts`
@@ -2180,7 +2185,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M13. Observability
 
 > 📁 `02-mid/13-observability/` · ⏱ ~2 hafta · Önkoşul: J6.5
-> Modül klasöründe ortak `docker-compose.yml`: OpenTelemetry Collector + Grafana LGTM (`grafana/otel-lgtm`) + Seq.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): OpenTelemetry Collector + Grafana LGTM (`grafana/otel-lgtm`) + Seq.
 > "Loglama zaten var" — ama **tek başına log yetmez.** Production teşhis metodolojisi, SLO ve APM seçimi → S8.
 
 #### M13.1 Üç Sinyal: Log, Metric, Trace · `01-three-signals`
@@ -2343,7 +2348,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### M15. AI Engineering: Uygulama Geliştirme
 
 > 📁 `02-mid/15-ai-engineering/` · ⏱ ~3 hafta · Önkoşul: J13, M5.9
-> Modül klasöründe ortak `docker-compose.yml`: Ollama, Qdrant, PostgreSQL + pgvector.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): Ollama, Qdrant, PostgreSQL + pgvector.
 > .NET artık AI-first bir platform; 2026'da backend rollerinde bile soruluyor. Agent mimarisi, Agent Framework, eval ve LLMOps → S9.
 
 #### M15.1 Microsoft.Extensions.AI Derinlemesine · `01-microsoft-extensions-ai`
@@ -2805,7 +2810,7 @@ Her konunun `README.md`'si şu şablonu izler:
 ### S6. Dağıtık Sistemler & Microservices
 
 > 📁 `03-senior/06-distributed-systems/` · ⏱ ~3 hafta · Önkoşul: M12, S5
-> Modül klasöründe ortak `docker-compose.yml`: Kafka, RabbitMQ, PostgreSQL, Redis, OpenTelemetry Collector.
+> Altyapı (repo köküne eklenecek `docker-compose.yml` servisleri): Kafka, RabbitMQ, PostgreSQL, Redis, OpenTelemetry Collector.
 
 #### S6.1 Microservice Temelleri & Ayrıştırma · `01-microservices`
 - Ne zaman microservice, ne zaman **monolit** — ekip yapısı (Conway yasası), bağımsız deploy, ölçek profili ⭐
@@ -3635,14 +3640,14 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 | Konu klasöründe | Açıklama |
 |-----------------|----------|
 | `README.md` | Teori — 8 başlıklı şablon; 5. başlık **"Sınav perspektifi"** (sınav neyi, nasıl sorar; tuzaklar; anahtar kelimeler) |
-| Kod / `az` CLI laboratuvarı | **Pratik**: Azure CLI komutları README'de kod bloğu olarak; Azure SDK/emülatör (Azurite, Cosmos emulator) ile çalışan .NET kodu modül projesinde |
+| Kod / `az` CLI laboratuvarı | **Pratik**: Azure CLI komutları README'de kod bloğu olarak; Azure SDK/emülatör (Azurite, Cosmos emulator) ile çalışan .NET kodu `ConsoleApp` içinde |
 | `quiz.md` | Sınav tarzı sorular (tek/çoklu seçim, evet-hayır tablosu, sıralama, senaryo; AI-200'de ayrıca kod tamamlama ve vaka) — cevap ve **gerekçe** `<details>` içinde |
 | `15-practice-exam/` · `14-practice-exam/` | Her sertifikanın sonunda **tam uzunlukta deneme sınavı**, alan bazlı puan tablosu ve sınav stratejisi |
 
 - **Sorular özgündür:** Gerçek sınav soruları Microsoft'un gizlilik sözleşmesi (NDA) kapsamındadır; "çıkmış soru" veya braindump kullanılmaz. Sorular **sınav formatında** ve resmî **konu ağırlıklarına** göre yazılır.
 - **Müfredat tarihlidir:** study guide'lar "skills measured as of …" ile tarihlenir; sınava girmeden önce resmî sayfayı kontrol et.
 - **Maliyet:** Laboratuvarlar ücretsiz katman/emülatörle ve **temizleme (cleanup) adımıyla** tasarlanır; her laboratuvar bütçe alarmı ve `az group delete` ile biter.
-- Proje yapısı: `C01.AzureFundamentals` (console: SLA/TCO hesaplayıcıları, SDK demoları) ve `C02.AzureAiCloudDeveloper` (Azure SDK + emülatörler + `docker-compose.yml`); testler yok, quiz'ler `.md`'dir.
+- Proje yapısı: ayrı proje yok; kod `ConsoleApp/06-certifications/…` altında (SLA/TCO hesaplayıcıları, Azure SDK demoları gerektiğinde, emülatörler kökteki `docker-compose.yml`'den); testler yok, quiz'ler `.md`'dir.
 
 ---
 
@@ -3657,7 +3662,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 > | Describe Azure architecture and services | %35-40 | C1.4 – C1.10 |
 > | Describe Azure management and governance | %30-35 | C1.11 – C1.14 |
 >
-> Her konuda dört katman var: **📌 Resmî hedef** (study guide'daki hangi maddeyi kapsadığı) · **Teori** (README) · **🛠 Pratik** (az CLI laboratuvarı ve/veya `C01` projesindeki kod; portal demoları yok, gereken bilgi teoride) · **📝 Quiz** (sınav formatında, gerekçeli). *(bağlam)* etiketli maddeler sınav hedefinde açıkça yazmaz ama soruyu anlamak ve gerçek işte kullanmak için gereklidir.
+> Her konuda dört katman var: **📌 Resmî hedef** (study guide'daki hangi maddeyi kapsadığı) · **Teori** (README) · **🛠 Pratik** (az CLI laboratuvarı ve/veya `ConsoleApp` içindeki kod; portal demoları yok, gereken bilgi teoride) · **📝 Quiz** (sınav formatında, gerekçeli). *(bağlam)* etiketli maddeler sınav hedefinde açıkça yazmaz ama soruyu anlamak ve gerçek işte kullanmak için gereklidir.
 > Sınav bilgileri (süre, geçme puanı 700/1000, ücret, dil) zaman zaman değişir — sınavdan önce resmî [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)'ı ve değişiklik kaydını kontrol et. Geliştirici derinliği → C2 (AI-200); çözüm mimarisi → S8.3 (AZ-305).
 > **Quiz notu:** Gerçek sınav soruları Microsoft'un gizlilik sözleşmesi kapsamındadır; "çıkmış soru"/braindump kullanılmaz. Sorular sınav formatında (tek seçim, çoklu seçim, evet/hayır tablosu, sıralama, senaryo), resmî alan ağırlıklarına göre **özgün** yazılır.
 
@@ -3712,7 +3717,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Pay-as-you-go** (taahhütsüz, saniye/dakika/saat veya işlem bazında), **reserved instances / savings plan** (1-3 yıl taahhütle indirim), **spot** (boşta kapasite, kesilebilir, çok ucuz), **free tier / ücretsiz hesap kredisi**, **dev/test fiyatlandırması**
   - Ne zaman hangisi: sabit 7/24 yük → reservation; değişken yük → pay-as-you-go; kesintiye dayanıklı toplu iş → spot (ayrıntılı maliyet → C1.11)
 - **Sınav tuzakları:** "MFA/şifre politikası kimin sorumluluğunda?" → **her zaman müşteri**; "işletim sistemi yaması" → IaaS'ta müşteri, PaaS/SaaS'ta Microsoft; hybrid ile multicloud; "baştan yatırım gerektirmeyen model" → OpEx/consumption
-- 🛠 **Pratik:** Aynı iş yükü (web uygulaması + veritabanı) için on-prem / IaaS / PaaS / SaaS **sorumluluk matrisini** doldurma alıştırması (README'de boş tablo + `<details>` çözüm); `az login` → `az account show` → ilk resource group'u açıp silme; **bütçe alarmı** kurma (Cost Management → Budgets, `az consumption budget create`) — öğrenirken fatura şoku yaşamamak için ilk iş. `C01` projesinde: sorumluluk matrisi sorgu aracı (`dotnet run -- 1.1 kim os paas`), CapEx/OpEx ve fiyatlandırma modeli karşılaştırma hesapları (örnek fiyatlarla).
+- 🛠 **Pratik:** Aynı iş yükü (web uygulaması + veritabanı) için on-prem / IaaS / PaaS / SaaS **sorumluluk matrisini** doldurma alıştırması (README'de boş tablo + `<details>` çözüm); `az login` → `az account show` → ilk resource group'u açıp silme; **bütçe alarmı** kurma (Cost Management → Budgets, `az consumption budget create`) — öğrenirken fatura şoku yaşamamak için ilk iş. `ConsoleApp` içinde (C1 klasörü): sorumluluk matrisi sorgu aracı (`dotnet run -- 1.1 kim os paas`), CapEx/OpEx ve fiyatlandırma modeli karşılaştırma hesapları (örnek fiyatlarla).
 - 📝 **Quiz:** sorumluluk matrisi, cloud modeli senaryoları, CapEx/OpEx, fiyatlandırma modeli seçimi (≈18 soru)
 
 #### C1.2 Cloud'un Faydaları · `02-cloud-benefits` ⭐
@@ -3735,7 +3740,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Composite SLA** *(bağlam — hesap sorusu gelebilir)*: seri bağlı bileşenlerde SLA'lar **çarpılır** (%99,95 × %99,99 ≈ %99,94); yedekli yapıda `1 − (1−a)(1−b)`; SLA'yı yükseltmek için zone/bölge yedekliliği ve maliyeti
   - **Scalability vs elasticity** ⭐: scalability **yetenek**, elasticity bu yeteneğin **otomatik** kullanımı
 - **Sınav tuzakları:** fayda ↔ tanım eşleştirme (özellikle HA ile reliability, scalability ile elasticity, security ile governance); scale up mı scale out mu; "kesintide hizmet sürsün" → HA; "talep artınca otomatik büyüsün" → elasticity
-- 🛠 **Kod:** `C01` projesinde **konsol hesaplayıcı**: SLA → günlük/aylık/yıllık izin verilen kesinti tablosu; seri ve paralel **composite SLA** hesabı; tek VM vs iki zone'a yayılmış VM karşılaştırması.
+- 🛠 **Kod:** `ConsoleApp` içinde (C1 klasörü) **konsol hesaplayıcı**: SLA → günlük/aylık/yıllık izin verilen kesinti tablosu; seri ve paralel **composite SLA** hesabı; tek VM vs iki zone'a yayılmış VM karşılaştırması.
 - 📝 **Quiz:** fayda eşleştirme (her faydadan en az 2 soru), scale up/out/elasticity senaryoları, SLA hesabı (≈20 soru)
 
 #### C1.3 Cloud Hizmet Türleri: IaaS, PaaS, SaaS ve Serverless · `03-cloud-service-types` ⭐
@@ -3755,7 +3760,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - Nitelikler: **olay tetiklemeli** çalışma, **otomatik ölçekleme** (sıfıra kadar), **çalışma süresi/çağrı başına ücret**, altyapı yönetimi yok
   - Serverless, PaaS'ın bir alt türü olarak düşünülür; Azure örnekleri: **Azure Functions** (kod), **Azure Logic Apps** (görsel iş akışı), serverless container (Container Apps) (→ C1.6)
 - **Sınav tuzakları:** "işletim sistemine tam erişim" → IaaS; "en az yönetim yükü" → SaaS (uygulama hazırsa) / PaaS (kendi kodunu çalıştıracaksan); ürün → model eşleştirme (Azure SQL Database = PaaS, VM üzerinde SQL Server = IaaS, Microsoft 365 = SaaS); "yalnızca kod çalışırken ödeme" → serverless
-- 🛠 **Pratik:** Aynı Todo uygulaması için IaaS (VM), PaaS (App Service) ve SaaS seçeneklerini **Pricing Calculator**'da fiyatlandırıp kontrol/maliyet/sorumluluk karşılaştırma tablosu çıkarma (README'de şablon); `az` CLI ile F1 App Service ve küçük bir VM açıp farkı görme, ardından `az group delete`. `C01` projesinde: ürün → hizmet türü kataloğu (`dotnet run -- 1.3 tur sql`) ve serverless (çağrı + GB-saniye) ile 7/24 açık kaynak maliyet karşılaştırması.
+- 🛠 **Pratik:** Aynı Todo uygulaması için IaaS (VM), PaaS (App Service) ve SaaS seçeneklerini **Pricing Calculator**'da fiyatlandırıp kontrol/maliyet/sorumluluk karşılaştırma tablosu çıkarma (README'de şablon); `az` CLI ile F1 App Service ve küçük bir VM açıp farkı görme, ardından `az group delete`. `ConsoleApp` içinde (C1 klasörü): ürün → hizmet türü kataloğu (`dotnet run -- 1.3 tur sql`) ve serverless (çağrı + GB-saniye) ile 7/24 açık kaynak maliyet karşılaştırması.
 - 📝 **Quiz:** ürün → hizmet türü eşleştirme, kullanım senaryosu seçimi, serverless nitelikleri (≈15 soru)
 
 #### C1.4 Azure Temel Mimari Bileşenleri · `04-core-architecture` ⭐
@@ -3874,7 +3879,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Azure Migrate:** taşıma için **merkezi hub** — keşif, değerlendirme (boyutlandırma/maliyet), sunucu, veritabanı, web uygulaması ve VDI taşıma; entegre araçlar (Discovery and assessment, Server Migration, Data Migration Assistant, Database Migration Service, Web app migration assistant)
   - **Azure Data Box:** çok büyük veriyi **fiziksel cihazla** taşıma (Data Box Disk; yeni nesil Data Box ~120/525 TB; Data Box Heavy emekli — kapasiteler değişir); ağ bağlantısı yetersiz/pahalı/yoksa; içe ve dışa aktarma; cihaz verisi güvenle silinir
 - **Sınav tuzakları:** redundancy ↔ senaryo eşleştirme ("bölgesel felakette de okunabilir" → RA-GRS/RA-GZRS; "zone arızası, tek bölge" → ZRS); Archive'dan anında okuma yok; "on-prem dosya sunucusunu Azure ile senkronla, önbellekte tut" → File Sync; "terabaytlarca veri, ağ yok" → Data Box; "komut satırı" → AzCopy, "grafik araç" → Storage Explorer; "taşıma için değerlendirme" → Azure Migrate
-- 🛠 **Pratik:** `C01` projesinde **Blob Storage** demosu (`Azure.Storage.Blobs`): container oluşturma, upload/download/listeleme, **access tier değiştirme** — yerelde **Azurite** emülatörüyle (Azure hesabı gerekmez); AzCopy ile yerel klasörü blob container'a kopyalama (`azcopy copy … --recursive`); Azure Files paylaşımı oluşturup bağlama; aynı storage account'u LRS ve GZRS olarak Pricing Calculator'da karşılaştırma.
+- 🛠 **Pratik:** `ConsoleApp` içinde (C1 klasörü) redundancy matrisi, access tier maliyet karşılaştırması ve taşıma aracı seçimi tabloları; `az storage` ile container/blob/**access tier değiştirme** ve AzCopy ile yerel klasörü blob container'a kopyalama (`azcopy copy … --recursive`) README'de CLI laboratuvarı; Azure Files paylaşımı oluşturup bağlama; aynı storage account'u LRS ve GZRS olarak Pricing Calculator'da karşılaştırma.
 - 📝 **Quiz:** servis seçimi, redundancy ve tier eşleştirme, taşıma/migration aracı seçimi (≈20 soru)
 
 #### C1.9 Kimlik ve Erişim: Microsoft Entra ID, Kimlik Doğrulama, RBAC · `09-identity-access` ⭐ *(geliştirici derinliği → M9, C2.11)*
@@ -3938,7 +3943,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
   - **Anahtar-değer** meta veri (`env=prod`, `costCenter=1234`, `owner=ali`); kullanım: **maliyet yönetimi ve raporlama**, kaynak yönetimi/arama, operasyon (otomatik kapatma), güvenlik (veri sınıflandırma), uyumluluk
   - Kurallar: tag'ler **varsayılan olarak miras alınmaz** (resource group tag'i içindeki kaynağa geçmez); **Azure Policy** ile zorunlu kılma veya gruptan kopyalama (Modify etkisi); portal/CLI/ARM ile ekleme
 - **Sınav tuzakları:** Pricing ile TCO Calculator; "bütçe %80 olunca e-posta" → Cost Management budget; egress ücreti ve bölge farkı; "maliyeti departmana göre raporla" → tag; tag mirası; reservation ile spot
-- 🛠 **Pratik:** **Pricing Calculator**'da küçük bir web uygulaması (App Service + SQL Database + storage) tahmini (README'de şablon); **budget** (aylık limit, %80 ve %100 eşikleri) ve alarm; `az tag`/`az resource tag` ile `env`/`owner`/`costCenter` tag'leri ve **tag bazlı** maliyet raporu (C01'de tag mirası olmadığını gösteren örnek rapor); `C01` hesaplayıcısına 3 yıllık **CapEx (on-prem) vs OpEx (cloud)** karşılaştırması.
+- 🛠 **Pratik:** **Pricing Calculator**'da küçük bir web uygulaması (App Service + SQL Database + storage) tahmini (README'de şablon); **budget** (aylık limit, %80 ve %100 eşikleri) ve alarm; `az tag`/`az resource tag` ile `env`/`owner`/`costCenter` tag'leri ve **tag bazlı** maliyet raporu (ConsoleApp'te tag mirası olmadığını gösteren örnek rapor); `ConsoleApp` hesaplayıcısına 3 yıllık **CapEx (on-prem) vs OpEx (cloud)** karşılaştırması.
 - 📝 **Quiz:** maliyet faktörleri, araç seçimi, tasarruf yolu, budget ve tag senaryoları (≈18 soru)
 
 #### C1.12 Azure Yönetişim ve Uyumluluk · `12-governance-compliance` ⭐
@@ -4036,7 +4041,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 >
 > **Dil notu:** Study guide'ın hedef kitle tanımı Azure SDK'ları, veri servisleri, izleme, mesajlaşma, **vector veritabanları** ve **Python** bilgisi bekler. Bu repoda laboratuvarlar **C#/.NET** ile yazılır (aynı Azure SDK kavramları), her konunun README'sinde sınavdaki kod tamamlama sorularına hazırlık için **eşdeğer Python parçası** da verilir.
 > **Kapsam notu:** AZ-204'te olan ama AI-200 hedeflerinde **görünmeyen** konular (App Service ayrıntıları, Blob lifecycle, API Management, Event Hubs, Microsoft Graph) bu modülde yalnızca *(bağlam)* olarak geçer; derinliği → S6 (gateway), S8.3 (mimari). Associate sınavlarında **senaryo/vaka** ve **kod/CLI/KQL tamamlama** soruları vardır; quiz'ler bu biçimleri içerir. AI-200 için resmî practice assessment henüz yayımlanmamış olabilir — deneme sınavı (C2.14) bu boşluğu doldurur.
-> Gerçek sınav soruları NDA kapsamındadır — braindump kullanılmaz; sorular özgün yazılır, her cevabın gerekçesi vardır. Her laboratuvar emülatörle (modülün `docker-compose.yml`: Azurite, Cosmos DB emulator, Service Bus emulator, PostgreSQL + pgvector, Redis) veya en ucuz katmanla çalışır ve `az group delete` ile biter.
+> Gerçek sınav soruları NDA kapsamındadır — braindump kullanılmaz; sorular özgün yazılır, her cevabın gerekçesi vardır. Her laboratuvar emülatörle (kökteki `docker-compose.yml`: Azurite, Cosmos DB emulator, Service Bus emulator, PostgreSQL + pgvector, Redis) veya en ucuz katmanla çalışır ve `az group delete` ile biter.
 
 #### C2.1 Azure Container Registry ve ACR Tasks · `01-container-registry` ⭐
 - 📌 **Resmî hedef:** *Develop containerized solutions* — Azure Container Registry ile container image'larını **oluştur, sakla, sürümle ve yönet** · **ACR Tasks** ile image oluştur ve çalıştır
@@ -4209,93 +4214,98 @@ Klasör hiyerarşisi roadmap'in birebir aynısıdır: **seviye → modül → ko
 
 ```
 dotnet-interview/
-├── DotnetInterview.slnx            # TEK solution: Visual Studio'da bunu açın
+├── DotnetInterview.slnx            # TEK solution: Visual Studio'da bunu açın (ConsoleApp + WebApp)
 ├── README.md
 ├── ROADMAP.md                      # bu dosya
 ├── CLAUDE.md
-├── Directory.Build.props           # (önerilen) ortak ayarlar: net10.0, nullable, analyzer'lar
-├── Directory.Packages.props        # (önerilen) Central Package Management — tüm projelerde tek paket sürümü
+├── docker-compose.yml              # (ilk altyapı konusu — J8 — geldiğinde eklenir): PostgreSQL, Redis, broker …
 │
-├── 01-junior/
-│   ├── 01-dev-foundations/
-│   ├── 02-csharp-fundamentals/
-│   ├── 03-collections-linq/
-│   ├── 04-async-basics/
-│   ├── 05-build-run-basics/
-│   ├── 06-aspnetcore-fundamentals/
-│   ├── 07-web-api-basics/
-│   ├── 08-database-fundamentals/
-│   ├── 09-ef-core-basics/
-│   ├── 10-testing-basics/
-│   ├── 11-security-auth-basics/
-│   ├── 12-docker-basics/
-│   ├── 13-ai-basics/
-│   └── capstone/
+├── ConsoleApp/                     # TEK console projesi: konsol konularının hepsi
+│   ├── ConsoleApp.csproj
+│   ├── Program.cs                  # konu menüsü: dotnet run -- J3.2 [bölüm | all]
+│   │
+│   ├── 01-junior/
+│   │   ├── 01-dev-foundations/
+│   │   ├── 02-csharp-fundamentals/
+│   │   ├── 03-collections-linq/
+│   │   ├── 04-async-basics/
+│   │   ├── 05-build-run-basics/
+│   │   ├── 06-aspnetcore-fundamentals/
+│   │   ├── 07-web-api-basics/
+│   │   ├── 08-database-fundamentals/
+│   │   ├── 09-ef-core-basics/
+│   │   ├── 10-testing-basics/
+│   │   ├── 11-security-auth-basics/
+│   │   ├── 12-docker-basics/
+│   │   ├── 13-ai-basics/
+│   │   └── capstone/
+│   │
+│   ├── 02-mid/
+│   │   ├── 01-csharp-deep-dive/
+│   │   ├── 02-build-runtime-deployment/
+│   │   ├── 03-aspnetcore-deep-dive/
+│   │   ├── 04-concurrency-async/
+│   │   ├── 05-api-design/
+│   │   ├── 06-sql-postgresql/
+│   │   ├── 07-data-access-advanced/
+│   │   ├── 08-nosql-caching/
+│   │   ├── 09-identity-access/
+│   │   ├── 10-testing-strategy/
+│   │   ├── 11-architecture-design/
+│   │   ├── 12-messaging/
+│   │   ├── 13-observability/
+│   │   ├── 14-devops/
+│   │   ├── 15-ai-engineering/
+│   │   └── capstone/
+│   │
+│   ├── 03-senior/
+│   │   ├── 01-runtime-internals/
+│   │   ├── 02-performance/
+│   │   ├── 03-concurrency-advanced/
+│   │   ├── 04-data-at-scale/
+│   │   ├── 05-architecture-advanced/
+│   │   ├── 06-distributed-systems/
+│   │   ├── 07-security-engineering/
+│   │   ├── 08-cloud-native-sre/
+│   │   ├── 09-ai-systems/
+│   │   ├── 10-system-design/
+│   │   └── capstone/
+│   │
+│   ├── 04-dsa/
+│   │   ├── 01-complexity/
+│   │   ├── 02-linear-structures/
+│   │   ├── 03-trees-heaps-tries/
+│   │   ├── 04-graphs/
+│   │   ├── 05-sorting-searching/
+│   │   ├── 06-recursion-backtracking/
+│   │   ├── 07-pattern-catalog/
+│   │   ├── 08-pattern-matching-guide/
+│   │   ├── 09-dynamic-programming/
+│   │   ├── 10-advanced-structures/
+│   │   └── 11-csharp-practice/
+│   │
+│   ├── 05-interview/
+│   │   ├── 01-coding-live-coding/
+│   │   ├── 02-behavioral/
+│   │   ├── 03-system-design-interview/
+│   │   ├── 04-take-home/
+│   │   ├── 05-technical-leadership/
+│   │   └── 06-mock-checklist/
+│   │
+│   └── 06-certifications/              # seviyelerden bağımsız sertifika pisti
+│       ├── 01-az-900-azure-fundamentals/      # 15 konu (README + quiz; kod yalnızca C1.1–C1.3, C1.8, C1.11)
+│       └── 02-ai-200-azure-ai-cloud-developer/ # 14 konu (Azure SDK + emülatörler: kökteki docker-compose.yml)
 │
-├── 02-mid/
-│   ├── 01-csharp-deep-dive/
-│   ├── 02-build-runtime-deployment/
-│   ├── 03-aspnetcore-deep-dive/
-│   ├── 04-concurrency-async/
-│   ├── 05-api-design/
-│   ├── 06-sql-postgresql/
-│   ├── 07-data-access-advanced/
-│   ├── 08-nosql-caching/
-│   ├── 09-identity-access/
-│   ├── 10-testing-strategy/
-│   ├── 11-architecture-design/
-│   ├── 12-messaging/
-│   ├── 13-observability/
-│   ├── 14-devops/
-│   ├── 15-ai-engineering/
-│   └── capstone/
-│
-├── 03-senior/
-│   ├── 01-runtime-internals/
-│   ├── 02-performance/
-│   ├── 03-concurrency-advanced/
-│   ├── 04-data-at-scale/
-│   ├── 05-architecture-advanced/
-│   ├── 06-distributed-systems/
-│   ├── 07-security-engineering/
-│   ├── 08-cloud-native-sre/
-│   ├── 09-ai-systems/
-│   ├── 10-system-design/
-│   └── capstone/
-│
-├── 04-dsa/
-│   ├── 01-complexity/
-│   ├── 02-linear-structures/
-│   ├── 03-trees-heaps-tries/
-│   ├── 04-graphs/
-│   ├── 05-sorting-searching/
-│   ├── 06-recursion-backtracking/
-│   ├── 07-pattern-catalog/
-│   ├── 08-pattern-matching-guide/
-│   ├── 09-dynamic-programming/
-│   ├── 10-advanced-structures/
-│   └── 11-csharp-practice/
-│
-├── 05-interview/
-│   ├── 01-coding-live-coding/
-│   ├── 02-behavioral/
-│   ├── 03-system-design-interview/
-│   ├── 04-take-home/
-│   ├── 05-technical-leadership/
-│   └── 06-mock-checklist/
-│
-└── 06-certifications/              # seviyelerden bağımsız sertifika pisti
-    ├── 01-az-900-azure-fundamentals/      # C01.AzureFundamentals (15 konu)
-    └── 02-ai-200-azure-ai-cloud-developer/ # C02.AzureAiCloudDeveloper (14 konu + docker-compose.yml)
+└── WebApp/                         # TEK web projesi: HTTP sunucusu gerektiren konular (J1.3, J6, J7, M3, M5 …)
+    ├── WebApp.csproj
+    ├── Program.cs                  # konuların AddServices / Map metotlarını çağırır
+    └── 01-junior/ …                # ConsoleApp ile aynı seviye/modül/konu klasör adları
 ```
 
 **Örnek — bir modülün açılmış hali:**
 
 ```
-01-junior/08-database-fundamentals/
-├── J08.DatabaseFundamentals.csproj # modülün TEK projesi (konular klasör olarak içinde)
-├── Program.cs                      # konu menüsü
-├── docker-compose.yml              # PostgreSQL + pgAdmin + MongoDB + Redis (modülün tüm konuları kullanır)
+ConsoleApp/01-junior/08-database-fundamentals/
 ├── 01-relational-modeling/
 │   ├── README.md
 │   ├── <kod dosyaları>
@@ -4307,13 +4317,16 @@ dotnet-interview/
 └── 06-postgresql-getting-started/
 ```
 
-**Kod konvansiyonları (önerilen):**
-- Bir modül = bir proje (`J08.DatabaseFundamentals.csproj`); konular proje içinde klasördür. `cd <modül> && dotnet run -- <konu> [bölüm]`
-- Proje adı `J<NN>.<ModülAdı>` (Solution Explorer'da sıralı görünür); namespace `Junior.DatabaseFundamentals.TransactionsAcid` biçimindedir (konu başına ayrı namespace → ad çakışması olmaz)
-- Aynı modüldeki konular birbirinin tipini kullanmaz; assembly sınırı gerektiren deneyler için modülün yanına küçük bir `J0X.Lib` projesi eklenebilir
-- Altyapı modül seviyesindeki `docker-compose.yml`'den gelir; connection string'ler `appsettings.Development.json` + User Secrets
-- Capstone'lar birden fazla katmanlı proje içerebilir; hepsi aynı solution'a eklenir
-- **Sertifika pisti:** modül = sertifika (`C01.AzureFundamentals`, `C02.AzureAiCloudDeveloper`); konu klasöründe `README.md` + (varsa) kod + **`quiz.md`** (sınav tarzı sorular, cevaplar `<details>` içinde); son konu = deneme sınavı. `interview-questions.md` yerine `quiz.md` kullanılır; testler yine yoktur.
+Modülün konuları kökteki `docker-compose.yml`'deki servisleri (PostgreSQL + pgAdmin + MongoDB + Redis) kullanır; her konu `ConsoleApp/Program.cs`'e tek satırla eklenir.
+
+**Kod konvansiyonları:**
+- Tek console + tek web projesi; konu = klasör. Konsol: `cd ConsoleApp && dotnet run -- J8.2 [bölüm | all]`; web: `cd WebApp && dotnet run`
+- Namespace `Junior.DatabaseFundamentals.TransactionsAcid` biçimindedir (konu başına ayrı namespace → aynı projede `Order`, `Customer` gibi demo tipleri çakışmaz)
+- Konular birbirinin tipini kullanmaz; modülün ortak yardımcıları modül klasöründeki `Shared/` klasörüne konur
+- Proje ayarları (`InvariantGlobalization`, `GenerateDocumentationFile`, `EnforceCodeStyleInBuild`) iki `.csproj`'a yazılır; yalnızca bir konuyu ilgilendiren analyzer ayarları o konu klasöründeki `.editorconfig`'e
+- Altyapı kökteki `docker-compose.yml`'den gelir; connection string'ler `appsettings.Development.json` + User Secrets
+- Capstone'lar katmanlı mimariyi göstermek için ek projeler içerebilir; hepsi aynı solution'a eklenir (tek istisna)
+- **Sertifika pisti:** `ConsoleApp/06-certifications/` altında sertifika = klasör (`01-az-900-azure-fundamentals`, `02-ai-200-azure-ai-cloud-developer`); konu klasöründe `README.md` + (varsa) kod + **`quiz.md`** (sınav tarzı sorular, cevaplar `<details>` içinde); son konu = deneme sınavı. `interview-questions.md` yerine `quiz.md` kullanılır; testler yine yoktur.
 
 ---
 
@@ -4559,7 +4572,7 @@ Sertifika pisti seviye sırasının parçası değildir; ilgili modüller bittik
 ## Nasıl İlerleyeceğim?
 
 1. Bu roadmap **canlı bir doküman**. Bir konu tamamlandığında başlığı klasör bağlantısına dönüşecek.
-2. Her konunun klasöründe: `README.md` + kod dosyaları + `interview-questions.md`; modül klasöründe tek `.csproj`.
+2. Her konunun klasöründe: `README.md` + kod dosyaları + `interview-questions.md`; kod `ConsoleApp`/`WebApp` projelerinin içindedir.
 3. **Sıralı ilerle** — seviyeleri atlama, DSA'yı paralel yürüt.
 4. Kodu **kopyalama, yaz.** AI asistanını açıklama ve review için kullan, yerine yazdırma (→ J13.2).
 5. Her seviyeyi capstone + mock mülakatla kapat.
