@@ -4,7 +4,7 @@ public static class ProjectLocator
 {
     public const string ProjectFile = "ConsoleApp.csproj";
 
-    /// <summary>Çıktı klasöründen (bin/Debug/net10.0) yukarı çıkarak proje klasörünü bulur; publish edilmiş kopyada bulunamaz (null).</summary>
+    /// <summary>Walks up from the output folder (bin/Debug/net10.0) to find the project folder; returns null in a published copy.</summary>
     public static string? FindProjectDirectory()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);

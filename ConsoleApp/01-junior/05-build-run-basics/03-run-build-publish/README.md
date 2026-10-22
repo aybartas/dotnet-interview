@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-`dotnet restore`, `build`, `run`, `publish`, `test`, `pack` farklı işler yapar ve farklı yerlerde kullanılır. En sık karıştırılan üçlü **`run` / `build` / `publish`**'tir: `run` ve `build` **geliştirme**, `publish` **deployment** içindir. Konunun kodu [`Sections/`](Sections/) altında 3 bölümdür (`dotnet run -- J5.3 <numara>`); 2. bölüm **dotnet CLI'ı kendisi çalıştırıp** build ve publish çıktılarını karşılaştırır.
+`dotnet restore`, `build`, `run`, `publish`, `test`, `pack` farklı işler yapar ve farklı yerlerde kullanılır. En sık karıştırılan üçlü **`run` / `build` / `publish`**'tir: `run` ve `build` **geliştirme**, `publish` **deployment** içindir. Konunun kodu [`Sections/`](Sections/) altında 3 bölümdür (`dotnet run -- J5.3 <number>`); 2. bölüm **dotnet CLI'ı kendisi çalıştırıp** build ve publish çıktılarını karşılaştırır.
 
 ---
 
@@ -50,13 +50,13 @@
 
 ```json
 { "profiles": { "ConsoleApp": { "commandName": "Project",
-    "environmentVariables": { "DEMO_ENV": "launchSettings.json'dan geldi" } } } }
+    "environmentVariables": { "DEMO_ENV": "came from launchSettings.json" } } } }
 ```
 
 ```bash
-dotnet run -- J5.3 1                                           # DEMO_ENV = "launchSettings.json'dan geldi"
-dotnet bin/Debug/net10.0/ConsoleApp.dll J5.3 1         # DEMO_ENV = (tanımsız) — doğrudan çalıştırınca okunmaz
-dotnet run --no-launch-profile -- J5.3 1                       # launchSettings'i hiç kullanma
+dotnet run -- J5.3 1                                           # DEMO_ENV = "came from launchSettings.json"
+dotnet bin/Debug/net10.0/ConsoleApp.dll J5.3 1         # DEMO_ENV = (not set) — not read when run directly
+dotnet run --no-launch-profile -- J5.3 1                       # don't use launchSettings at all
 ```
 
 - `launchSettings.json`'ı yalnızca **Visual Studio / `dotnet run`** okur; `bin/` ve publish çıktısına **girmez**. (`dotnet run` ilk satırda `Using launch settings from …` yazar.)
@@ -68,7 +68,7 @@ Program üç komutu geçici bir klasöre çalıştırıp çıktıları karşıla
 
 ```bash
 dotnet build   -c Release -o <A>
-dotnet publish -c Release -o <B>                                               # framework-dependent (varsayılan)
+dotnet publish -c Release -o <B>                                               # framework-dependent (default)
 dotnet publish -c Release -r <rid> --self-contained false -p:PublishSingleFile=true -o <C>
 ```
 

@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Junior.BuildRunBasics.BigPicture;
 
-/// <summary>IL'ine bakılacak küçük örnek metotlar (Section02, Section04, Section06). Gövdeleri bilerek basit tutuldu.</summary>
+/// <summary>Small sample methods whose IL we inspect (Section02, Section04, Section06). Bodies are kept simple on purpose.</summary>
 public static class Samples
 {
     public static int Add(int a, int b) => a + b;
@@ -33,7 +33,7 @@ public static class Samples
         return reader.ReadLine() ?? "";
     }
 
-    public static string Greet(string name, int count) => $"Merhaba {name}, {count}";
+    public static string Greet(string name, int count) => $"Hello {name}, {count}";
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static int JitMeOnce(int x) => x * x + 1;

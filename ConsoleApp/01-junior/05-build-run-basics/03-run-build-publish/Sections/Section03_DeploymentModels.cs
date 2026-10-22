@@ -5,24 +5,24 @@ public static class Section03_DeploymentModels
     public static void Run()
     {
         Console.WriteLine("""
-        Deployment modellerine bir paragraflık giriş (derin hali → M2.5):
+        A one-paragraph intro to the deployment models (in depth → M2.5):
 
-        1) Framework-dependent (varsayılan)  Runtime: MAKİNEDE kurulu .NET   · Boyut: küçük (yalnızca uygulama)
+        1) Framework-dependent (default)     Runtime: .NET installed ON THE MACHINE · Size: small (app only)
               dotnet publish -c Release
-        2) Self-contained                    Runtime: UYGULAMAYLA birlikte gelir · Boyut: büyük (~70+ MB)
+        2) Self-contained                    Runtime: ships WITH THE APP            · Size: large (~70+ MB)
               dotnet publish -c Release -r linux-x64 --self-contained
-        3) Native AOT                        Runtime: yok, kod önceden native derlenir · Boyut: küçük, hızlı başlangıç
+        3) Native AOT                        Runtime: none, code is compiled to native ahead of time · Size: small, fast startup
               dotnet publish -c Release -r linux-x64 -p:PublishAot=true
 
-        • Framework-dependent: sunucuda/container'da (mcr.microsoft.com/dotnet/aspnet) .NET runtime kurulu olmalı; güvenlik yamaları runtime güncellemesiyle gelir.
-          Eksikse: "You must install or update .NET..." (runtimeconfig.json'daki framework sürümü bulunamaz → 5.2 Bölüm 2).
-        • Self-contained: hedef makinede .NET gerekmez; runtime sürümü uygulamaya kilitlidir (yama için yeniden yayımlamak gerekir).
-          runtimeconfig.json'da `includedFrameworks` görünür; çıktı yüzlerce dosya olur (tek dosya: -p:PublishSingleFile=true).
-        • Native AOT: IL, yayın sırasında makine koduna derlenir; JIT yoktur → çok hızlı başlangıç, küçük bellek; kısıtları (yansıma, dinamik kod) vardır.
-        • Ek seçenekler: -p:PublishTrimmed=true (kullanılmayan kodu at), -p:PublishReadyToRun=true (JIT maliyetini azalt).
-        Seçim: kurumsal sunucu/container + .NET kurulu → framework-dependent (varsayılan); izole/istemci makinesi → self-contained; serverless/CLI/soğuk başlangıç → AOT.
+        • Framework-dependent: the .NET runtime must be installed on the server/in the container (mcr.microsoft.com/dotnet/aspnet); security patches come with runtime updates.
+          If it is missing: "You must install or update .NET..." (the framework version in runtimeconfig.json can't be found → 5.2 Section 2).
+        • Self-contained: no .NET needed on the target machine; the runtime version is locked to the app (you must republish to patch).
+          `includedFrameworks` shows up in runtimeconfig.json; the output becomes hundreds of files (single file: -p:PublishSingleFile=true).
+        • Native AOT: IL is compiled to machine code at publish time; there is no JIT → very fast startup, low memory; it has restrictions (reflection, dynamic code).
+        • Extra options: -p:PublishTrimmed=true (drop unused code), -p:PublishReadyToRun=true (reduce JIT cost).
+        Choice: corporate server/container + .NET installed → framework-dependent (default); isolated/client machine → self-contained; serverless/CLI/cold start → AOT.
         """);
 
-        Console.WriteLine($"Bu program: {(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, typeof(Section03_DeploymentModels).Assembly.GetName().Name + ".runtimeconfig.json")).Contains("includedFrameworks") ? "self-contained" : "framework-dependent")} (runtimeconfig.json'da 'includedFrameworks' var mı diye bakarak anlıyoruz)");
+        Console.WriteLine($"This program: {(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, typeof(Section03_DeploymentModels).Assembly.GetName().Name + ".runtimeconfig.json")).Contains("includedFrameworks") ? "self-contained" : "framework-dependent")} (we tell by checking whether runtimeconfig.json contains 'includedFrameworks')");
     }
 }
