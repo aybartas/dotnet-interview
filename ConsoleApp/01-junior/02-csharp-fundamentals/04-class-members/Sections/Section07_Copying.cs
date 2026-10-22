@@ -6,55 +6,55 @@ public static class Section07_Copying
 {
     public static void Run()
     {
-        OrderModel Create() => new() { Number = "A-1", ShippingAddress = new Address { City = "Ankara", Street = "Atatürk Cd." }, Tags = ["acil"] };
+        OrderModel Create() => new() { Number = "A-1", ShippingAddress = new Address { City = "London", Street = "Main St." }, Tags = ["urgent"] };
 
-        Console.WriteLine("1) Atama (=) KOPYA DEĞİLDİR: aynı nesne");
+        Console.WriteLine("1) Assignment (=) is NOT a copy: it is the same object");
         var original = Create();
         var alias = original;
-        alias.Number = "DEĞİŞTİ";
-        Console.WriteLine($"   alias.Number değişti → original.Number = {original.Number}");
+        alias.Number = "CHANGED";
+        Console.WriteLine($"   alias.Number changed → original.Number = {original.Number}");
 
-        Console.WriteLine("\n2) MemberwiseClone → SHALLOW: iç referanslar PAYLAŞILIR");
+        Console.WriteLine("\n2) MemberwiseClone → SHALLOW: inner references are SHARED");
         original = Create();
         var shallow = original.ShallowCopy();
-        shallow.Number = "S-1";                                          // string/değer: bağımsız
-        shallow.ShippingAddress.City = "İstanbul";                       // iç nesne: PAYLAŞILIYOR
-        shallow.Tags.Add("hediye");                                      // iç liste: PAYLAŞILIYOR
-        Console.WriteLine($"   shallow'u değiştirdim → original.Number = {original.Number} (bozulmadı), original.City = {original.ShippingAddress.City} (BOZULDU!), original.Tags = [{string.Join(",", original.Tags)}] (BOZULDU!)");
+        shallow.Number = "S-1";                                          // string/value: independent
+        shallow.ShippingAddress.City = "Paris";                          // inner object: SHARED
+        shallow.Tags.Add("gift");                                        // inner list: SHARED
+        Console.WriteLine($"   I changed the shallow copy → original.Number = {original.Number} (unaffected), original.City = {original.ShippingAddress.City} (CORRUPTED!), original.Tags = [{string.Join(",", original.Tags)}] (CORRUPTED!)");
         Console.WriteLine($"   ReferenceEquals(original.ShippingAddress, shallow.ShippingAddress) = {ReferenceEquals(original.ShippingAddress, shallow.ShippingAddress)}");
 
-        Console.WriteLine("\n3) Deep copy yolları (hepsi orijinali KORUR)");
+        Console.WriteLine("\n3) Deep copy approaches (all PRESERVE the original)");
         foreach (var (name, copy) in new (string, Func<OrderModel, OrderModel>)[]
                  {
-                     ("copy constructor / elle  ", o => new OrderModel(o)),
-                     ("DeepCopy() (ctor'a delege)", o => o.DeepCopy()),
-                     ("JSON round-trip          ", o => o.DeepCopyViaJson()),
+                     ("copy constructor / manual    ", o => new OrderModel(o)),
+                     ("DeepCopy() (delegates to ctor)", o => o.DeepCopy()),
+                     ("JSON round-trip              ", o => o.DeepCopyViaJson()),
                  })
         {
             original = Create();
             var deep = copy(original);
-            deep.ShippingAddress.City = "İzmir";
-            deep.Tags.Add("hediye");
-            Console.WriteLine($"   {name} → original.City = {original.ShippingAddress.City}, original.Tags = [{string.Join(",", original.Tags)}]  (bozulmadı)");
+            deep.ShippingAddress.City = "Berlin";
+            deep.Tags.Add("gift");
+            Console.WriteLine($"   {name} → original.City = {original.ShippingAddress.City}, original.Tags = [{string.Join(",", original.Tags)}]  (unaffected)");
         }
 
-        Console.WriteLine("\n4) record + 'with' de SHALLOW'dur (bilinmesi gereken tuzak)");
-        var rec = new OrderRecord("R-1", new Address { City = "Ankara" }, ["acil"]);
+        Console.WriteLine("\n4) record + 'with' is also SHALLOW (a trap worth knowing)");
+        var rec = new OrderRecord("R-1", new Address { City = "London" }, ["urgent"]);
         var recCopy = rec with { Number = "R-2" };
-        recCopy.ShippingAddress.City = "Bursa";
-        recCopy.Tags.Add("hediye");
-        Console.WriteLine($"   with ile kopyalanan değiştirildi → rec.ShippingAddress.City = {rec.ShippingAddress.City} (BOZULDU), rec.Tags = [{string.Join(",", rec.Tags)}] (BOZULDU)");
-        Console.WriteLine("   Çözüm: iç içe tipleri de immutable yapın (record / ImmutableList) ya da with sırasında yeni iç nesne verin: rec with { ShippingAddress = rec.ShippingAddress with { City = \"Bursa\" } }");
+        recCopy.ShippingAddress.City = "Rome";
+        recCopy.Tags.Add("gift");
+        Console.WriteLine($"   the copy made with 'with' was changed → rec.ShippingAddress.City = {rec.ShippingAddress.City} (CORRUPTED), rec.Tags = [{string.Join(",", rec.Tags)}] (CORRUPTED)");
+        Console.WriteLine("   Fix: make nested types immutable too (record / ImmutableList) or supply a new inner object in the with: rec with { ShippingAddress = rec.ShippingAddress with { City = \"Rome\" } }");
 
-        Console.WriteLine("\n5) ICloneable neden önerilmez?");
-        object cloned = new LegacyCloneable().Clone();                   // object döner → cast gerekir
-        Console.WriteLine($"   Clone() tipi: {cloned.GetType().Name} (cast gerekti); shallow mı deep mi? Sözleşme söylemiyor → kullanıcı tahmin etmek zorunda.");
+        Console.WriteLine("\n5) Why is ICloneable discouraged?");
+        object cloned = new LegacyCloneable().Clone();                   // returns object → a cast is needed
+        Console.WriteLine($"   Clone() type: {cloned.GetType().Name} (a cast was needed); shallow or deep? The contract doesn't say → the user has to guess.");
 
         Console.WriteLine("""
 
-        Özet: shallow = yalnızca üst düzey alanlar kopyalanır (iç referanslar paylaşılır) · deep = tüm nesne grafiği yeniden oluşturulur.
-        Deep copy yolları: (1) copy constructor/elle — açık ve hızlı, (2) JSON round-trip — kolay ama yavaş/tip kısıtlı/dairesel referansta hata,
-        (3) immutable tasarım — kopyalama ihtiyacını AZALTIR (paylaşım güvenli olur). BinaryFormatter ile deep copy ARTIK KULLANILMAZ (güvenlik).
+        Summary: shallow = only top-level fields are copied (inner references are shared) · deep = the whole object graph is recreated.
+        Deep copy approaches: (1) copy constructor/manual — explicit and fast, (2) JSON round-trip — easy but slow/type-restricted/fails on circular references,
+        (3) immutable design — REDUCES the need for copying (sharing becomes safe). Deep copy via BinaryFormatter is NO LONGER USED (security).
         """);
     }
 }

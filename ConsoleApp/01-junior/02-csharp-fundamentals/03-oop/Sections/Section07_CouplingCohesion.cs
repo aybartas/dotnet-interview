@@ -4,43 +4,43 @@ public static class Section07_CouplingCohesion
 {
     public static void Run()
     {
-        Console.WriteLine("COUPLING (bağlılık): bir sınıfın başkasını ne kadar BİLDİĞİ. Hedef: gevşek bağlılık.");
-        Console.WriteLine("COHESION (uyum)    : bir sınıfın içindekilerin ne kadar AYNI AMACA hizmet ettiği. Hedef: yüksek uyum.\n");
+        Console.WriteLine("COUPLING: how much one class KNOWS about another. Goal: loose coupling.");
+        Console.WriteLine("COHESION: how much the contents of a class serve the SAME purpose. Goal: high cohesion.\n");
 
-        Console.WriteLine("1) SIKI bağlı: OrderService içinde 'new SmtpSender()' — somut tipe bağlı");
+        Console.WriteLine("1) TIGHTLY coupled: 'new SmtpSender()' inside OrderService — bound to a concrete type");
         var tight = new TightOrderService();
-        tight.Place("kitap");                                 // test ederken GERÇEK e-posta gönderilir (yan etki, yavaş, kırılgan)
+        tight.Place("book");                                  // when testing, a REAL e-mail is sent (side effect, slow, fragile)
 
-        Console.WriteLine("\n2) GEVŞEK bağlı: OrderService yalnızca INotifier soyutlamasını bilir (bağımlılık DIŞARIDAN verilir)");
+        Console.WriteLine("\n2) LOOSELY coupled: OrderService knows only the INotifier abstraction (the dependency is given FROM OUTSIDE)");
         var fake = new FakeNotifier();
         var loose = new LooseOrderService(fake);
-        loose.Place("kitap");
-        Console.WriteLine($"   test double yakaladı: [{string.Join(" | ", fake.Messages)}]  (gerçek e-posta yok)");
-        new LooseOrderService(new SmsNotifier()).Place("kalem");   // gönderim kanalı değişti; OrderService'e DOKUNULMADI
+        loose.Place("book");
+        Console.WriteLine($"   test double captured: [{string.Join(" | ", fake.Messages)}]  (no real e-mail)");
+        new LooseOrderService(new SmsNotifier()).Place("pen");     // the delivery channel changed; OrderService was NOT TOUCHED
 
         Console.WriteLine("""
 
-        Bağlılığı ölçmek: "Bu sınıfı değiştirince kaç yer etkileniyor?" ve "Bu sınıfı test etmek için kaç somut şey ayağa kalkmalı?"
-          • SmtpSender'ın imzası değişince: Tight → OrderService'in kodu değişir (+ onu kullanan her yer). Loose → yalnızca SmtpSender ve DI kaydı.
-        Uyumu ölçmek: "Sınıfın kaç farklı DEĞİŞME NEDENİ var?" (SRP). OrderManager'ın e-posta + PDF + vergi + DB'yi birlikte yapması = düşük uyum:
-          vergi kuralı da e-posta şablonu da aynı dosyayı değiştirir → birbirinden bağımsız değişiklikler çakışır.
-        'new' ile somut tipe bağlanmanın maliyeti: test edilemezlik, değiştirememe, gizli bağımlılık. Çözüm: interface + constructor injection (→ J6.2 DI).
+        Measuring coupling: "How many places are affected when I change this class?" and "How many concrete things must be stood up to test this class?"
+          • When SmtpSender's signature changes: Tight → OrderService's code changes (+ everything that uses it). Loose → only SmtpSender and the DI registration.
+        Measuring cohesion: "How many different REASONS TO CHANGE does the class have?" (SRP). OrderManager doing e-mail + PDF + tax + DB together = low cohesion:
+          a tax rule and an e-mail template both change the same file → independent changes collide.
+        Cost of binding to a concrete type with 'new': untestability, inability to swap, hidden dependency. Fix: interface + constructor injection (→ J6.2 DI).
         """);
     }
 
     private interface INotifier { void Notify(string message); }
-    private sealed class SmtpSender { public void Send(string to, string body) => Console.WriteLine($"   [SMTP] gerçek e-posta gönderildi → {to}: {body}"); }
+    private sealed class SmtpSender { public void Send(string to, string body) => Console.WriteLine($"   [SMTP] real e-mail sent → {to}: {body}"); }
     private sealed class SmsNotifier : INotifier { public void Notify(string message) => Console.WriteLine($"   [SMS] {message}"); }
     private sealed class FakeNotifier : INotifier { public List<string> Messages { get; } = []; public void Notify(string message) => Messages.Add(message); }
 
     private sealed class TightOrderService
     {
-        private readonly SmtpSender _sender = new();                   // ← somut tipe, KENDİ içinde 'new'
-        public void Place(string product) => _sender.Send("musteri@example.com", $"{product} siparişi alındı");
+        private readonly SmtpSender _sender = new();                   // ← a concrete type, 'new' INSIDE itself
+        public void Place(string product) => _sender.Send("customer@example.com", $"order for {product} received");
     }
 
-    private sealed class LooseOrderService(INotifier notifier)         // ← soyutlama, dışarıdan verilir
+    private sealed class LooseOrderService(INotifier notifier)         // ← an abstraction, given from outside
     {
-        public void Place(string product) => notifier.Notify($"{product} siparişi alındı");
+        public void Place(string product) => notifier.Notify($"order for {product} received");
     }
 }

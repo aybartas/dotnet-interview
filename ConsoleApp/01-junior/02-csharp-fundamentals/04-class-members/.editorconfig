@@ -1,5 +1,5 @@
-# Bu klasör için analyzer ayarı: CA2214 ("constructor içinde overridable metot çağırma") varsayılan olarak KAPALIDIR.
-# Section03'teki demo kodun BİLEREK bu uyarıyı üretmesi için 'warning' yapıyoruz. Derleme çıktısında şunu görmelisiniz:
+# Analyzer setting for this folder: CA2214 ("do not call overridable methods in constructors") is OFF by default.
+# We set it to 'warning' so that the demo code in Section03 INTENTIONALLY produces this warning. In the build output you should see:
 #   warning CA2214: 'BaseWithVirtualCall..ctor()' contains a call chain that results in a call to a virtual method defined by the class
 root = false
 

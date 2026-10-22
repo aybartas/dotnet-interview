@@ -1,9 +1,9 @@
 namespace Junior.CSharpFundamentals.Oop.Relationships;
 
-// ════════════════ AGGREGATION (zayıf "has-a") ════════════════
-// Team çalışanları İÇERİR ama ONLARA SAHİP DEĞİLDİR. Employee, Team'den bağımsız yaşar:
-//   • Team dağıtılınca (Disband) çalışanlar yok olmaz; başka takıma geçebilir.
-//   • Employee, Team'in dışında (ör. şirket kaydında) oluşturulur ve ona verilir.
+// ════════════════ AGGREGATION (weak "has-a") ════════════════
+// A Team CONTAINS employees but does NOT OWN them. An Employee lives independently of the Team:
+//   • When a Team is disbanded (Disband) the employees don't disappear; they can move to another team.
+//   • An Employee is created outside the Team (e.g. in the company registry) and given to it.
 
 public sealed class Employee(string name)
 {
@@ -18,7 +18,7 @@ public sealed class Team(string name)
     public string Name { get; } = name;
     public IReadOnlyList<Employee> Members => _members;
 
-    /// <summary>Çalışan DIŞARIDA oluşturulmuş olarak gelir; takıma "katılır". Başka takımdaysa oradan ayrılır (taşınır).</summary>
+    /// <summary>The employee arrives already created OUTSIDE; it "joins" the team. If it is in another team it leaves that one (is moved).</summary>
     public void Add(Employee employee)
     {
         employee.Team?.Remove(employee);
@@ -31,7 +31,7 @@ public sealed class Team(string name)
         if (_members.Remove(employee)) employee.Team = null;
     }
 
-    /// <summary>Takım dağıtılır; çalışanlar SAĞ KALIR (yalnızca ilişki kopar).</summary>
+    /// <summary>The team is disbanded; the employees SURVIVE (only the relationship is severed).</summary>
     public void Disband()
     {
         foreach (var e in _members) e.Team = null;

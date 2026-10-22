@@ -1,12 +1,12 @@
 namespace Junior.CSharpFundamentals.ClassMembers.Models;
 
-// ═════════ KURAL: Equals ve GetHashCode BİRLİKTE override edilir ═════════
-// Sözleşme: a.Equals(b) ise a.GetHashCode() == b.GetHashCode() olmak ZORUNDA (tersi şart değil: farklı nesneler aynı hash'i verebilir).
-// Hash tabanlı koleksiyonlar (Dictionary, HashSet) önce hash'e bakar, sonra Equals çağırır. Hash tutarsızsa nesne "kaybolur".
+// ═════════ RULE: Equals and GetHashCode are overridden TOGETHER ═════════
+// Contract: if a.Equals(b) then a.GetHashCode() == b.GetHashCode() MUST hold (the reverse isn't required: different objects may share a hash).
+// Hash-based collections (Dictionary, HashSet) look at the hash first, then call Equals. If the hash is inconsistent the object "gets lost".
 
-/// <summary>YANLIŞ: yalnızca Equals override edildi. Eşit iki nesne FARKLI hash üretir → HashSet/Dictionary eşitliği göremez.</summary>
-#pragma warning disable CS0659 // 'Equals' override edildi ama 'GetHashCode' edilmedi — BİLEREK (hatayı göstermek için)
-#pragma warning disable CS0661 // '==' tanımlı değil; yalnızca CS0659 bastırıldı
+/// <summary>WRONG: only Equals is overridden. Two equal objects produce DIFFERENT hashes → HashSet/Dictionary can't see the equality.</summary>
+#pragma warning disable CS0659 // 'Equals' is overridden but 'GetHashCode' is not — INTENTIONAL (to show the bug)
+#pragma warning disable CS0661 // '==' is not defined; only CS0659 was suppressed
 public sealed class BadPoint(int x, int y)
 {
     public int X { get; } = x;
@@ -16,7 +16,7 @@ public sealed class BadPoint(int x, int y)
 #pragma warning restore CS0661
 #pragma warning restore CS0659
 
-/// <summary>DOĞRU: IEquatable&lt;T&gt; (boxing'siz tipli eşitlik) + Equals(object) + GetHashCode + == / !=.</summary>
+/// <summary>RIGHT: IEquatable&lt;T&gt; (typed equality without boxing) + Equals(object) + GetHashCode + == / !=.</summary>
 public sealed class GoodPoint(int x, int y) : IEquatable<GoodPoint>
 {
     public int X { get; } = x;
@@ -24,13 +24,13 @@ public sealed class GoodPoint(int x, int y) : IEquatable<GoodPoint>
 
     public bool Equals(GoodPoint? other) => other is not null && other.X == X && other.Y == Y;
     public override bool Equals(object? obj) => Equals(obj as GoodPoint);
-    public override int GetHashCode() => HashCode.Combine(X, Y);                 // eşitlikte kullanılan ALANLARDAN türet
+    public override int GetHashCode() => HashCode.Combine(X, Y);                 // derive from the FIELDS used in equality
     public static bool operator ==(GoodPoint? a, GoodPoint? b) => a is null ? b is null : a.Equals(b);
     public static bool operator !=(GoodPoint? a, GoodPoint? b) => !(a == b);
     public override string ToString() => $"({X}, {Y})";
 }
 
-/// <summary>MUTABLE KEY TUZAĞI: hash'i DEĞİŞEBİLEN bir alandan türüyor. Koleksiyona eklendikten sonra değiştirilirse nesne bulunamaz hale gelir.</summary>
+/// <summary>MUTABLE KEY TRAP: the hash derives from a field that can CHANGE. If it is changed after being added to a collection, the object can no longer be found.</summary>
 public sealed class MutableKey(string id)
 {
     public string Id { get; set; } = id;
@@ -38,10 +38,10 @@ public sealed class MutableKey(string id)
     public override int GetHashCode() => Id.GetHashCode();
 }
 
-/// <summary>Güvenli anahtar: değişmez (immutable) ve değer eşitlikli.</summary>
+/// <summary>Safe key: immutable and value-equal.</summary>
 public sealed record SafeKey(string Id);
 
-/// <summary>IComparable&lt;T&gt; (doğal sıralama) ve IComparer&lt;T&gt; (alternatif sıralama).</summary>
+/// <summary>IComparable&lt;T&gt; (natural order) and IComparer&lt;T&gt; (alternative order).</summary>
 public sealed class Version2(int major, int minor) : IComparable<Version2>, IEquatable<Version2>
 {
     public int Major { get; } = major;

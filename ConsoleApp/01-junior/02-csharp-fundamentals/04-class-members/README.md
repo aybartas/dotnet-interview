@@ -72,11 +72,11 @@ Bir sınıfın **üyeleri** (property, constructor, operatör, indexer, extensio
 
 ```
 new Derived() →
-  1) Tüm alanlar varsayılan değere (0/null) ayarlanır
-  2) Field initializer'lar — EN TÜRETİLMİŞ sınıftan TABANA doğru
-  3) Constructor GÖVDELERİ — TABANDAN türetilmişe doğru
+  1) All fields are set to their default value (0/null)
+  2) Field initializers — from the MOST DERIVED class toward the BASE
+  3) Constructor BODIES — from the BASE toward the derived
 ```
-Neden initializer'lar "ters"? Derleyici onları constructor'ın **başına**, `base(...)` çağrısından **önce** yerleştirir. Gerçek çıktı: `Derived instance init → Base instance init → Base ctor gövdesi → Derived ctor gövdesi`.
+Neden initializer'lar "ters"? Derleyici onları constructor'ın **başına**, `base(...)` çağrısından **önce** yerleştirir. Gerçek çıktı: `Derived instance field initializer → Base instance field initializer → Base constructor BODY → Derived constructor BODY`.
 
 **Static başlatma:** her tipin static field initializer + static ctor'u, o tip **ilk kullanılmadan önce bir kez** (thread-safe) çalışır; ikinci `new`'de tekrarlanmaz. Deneyde Base'in static başlatması, Derived'ın instance alanları kurulduktan **sonra**, base ctor'a ilk girişte tetiklenir. Static ctor exception fırlatırsa tip kalıcı olarak `TypeInitializationException` verir (→ J2.1; `beforefieldinit` derinliği → S1.2).
 
@@ -85,8 +85,8 @@ Neden initializer'lar "ters"? Derleyici onları constructor'ın **başına**, `b
 Base ctor çalışırken türetilmiş sınıfın **ctor gövdesi henüz çalışmamıştır**; override edilen metot **yarım kurulmuş nesneyi** görür ([`VirtualCall.cs`](Models/VirtualCall.cs)):
 
 ```
-Taban ctor içinde:  initializer: başlatıcıdan, ctor: null, count: 0      ← ctor'da atananlar varsayılan!
-Ctor bittikten sonra: initializer: başlatıcıdan, ctor: ctor gövdesinden, count: 42
+Inside the base ctor:  initializer: from initializer, ctor: null, count: 0      ← whatever the ctor assigns is still at its default!
+After the ctor finishes: initializer: from initializer, ctor: from ctor body, count: 42
 ```
 Field initializer ile atananlar *dolu* (taban ctor'dan önce çalıştıkları için), ctor gövdesinde atananlar *boş* → tutarsız ve bulması zor hata. Analyzer **CA2214** bunu yakalar (varsayılan kapalıdır; bu proje [`.editorconfig`](.editorconfig) ile `warning` yapar, `dotnet build --no-incremental` çıktısında görünür). Çözüm: virtual çağrıyı ctor'da yapma; nesne **tamamen kurulduktan sonra** (factory + `Initialize()`; `SafeBase.Create<T>()`).
 
@@ -96,10 +96,10 @@ Field initializer ile atananlar *dolu* (taban ctor'dan önce çalıştıkları i
 - **`Equals` + `GetHashCode` birlikte override edilir.** Sözleşme: `a.Equals(b)` ⇒ `a.GetHashCode() == b.GetHashCode()` (tersi şart değil). Hash tabanlı koleksiyonlar önce hash'e bakar, sonra `Equals` çağırır:
 
 ```csharp
-class BadPoint { override bool Equals(...) => ...; }   // GetHashCode YOK
+class BadPoint { override bool Equals(...) => ...; }   // NO GetHashCode
 var set = new HashSet<BadPoint> { new(1,2) };
-set.Contains(new BadPoint(1,2));   // false! (Equals eşit diyor ama hash başka kovaya baktı)
-set.Add(new BadPoint(1,2));        // true  → "aynı" nesne ikinci kez eklendi
+set.Contains(new BadPoint(1,2));   // false! (Equals says equal, but the hash looked in another bucket)
+set.Add(new BadPoint(1,2));        // true  → the "same" object was added a second time
 ```
 - **`IEquatable<T>`:** tipli `Equals(T)` — struct'ta **boxing'i önler**, koleksiyonlar onu tercih eder. **`IComparable<T>`** doğal sıralama, **`IComparer<T>`** alternatif sıralama.
 - **Mutable key tuzağı** ⭐: `Dictionary`/`HashSet`'e eklendikten sonra hash'i değişen nesne **bulunamaz** (`Contains` false, `Remove` false) ama koleksiyonda **durur** → "hayalet kayıt". Kural: hash'e giren alanlar **değişmez** olmalı (immutable key: `record`, `string`, `int`) (→ J3.1).
@@ -109,9 +109,9 @@ set.Add(new BadPoint(1,2));        // true  → "aynı" nesne ikinci kez eklendi
 
 ```csharp
 public static class StringExtensions {
-    public static string Shout(this string text) => text.ToUpperInvariant() + "!";   // static class + static metot + this parametre
+    public static string Shout(this string text) => text.ToUpperInvariant() + "!";   // static class + static method + this parameter
 }
-"merhaba".Shout();   // derleyici: StringExtensions.Shout("merhaba")  (statik çağrının süslü yazımı)
+"hello".Shout();   // compiler: StringExtensions.Shout("hello")  (syntactic sugar for the static call)
 ```
 - Gerçekte tipe **hiçbir şey eklenmez**; null receiver ile bile çalışır (`NullReferenceException` yok).
 - **Çözümleme sırası:** (1) **örnek metot HER ZAMAN önce** gelir (aynı imzalı extension asla çağrılmaz — [`Widget`](Extensions/StringExtensions.cs)), (2) çağıran dosyanın `using`'leriyle görünen extension'lar. **`using` yoksa görünmez.**

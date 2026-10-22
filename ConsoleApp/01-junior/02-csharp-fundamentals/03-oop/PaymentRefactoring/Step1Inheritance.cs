@@ -1,13 +1,13 @@
 namespace Junior.CSharpFundamentals.Oop.PaymentRefactoring.Step1;
 
 // ═════════════════════════════════════════════════════════════════════════════════════════
-// ADIM 1 — SADECE KALITIM.
-// İlk bakışta zarif: PaymentMethod tabanı, üç alt sınıf. Sorun, YENİ GEREKSİNİMLER geldikçe başlar:
-//   "taksit" → InstallmentCreditCardPayment : CreditCardPayment
-//   "fraud kontrolü" → FraudCheckedCreditCardPayment : CreditCardPayment
-//   "taksit + fraud" → ??? → FraudCheckedInstallmentCreditCardPayment — fraud mantığı KOPYALANDI
-// Her yeni "boyut" (taksit × fraud × 3D Secure × ...) sınıf sayısını ÇARPAR (class explosion).
-// Taban sınıftaki değişiklik (örn. Validate sırası) tüm alt sınıfları sessizce etkiler → FRAGILE BASE CLASS.
+// STEP 1 — INHERITANCE ONLY.
+// Elegant at first glance: a PaymentMethod base, three subclasses. The trouble starts as NEW REQUIREMENTS arrive:
+//   "installments" → InstallmentCreditCardPayment : CreditCardPayment
+//   "fraud check" → FraudCheckedCreditCardPayment : CreditCardPayment
+//   "installments + fraud" → ??? → FraudCheckedInstallmentCreditCardPayment — the fraud logic was COPIED
+// Every new "dimension" (installments × fraud × 3D Secure × ...) MULTIPLIES the number of classes (class explosion).
+// A change in the base class (e.g. the Validate order) silently affects all subclasses → FRAGILE BASE CLASS.
 // ═════════════════════════════════════════════════════════════════════════════════════════
 
 public abstract class PaymentMethod
@@ -26,7 +26,7 @@ public abstract class PaymentMethod
 
     protected virtual void Validate(decimal amount)
     {
-        if (amount <= 0) throw new PaymentRejectedException("Tutar pozitif olmalı");
+        if (amount <= 0) throw new PaymentRejectedException("Amount must be positive");
     }
 
     protected virtual void Charge(decimal total) { }
@@ -40,7 +40,7 @@ public class CreditCardPayment : PaymentMethod
     protected override void Validate(decimal amount)
     {
         base.Validate(amount);
-        if (amount > 5000m) throw new PaymentRejectedException("Kart limiti aşıldı");
+        if (amount > 5000m) throw new PaymentRejectedException("Card limit exceeded");
     }
 }
 
@@ -53,7 +53,7 @@ public class BankTransferPayment(string iban) : PaymentMethod
     {
         base.Validate(amount);
         if (iban is not { Length: 26 } || !iban.StartsWith("TR", StringComparison.Ordinal))
-            throw new PaymentRejectedException("Geçersiz IBAN");
+            throw new PaymentRejectedException("Invalid IBAN");
     }
 }
 
@@ -67,13 +67,13 @@ public class WalletPayment(decimal balance) : PaymentMethod
     protected override void Validate(decimal amount)
     {
         base.Validate(amount);
-        if (amount > Balance) throw new PaymentRejectedException("Yetersiz bakiye");
+        if (amount > Balance) throw new PaymentRejectedException("Insufficient balance");
     }
 
     protected override void Charge(decimal total) => Balance -= total;
 }
 
-// ── Yeni gereksinimler = yeni alt sınıflar ──
+// ── New requirements = new subclasses ──
 
 public class InstallmentCreditCardPayment(int installments) : CreditCardPayment
 {
@@ -85,23 +85,23 @@ public class FraudCheckedCreditCardPayment : CreditCardPayment
     protected override void Validate(decimal amount)
     {
         base.Validate(amount);
-        if (amount > 3000m) throw new PaymentRejectedException("Fraud şüphesi");
+        if (amount > 3000m) throw new PaymentRejectedException("Suspected fraud");
     }
 }
 
-/// <summary>Taksit + fraud: C#'ta ÇOKLU KALITIM YOK → ikisinin mantığı birleştirilemez, biri KOPYALANIR.</summary>
+/// <summary>Installments + fraud: C# has NO MULTIPLE INHERITANCE → the logic of the two can't be combined, one gets COPIED.</summary>
 public class FraudCheckedInstallmentCreditCardPayment(int installments) : InstallmentCreditCardPayment(installments)
 {
     protected override void Validate(decimal amount)
     {
         base.Validate(amount);
-        if (amount > 3000m) throw new PaymentRejectedException("Fraud şüphesi");   // ← FraudCheckedCreditCardPayment'tan KOPYA
+        if (amount > 3000m) throw new PaymentRejectedException("Suspected fraud");   // ← COPY from FraudCheckedCreditCardPayment
     }
 }
 
 public sealed class Step1Scenarios : IPaymentScenarios
 {
-    public string StepName => "Adım 1 — kalıtım";
+    public string StepName => "Step 1 — inheritance";
     public PaymentResult PayCreditCard(decimal amount) => new CreditCardPayment().Pay(amount);
     public PaymentResult PayInstallmentCreditCard(decimal amount, int installments) => new InstallmentCreditCardPayment(installments).Pay(amount);
     public PaymentResult PayFraudCheckedCreditCard(decimal amount) => new FraudCheckedCreditCardPayment().Pay(amount);

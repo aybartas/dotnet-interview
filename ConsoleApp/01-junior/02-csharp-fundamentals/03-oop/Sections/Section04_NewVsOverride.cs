@@ -4,27 +4,27 @@ public static class Section04_NewVsOverride
 {
     public static void Run()
     {
-        Console.WriteLine("Aynı metot, iki farklı türetme biçimi. Base REFERANSI üzerinden çağırınca ne olur?\n");
+        Console.WriteLine("Same method, two different ways to derive. What happens when you call through a Base REFERENCE?\n");
 
         Base viaOverride = new DerivedOverride();
         Base viaNew = new DerivedNew();
 
-        Console.WriteLine("                                   Base referansı ile    Derived referansı ile");
+        Console.WriteLine("                                   Via Base reference    Via Derived reference");
         Console.WriteLine($"override (virtual dispatch)      : {viaOverride.Hello(),-20}  {((DerivedOverride)viaOverride).Hello()}");
         Console.WriteLine($"new      (method HIDING)         : {viaNew.Hello(),-20}  {((DerivedNew)viaNew).Hello()}");
-        Console.WriteLine($"non-virtual (Base'te virtual yok) : {viaNew.Plain(),-20}  {((DerivedNew)viaNew).Plain()}");
+        Console.WriteLine($"non-virtual (Base has no virtual) : {viaNew.Plain(),-20}  {((DerivedNew)viaNew).Plain()}");
 
         Console.WriteLine("""
 
-        override: Base'in sanal (virtual/abstract) metodunu DEĞİŞTİRİR → çağrı, nesnenin GERÇEK tipine göre çözülür (runtime polimorfizm).
-        new     : Base'teki metodu GİZLER → çağrı, DEĞİŞKENİN (derleme zamanı) tipine göre çözülür. Polimorfizm YOKTUR.
-                  Aynı nesne, hangi tipte tutulduğuna göre farklı davranır → şaşırtıcı hata kaynağı.
-        Derleyici 'new' yazmazsanız CS0108 uyarısı verir ("gizlemek mi istediniz?"). 'new' neredeyse hiçbir zaman istenen şey DEĞİLDİR;
-        meşru kullanım: sahibi olmadığınız bir taban sınıfa sonradan eklenen aynı adlı üyeyle çakışmayı çözmek.
-        sealed override: bu noktadan sonra daha fazla override'a izin vermez (kalıtım zincirini kapatır, JIT devirtualization yapabilir).
+        override: CHANGES Base's virtual (virtual/abstract) method → the call is resolved by the object's ACTUAL type (runtime polymorphism).
+        new     : HIDES the method in Base → the call is resolved by the VARIABLE's (compile-time) type. There is NO polymorphism.
+                  The same object behaves differently depending on the type it is held as → a surprising source of bugs.
+        If you omit 'new' the compiler gives warning CS0108 ("did you mean to hide?"). 'new' is almost never what you want;
+        legitimate use: resolving a clash with a same-named member added later to a base class you don't own.
+        sealed override: allows no further overrides from this point (closes the inheritance chain, the JIT can devirtualize).
         """);
 
-        Console.WriteLine("Koleksiyon içinde fark daha da kötü: Base listesi, new ile gizlenen metodu HİÇ görmez:");
+        Console.WriteLine("Inside a collection the difference is even worse: a Base list NEVER sees the method hidden with new:");
         List<Base> list = [new DerivedOverride(), new DerivedNew()];
         foreach (var item in list) Console.WriteLine($"   {item.GetType().Name,-16} → {item.Hello()}");
     }
@@ -42,7 +42,7 @@ public static class Section04_NewVsOverride
 
     private class DerivedNew : Base
     {
-        public new string Hello() => "DerivedNew.Hello";       // GİZLER (base.virtual olsa bile)
+        public new string Hello() => "DerivedNew.Hello";       // HIDES (even if base is virtual)
         public new string Plain() => "DerivedNew.Plain";
     }
 }

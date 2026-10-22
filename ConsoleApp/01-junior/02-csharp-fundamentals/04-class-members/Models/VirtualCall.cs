@@ -1,8 +1,8 @@
 namespace Junior.CSharpFundamentals.ClassMembers.Models;
 
-// ═════════ CONSTRUCTOR'DAN VIRTUAL METOT ÇAĞIRMAK TEHLİKELİDİR (CA2214) ═════════
-// Taban constructor çalışırken türetilmiş sınıfın constructor GÖVDESİ henüz çalışmamıştır.
-// Override edilen metot "yarım kurulmuş" nesneyi görür: ctor gövdesinde atanan alanlar hâlâ varsayılan (null/0) değerdedir.
+// ═════════ CALLING A VIRTUAL METHOD FROM A CONSTRUCTOR IS DANGEROUS (CA2214) ═════════
+// While the base constructor runs, the derived class's constructor BODY hasn't run yet.
+// The overridden method sees a "half-built" object: fields assigned in the ctor body are still at their default (null/0) values.
 
 public class BaseWithVirtualCall
 {
@@ -10,7 +10,7 @@ public class BaseWithVirtualCall
 
     public BaseWithVirtualCall()
     {
-        Seen.Add(Describe());               // ← constructor içinde virtual çağrı (CA2214 uyarısı)
+        Seen.Add(Describe());               // ← virtual call inside the constructor (CA2214 warning)
     }
 
     public virtual string Describe() => "Base.Describe";
@@ -18,13 +18,13 @@ public class BaseWithVirtualCall
 
 public class DerivedWithState : BaseWithVirtualCall
 {
-    private readonly string _fromInitializer = "başlatıcıdan";   // field initializer → base ctor'dan ÖNCE çalışır
-    private readonly string _fromConstructor;                      // ctor GÖVDESİNDE atanır → base ctor sırasında HENÜZ null
+    private readonly string _fromInitializer = "from initializer";   // field initializer → runs BEFORE the base ctor
+    private readonly string _fromConstructor;                          // assigned in the ctor BODY → still null during the base ctor
     private readonly int _count;
 
     public DerivedWithState()
     {
-        _fromConstructor = "ctor gövdesinden";
+        _fromConstructor = "from ctor body";
         _count = 42;
     }
 
@@ -32,13 +32,13 @@ public class DerivedWithState : BaseWithVirtualCall
         => $"initializer: {_fromInitializer ?? "null"}, ctor: {_fromConstructor ?? "null"}, count: {_count}";
 }
 
-/// <summary>Güvenli alternatif: virtual çağrıyı constructor'da değil, nesne tamamen kurulduktan SONRA (ör. Initialize()/factory) yapın.</summary>
+/// <summary>Safe alternative: make the virtual call not in the constructor but AFTER the object is fully constructed (e.g. Initialize()/factory).</summary>
 public class SafeBase
 {
     public static T Create<T>() where T : SafeBase, new()
     {
-        var instance = new T();             // önce nesne TAMAMEN kurulur
-        instance.Initialize();              // sonra virtual çağrı güvenle yapılır
+        var instance = new T();             // first the object is FULLY constructed
+        instance.Initialize();              // then the virtual call is made safely
         return instance;
     }
 
@@ -49,6 +49,6 @@ public class SafeBase
 
 public sealed class SafeDerived : SafeBase
 {
-    private readonly string _name = "hazır";
-    protected override string Describe() => $"SafeDerived görüyor: {_name}";
+    private readonly string _name = "ready";
+    protected override string Describe() => $"SafeDerived sees: {_name}";
 }

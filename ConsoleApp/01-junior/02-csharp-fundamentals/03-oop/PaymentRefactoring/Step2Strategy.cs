@@ -1,11 +1,11 @@
 namespace Junior.CSharpFundamentals.Oop.PaymentRefactoring.Step2;
 
 // ═════════════════════════════════════════════════════════════════════════════════════════
-// ADIM 2 — DEĞİŞEN BİR BOYUTU (komisyon hesabı) KALITIMDAN ÇIKAR → STRATEJİ (composition).
-// Küçük, güvenli bir adım: PaymentMethod hâlâ taban sınıf, ama komisyon artık bir IFeePolicy NESNESİ.
-//   ✓ InstallmentCreditCardPayment sınıfı SİLİNDİ: taksit = farklı bir IFeePolicy (kalıtım yerine nesne verilir).
-//   ✗ Fraud kontrolü hâlâ alt sınıfta → "fraud × taksit" kopyası sürüyor. Bir sonraki adımda onu da çıkaracağız.
-// Her adımın sonunda aynı senaryolar çalışır (Section09) → refactor GÜVENLİ.
+// STEP 2 — TAKE ONE CHANGING DIMENSION (fee calculation) OUT OF INHERITANCE → STRATEGY (composition).
+// A small, safe step: PaymentMethod is still the base class, but the fee is now an IFeePolicy OBJECT.
+//   ✓ The InstallmentCreditCardPayment class was DELETED: installments = a different IFeePolicy (an object is passed instead of inheriting).
+//   ✗ The fraud check is still in a subclass → the "fraud × installments" copy persists. We'll extract it in the next step too.
+// At the end of every step the same scenarios run (Section09) → the refactor is SAFE.
 // ═════════════════════════════════════════════════════════════════════════════════════════
 
 public interface IFeePolicy { decimal Calculate(decimal amount); }
@@ -26,7 +26,7 @@ public abstract class PaymentMethod(IFeePolicy feePolicy)
     public PaymentResult Pay(decimal amount)
     {
         Validate(amount);
-        var fee = Rounding.Round(feePolicy.Calculate(amount));     // ← komisyon artık BİR NESNE (composition)
+        var fee = Rounding.Round(feePolicy.Calculate(amount));     // ← the fee is now AN OBJECT (composition)
         var total = amount + fee;
         Charge(total);
         return new PaymentResult(Name, amount, fee, total);
@@ -34,7 +34,7 @@ public abstract class PaymentMethod(IFeePolicy feePolicy)
 
     protected virtual void Validate(decimal amount)
     {
-        if (amount <= 0) throw new PaymentRejectedException("Tutar pozitif olmalı");
+        if (amount <= 0) throw new PaymentRejectedException("Amount must be positive");
     }
 
     protected virtual void Charge(decimal total) { }
@@ -49,7 +49,7 @@ public class CreditCardPayment(IFeePolicy feePolicy) : PaymentMethod(feePolicy)
     protected override void Validate(decimal amount)
     {
         base.Validate(amount);
-        if (amount > 5000m) throw new PaymentRejectedException("Kart limiti aşıldı");
+        if (amount > 5000m) throw new PaymentRejectedException("Card limit exceeded");
     }
 }
 
@@ -58,7 +58,7 @@ public sealed class FraudCheckedCreditCardPayment(IFeePolicy feePolicy) : Credit
     protected override void Validate(decimal amount)
     {
         base.Validate(amount);
-        if (amount > 3000m) throw new PaymentRejectedException("Fraud şüphesi");
+        if (amount > 3000m) throw new PaymentRejectedException("Suspected fraud");
     }
 }
 
@@ -70,7 +70,7 @@ public sealed class BankTransferPayment(string iban) : PaymentMethod(new FlatFee
     {
         base.Validate(amount);
         if (iban is not { Length: 26 } || !iban.StartsWith("TR", StringComparison.Ordinal))
-            throw new PaymentRejectedException("Geçersiz IBAN");
+            throw new PaymentRejectedException("Invalid IBAN");
     }
 }
 
@@ -83,7 +83,7 @@ public sealed class WalletPayment(decimal balance) : PaymentMethod(new NoFee())
     protected override void Validate(decimal amount)
     {
         base.Validate(amount);
-        if (amount > Balance) throw new PaymentRejectedException("Yetersiz bakiye");
+        if (amount > Balance) throw new PaymentRejectedException("Insufficient balance");
     }
 
     protected override void Charge(decimal total) => Balance -= total;
@@ -91,7 +91,7 @@ public sealed class WalletPayment(decimal balance) : PaymentMethod(new NoFee())
 
 public sealed class Step2Scenarios : IPaymentScenarios
 {
-    public string StepName => "Adım 2 — komisyon strateji oldu";
+    public string StepName => "Step 2 — fee became a strategy";
     public PaymentResult PayCreditCard(decimal amount) => new CreditCardPayment().Pay(amount);
     public PaymentResult PayInstallmentCreditCard(decimal amount, int installments) => new CreditCardPayment(InstallmentFee.For(installments)).Pay(amount);
     public PaymentResult PayFraudCheckedCreditCard(decimal amount) => new FraudCheckedCreditCardPayment(new PercentageFee(0.02m)).Pay(amount);

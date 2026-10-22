@@ -1,11 +1,11 @@
 namespace Junior.CSharpFundamentals.Oop.Relationships;
 
-// ════════════════ COMPOSITION (güçlü "has-a") ════════════════
-// Order, satırlarının SAHİBİDİR. OrderLine, Order olmadan var olamaz:
-//   • OrderLine'ın constructor'ı internal → dışarıda kimse tek başına satır üretemez; yalnızca Order.AddLine ile doğar.
-//   • Satır tek bir siparişe aittir ve başka siparişe taşınamaz.
-//   • Sipariş iptal edilince/yok olunca satırlar da yok olur (yaşam süresi bütüne bağlı).
-// DDD'de bu sınır "aggregate root + içindeki parçalar" olarak karşımıza çıkar (→ S5.1).
+// ════════════════ COMPOSITION (strong "has-a") ════════════════
+// An Order OWNS its lines. An OrderLine cannot exist without an Order:
+//   • OrderLine's constructor is internal → nobody outside can create a line on its own; it is born only via Order.AddLine.
+//   • A line belongs to a single order and cannot be moved to another order.
+//   • When the order is cancelled/destroyed its lines are gone too (lifetime is bound to the whole).
+// In DDD this boundary shows up as "aggregate root + the parts inside it" (→ S5.1).
 
 public sealed class OrderLine
 {
@@ -23,7 +23,7 @@ public sealed class OrderLine
     public decimal UnitPrice { get; }
     public decimal Total => Quantity * UnitPrice;
 
-    /// <summary>Sipariş iptal edilince satır "yetim" kalır: artık hiçbir anlamı/sahibi yoktur.</summary>
+    /// <summary>When the order is cancelled the line is left "orphaned": it no longer has any meaning/owner.</summary>
     public bool IsOrphaned { get; internal set; }
 }
 
@@ -37,15 +37,15 @@ public sealed class Order
 
     public OrderLine AddLine(string product, int quantity, decimal unitPrice)
     {
-        if (IsCancelled) throw new InvalidOperationException("İptal edilmiş siparişe satır eklenemez.");
-        var line = new OrderLine(this, product, quantity, unitPrice);   // satırı SİPARİŞ yaratır
+        if (IsCancelled) throw new InvalidOperationException("Cannot add a line to a cancelled order.");
+        var line = new OrderLine(this, product, quantity, unitPrice);   // the ORDER creates the line
         _lines.Add(line);
         return line;
     }
 
     public void Cancel()
     {
-        foreach (var l in _lines) l.IsOrphaned = true;                   // parçalar bütünle birlikte "ölür"
+        foreach (var l in _lines) l.IsOrphaned = true;                   // the parts "die" together with the whole
         _lines.Clear();
         IsCancelled = true;
     }

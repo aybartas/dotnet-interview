@@ -1,11 +1,11 @@
 namespace Junior.CSharpFundamentals.ClassMembers.Extensions;
 
-// EXTENSION METHOD kuralları:
-//   • static bir sınıfta, static metot, İLK parametre 'this' ile işaretli → o tipin sanki bir örnek metoduymuş gibi çağrılır.
-//   • Gerçekte hiçbir şey eklenmez: derleyici 'x.Shout()' çağrısını 'StringExtensions.Shout(x)' statik çağrısına çevirir.
-//   • Çağıran dosyada bu namespace'in 'using'i OLMALI (aksi halde görünmez).
-//   • Örnek (instance) metot HER ZAMAN önceliklidir; aynı imzalı extension asla çağrılmaz.
-//   • null receiver ile çalışır (çünkü gerçekte static çağrı): x.IsBlank() x null olsa bile NullReferenceException atmaz.
+// EXTENSION METHOD rules:
+//   • In a static class, a static method whose FIRST parameter is marked with 'this' → it is called as if it were an instance method of that type.
+//   • Nothing is actually added: the compiler turns the call 'x.Shout()' into the static call 'StringExtensions.Shout(x)'.
+//   • The calling file MUST have a 'using' for this namespace (otherwise it is invisible).
+//   • An instance method ALWAYS takes precedence; an extension with the same signature is never called.
+//   • Works with a null receiver (because it is really a static call): x.IsBlank() doesn't throw NullReferenceException even if x is null.
 public static class StringExtensions
 {
     public static string Shout(this string text) => text.ToUpperInvariant() + "!";
@@ -14,7 +14,7 @@ public static class StringExtensions
 
     public static string Truncate(this string text, int max) => text.Length <= max ? text : text[..max] + "…";
 
-    // Generic extension: IEnumerable<T> üzerinde — LINQ'in tamamı bu mantıkla yazılmıştır (Where, Select, OrderBy…)
+    // Generic extension: on IEnumerable<T> — all of LINQ is written this way (Where, Select, OrderBy…)
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) where T : class
     {
         foreach (var item in source)
@@ -24,11 +24,11 @@ public static class StringExtensions
 
 public sealed class Widget
 {
-    public string Describe() => "örnek metot (instance)";           // ← instance HER ZAMAN kazanır
+    public string Describe() => "instance method";           // ← the instance ALWAYS wins
 }
 
 public static class WidgetExtensions
 {
-    public static string Describe(this Widget w) => "extension metot";                          // aynı imza → ASLA çağrılmaz (gölgelenir)
-    public static string Describe(this Widget w, string prefix) => $"{prefix}: extension metot"; // farklı imza → çağrılabilir
+    public static string Describe(this Widget w) => "extension method";                          // same signature → NEVER called (shadowed)
+    public static string Describe(this Widget w, string prefix) => $"{prefix}: extension method"; // different signature → can be called
 }
