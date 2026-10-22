@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Junior.DevFoundations.HowTheWebWorks;
 
 /// <summary>
-/// Gelen HTTP isteğini, ağdan gelen HAM metne en yakın biçimde konsola yazar:
+/// Writes the incoming HTTP request to the console in the form closest to the RAW text that came over the wire:
 ///
-///     GET /search?q=dotnet HTTP/1.1          ← request line: method + path + query + protokol sürümü
-///     Host: localhost:5080                   ← header'lar
+///     GET /search?q=dotnet HTTP/1.1          ← request line: method + path + query + protocol version
+///     Host: localhost:5080                   ← headers
 ///     User-Agent: curl/8.5.0
-///                                            ← boş satır: header'ların sonu
-///     {"name":"..."}                         ← body (varsa)
+///                                            ← blank line: end of the headers
+///     {"name":"..."}                         ← body (if any)
 ///
-/// Kestrel isteği zaten ayrıştırıp (parse) HttpContext'e koymuştur; biz onu tekrar "metne" çeviriyoruz.
-/// HTTP/1.1 gerçekten bu düz metin formatıyla konuşur (HTTP/2 ve 3 ikilik/binary'dir, ama mantıksal model aynıdır).
+/// Kestrel has already parsed the request and put it into the HttpContext; we turn it back into "text".
+/// HTTP/1.1 really does speak this plain-text format (HTTP/2 and 3 are binary, but the logical model is the same).
 /// </summary>
 public sealed class RawRequestLoggingMiddleware(RequestDelegate next, ILogger<RawRequestLoggingMiddleware> logger)
 {
@@ -22,13 +22,13 @@ public sealed class RawRequestLoggingMiddleware(RequestDelegate next, ILogger<Ra
     public async Task InvokeAsync(HttpContext ctx)
     {
         var raw = await RenderAsync(ctx.Request);
-        ctx.Items["raw-request"] = raw;                       // endpoint'ler isterse cevap gövdesine koyabilsin
+        ctx.Items["raw-request"] = raw;                       // so endpoints can put it in the response body if they want
 
-        logger.LogInformation("┌── gelen istek (uzak: {Remote}) ──\n{Raw}\n└──", ctx.Connection.RemoteIpAddress, raw);
+        logger.LogInformation("┌── incoming request (remote: {Remote}) ──\n{Raw}\n└──", ctx.Connection.RemoteIpAddress, raw);
 
         await next(ctx);
 
-        logger.LogInformation("  ↳ yanıt: {Status} {Reason}", ctx.Response.StatusCode,
+        logger.LogInformation("  ↳ response: {Status} {Reason}", ctx.Response.StatusCode,
             ReasonPhrases.GetReasonPhrase(ctx.Response.StatusCode));
     }
 
@@ -39,20 +39,20 @@ public sealed class RawRequestLoggingMiddleware(RequestDelegate next, ILogger<Ra
         // 1) Request line
         sb.Append(req.Method).Append(' ').Append(req.Path).Append(req.QueryString).Append(' ').AppendLine(req.Protocol);
 
-        // 2) Header'lar (Kestrel Host'u da buraya koyar)
+        // 2) Headers (Kestrel puts Host here too)
         foreach (var (name, values) in req.Headers)
             sb.Append(name).Append(": ").AppendLine(values.ToString());
 
-        // 3) Boş satır + body
+        // 3) Blank line + body
         sb.AppendLine();
         if (req.ContentLength is > 0 || req.Headers.ContainsKey("Transfer-Encoding"))
         {
-            req.EnableBuffering();                              // body'yi sonradan tekrar okuyabilmek için
+            req.EnableBuffering();                              // so the body can be read again later
             using var reader = new StreamReader(req.Body, Encoding.UTF8, leaveOpen: true);
             var buffer = new char[MaxBodyBytesToLog];
             var read = await reader.ReadBlockAsync(buffer, 0, buffer.Length);
             sb.Append(buffer, 0, read);
-            if (read == MaxBodyBytesToLog) sb.Append(" …(kesildi)");
+            if (read == MaxBodyBytesToLog) sb.Append(" …(truncated)");
             req.Body.Position = 0;
         }
 

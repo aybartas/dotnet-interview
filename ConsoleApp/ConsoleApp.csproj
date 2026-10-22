@@ -5,9 +5,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <!-- Türkçe kültür deneyleri (tr-TR, "Türkçe I problemi", sıralama) gerçek ICU verisi ister -->
+    <!-- Culture experiments (tr-TR, the Turkish I problem, sorting) need real ICU data -->
     <InvariantGlobalization>false</InvariantGlobalization>
-    <!-- J2.1 XML doc deneyi + J1.5: IDE0xxx stil kuralları derlemede de çalışsın (kural şiddetleri ilgili konu klasöründeki .editorconfig'de) -->
+    <!-- J2.1 XML doc experiment + J1.5: run IDE0xxx style rules during build too (rule severities live in the topic folder's .editorconfig) -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -15,12 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- J4: konular yerel bir Kestrel API'ye HTTP çağrısı yapar (console uygulaması içinde, rastgele port) -->
+    <!-- J4: topics call a local Kestrel API hosted inside the console app (random port) -->
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- J5.2: CopyToOutputDirectory — bin/<config>/<tfm>/ klasörüne appsettings.json adıyla kopyalanır (Link: konu klasörü yolu çıktıya taşınmaz) -->
+    <!-- J5.2: CopyToOutputDirectory — copied to bin/<config>/<tfm>/ as appsettings.json (Link: the topic folder path is not carried into the output) -->
     <None Include="01-junior/05-build-run-basics/02-bin-obj/appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

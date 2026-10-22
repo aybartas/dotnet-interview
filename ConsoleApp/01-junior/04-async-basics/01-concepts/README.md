@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-Async kodu doğru yazmak için önce dört ayrımı netleştirmek gerekir: **process / thread / task**, **concurrency / parallelism**, **CPU-bound / I/O-bound** ve **blocking / non-blocking**. Bunlar karışınca "her şeyi `Task.Run`'a sarayım" ya da "async yaptım ama hâlâ yavaş" gibi hatalar doğar. Bu konunun kodu [`Sections/`](Sections/) altında 6 bölümdür (`dotnet run -- J4.1 <numara>`, J04 modül klasöründe).
+Async kodu doğru yazmak için önce dört ayrımı netleştirmek gerekir: **process / thread / task**, **concurrency / parallelism**, **CPU-bound / I/O-bound** ve **blocking / non-blocking**. Bunlar karışınca "her şeyi `Task.Run`'a sarayım" ya da "async yaptım ama hâlâ yavaş" gibi hatalar doğar. Bu konunun kodu [`Sections/`](Sections/) altında 6 bölümdür (`dotnet run -- J4.1 <number>`, J04 modül klasöründe).
 
 ---
 
@@ -50,9 +50,9 @@ Async kodu doğru yazmak için önce dört ayrımı netleştirmek gerekir: **pro
 Demoda üç asenkron "aşçı" **tek thread'de** dönüşümlü ilerler (≈300 ms, sıralı olsa ≈900 ms): concurrency var, parallelism yok. `Parallel.For` ile CPU işi çekirdeklere bölününce gerçek paralellik görülür (4 çekirdekte 136 ms → 54 ms).
 
 ```
-Concurrency (tek thread):   A─ ─B─ ─C─ ─A─ ─B─ ─C─      (dönüşümlü ilerler)
-Parallelism (3 çekirdek):   A───────►
-                            B───────►                    (aynı anda)
+Concurrency (single thread): A─ ─B─ ─C─ ─A─ ─B─ ─C─      (take turns)
+Parallelism (3 cores):      A───────►
+                            B───────►                    (at the same time)
                             C───────►
 ```
 

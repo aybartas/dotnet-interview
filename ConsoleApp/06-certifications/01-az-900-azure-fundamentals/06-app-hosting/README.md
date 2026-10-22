@@ -112,15 +112,15 @@ Azure'daki container seçenekleri:
 ### 3.5 Barındırma karar ağacı
 
 ```
-OS üzerinde tam kontrol / özel yazılım / aynen taşıma?        → Virtual Machines (→ C1.5)
-Masaüstü veya Windows uygulamalarını uzaktan sunmak?          → Azure Virtual Desktop
-Olayla tetiklenen kısa kod (zamanlayıcı, kuyruk, blob, HTTP)? → Azure Functions
-Kod yok, görsel iş akışı/entegrasyon?                         → Logic Apps
-Hazır web/API platformu, OS yönetmeden?                       → App Service
+Full control over the OS / custom software / lift-and-shift? → Virtual Machines (→ C1.5)
+Serve desktops or Windows apps remotely?                     → Azure Virtual Desktop
+Short event-triggered code (timer, queue, blob, HTTP)?       → Azure Functions
+No code, visual workflow/integration?                        → Logic Apps
+Ready-made web/API platform, without managing the OS?        → App Service
 Container:
-   tek container, hızlı, orkestrasyonsuz                      → Container Instances
-   mikroservisler, serverless, sıfıra ölçek                   → Container Apps
-   çok sayıda container, tam Kubernetes kontrolü              → AKS
+   single container, fast, no orchestration                  → Container Instances
+   microservices, serverless, scale to zero                  → Container Apps
+   many containers, full Kubernetes control                  → AKS
 ```
 
 ### 3.6 Pratik — App Service, Container Instances ve yerel Function
@@ -130,32 +130,32 @@ Container:
 **(a) Todo API'yi App Service'e deploy etmek**
 
 ```bash
-# Küçük bir .NET Web API (repoda proje oluşturmuyoruz; geçici bir klasörde)
+# A small .NET Web API (we do not create a project in the repo; use a temporary folder)
 dotnet new webapi -n TodoApi && cd TodoApi
 
 az login
 az group create --name rg-az900-c16 --location westeurope
 
-# az webapp up: plan + web app oluşturur, kodu derleyip ZIP deploy eder
+# az webapp up: creates the plan + web app, builds the code and ZIP-deploys it
 APP=todo-c16-$RANDOM
-az webapp list-runtimes --os linux --output table            # geçerli runtime değerleri
+az webapp list-runtimes --os linux --output table            # valid runtime values
 az webapp up --resource-group rg-az900-c16 --name $APP \
   --sku F1 --os-type linux --runtime "DOTNETCORE:10.0"
 
-curl https://$APP.azurewebsites.net/weatherforecast          # şablonun örnek endpoint'i
+curl https://$APP.azurewebsites.net/weatherforecast          # the template's sample endpoint
 ```
 
 **(b) Ayarların environment variable olarak `IConfiguration`'a akması**
 
 ```bash
-# Application setting: "__" (çift alt çizgi) → IConfiguration'da ":" olur → Todo:Greeting
+# Application setting: "__" (double underscore) becomes ":" in IConfiguration → Todo:Greeting
 az webapp config appsettings set --resource-group rg-az900-c16 --name $APP \
-  --settings Todo__Greeting="Merhaba App Service"
+  --settings Todo__Greeting="Hello App Service"
 
-# Connection string: uygulamaya SQLAZURECONNSTR_TodoDb env var'ı olarak gelir;
-# ASP.NET Core bunu builder.Configuration.GetConnectionString("TodoDb") ile okur
+# Connection string: reaches the app as the SQLAZURECONNSTR_TodoDb env var;
+# ASP.NET Core reads it with builder.Configuration.GetConnectionString("TodoDb")
 az webapp config connection-string set --resource-group rg-az900-c16 --name $APP \
-  --connection-string-type SQLAzure --settings TodoDb="Server=tcp:ornek.database.windows.net;Database=todo;"
+  --connection-string-type SQLAzure --settings TodoDb="Server=tcp:example.database.windows.net;Database=todo;"
 
 az webapp config appsettings list --resource-group rg-az900-c16 --name $APP --output table
 ```
@@ -170,14 +170,14 @@ app.MapGet("/config", (IConfiguration c) => new { greeting = c["Todo:Greeting"],
 
 ```bash
 az webapp log config --resource-group rg-az900-c16 --name $APP \
-  --docker-container-logging filesystem --level information   # Linux uygulamada konsol log'larını aç
-az webapp log tail --resource-group rg-az900-c16 --name $APP   # Ctrl+C ile çık; başka terminalden istek at
+  --docker-container-logging filesystem --level information   # enable console logs on a Linux app
+az webapp log tail --resource-group rg-az900-c16 --name $APP   # exit with Ctrl+C; send a request from another terminal
 ```
 
 **(d) Aynı işi bir container ile: Azure Container Instances**
 
 ```bash
-# Örnek bir web container'ı tek komutla — VM yok, plan yok, orkestratör yok
+# A sample web container with a single command — no VM, no plan, no orchestrator
 az container create --resource-group rg-az900-c16 --name aci-c16 \
   --image mcr.microsoft.com/azuredocs/aci-helloworld \
   --os-type Linux --cpu 1 --memory 1.5 --ports 80 \
@@ -191,7 +191,7 @@ az container logs --resource-group rg-az900-c16 --name aci-c16
 **(e) HTTP tetiklemeli bir Azure Function — yerelde, Core Tools ile (ücretsiz)**
 
 ```bash
-# Azure Functions Core Tools v4 kurulu olmalı (func --version)
+# Azure Functions Core Tools v4 must be installed (func --version)
 func init FuncC16 --worker-runtime dotnet-isolated
 cd FuncC16
 func new --name Hello --template "HTTP trigger" --authlevel anonymous

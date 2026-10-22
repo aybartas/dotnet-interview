@@ -6,35 +6,35 @@ public static class Section08_Misc
 {
     public static void Run()
     {
-        Console.WriteLine("A) Optional parametreler ve named argument'lar");
+        Console.WriteLine("A) Optional parameters and named arguments");
         Console.WriteLine($"   {Send("a@x.com")}");
-        Console.WriteLine($"   {Send("a@x.com", urgent: true)}                  ← named argument: ortadaki optional'ı atlayıp sonrakini ver");
-        Console.WriteLine($"   {Send(subject: "Selam", to: "b@x.com")}   ← named argument sırayı serbest bırakır");
+        Console.WriteLine($"   {Send("a@x.com", urgent: true)}                  ← named argument: skip the optional in the middle and pass the next one");
+        Console.WriteLine($"   {Send(subject: "Hello", to: "b@x.com")}   ← named arguments free the order");
 
         var p = typeof(Section08_Misc).GetMethod(nameof(Send), BindingFlags.NonPublic | BindingFlags.Static)!.GetParameters()[1];
-        Console.WriteLine($"   Varsayılan değer METADATA'da: subject.HasDefaultValue = {p.HasDefaultValue}, DefaultValue = \"{p.DefaultValue}\"");
-        Console.WriteLine("   ⚠ Varsayılan değer ÇAĞIRAN assembly'nin IL'ine derlenir (const ile aynı mantık, → J2.2): kütüphanede varsayılanı değiştirip yalnızca");
-        Console.WriteLine("     kütüphaneyi dağıtırsanız eski tüketici ESKİ varsayılanı kullanmaya devam eder. Public API'de güvenli alternatif: overload'lar.");
+        Console.WriteLine($"   The default value lives in METADATA: subject.HasDefaultValue = {p.HasDefaultValue}, DefaultValue = \"{p.DefaultValue}\"");
+        Console.WriteLine("   ⚠ The default value is compiled into the CALLER assembly's IL (same logic as const, → J2.2): if you change the default in a library and ship only");
+        Console.WriteLine("     the library, an old consumer keeps using the OLD default. Safe alternative in a public API: overloads.");
 
-        Console.WriteLine($"   Overload + optional karışırsa: Log(\"x\") → {Log("x")}  (optional'sız overload önceliklidir; kafa karıştırıcı → birini seçin)");
+        Console.WriteLine($"   Mixing overload + optional: Log(\"x\") → {Log("x")}  (the overload without optionals wins; confusing → pick one)");
 
-        Console.WriteLine("\nB) Anonim tipler (derleyici ürettiği, adsız, salt okunur, değer eşitlikli sınıf)");
-        var anon = new { Ad = "Ayşe", Yas = 30 };
-        var anon2 = new { Ad = "Ayşe", Yas = 30 };
-        Console.WriteLine($"   {anon}  Equals → {anon.Equals(anon2)}  tip: {anon.GetType().Name}; aynı yapı → aynı tip: {anon.GetType() == anon2.GetType()}");
-        Console.WriteLine("   Metot sınırını GEÇEMEZ (dönüş tipi olarak yazılamaz; ancak object/dynamic) → LINQ ara sonuçları için uygun; kalıcı veri için record/tuple.");
+        Console.WriteLine("\nB) Anonymous types (compiler-generated, nameless, read-only, value-equality class)");
+        var anon = new { Name = "Alice", Age = 30 };
+        var anon2 = new { Name = "Alice", Age = 30 };
+        Console.WriteLine($"   {anon}  Equals → {anon.Equals(anon2)}  type: {anon.GetType().Name}; same shape → same type: {anon.GetType() == anon2.GetType()}");
+        Console.WriteLine("   CANNOT cross a method boundary (can't be written as a return type; only object/dynamic) → fine for LINQ intermediate results; use record/tuple for lasting data.");
 
-        Console.WriteLine("\nC) Nested (iç içe) sınıflar");
+        Console.WriteLine("\nC) Nested classes");
         var outer = new Outer();
         var inner = outer.CreateInner();
-        Console.WriteLine($"   Inner, Outer'ın private üyesine erişebilir: {inner.ReadOuterSecret()}");
+        Console.WriteLine($"   Inner can access Outer's private member: {inner.ReadOuterSecret()}");
         foreach (var nested in typeof(Outer).GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Public))
-            Console.WriteLine($"   iç tip {nested.Name,-7} görünürlüğü: {nested.Attributes & TypeAttributes.VisibilityMask}");
-        Console.WriteLine("   Ne zaman anlamlı? Dış sınıfın yalnızca KENDİ iç detayı olan yardımcı tip (enumerator, builder, state) → ad kirliliği olmaz, private üyelere erişir.");
-        Console.WriteLine("   Ne zaman değil? Dışarıdan da kullanılacak/test edilecek tipler → kendi dosyasında ayrı tip.");
+            Console.WriteLine($"   nested type {nested.Name,-7} visibility: {nested.Attributes & TypeAttributes.VisibilityMask}");
+        Console.WriteLine("   When does it make sense? A helper type that is only the outer class's OWN internal detail (enumerator, builder, state) → no name pollution, access to private members.");
+        Console.WriteLine("   When not? Types that will also be used/tested from outside → a separate type in its own file.");
     }
 
-    private static string Send(string to, string subject = "(konu yok)", bool urgent = false)
+    private static string Send(string to, string subject = "(no subject)", bool urgent = false)
         => $"to={to}, subject={subject}, urgent={urgent}";
 
     private static string Log(string message) => "Log(string)";
@@ -45,10 +45,10 @@ public static class Section08_Misc
         private readonly string _secret = "outer-private";
         public Inner CreateInner() => new(this);
 
-        private sealed class Helper;                                      // tamamen private yardımcı tip (dışarıdan hiç görünmez)
+        private sealed class Helper;                                      // a fully private helper type (never visible from outside)
         public sealed class Inner(Outer owner)
         {
-            public string ReadOuterSecret() => owner._secret;              // nested tip, dış sınıfın private üyesine erişir
+            public string ReadOuterSecret() => owner._secret;              // a nested type accesses the outer class's private member
         }
     }
 }

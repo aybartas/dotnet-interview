@@ -3,7 +3,7 @@
 > Teori: [README.md](README.md). ⭐ = çok sık sorulan.
 
 ### 1. ⭐ `throw` ile `throw ex` arasındaki fark nedir?
-`throw;` yakalanmış exception'ı **orijinal stack trace'iyle** yeniden fırlatır. `throw ex;` ise exception nesnesini yeniden fırlatıp stack trace'i **catch noktasından başlatır**: hatanın gerçekte doğduğu metot ve satır kaybolur, hata sanki catch bloğunun bulunduğu metotta doğmuş gibi görünür; üretimde teşhisi çok zorlaştırır. CA2200 analyzer'ı bunu yakalar. Bağlam eklemek istiyorsan `throw new X("mesaj", ex)` (orijinal `InnerException` olarak korunur); başka yerden/thread'den orijinal stack'le fırlatmak için `ExceptionDispatchInfo.Capture(ex).Throw()`.
+`throw;` yakalanmış exception'ı **orijinal stack trace'iyle** yeniden fırlatır. `throw ex;` ise exception nesnesini yeniden fırlatıp stack trace'i **catch noktasından başlatır**: hatanın gerçekte doğduğu metot ve satır kaybolur, hata sanki catch bloğunun bulunduğu metotta doğmuş gibi görünür; üretimde teşhisi çok zorlaştırır. CA2200 analyzer'ı bunu yakalar. Bağlam eklemek istiyorsan `throw new X("message", ex)` (orijinal `InnerException` olarak korunur); başka yerden/thread'den orijinal stack'le fırlatmak için `ExceptionDispatchInfo.Capture(ex).Throw()`.
 
 ### 2. `try/catch/finally` nasıl çalışır? `finally` her zaman çalışır mı?
 Önce `try` çalışır; exception fırlarsa ilk eşleşen `catch` (yukarıdan aşağı, özelden genele) çalışır; `finally` hata olsun olmasın, hatta `return`'den sonra bile çalışır. Çalışmadığı durumlar: process'in aniden ölmesi (`Environment.FailFast`, StackOverflow, güç kesintisi), sonsuz döngü/blok. `finally` içinde `return`/`throw` yazmak bekleyen exception'ı yutar veya ezer; yalnızca temizlik yapılmalı.
@@ -48,10 +48,10 @@ Birden çok exception'ı tek nesnede toplayan tiptir (`InnerExceptions`). `Task.
 Hayır, iptal normal bir akıştır (`CancellationToken`). Genellikle hata olarak loglanmaz/yeniden denenmez, ayrı yakalanır (`catch (OperationCanceledException)`); `TaskCanceledException` ondan türer.
 
 ### 16. Exception'ı loglarken neye dikkat edersin?
-`ex.Message` değil **exception nesnesinin kendisini** logla (`logger.LogError(ex, "bağlam")`) ki stack trace ve inner exception'lar kaybolmasın. Aynı hatayı her katmanda logla-ve-fırlat yapma (log gürültüsü); sınırda bir kez logla. Hassas veriyi (parola, token) mesaja koyma.
+`ex.Message` değil **exception nesnesinin kendisini** logla (`logger.LogError(ex, "context")`) ki stack trace ve inner exception'lar kaybolmasın. Aynı hatayı her katmanda logla-ve-fırlat yapma (log gürültüsü); sınırda bir kez logla. Hassas veriyi (parola, token) mesaja koyma.
 
 ### 17. `InnerException` ne işe yarar? Ne zaman kullanılır?
-Bir hatayı daha üst seviyeli (domain) bir hataya çevirirken orijinal hatayı korumak için: `throw new OrderRepositoryException("Sipariş yüklenemedi", ex)`. Böylece çağıran anlamlı bir tip alır, teşhis eden kişi kök nedene ve orijinal stack'e ulaşır. Orijinali atlamak bilgi kaybıdır.
+Bir hatayı daha üst seviyeli (domain) bir hataya çevirirken orijinal hatayı korumak için: `throw new OrderRepositoryException("Could not load order", ex)`. Böylece çağıran anlamlı bir tip alır, teşhis eden kişi kök nedene ve orijinal stack'e ulaşır. Orijinali atlamak bilgi kaybıdır.
 
 ### 18. `StackOverflowException` yakalanabilir mi?
 Hayır; .NET'te process'i sonlandırır. Önlem: özyinelemeyi sınırlamak (derinlik kontrolü), döngüye çevirmek. `OutOfMemoryException` teorik olarak yakalanabilir ama çoğu zaman anlamlı bir kurtarma mümkün değildir.

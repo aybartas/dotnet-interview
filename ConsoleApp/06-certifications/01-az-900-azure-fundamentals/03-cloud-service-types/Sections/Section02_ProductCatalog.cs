@@ -9,18 +9,18 @@ public static class Section02_ProductCatalog
         foreach (var group in ServiceCatalog.All.GroupBy(s => s.Type))
         {
             Console.WriteLine($"\n{ServiceCatalog.Label(group.Key)}");
-            Table.Print(["Ürün", "Neden bu tür?"], group.Select(s => (IReadOnlyList<string>)[s.Name, s.Note]));
+            Table.Print(["Product", "Why this type?"], group.Select(s => (IReadOnlyList<string>)[s.Name, s.Note]));
         }
 
         Console.WriteLine("""
 
-        Sınav tuzakları:
-          • "SQL" tek başına bir tür değildir: VM üzerinde SQL Server = IaaS · Azure SQL Database / Managed Instance = PaaS.
-          • Azure Functions ve Logic Apps hem "PaaS" hem "serverless" şıkkına uyar; soru "serverless" diyorsa onu seç.
-          • Microsoft 365 bir Azure hizmeti değil ama SaaS örneği olarak sınavda sık geçer.
-          • AKS'de node VM'leri senin aboneliğinde çalışır; yine de yönetilen hizmet olduğu için PaaS kabul edilir.
+        Exam traps:
+          • "SQL" alone is not a type: SQL Server on a VM = IaaS · Azure SQL Database / Managed Instance = PaaS.
+          • Azure Functions and Logic Apps fit both the "PaaS" and the "serverless" option; if the question says "serverless", pick that.
+          • Microsoft 365 is not an Azure service but often appears on the exam as a SaaS example.
+          • In AKS the node VMs run in your subscription; it is still counted as PaaS because it is a managed service.
 
-        Kendi ürününü sor: dotnet run -- C1.3 tur sql
+        Ask about your own product: dotnet run -- C1.3 lookup sql
         """);
     }
 }

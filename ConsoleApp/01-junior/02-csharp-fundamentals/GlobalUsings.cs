@@ -1,6 +1,6 @@
-// GLOBAL USING: Bu proje boyunca HER dosyada geçerli olur; dosya başına tekrar yazmak gerekmez (C# 10).
-// (Bu repoda ImplicitUsings açık olduğundan System, System.Linq, System.IO, System.Collections.Generic vb. zaten otomatik eklenir;
-//  hangileri olduğunu obj/Debug/net10.0/ConsoleApp.GlobalUsings.g.cs dosyasında görebilirsiniz.)
-// NOT: Csharp7Style klasöründeki dosyalar kasıtlı olarak kendi using'lerini AÇIKÇA yazar (J2.6 karşılaştırması için).
+// GLOBAL USING: applies to EVERY file in this project; no need to repeat it per file (C# 10).
+// (ImplicitUsings is enabled in this repo, so System, System.Linq, System.IO, System.Collections.Generic etc. are already added automatically;
+//  you can see which ones in obj/Debug/net10.0/ConsoleApp.GlobalUsings.g.cs.)
+// NOTE: The files in the Csharp7Style folder deliberately write their own using directives EXPLICITLY (for the J2.6 comparison).
 global using System.Diagnostics;
 global using System.Globalization;

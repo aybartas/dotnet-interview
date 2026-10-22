@@ -6,47 +6,47 @@ public static class Section02_CustomExceptions
 {
     public static void Run()
     {
-        Console.WriteLine("Standart hiyerarşi (kısaltılmış):");
+        Console.WriteLine("Standard hierarchy (abridged):");
         Console.WriteLine("   Exception");
         Console.WriteLine("   ├─ SystemException ── NullReferenceException, InvalidCastException, IndexOutOfRangeException, OutOfMemoryException…");
         Console.WriteLine("   │   └─ ArgumentException ── ArgumentNullException, ArgumentOutOfRangeException");
         Console.WriteLine("   ├─ InvalidOperationException ── ObjectDisposedException");
         Console.WriteLine("   ├─ NotSupportedException, NotImplementedException");
         Console.WriteLine("   ├─ IOException ── FileNotFoundException, DirectoryNotFoundException");
-        Console.WriteLine("   └─ (kendi domain exception'larınız: DomainException → InsufficientFundsException, OrderNotFoundException …)");
+        Console.WriteLine("   └─ (your own domain exceptions: DomainException → InsufficientFundsException, OrderNotFoundException …)");
 
-        Console.WriteLine("\nHazır tipi doğru seç:");
-        Console.WriteLine("   ArgumentNullException       → argüman null (ThrowIfNull)      ArgumentOutOfRangeException → değer aralık dışı");
-        Console.WriteLine("   InvalidOperationException   → nesne BU durumda bu işlemi yapamaz   NotSupportedException        → işlem hiç desteklenmiyor");
+        Console.WriteLine("\nPick the right built-in type:");
+        Console.WriteLine("   ArgumentNullException       → argument is null (ThrowIfNull)      ArgumentOutOfRangeException → value is out of range");
+        Console.WriteLine("   InvalidOperationException   → the object can't do this in THIS state   NotSupportedException        → the operation isn't supported at all");
 
-        Console.WriteLine("\nCustom domain exception: ek VERİ taşır, çağıran tipe göre karar verir:");
+        Console.WriteLine("\nCustom domain exception: carries extra DATA, the caller decides by type:");
         try { Withdraw("ACC-1", balance: 100m, amount: 250m); }
         catch (InsufficientFundsException ex)
         {
-            Console.WriteLine($"   catch InsufficientFundsException → kullanıcıya: 'Eksik tutar: {ex.Shortfall:N2}'  (Code={ex.Code})  ← mesajı ayrıştırmaya gerek yok");
+            Console.WriteLine($"   catch InsufficientFundsException → to the user: 'Shortfall: {ex.Shortfall:N2}'  (Code={ex.Code})  ← no need to parse the message");
         }
 
-        Console.WriteLine("\nKök tip sayesinde üst katman TEK catch ile tüm iş kuralı hatalarını ayırt eder:");
+        Console.WriteLine("\nThanks to the root type, the upper layer tells all business-rule errors apart with a SINGLE catch:");
         foreach (var action in new Action[]
                  {
                      () => throw new OrderNotFoundException(42),
-                     () => throw new ValidationFailedException(new Dictionary<string, string> { ["email"] = "geçersiz", ["yas"] = "negatif" }),
-                     () => throw new NullReferenceException("beklenmeyen"),
+                     () => throw new ValidationFailedException(new Dictionary<string, string> { ["email"] = "invalid", ["age"] = "negative" }),
+                     () => throw new NullReferenceException("unexpected"),
                  })
         {
             try { action(); }
-            catch (DomainException ex) { Console.WriteLine($"   [{ex.Code}] → 4xx'e çevrilir: {ex.Message}"); }
-            catch (Exception ex) { Console.WriteLine($"   [BEKLENMEYEN] → 500'e çevrilir ve LOGLANIR: {ex.GetType().Name}"); }
+            catch (DomainException ex) { Console.WriteLine($"   [{ex.Code}] → translated to 4xx: {ex.Message}"); }
+            catch (Exception ex) { Console.WriteLine($"   [UNEXPECTED] → translated to 500 and LOGGED: {ex.GetType().Name}"); }
         }
 
-        Console.WriteLine("\nAltyapı hatasını çevirirken InnerException'ı KORU:");
+        Console.WriteLine("\nWhen translating an infrastructure error, KEEP the InnerException:");
         try { LoadOrder(1); }
-        catch (OrderRepositoryException ex) { Console.WriteLine($"   {ex.Message}  ← iç neden: {ex.InnerException!.GetType().Name}: {ex.InnerException.Message}"); }
+        catch (OrderRepositoryException ex) { Console.WriteLine($"   {ex.Message}  ← inner cause: {ex.InnerException!.GetType().Name}: {ex.InnerException.Message}"); }
 
         Console.WriteLine("""
 
-        Çok sayıda custom exception tipi üretmeyin: çağıranın AYRI davranacağı durumlar için tip, gerisi için hazır tipler.
-        Hangi katman neyi fırlatır?  Domain → DomainException'lar · Altyapı (repository) → kendi tipini sarar · Sınır (API/middleware) → HTTP koduna çevirir.
+        Don't create many custom exception types: a type for cases where the caller will behave DIFFERENTLY, built-in types for the rest.
+        Which layer throws what?  Domain → DomainExceptions · Infrastructure (repository) → wraps into its own type · Boundary (API/middleware) → translates to an HTTP code.
         """);
     }
 
@@ -57,10 +57,10 @@ public static class Section02_CustomExceptions
 
     private static void LoadOrder(int id)
     {
-        try { throw new TimeoutException("veritabanı zaman aşımı"); }
+        try { throw new TimeoutException("database timeout"); }
         catch (TimeoutException ex)
         {
-            throw new OrderRepositoryException($"Sipariş {id} yüklenemedi", ex);       // sarmala, orijinali inner olarak sakla
+            throw new OrderRepositoryException($"Could not load order {id}", ex);       // wrap, keep the original as inner
         }
     }
 }

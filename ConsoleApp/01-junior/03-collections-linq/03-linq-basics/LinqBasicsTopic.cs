@@ -4,18 +4,18 @@ public static class LinqBasicsTopic
 {
     public static int Run(string[] args)
     {
-        // J3.3 — LINQ Temelleri.
-        //   dotnet run -- J3.3          → bölüm listesi
+        // J3.3 — LINQ Basics.
+        //   dotnet run -- J3.3          → section list
         //   dotnet run -- J3.3 2     → deferred vs immediate execution ⭐
-        //   dotnet run -- J3.3 8     → 20 rapor alıştırması (çıktılar)
-        //   dotnet run -- J3.3 all   → hepsi
-        // Alıştırma: Reports/Reports.cs içindeki soruları önce KENDİNİZ çözün, sonra çözümle karşılaştırın.
+        //   dotnet run -- J3.3 8     → 20 report exercises (outputs)
+        //   dotnet run -- J3.3 all   → everything
+        // Exercise: solve the questions in Reports/Reports.cs YOURSELF first, then compare with the solution.
 
         if (args.Length == 0)
         {
-            Console.WriteLine("J3.3 LINQ Temelleri — bölümler:\n");
+            Console.WriteLine("J3.3 LINQ Basics — sections:\n");
             foreach (var s in Sections.All) Console.WriteLine($"  {s.Number,2}. {s.Title}");
-            Console.WriteLine("\nÇalıştırmak için: dotnet run -- J3.3 <numara> | all");
+            Console.WriteLine("\nTo run: dotnet run -- J3.3 <number> | all");
             return 0;
         }
 

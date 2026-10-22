@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Junior.AsyncBasics.Concepts;
 
-/// <summary>🛠 J4.1: Paylaşılan sayaçta race condition demosu.</summary>
+/// <summary>🛠 J4.1: Race condition demo on a shared counter.</summary>
 public static class Section06_RaceCondition
 {
     private const int Workers = 4;
@@ -11,41 +11,41 @@ public static class Section06_RaceCondition
     public static Task Run()
     {
         var expected = Workers * PerWorker;
-        Console.WriteLine($"{Workers} thread × {PerWorker:N0} artırma → beklenen sonuç = {expected:N0}  ({Environment.ProcessorCount} çekirdek)\n");
-        Console.WriteLine("counter++ tek satırdır ama ÜÇ adımdır: oku → 1 ekle → yaz. İki thread aynı değeri okuyup aynı sonucu yazarsa bir artırma KAYBOLUR.\n");
+        Console.WriteLine($"{Workers} threads × {PerWorker:N0} increments → expected result = {expected:N0}  ({Environment.ProcessorCount} cores)\n");
+        Console.WriteLine("counter++ is a single line but THREE steps: read → add 1 → write. If two threads read the same value and write the same result, one increment is LOST.\n");
 
-        // 1) Güvensiz
+        // 1) Unsafe
         var counter = 0;
         var sw = Stopwatch.StartNew();
         RunWorkers(() => { for (var i = 0; i < PerWorker; i++) counter++; });
-        Print("1) counter++ (kilitsiz, RACE CONDITION)", counter, expected, sw);
+        Print("1) counter++ (no lock, RACE CONDITION)", counter, expected, sw);
 
-        // 2) Interlocked: tek atomik CPU komutu
+        // 2) Interlocked: a single atomic CPU instruction
         var atomic = 0;
         sw.Restart();
         RunWorkers(() => { for (var i = 0; i < PerWorker; i++) Interlocked.Increment(ref atomic); });
-        Print("2) Interlocked.Increment (atomik)", atomic, expected, sw);
+        Print("2) Interlocked.Increment (atomic)", atomic, expected, sw);
 
-        // 3) lock: kritik bölge; aynı anda tek thread
+        // 3) lock: critical section; one thread at a time
         var locked = 0;
         var gate = new object();
         sw.Restart();
         RunWorkers(() => { for (var i = 0; i < PerWorker; i++) lock (gate) locked++; });
-        Print("3) lock (karşılıklı dışlama)", locked, expected, sw);
+        Print("3) lock (mutual exclusion)", locked, expected, sw);
 
-        // 4) Paylaşımı ortadan kaldır: her thread kendi toplamını tutar, sonda birleştirilir (en hızlısı)
+        // 4) Eliminate the sharing: each thread keeps its own total, merged at the end (the fastest)
         var partials = new int[Workers];
         sw.Restart();
         Parallel.For(0, Workers, w => { var local = 0; for (var i = 0; i < PerWorker; i++) local++; partials[w] = local; });
-        Print("4) thread başına yerel toplam + birleştirme", partials.Sum(), expected, sw);
+        Print("4) per-thread local total + merge", partials.Sum(), expected, sw);
 
         Console.WriteLine("""
 
-        Notlar:
-          • Kayıp sayısı çalıştırmadan çalıştırmaya DEĞİŞİR (zamanlamaya bağlı); hiç kayıp çıkmadıysa tekrar çalıştırın (tek çekirdekli makinede nadir olabilir).
-          • race condition "bazen" olur → en tehlikeli hata türüdür: testte geçer, production'da yük altında patlar.
-          • Hiyerarşi: önce paylaşımı azalt (immutable, thread başına veri) → atomik işlem (Interlocked) → lock → (nadiren) daha gelişmiş primitifler (→ M4, S3).
-          • async/await tek başına thread safety SAĞLAMAZ: await sonrası devam kodu başka thread'de çalışabilir ve aynı state'e dokunabilir.
+        Notes:
+          • The number of lost increments VARIES from run to run (timing-dependent); if nothing was lost, run it again (can be rare on a single-core machine).
+          • A race condition happens "sometimes" → it is the most dangerous kind of bug: passes in testing, blows up in production under load.
+          • Hierarchy: first reduce sharing (immutable, per-thread data) → atomic operation (Interlocked) → lock → (rarely) more advanced primitives (→ M4, S3).
+          • async/await alone does NOT provide thread safety: the code after an await may run on another thread and touch the same state.
         """);
         return Task.CompletedTask;
     }
@@ -54,5 +54,5 @@ public static class Section06_RaceCondition
         Task.WaitAll(Enumerable.Range(0, Workers).Select(_ => Task.Run(work)).ToArray());
 
     private static void Print(string title, int actual, int expected, Stopwatch sw) =>
-        Console.WriteLine($"{title,-46} sonuç = {actual,10:N0}   {(actual == expected ? "✓ doğru" : $"✗ {expected - actual:N0} artırma KAYBOLDU"),-26} {sw.ElapsedMilliseconds} ms");
+        Console.WriteLine($"{title,-46} result = {actual,10:N0}   {(actual == expected ? "✓ correct" : $"✗ {expected - actual:N0} increments LOST"),-26} {sw.ElapsedMilliseconds} ms");
 }

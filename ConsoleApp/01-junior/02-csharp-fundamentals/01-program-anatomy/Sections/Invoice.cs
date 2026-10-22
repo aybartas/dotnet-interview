@@ -1,6 +1,6 @@
 namespace Junior.CSharpFundamentals.ProgramAnatomy;
 
-// 1/2: ELLE yazılan kısım
+// 1/2: the HAND-WRITTEN part
 public partial class Invoice(string number, decimal net)
 {
     public string Number { get; } = number;
@@ -8,10 +8,10 @@ public partial class Invoice(string number, decimal net)
 
     public string Describe()
     {
-        OnDescribing();                                       // partial metot çağrısı (uygulaması başka dosyada)
-        return $"Fatura {Number}: net {Net:N2}, KDV dahil {Gross:N2}";
+        OnDescribing();                                       // partial method call (implementation is in another file)
+        return $"Invoice {Number}: net {Net:N2}, gross (incl. VAT) {Gross:N2}";
     }
 
-    // Partial metot bildirimi (C# 9+: erişim belirleyicili partial metotlar için UYGULAMA ZORUNLUDUR)
+    // Partial method declaration (C# 9+: for partial methods with an access modifier the IMPLEMENTATION IS REQUIRED)
     partial void OnDescribing();
 }

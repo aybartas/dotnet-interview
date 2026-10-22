@@ -30,7 +30,7 @@ Hedef platform: **.NET 10 (LTS) / C# 14**. .NET 11 / C# 15'e ait olanlar **(.NET
 Derleme akışı (derin hali → M2, S1):
 
 ```
-.cs  ──Roslyn──▶  .dll/.exe (IL + metadata, platformdan bağımsız)  ──CLR (JIT)──▶  makine kodu
+.cs  ──Roslyn──▶  .dll/.exe (IL + metadata, platform-independent)  ──CLR (JIT)──▶  machine code
 ```
 
 ### 1.1 Tarihçe
@@ -53,9 +53,9 @@ Derleme akışı (derin hali → M2, S1):
 | **TFM** (Target Framework Moniker) | Uygulamanın/kütüphanenin **hangi API setini hedeflediğini** söyleyen etiket: `net10.0`, `net10.0-windows`, `netstandard2.0`, `net48` | `.csproj` içindeki `<TargetFramework>` |
 
 ```xml
-<TargetFramework>net10.0</TargetFramework>                          <!-- tek hedef -->
-<TargetFrameworks>net8.0;net10.0</TargetFrameworks>                 <!-- çoklu hedef (kütüphane yazarları) -->
-<!-- net10.0-windows → Windows'a özel API'ler (WPF, WinForms, registry); sadece Windows'ta çalışır -->
+<TargetFramework>net10.0</TargetFramework>                          <!-- single target -->
+<TargetFrameworks>net8.0;net10.0</TargetFrameworks>                 <!-- multi-targeting (library authors) -->
+<!-- net10.0-windows → Windows-specific APIs (WPF, WinForms, registry); runs only on Windows -->
 ```
 
 - **SDK ≠ hedef:** .NET 10 SDK ile `net8.0` hedefleyen proje derleyebilirsiniz; **çalıştırmak** için o hedefin runtime'ı (8.x) gerekir. SDK her zaman eski runtime'ları hedefleyebilir (geriye uyumlu), tersi olmaz.
@@ -85,30 +85,30 @@ Derleme akışı (derin hali → M2, S1):
 ### 3.1 Temel `dotnet` komutları
 
 ```bash
-dotnet --info                       # kurulu SDK/runtime'lar, OS bilgisi
-dotnet --list-sdks                  # kurulu SDK'lar
-dotnet --list-runtimes              # kurulu runtime'lar
-dotnet new list                     # mevcut şablonlar
+dotnet --info                       # installed SDKs/runtimes, OS info
+dotnet --list-sdks                  # installed SDKs
+dotnet --list-runtimes              # installed runtimes
+dotnet new list                     # available templates
 
-dotnet new console  -n MyApp        # çalıştırılabilir uygulama
-dotnet new classlib -n MyLib        # kütüphane (.dll)
+dotnet new console  -n MyApp        # runnable application
+dotnet new classlib -n MyLib        # library (.dll)
 dotnet new webapi   -n MyApi        # ASP.NET Core Web API
-dotnet new xunit3   -n MyTests      # xUnit v3 test projesi (şablon: dotnet new install xunit.v3.templates)
-dotnet new sln -n MySolution        # solution — .NET 10'da varsayılan biçim .slnx
+dotnet new xunit3   -n MyTests      # xUnit v3 test project (template: dotnet new install xunit.v3.templates)
+dotnet new sln -n MySolution        # solution — the default format in .NET 10 is .slnx
 dotnet new gitignore                # .NET .gitignore  ·  dotnet new editorconfig  ·  dotnet new globaljson
 
-dotnet restore                      # NuGet paketlerini indir (build/run bunu zaten yapar)
-dotnet build                        # derle   (-c Release ile Release yapılandırması)
-dotnet run                          # derle + çalıştır  (--project yol, -- sonrası uygulamaya argüman)
-dotnet test                         # testleri çalıştır
-dotnet publish -c Release           # dağıtıma hazır çıktı üret (→ J5)
-dotnet clean                        # bin/obj çıktılarını temizle
+dotnet restore                      # download NuGet packages (build/run already does this)
+dotnet build                        # build   (-c Release for the Release configuration)
+dotnet run                          # build + run  (--project path, arguments after -- go to the app)
+dotnet test                         # run the tests
+dotnet publish -c Release           # produce deployment-ready output (→ J5)
+dotnet clean                        # clean the bin/obj output
 
-dotnet add package Serilog          # paket ekle (csproj'a <PackageReference>)
-dotnet add reference ../MyLib       # proje referansı ekle
-dotnet sln add src/MyApp            # projeyi solution'a ekle
-dotnet list package --outdated      # eski paketler  ·  --vulnerable (güvenlik açığı olanlar)  ·  --include-transitive
-dotnet tool install -g dotnet-ef    # global araç kurulumu
+dotnet add package Serilog          # add a package (<PackageReference> in the csproj)
+dotnet add reference ../MyLib       # add a project reference
+dotnet sln add src/MyApp            # add the project to the solution
+dotnet list package --outdated      # outdated packages  ·  --vulnerable (those with vulnerabilities)  ·  --include-transitive
+dotnet tool install -g dotnet-ef    # install a global tool
 ```
 
 **Template'ler:** `console`, `classlib`, `webapi`, `web`, `worker`, `xunit3`, `mstest`, `nunit`, `blazor`… `dotnet new list` ile görülür; kendi şirket şablonunuzu da yazabilirsiniz (→ S8).
@@ -131,13 +131,13 @@ dotnet tool install -g dotnet-ef    # global araç kurulumu
 - **Proje referansı** (`<ProjectReference>`): aynı solution'daki başka bir projeyi kullanmak — derleme sırası otomatik belirlenir.
 
 ```
-VatCalculator/                 (3.6'da CLI ile kurulur)
+VatCalculator/                 (set up with the CLI in 3.6)
 ├── VatCalculator.slnx
 ├── src/
-│   ├── VatCalculator.Core/    ← class library: iş mantığı (başka projeler referans verir)
-│   └── VatCalculator.Cli/     ← console: ince giriş katmanı → Core'a ProjectReference
+│   ├── VatCalculator.Core/    ← class library: business logic (other projects reference it)
+│   └── VatCalculator.Cli/     ← console: thin entry layer → ProjectReference to Core
 └── tests/
-    └── VatCalculator.Core.Tests/   ← xUnit: Core'u test eder
+    └── VatCalculator.Core.Tests/   ← xUnit: tests Core
 ```
 
 **Ortak ayarlar:** `Directory.Build.props` (her projeye uygulanan MSBuild ayarları: TFM, Nullable…) ve `Directory.Packages.props` (**Central Package Management**: paket sürümü tek yerde, `.csproj` içinde sürümsüz `<PackageReference>`). Bu repo bilerek ikisini de **kullanmaz**: yalnızca iki proje var (`ConsoleApp`, `WebApp`), ayarlar doğrudan `.csproj`'larda; çok projeli bir çözümde bu iki dosya devreye girer.
@@ -175,7 +175,7 @@ VatCalculator/                 (3.6'da CLI ile kurulur)
 .NET 10 ile **`.csproj` olmadan tek bir `.cs` dosyası** doğrudan çalıştırılır. Script gibi hafif ama tam C# + NuGet + ASP.NET Core:
 
 ```bash
-dotnet run vat.cs -- 100 20      # '--' sonrası: uygulamanın args'ı
+dotnet run vat.cs -- 100 20      # after '--': the app's args
 ```
 
 `#:` direktifleri dosyanın **en başında** (kodlardan önce) yazılır:
@@ -193,7 +193,7 @@ Unix'te ilk satıra `#!/usr/bin/env dotnet` yazıp `chmod +x` ile dosyayı doğr
 
 **Üç gotcha** (3.6'daki örneklerde yorumlanmıştır):
 1. File-based app'lerde **`PublishAot` varsayılanı açıktır** → yansıma tabanlı JSON serileştirme kapalıdır; anonim nesne döndüren Minimal API endpoint'i 500 verir. AOT'a hazır değilseniz `#:property PublishAot=false` (3.6, `web.cs`).
-2. Üst klasörlerde **Central Package Management** (`Directory.Packages.props`) varsa `#:package Paket@sürüm` ile çakışır (`NU1008`); dosyada `#:property ManagePackageVersionsCentrally=false` gerekir (3.6, `with-package.cs`).
+2. Üst klasörlerde **Central Package Management** (`Directory.Packages.props`) varsa `#:package Package@version` ile çakışır (`NU1008`); dosyada `#:property ManagePackageVersionsCentrally=false` gerekir (3.6, `with-package.cs`).
 3. Üst klasörlerdeki **`Directory.Build.props` file-based app'lere de uygulanır** (ör. `InvariantGlobalization=true` kültür duyarlı kütüphaneleri etkileyebilir).
 
 **Ne zaman hangisi?**
@@ -207,7 +207,7 @@ Unix'te ilk satıra `#!/usr/bin/env dotnet` yazıp `chmod +x` ile dosyayı doğr
 
 ### 3.6 Pratik: aynı uygulamayı üç şekilde kurmak
 
-Üçü de **aynı işi** yapar: net tutara KDV ekler (`100` + `%20` → `120,00`). Hepsini repodan **bağımsız, boş bir klasörde** deneyin: üst klasörlerde Central Package Management (`Directory.Packages.props`) olan bir repoda `dotnet add package` onu değiştirirdi.
+Üçü de **aynı işi** yapar: net tutara KDV ekler (`100` + `20%` → `120.00`). Hepsini repodan **bağımsız, boş bir klasörde** deneyin: üst klasörlerde Central Package Management (`Directory.Packages.props`) olan bir repoda `dotnet add package` onu değiştirirdi.
 
 **(a) File-based app** — dosya sayısı 1, csproj yok. `vat.cs`:
 
@@ -215,18 +215,18 @@ Unix'te ilk satıra `#!/usr/bin/env dotnet` yazıp `chmod +x` ile dosyayı doğr
 #:property Nullable=enable
 using System.Globalization;
 
-// Top-level statements: derleyici gizli bir Program sınıfı + Main üretir (→ J2.1). args = "--" sonrakiler.
+// Top-level statements: the compiler generates a hidden Program class + Main (→ J2.1). args = everything after "--".
 if (args.Length < 1 || !decimal.TryParse(args[0], CultureInfo.InvariantCulture, out var net))
 {
-    Console.Error.WriteLine("Kullanım: dotnet run vat.cs -- <net tutar> [KDV yüzdesi=20]");
+    Console.Error.WriteLine("Usage: dotnet run vat.cs -- <net amount> [VAT percent=20]");
     return 1;
 }
 
 var rate = args.Length > 1 && decimal.TryParse(args[1], CultureInfo.InvariantCulture, out var r) ? r : 20m;
-Console.WriteLine($"{net:N2} + %{rate:N0} KDV = {VatMath.WithVat(net, rate):N2}");
+Console.WriteLine(FormattableString.Invariant($"{net:N2} + {rate:N0}% VAT = {VatMath.WithVat(net, rate):N2}"));
 return 0;
 
-// File-based app'te tipler dosyanın SONUNDA (top-level statement'lardan sonra) tanımlanır.
+// In a file-based app, types are defined at the END of the file (after the top-level statements).
 static class VatMath
 {
     public static decimal WithVat(decimal net, decimal ratePercent)
@@ -235,14 +235,14 @@ static class VatMath
 ```
 
 ```bash
-dotnet run vat.cs -- 100 20      # 100,00 + %20 KDV = 120,00
+dotnet run vat.cs -- 100 20      # 100.00 + 20% VAT = 120.00
 ```
 
 `web.cs` — aynı hesap Minimal API olarak (`dotnet run web.cs` → `http://localhost:5090/vat?net=100&rate=20`):
 
 ```csharp
 #:sdk Microsoft.NET.Sdk.Web
-#:property PublishAot=false      // gotcha 1: varsayılan AOT, anonim nesne JSON'unu bozar
+#:property PublishAot=false      // gotcha 1: AOT is the default and it breaks the JSON of anonymous objects
 
 var app = WebApplication.CreateBuilder(args).Build();
 app.MapGet("/vat", (decimal net, decimal? rate) =>
@@ -257,7 +257,7 @@ app.Run("http://localhost:5090");
 
 ```csharp
 #:package Newtonsoft.Json@13.0.3
-#:property ManagePackageVersionsCentrally=false   // gotcha 2: üst klasörde CPM varsa NU1008
+#:property ManagePackageVersionsCentrally=false   // gotcha 2: NU1008 if a parent folder has CPM
 using Newtonsoft.Json;
 
 Console.WriteLine(JsonConvert.SerializeObject(new { Net = 100m, Rate = 20m, Total = 120m }, Formatting.Indented));
@@ -268,33 +268,33 @@ Console.WriteLine(JsonConvert.SerializeObject(new { Net = 100m, Rate = 20m, Tota
 ```bash
 dotnet new console -n VatCalculator.Console
 cd VatCalculator.Console
-# Program.cs'e (a)'daki kodu yapıştırın (#: satırları hariç), sonra:
+# Paste the code from (a) into Program.cs (except the #: lines), then:
 dotnet run -- 100 20
 ```
 
 **(c) Solution + class library + test projesi** — yalnızca CLI ile, sıfırdan. `VatMath` ayrı bir class library'ye taşınır (test edilebilir), console ince bir giriş katmanıdır:
 
 ```bash
-dotnet --list-sdks && dotnet --list-runtimes                       # hangi SDK/runtime kurulu?
+dotnet --list-sdks && dotnet --list-runtimes                       # which SDK/runtime is installed?
 
-dotnet new sln -n VatCalculator                                    # .NET 10'da varsayılan: .slnx
+dotnet new sln -n VatCalculator                                    # default in .NET 10: .slnx
 dotnet new classlib -n VatCalculator.Core  -o src/VatCalculator.Core
 dotnet new console  -n VatCalculator.Cli   -o src/VatCalculator.Cli
-dotnet new classlib -n VatCalculator.Tests -o tests/VatCalculator.Tests   # test projesi: classlib + xunit paketi
+dotnet new classlib -n VatCalculator.Tests -o tests/VatCalculator.Tests   # test project: classlib + xunit package
 
 dotnet sln add src/VatCalculator.Core src/VatCalculator.Cli tests/VatCalculator.Tests
 dotnet add src/VatCalculator.Cli reference src/VatCalculator.Core          # ProjectReference
 dotnet add tests/VatCalculator.Tests reference src/VatCalculator.Core
 
-dotnet add tests/VatCalculator.Tests package xunit.v3             # <PackageReference> yazılır
-dotnet list tests/VatCalculator.Tests package --include-transitive | head -20   # tek paket → onlarca transitive
+dotnet add tests/VatCalculator.Tests package xunit.v3             # writes a <PackageReference>
+dotnet list tests/VatCalculator.Tests package --include-transitive | head -20   # one package → dozens of transitive ones
 
-# xUnit v3 testleri çalıştırılabilir (Exe) projedir; .NET 10'da `dotnet test`'in yeni modu için global.json:
+# xUnit v3 tests are an executable (Exe) project; global.json for the new mode of `dotnet test` in .NET 10:
 sed -i 's#<PropertyGroup>#<PropertyGroup>\n    <OutputType>Exe</OutputType>#' tests/VatCalculator.Tests/VatCalculator.Tests.csproj
 echo '{ "test": { "runner": "Microsoft.Testing.Platform" } }' > global.json
 
 dotnet build && dotnet test && dotnet run --project src/VatCalculator.Cli
-cat src/VatCalculator.Cli/VatCalculator.Cli.csproj                 # şablonun ürettiği çıplak csproj
+cat src/VatCalculator.Cli/VatCalculator.Cli.csproj                 # the bare csproj the template generated
 ```
 
 `Core`'daki metot doğrulamalı olur (`ArgumentOutOfRangeException.ThrowIfNegative(net)`); Cli yalnızca girdi/çıktıdan sorumludur.
@@ -341,7 +341,7 @@ Sık sorulanlar ([`interview-questions.md`](interview-questions.md)'de cevaplar�
 | Kayan sürüm (`Version="*"`) ile paket eklemek | Tekrarlanabilir olmayan build. Sabit sürüm veya Central Package Management |
 | Paket sürümlerini her `.csproj`'a ayrı ayrı yazmak | Çok projede sürüm kayması. `Directory.Packages.props` (CPM) |
 | Transitive bağımlılıkta güvenlik açığını görmezden gelmek | `dotnet list package --vulnerable --include-transitive`, NuGet Audit uyarılarını ciddiye alın |
-| File-based app'e `Paket@sürüm` yazıp CPM çakışmasını anlamamak | `NU1008`: bu dosyada `#:property ManagePackageVersionsCentrally=false` (bkz. 3.5) |
+| File-based app'e `Package@version` yazıp CPM çakışmasını anlamamak | `NU1008`: bu dosyada `#:property ManagePackageVersionsCentrally=false` (bkz. 3.5) |
 | File-based Minimal API'de 500 (JSON metadata hatası) | `PublishAot` varsayılan açık → `#:property PublishAot=false` ya da source-generated JSON |
 | `dotnet test`'e MSBuild bayrağı eklemek (ör. `-nologo`) | Microsoft.Testing.Platform modunda argümanlar test uygulamasına iletilir; tanımsız bayrak `Handshake failures` verir |
 | `dotnet add package` ile Central Package Management'ı beklenmedik şekilde değiştirmek | CPM'de sürüm `Directory.Packages.props`'ta yaşar; CLI orayı düzenler. Tümünü kasıtlı yapın |

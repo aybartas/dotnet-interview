@@ -6,9 +6,9 @@ public static class Sections
 {
     public static IReadOnlyList<Section> All { get; } =
     [
-        new(1, "CancellationTokenSource / CancellationToken: iptal KOOPERATİFTİR ⭐", Section01_CooperativeModel.Run),
-        new(2, "Konvansiyonlar: token son parametre, OperationCanceledException, CancelAfter", Section02_Conventions.Run),
-        new(3, "🛠 İptal edilebilir rapor endpoint'i (istemci kopunca iş durur)",      Section03_CancellableEndpoint.Run),
-        new(4, "Token'ı aşağı geçirmeyi unutmak",                                     Section04_ForgottenToken.Run),
+        new(1, "CancellationTokenSource / CancellationToken: cancellation is COOPERATIVE ⭐", Section01_CooperativeModel.Run),
+        new(2, "Conventions: token as the last parameter, OperationCanceledException, CancelAfter", Section02_Conventions.Run),
+        new(3, "🛠 A cancellable report endpoint (the work stops when the client disconnects)", Section03_CancellableEndpoint.Run),
+        new(4, "Forgetting to pass the token down",                                         Section04_ForgottenToken.Run),
     ];
 }

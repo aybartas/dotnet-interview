@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using System.Text;
 
 // ═══════════════════════════════════════════════════════════════════════════════════════
-// "C# 14 TARZI" AYNI sipariş modeli: file-scoped namespace, implicit/global using, record + primary constructor,
-// otomatik değer eşitliği/ToString/with, switch expression + relational/logical pattern, `field` keyword, null-conditional,
-// raw string literal, collection expression. Karşılaştırma: ../Csharp7Style/Domain.cs
+// The SAME order model in "C# 14 STYLE": file-scoped namespace, implicit/global using, record + primary constructor,
+// automatic value equality/ToString/with, switch expression + relational/logical pattern, `field` keyword, null-conditional,
+// raw string literal, collection expression. Comparison: ../Csharp7Style/Domain.cs
 // ═══════════════════════════════════════════════════════════════════════════════════════
 namespace Junior.CSharpFundamentals.ModernCSharp.Csharp14Style;
 
@@ -18,7 +18,7 @@ public sealed class Customer(string name, CustomerTier tier)
 {
     public string Name { get; set; } = name ?? throw new ArgumentNullException(nameof(name));
 
-    // C# 14 `field` keyword: backing field'ı elle yazmadan setter'da normalize + doğrula
+    // C# 14 `field` keyword: normalize + validate in the setter without writing the backing field by hand
     public string Email
     {
         get;
@@ -39,7 +39,7 @@ public sealed record Order(string Id, Customer Customer, ImmutableArray<OrderLin
 {
     public decimal Subtotal => Lines.Sum(l => l.Total);
 
-    // relational (> 1000) + constant + logical pattern; tuple pattern ile iki girdiyi birlikte değerlendirme
+    // relational (> 1000) + constant + logical pattern; evaluating two inputs together with a tuple pattern
     public decimal DiscountRate => (Customer.Tier, Subtotal) switch
     {
         (CustomerTier.Platinum, > 1000m) => 0.20m,
@@ -58,12 +58,12 @@ public sealed record Order(string Id, Customer Customer, ImmutableArray<OrderLin
         (OrderStatus.Paid, "ship") => this with { Status = OrderStatus.Shipped },
         (OrderStatus.Shipped, "deliver") => this with { Status = OrderStatus.Delivered },
         (OrderStatus.Pending or OrderStatus.Paid, "cancel") => this with { Status = OrderStatus.Cancelled },
-        _ => throw new InvalidOperationException($"'{Status}' durumundaki sipariş için '{action}' işlemi geçersiz"),
+        _ => throw new InvalidOperationException($"Action '{action}' is invalid for an order in '{Status}' state"),
     };
 
-    public string ShippingLabel() => Customer.Address?.City ?? "adres yok";
+    public string ShippingLabel() => Customer.Address?.City ?? "no address";
 
-    // record'un üretilen Equals'ı koleksiyonları REFERANS karşılaştırır; içerik eşitliği istiyorsak elle yazarız.
+    // The record's generated Equals compares collections by REFERENCE; if we want content equality we write it by hand.
     public bool Equals(Order? other) => other is not null && Id == other.Id && Status == other.Status && Lines.SequenceEqual(other.Lines);
     public override int GetHashCode() => HashCode.Combine(Id, Status, Lines.Length);
 
@@ -71,10 +71,10 @@ public sealed record Order(string Id, Customer Customer, ImmutableArray<OrderLin
     {
         var lines = string.Join('\n', Lines.Select(l => FormattableString.Invariant($"  {l.Quantity} × {l.Product} = {l.Total:F2}")));
         return FormattableString.Invariant($$"""
-            SİPARİŞ {{Id}} — {{Customer.Name}} <{{Customer.Email}}>
-            {{Customer.Tier}} müşteri · {{ShippingLabel()}}
+            ORDER {{Id}} — {{Customer.Name}} <{{Customer.Email}}>
+            {{Customer.Tier}} customer · {{ShippingLabel()}}
             {{lines}}
-            Ara toplam: {{Subtotal:F2}} · İndirim %{{DiscountRate * 100:0}} → {{Total:F2}}
+            Subtotal: {{Subtotal:F2}} · Discount {{DiscountRate * 100:0}}% → {{Total:F2}}
             """);
     }
 }

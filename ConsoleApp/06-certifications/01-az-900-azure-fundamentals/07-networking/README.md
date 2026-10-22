@@ -147,32 +147,32 @@ az login
 RG=rg-az900-c17; LOC=westeurope
 az group create --name $RG --location $LOC
 
-# 1) VNet-A: iki subnet (uygulama + private endpoint)
+# 1) VNet-A: two subnets (app + private endpoint)
 az network vnet create --resource-group $RG --name vnet-a --address-prefixes 10.1.0.0/16 \
   --subnet-name snet-app --subnet-prefixes 10.1.1.0/24
 az network vnet subnet create --resource-group $RG --vnet-name vnet-a --name snet-pe --address-prefixes 10.1.2.0/24
 
-# 2) VNet-B: çakışmayan adres alanı
+# 2) VNet-B: non-overlapping address space
 az network vnet create --resource-group $RG --name vnet-b --address-prefixes 10.2.0.0/16 \
   --subnet-name snet-app --subnet-prefixes 10.2.1.0/24
 
-# 3) Peering — İKİ yönlü tanımlanır
+# 3) Peering — defined in BOTH directions
 az network vnet peering create --resource-group $RG --name a-to-b --vnet-name vnet-a --remote-vnet vnet-b --allow-vnet-access
 az network vnet peering create --resource-group $RG --name b-to-a --vnet-name vnet-b --remote-vnet vnet-a --allow-vnet-access
-az network vnet peering list --resource-group $RG --vnet-name vnet-a --query "[].{ad:name,durum:peeringState}" --output table
-#   peeringState = Connected olmalı (tek yön tanımlanırsa "Initiated" kalır)
+az network vnet peering list --resource-group $RG --vnet-name vnet-a --query "[].{name:name,state:peeringState}" --output table
+#   peeringState should be Connected (stays "Initiated" if only one direction is defined)
 
-# 4) Storage account (public endpoint'i ile başlar)
+# 4) Storage account (starts with its public endpoint)
 ST=stc17$RANDOM
 az storage account create --resource-group $RG --name $ST --location $LOC --sku Standard_LRS --kind StorageV2
-nslookup $ST.blob.core.windows.net              # yerel makinende: public IP'ye çözülür
+nslookup $ST.blob.core.windows.net              # on your local machine: resolves to a public IP
 
-# 5) Private DNS zone + VNet bağlantısı
+# 5) Private DNS zone + VNet link
 az network private-dns zone create --resource-group $RG --name privatelink.blob.core.windows.net
 az network private-dns link vnet create --resource-group $RG --zone-name privatelink.blob.core.windows.net \
   --name link-vnet-a --virtual-network vnet-a --registration-enabled false
 
-# 6) Private endpoint (blob alt kaynağı için) + DNS zone grubu (A kaydını otomatik yazar)
+# 6) Private endpoint (for the blob sub-resource) + DNS zone group (writes the A record automatically)
 az network private-endpoint create --resource-group $RG --name pe-$ST \
   --vnet-name vnet-a --subnet snet-pe \
   --private-connection-resource-id $(az storage account show -g $RG -n $ST --query id -o tsv) \
@@ -180,20 +180,20 @@ az network private-endpoint create --resource-group $RG --name pe-$ST \
 az network private-endpoint dns-zone-group create --resource-group $RG --endpoint-name pe-$ST \
   --name default --private-dns-zone privatelink.blob.core.windows.net --zone-name blob
 
-# 7) Public erişimi kapat
+# 7) Disable public access
 az storage account update --resource-group $RG --name $ST --public-network-access Disabled
 
-# 8) Test: VNet-A içinde küçük bir VM; komutu run-command ile çalıştır (SSH'a gerek yok).
-#    run-command, VM ajanının Azure'a giden bağlantısını kullanır; bu yüzden VM'i varsayılan ayarlarla
-#    (public IP + NSG) açıyoruz. Storage'a giden istek ise private endpoint üzerinden VNet içinde kalır.
+# 8) Test: a small VM inside VNet-A; run the command via run-command (no SSH needed).
+#    run-command uses the VM agent's outbound connection to Azure, so we create the VM with
+#    default settings (public IP + NSG). The request to storage stays inside the VNet via the private endpoint.
 az vm create --resource-group $RG --name vm-test --image Ubuntu2404 --size Standard_B1s \
   --vnet-name vnet-a --subnet snet-app \
   --admin-username azureuser --generate-ssh-keys
 az vm run-command invoke --resource-group $RG --name vm-test --command-id RunShellScript \
   --scripts "nslookup $ST.blob.core.windows.net; curl -s -o /dev/null -w '%{http_code}\n' https://$ST.blob.core.windows.net/"
-#   VNet içinden: 10.1.2.x (özel IP) — dışarıdan: public erişim kapalı olduğu için istek reddedilir
+#   From inside the VNet: 10.1.2.x (private IP) — from outside: the request is rejected because public access is disabled
 
-# 9) Temizlik — mutlaka
+# 9) Cleanup — mandatory
 az group delete --name $RG --yes --no-wait
 ```
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A .NET Junior → Mid → Senior interview-prep study repo. **All content is written in Turkish** — keep new prose in Turkish (technical terms and identifiers stay in English, as in the existing text). Target platform is **.NET 10 (LTS) / C# 14**; .NET 11 / C# 15 features may be mentioned but must be marked **(.NET 11)**.
+A .NET Junior → Mid → Senior interview-prep study repo. Target platform is **.NET 10 (LTS) / C# 14**; .NET 11 / C# 15 features may be mentioned but must be marked **(.NET 11)**.
 
 The repo started **docs-only** (`ROADMAP.md`, `README.md`, `CLAUDE.md`) and is being filled in one topic at a time. Content written so far: **J1 — all 5 topics**, **J2 — all 6**, **J3 — all 3**, **J4 — all 3**, **J5 — all 3** (each topic: theory `README.md`, runnable code, `interview-questions.md`); certification track: **C1 (AZ-900) — all 15 topics C1.1–C1.15** (each topic: `README.md` + `quiz.md`; code only where it helps — C1.1–C1.3, C1.8, C1.11). The remaining `02-mid/` … `05-interview/` folders described in `ROADMAP.md → Repo Yapısı` are created as their topics are written.
 
@@ -20,6 +20,12 @@ The repo started **docs-only** (`ROADMAP.md`, `README.md`, `CLAUDE.md`) and is b
 | `WebApp/` | The one web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …). |
 
 When adding content, the usual task is "write topic X" — see [Writing a topic](#writing-a-topic).
+
+## Language policy
+
+- **Turkish — explanations only:** the prose of topic `README.md` files (theory paragraphs, bullets, explanatory table text), `interview-questions.md` / `quiz.md` (questions, answers, rationales), and the planning prose in `ROADMAP.md` and the root `README.md`. Technical terms stay in English inside Turkish sentences.
+- **English — everything else:** C# identifiers, comments and XML docs, strings printed by demos (section titles, menu/help text, sample data labels), command-line words and arguments, file/folder/namespace names, `.csproj`/json/http/config contents, **code blocks inside Markdown** (comments, strings, sample output), `CLAUDE.md`, and **commit messages / PR descriptions**.
+- Exception: data that *is* the lesson stays as is (Turkish culture/text demos: tr-TR, the Turkish İ/ı problem, Turkish city names for sorting). Demo output must be culture-independent English (explicit `CultureInfo.InvariantCulture`, e.g. `99.95%`, `21 min 53 s`, `$` for example prices) unless a topic is about culture.
 
 ## Roadmap structure: level → module → topic
 
@@ -135,7 +141,7 @@ When asked to implement a topic, derive everything from the ROADMAP rather than 
 
 1. Locate the topic heading; take the topic folder name from the heading and the module path from the module's `📁` line. Create the folder under `ConsoleApp/` (or `WebApp/` if it needs an HTTP server). **Do not create a project.**
 2. Create the topic folder with `README.md`, the code, and `interview-questions.md` (certification track: `quiz.md` instead — see above). **No `src/`, no `tests/`** (tests only if the topic is about testing).
-3. Write `README.md` from the topic's bullets — they are effectively its outline — using the 8-heading template above, in Turkish. Start it with `> 📁 \`ConsoleApp/<path>/\`` (or `WebApp/…`). Command-line exercises go in as code blocks (no scripts).
+3. Write `README.md` from the topic's bullets — they are effectively its outline — using the 8-heading template above; prose in Turkish, code blocks in English (see the language policy). Start it with `> 📁 \`ConsoleApp/<path>/\`` (or `WebApp/…`). Command-line exercises go in as code blocks (no scripts).
 4. Write the code to the scope in the `🛠 **Kod:**` line, no more and no less. Many of those lines ask for a *deliberately broken* case to diagnose (bad probe, wrong env var, OOM) — implement that too, it is the point of the exercise. Console topics follow the section pattern: `Sections/SectionNN_*.cs` (`Run()`), `Sections/Sections.cs` (list), `<Topic>Topic.cs` (`Run(args)`: list / `<n>` / `all`), one namespace per topic. **Register the topic with one line in `ConsoleApp/Program.cs`** (`new("J8.2", "Title", SqlBasicsTopic.Run)`); a web topic exposes `AddServices`/`Map` and is called from `WebApp/Program.cs`.
 5. Put the module's `🎯` questions plus topic-specific ones into `interview-questions.md`, with answers.
 6. If the topic needs infra, add the service to the root `docker-compose.yml` (create it with the first infra topic); don't add a per-topic compose file.
@@ -160,4 +166,4 @@ When adding, removing, renaming, or renumbering a module or topic, update **all*
 
 ## Commits
 
-Conventional-commit style with a `docs:` prefix for content changes (`refactor:` for structure changes), a short subject, and a body that summarizes per-level/per-module what changed.
+Conventional-commit style, **in English**: `docs:` prefix for content changes (`refactor:` for structure/code changes), a short subject, and a body that summarizes per-level/per-module what changed.

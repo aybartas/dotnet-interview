@@ -3,14 +3,14 @@ namespace Junior.DevFoundations.IdeDebugging.Exercises;
 public sealed class Exercise01_OffByOne : Exercise
 {
     public override int Number => 1;
-    public override string Title => "Döngü: 1'den n'e toplam";
-    public override string Skill => "Step over / watch / locals — döngü değişkenini izleme";
-    public override string Hint => "SumUpTo içindeki döngüye breakpoint koyup F10 ile ilerleyin; Watch'a 'i' ve 'sum' ekleyin. Son iterasyonda i kaç?";
+    public override string Title => "Loop: sum from 1 to n";
+    public override string Skill => "Step over / watch / locals — tracking the loop variable";
+    public override string Hint => "Put a breakpoint on the loop in SumUpTo and step with F10; add 'i' and 'sum' to Watch. What is i in the last iteration?";
 
     public override void Run()
     {
-        Report("1..10 toplamı", expected: 55, actual: SumUpTo(10));
-        Report("1..1 toplamı", expected: 1, actual: SumUpTo(1));
+        Report("sum of 1..10", expected: 55, actual: SumUpTo(10));
+        Report("sum of 1..1", expected: 1, actual: SumUpTo(1));
     }
 
     private static int SumUpTo(int n)

@@ -7,8 +7,8 @@ public static class Section05_Cost
     public static void Run()
     {
         const int n = 20_000;
-        var inputs = Enumerable.Range(0, n).Select(i => i % 2 == 0 ? "123" : "abc").ToArray();       // yarısı geçersiz
-        // ısınma
+        var inputs = Enumerable.Range(0, n).Select(i => i % 2 == 0 ? "123" : "abc").ToArray();       // half of them are invalid
+        // warm-up
         _ = ParseWithTry("x"); _ = ParseWithTryParse("x");
 
         var sw = Stopwatch.StartNew();
@@ -19,23 +19,23 @@ public static class Section05_Cost
         var okB = inputs.Count(s => ParseWithTry(s) is not null);
         var exceptionMs = sw.Elapsed.TotalMilliseconds;
 
-        Console.WriteLine($"{n:N0} girdi, yarısı geçersiz:");
-        Console.WriteLine($"   int.TryParse           : {tryParseMs,8:F2} ms   (başarılı: {okA:N0})");
-        Console.WriteLine($"   int.Parse + try/catch  : {exceptionMs,8:F2} ms   (başarılı: {okB:N0})   → yaklaşık {exceptionMs / Math.Max(tryParseMs, 0.001):N0}× daha YAVAŞ");
-        Console.WriteLine($"   (her fırlatma: stack trace yakalama + stack çözme + (varsa) filter/finally işletme → binlerce CPU döngüsü;");
-        Console.WriteLine($"    exception olmayan yolda try bloğu neredeyse ücretsizdir — maliyet FIRLATILDIĞINDA ortaya çıkar)");
-        Console.WriteLine("   Kaba ölçüm (Stopwatch); kesin sonuç için BenchmarkDotNet → S2.1");
+        Console.WriteLine($"{n:N0} inputs, half of them invalid:");
+        Console.WriteLine($"   int.TryParse           : {tryParseMs,8:F2} ms   (succeeded: {okA:N0})");
+        Console.WriteLine($"   int.Parse + try/catch  : {exceptionMs,8:F2} ms   (succeeded: {okB:N0})   → roughly {exceptionMs / Math.Max(tryParseMs, 0.001):N0}× SLOWER");
+        Console.WriteLine($"   (each throw: stack trace capture + stack unwinding + running (any) filters/finally blocks → thousands of CPU cycles;");
+        Console.WriteLine($"    on the path without an exception the try block is almost free — the cost shows up when it is THROWN)");
+        Console.WriteLine("   Rough measurement (Stopwatch); for precise results use BenchmarkDotNet → S2.1");
 
         Console.WriteLine("""
 
-        KURAL: Exception, "BEKLENEN" kontrol akışı için değil, "İSTİSNAİ" durumlar için kullanılır.
-          ✗ Kullanıcı girdisini doğrulamak için Parse + catch FormatException      → ✓ TryParse
-          ✗ Anahtar var mı diye dictionary[key] + catch KeyNotFoundException       → ✓ TryGetValue
-          ✗ Dosya var mı diye catch FileNotFoundException (yarış koşulu hariç)      → ✓ File.Exists / TryOpen ya da Result döndür
-          ✗ Döngüyü exception ile bitirmek                                         → ✓ normal koşul
-        Gerekçeler: (1) performans (yukarıdaki ölçüm), (2) okunabilirlik — "normal" yol ile "hata" yolu karışır, (3) debugger'da first-chance exception gürültüsü,
-        (4) izleme/alarm sistemleri exception sayısına bakar; normal akış yanlış alarm üretir.
-        Kural: çağıranın BEKLEDİĞİ başarısızlık (parse hatası, kayıt yok) → Try-deseni / Result / null; çağıranın BEKLEMEDİĞİ ihlal (bug, kurulum hatası, kesinti) → exception.
+        RULE: Exceptions are for "EXCEPTIONAL" situations, not for "EXPECTED" control flow.
+          ✗ Validating user input with Parse + catch FormatException                → ✓ TryParse
+          ✗ Checking a key with dictionary[key] + catch KeyNotFoundException       → ✓ TryGetValue
+          ✗ Checking a file with catch FileNotFoundException (except race conditions) → ✓ File.Exists / TryOpen or return a Result
+          ✗ Ending a loop with an exception                                         → ✓ a normal condition
+        Reasons: (1) performance (the measurement above), (2) readability — the "normal" path and the "error" path get mixed up, (3) first-chance exception noise in the debugger,
+        (4) monitoring/alerting systems count exceptions; normal flow produces false alarms.
+        Rule: a failure the caller EXPECTS (parse error, no record) → Try pattern / Result / null; a violation the caller does NOT EXPECT (bug, setup error, outage) → exception.
         """);
     }
 

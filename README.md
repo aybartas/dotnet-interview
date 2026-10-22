@@ -14,9 +14,9 @@ Terminalden de aynı şekilde:
 
 ```bash
 cd ConsoleApp
-dotnet run                          # menü
-dotnet run -- J3.2 4                # menüsüz: J3.2'nin 4. bölümü  (all: hepsi)
-cd ../WebApp && dotnet run          # web konuları
+dotnet run                          # menu
+dotnet run -- J3.2 4                # without the menu: section 4 of J3.2  (all: every section)
+cd ../WebApp && dotnet run          # web topics
 ```
 
 ## Klasör yapısı
@@ -26,18 +26,18 @@ cd ../WebApp && dotnet run          # web konuları
 ```
 DotnetInterview.slnx
 ConsoleApp/
-├── Program.cs                          # tüm konsol konularının menüsü
+├── Program.cs                          # menu for every console topic
 ├── 01-junior/
-│   ├── 01-dev-foundations/             # modül
-│   │   ├── 01-git/                     # konu
-│   │   │   ├── README.md               # anlatım
-│   │   │   └── interview-questions.md  # 10-20 soru + cevap
-│   │   └── 02-network-fundamentals/    # README + kod + sorular
+│   ├── 01-dev-foundations/             # module
+│   │   ├── 01-git/                     # topic
+│   │   │   ├── README.md               # explanation (Turkish)
+│   │   │   └── interview-questions.md  # 10-20 questions + answers
+│   │   └── 02-network-fundamentals/    # README + code + questions
 │   └── 02-csharp-fundamentals/ … 05-build-run-basics/
-├── 02-mid/  03-senior/  04-dsa/  05-interview/   # sırayla doldurulur
-└── 06-certifications/                  # Azure sertifika pisti (AZ-900, AI-200)
+├── 02-mid/  03-senior/  04-dsa/  05-interview/   # filled in order
+└── 06-certifications/                  # Azure certification track (AZ-900, AI-200)
 WebApp/
-├── Program.cs                          # web konularını çağırır
+├── Program.cs                          # calls the web topics
 └── 01-junior/01-dev-foundations/03-how-the-web-works/
 ```
 

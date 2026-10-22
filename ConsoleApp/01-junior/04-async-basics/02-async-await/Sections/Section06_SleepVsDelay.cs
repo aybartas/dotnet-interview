@@ -6,20 +6,20 @@ public static class Section06_SleepVsDelay
 {
     public static async Task Run()
     {
-        Console.WriteLine("Aynı 'UI thread'inde 400 ms bekleme: Thread.Sleep ile await Task.Delay karşılaştırması (tık = arayüz duyarlılığı).\n");
+        Console.WriteLine("Waiting 400 ms on the same 'UI thread': Thread.Sleep vs await Task.Delay (tick = interface responsiveness).\n");
 
         var sleep = await UiMeter.MeasureAsync(() => { Thread.Sleep(400); return Task.CompletedTask; });
-        Console.WriteLine($"Thread.Sleep(400)        : {sleep.Ms,4} ms, UI tık sayısı: {sleep.Ticks,2}   ← thread UYUDU: hiçbir şey çalışamadı (donmuş arayüz / boşa harcanan havuz thread'i)");
+        Console.WriteLine($"Thread.Sleep(400)        : {sleep.Ms,4} ms, UI ticks: {sleep.Ticks,2}   ← the thread SLEPT: nothing could run (frozen interface / wasted pool thread)");
 
         var delay = await UiMeter.MeasureAsync(() => Task.Delay(400));
-        Console.WriteLine($"await Task.Delay(400)    : {delay.Ms,4} ms, UI tık sayısı: {delay.Ticks,2}   ← thread SERBEST: bekleme zamanlayıcıyla yapıldı");
+        Console.WriteLine($"await Task.Delay(400)    : {delay.Ms,4} ms, UI ticks: {delay.Ticks,2}   ← the thread is FREE: the wait was done with a timer");
 
         Console.WriteLine("""
 
-        • Thread.Sleep: bulunduğu thread'i bloklar. async metotta kullanmak, async'in tüm amacını bozar.
-        • await Task.Delay: bir zamanlayıcı kurar, thread'i serbest bırakır, süre dolunca devam kodunu çalıştırır.
-        • Kullanım: "bekle" ihtiyacı (retry arası, polling, simülasyon) → await Task.Delay. Test için gerçek beklemek yerine TimeProvider/fake zaman (→ M10).
-        • Task.Delay(Timeout.Infinite, token) ile "iptal edilene kadar bekle" da yazılır.
+        • Thread.Sleep: blocks the thread it is on. Using it in an async method defeats the whole purpose of async.
+        • await Task.Delay: sets up a timer, frees the thread, and runs the continuation when the time is up.
+        • Usage: whenever you need to "wait" (between retries, polling, simulation) → await Task.Delay. In tests, use TimeProvider/fake time instead of really waiting (→ M10).
+        • "Wait until cancelled" is also written as Task.Delay(Timeout.Infinite, token).
         """);
     }
 }

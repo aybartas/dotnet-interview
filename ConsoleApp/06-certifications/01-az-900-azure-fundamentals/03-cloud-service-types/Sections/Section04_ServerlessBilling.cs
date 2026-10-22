@@ -1,11 +1,12 @@
+using System.Globalization;
 using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.CloudServiceTypes;
 
 /// <summary>
-/// Serverless faturalandırma mantığı: (çağrı sayısı) + (çalışma süresi × bellek = GB-saniye), aylık ücretsiz kotayla.
-/// Oranlar Azure Functions Consumption planının uzun süre yayımlanan oranlarına dayalı ÖRNEKLERDİR (USD);
-/// güncel fiyat ve Flex Consumption planı için Pricing Calculator'a bakılır.
+/// Serverless billing logic: (number of executions) + (execution time × memory = GB-seconds), with a monthly free grant.
+/// The rates are EXAMPLES based on the long-published rates of the Azure Functions Consumption plan (USD);
+/// see the Pricing Calculator for current prices and the Flex Consumption plan.
 /// </summary>
 public static class Section04_ServerlessBilling
 {
@@ -14,16 +15,17 @@ public static class Section04_ServerlessBilling
     private const decimal FreeExecutions = 1_000_000m;
     private const decimal FreeGbSeconds = 400_000m;
 
-    private const decimal AlwaysOnMonthly = 60m;   // 7/24 açık küçük bir VM/App Service planı (örnek)
-    private const double DurationSeconds = 0.3;    // çağrı başına çalışma süresi
-    private const double MemoryGb = 0.5;           // ayrılan bellek
+    private const decimal AlwaysOnMonthly = 60m;   // a small always-on (24/7) VM/App Service plan (example)
+    private const double DurationSeconds = 0.3;    // execution time per call
+    private const double MemoryGb = 0.5;           // allocated memory
 
     public static void Run()
     {
-        Console.WriteLine($"Fonksiyon: çağrı başına {DurationSeconds * 1000} ms, {MemoryGb * 1024} MB bellek. Karşılaştırma: 7/24 açık sunucu ~{AlwaysOnMonthly:0} $/ay (örnek).\n");
+        var inv = CultureInfo.InvariantCulture;
+        Console.WriteLine(string.Create(inv, $"Function: {DurationSeconds * 1000} ms per call, {MemoryGb * 1024} MB memory. Comparison: 24/7 always-on server ~{AlwaysOnMonthly:0} $/month (example).\n"));
 
         long[] monthlyCalls = [100_000, 2_000_000, 20_000_000, 200_000_000];
-        Table.Print(["Aylık çağrı", "GB-saniye", "Çağrı ücreti", "Süre ücreti", "Serverless toplam", "7/24 açık", "Ucuz olan"],
+        Table.Print(["Monthly calls", "GB-seconds", "Execution charge", "Duration charge", "Serverless total", "24/7 always-on", "Cheaper"],
             monthlyCalls.Select(calls =>
             {
                 var gbSeconds = (decimal)(calls * DurationSeconds * MemoryGb);
@@ -32,26 +34,26 @@ public static class Section04_ServerlessBilling
                 var total = execCost + durationCost;
                 return (IReadOnlyList<string>)
                 [
-                    calls.ToString("N0"),
-                    gbSeconds.ToString("N0"),
-                    $"{execCost:0.00} $",
-                    $"{durationCost:0.00} $",
-                    $"{total:0.00} $",
-                    $"{AlwaysOnMonthly:0} $",
-                    total < AlwaysOnMonthly ? "Serverless" : "7/24 açık*",
+                    calls.ToString("N0", inv),
+                    gbSeconds.ToString("N0", inv),
+                    execCost.ToString("0.00", inv) + " $",
+                    durationCost.ToString("0.00", inv) + " $",
+                    total.ToString("0.00", inv) + " $",
+                    AlwaysOnMonthly.ToString("0", inv) + " $",
+                    total < AlwaysOnMonthly ? "Serverless" : "24/7 always-on*",
                 ];
             }));
 
         Console.WriteLine("""
 
-        * Çok yüksek ve SÜREKLİ yükte 7/24 açık kaynak ucuzlaşır — ama aylık 200 milyon çağrıyı tek küçük sunucu taşıyamaz;
-          gerçek karşılaştırmada gereken instance sayısı da hesaba katılır (→ C1.11, Pricing Calculator).
+        * At very high and CONSTANT load an always-on resource gets cheaper — but a single small server cannot carry 200 million calls a month;
+          a real comparison also accounts for the number of instances needed (→ C1.11, Pricing Calculator).
 
-        Serverless'in nitelikleri (sınavın aradığı ifadeler):
-          • Sunucu YOK değil — sunucuları sağlamak, ölçeklemek ve yönetmek tamamen sağlayıcıda.
-          • Olay tetiklemeli (HTTP isteği, kuyruk mesajı, dosya yükleme, zamanlayıcı).
-          • Otomatik ölçekleme, boşta SIFIRA kadar; boşta ücret yok (yalnızca çalışma süresi/çağrı başına).
-          • Trade-off: sıfırdan uyanırken "cold start" gecikmesi; uzun süren işler için çalışma süresi sınırları.
+        Characteristics of serverless (the phrases the exam looks for):
+          • It does NOT mean no servers — provisioning, scaling and managing them is entirely the provider's job.
+          • Event-triggered (HTTP request, queue message, file upload, timer).
+          • Automatic scaling, down to ZERO when idle; no charge when idle (only per execution time/call).
+          • Trade-off: "cold start" latency when waking from zero; execution time limits for long-running jobs.
         """);
     }
 }

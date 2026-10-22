@@ -6,14 +6,14 @@ public static class TypeSystemMemoryTopic
 {
     public static int Run(string[] args)
     {
-        // J2.2 — Tip Sistemi & Bellek Modeli: deneyler.
-        //   dotnet run -- J2.2            → bölüm listesi
-        //   dotnet run -- J2.2 5       → 5. bölüm (boxing)
-        //   dotnet run -- J2.2 all     → hepsi
+        // J2.2 — Type System & Memory Model: experiments.
+        //   dotnet run -- J2.2            → section list
+        //   dotnet run -- J2.2 5       → section 5 (boxing)
+        //   dotnet run -- J2.2 all     → all of them
         //
-        // Her deney "ne oluyor?" sorusunu çıktıyla cevaplar. Önce çıktıyı TAHMİN edin, sonra çalıştırın.
+        // Each experiment answers the "what is happening?" question with output. PREDICT the output first, then run it.
 
-        if (args is ["const-embedding"])        // const gömülmesi deneyi (adımlar README'de)
+        if (args is ["const-embedding"])        // const embedding experiment (steps are in the README)
         {
             ConstEmbeddingDemo.Run();
             return 0;
@@ -21,9 +21,9 @@ public static class TypeSystemMemoryTopic
 
         if (args.Length == 0)
         {
-            Console.WriteLine("J2.2 Tip Sistemi & Bellek Modeli — bölümler:\n");
+            Console.WriteLine("J2.2 Type System & Memory Model — sections:\n");
             foreach (var s in Sections.All) Console.WriteLine($"  {s.Number,2}. {s.Title}");
-            Console.WriteLine("\nÇalıştırmak için: dotnet run -- J2.2 <numara> | all | const-embedding");
+            Console.WriteLine("\nTo run: dotnet run -- J2.2 <number> | all | const-embedding");
             return 0;
         }
 

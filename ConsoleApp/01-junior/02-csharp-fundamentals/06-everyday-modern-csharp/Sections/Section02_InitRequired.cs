@@ -4,29 +4,29 @@ public static class Section02_InitRequired
 {
     public static void Run()
     {
-        // init-only: yalnızca NESNE OLUŞTURULURKEN (object initializer / ctor / with) atanabilir, sonra salt okunur
+        // init-only: can be assigned only WHILE THE OBJECT IS BEING CREATED (object initializer / ctor / with), read-only afterwards
         var settings = new ConnectionSettings { Host = "localhost", Port = 5432 };
-        // settings.Port = 1;                                   // ✗ CS8852: init-only property yalnızca nesne başlatıcıda atanabilir
+        // settings.Port = 1;                                   // ✗ CS8852: an init-only property can only be assigned in an object initializer
         var changed = new ConnectionSettings { Host = settings.Host, Port = 6000 };
-        Console.WriteLine($"init-only      : {settings.Host}:{settings.Port} → yeni örnek {changed.Host}:{changed.Port}");
+        Console.WriteLine($"init-only      : {settings.Host}:{settings.Port} → new instance {changed.Host}:{changed.Port}");
 
-        // required: nesne oluştururken bu üyeyi ATAMAK ZORUNLU (yoksa DERLEME hatası); 'yarım' nesne oluşmaz
-        // var bad = new ConnectionSettings { Port = 1 };       // ✗ CS9035: required 'Host' atanmadı
-        Console.WriteLine($"required       : Host atlanırsa derleme hatası (CS9035); Port'un varsayılanı var → atlanabilir: {new ConnectionSettings { Host = "x" }.Port}");
+        // required: assigning this member when creating the object is MANDATORY (otherwise a COMPILE error); no 'half-built' object
+        // var bad = new ConnectionSettings { Port = 1 };       // ✗ CS9035: required 'Host' was not assigned
+        Console.WriteLine($"required       : omitting Host is a compile error (CS9035); Port has a default → can be omitted: {new ConnectionSettings { Host = "x" }.Port}");
 
-        // required + init birlikte: doğrulanmış, değişmez, eksiksiz nesne için en pratik desen (constructor yazmadan)
+        // required + init together: the most practical pattern for a validated, immutable, complete object (without writing a constructor)
         var order = new OrderDto { Id = "ORD-1", Total = 10m };
         Console.WriteLine($"DTO            : {order.Id} / {order.Total}");
 
-        // with ifadesi record'larda init property'leri 'değiştirir' (aslında kopya üretir)
+        // the with expression 'changes' init properties on records (actually produces a copy)
         Console.WriteLine($"required + record: {new Contact { Email = "a@x.com" } with { Email = "b@x.com" }}");
 
         Console.WriteLine("""
 
-        Neden? Eskiden: ya parametreli ctor (parametre sayısı patlar) ya set; (nesne sonradan değişebilir, yarım kalır).
-        init → "kurarken ata, sonra değişmez"; required → "atamayı unutamazsın". İkisi birleşince ctor'suz immutable DTO yazılır.
-        Serileştiriciler (System.Text.Json) init-only ve required'ı destekler; EF Core'da entity'ler genelde set; kullanır.
-        Constructor içinde `[SetsRequiredMembers]` ile required kontrolü atlanabilir (dikkatli kullanın).
+        Why? Before: either a parameterized ctor (the parameter count explodes) or set; (the object can change later, stays half-built).
+        init → "assign while constructing, immutable afterwards"; required → "you can't forget to assign". Combined, they let you write an immutable DTO without a ctor.
+        Serializers (System.Text.Json) support init-only and required; in EF Core entities usually use set;.
+        Inside a constructor, `[SetsRequiredMembers]` can skip the required check (use with care).
         """);
     }
 

@@ -19,7 +19,7 @@
 
 Bir C# programının **iskeleti**: nereden başlar (entry point), kod nasıl düzenlenir (namespace, using, partial), kime ne görünür (erişim belirleyicileri) ve dilin her gün karşınıza çıkan temel mekanikleri (dönüşümler, taşma, operatörler, preprocessor, derleme zamanı bilgisi). Mülakatın ilk teknik turu çoğunlukla buradan başlar; yüzeysel tanım değil **örnekle açıklama** beklenir.
 
-Konu 13 küçük, yorumlu bölümden oluşur ([`Sections/`](Sections/); `dotnet run -- J2.1 <numara>`); [`AccessModifiers/`](AccessModifiers/) erişim belirleyicilerini derleyiciye denetletir (başka assembly'den bakış: 3.3'teki alıştırma).
+Konu 13 küçük, yorumlu bölümden oluşur ([`Sections/`](Sections/); `dotnet run -- J2.1 <number>`); [`AccessModifiers/`](AccessModifiers/) erişim belirleyicilerini derleyiciye denetletir (başka assembly'den bakış: 3.3'teki alıştırma).
 
 ---
 
@@ -39,7 +39,7 @@ Geçerli `Main` imzaları (hepsi `static`; erişim düzeyi önemsiz):
 
 ```csharp
 static void Main()                       static void Main(string[] args)
-static int  Main()                       static int  Main(string[] args)          // dönüş değeri = exit code
+static int  Main()                       static int  Main(string[] args)          // return value = exit code
 static async Task Main()                 static async Task Main(string[] args)
 static async Task<int> Main()            static async Task<int> Main(string[] args)
 ```
@@ -49,7 +49,7 @@ static async Task<int> Main()            static async Task<int> Main(string[] ar
 - **Top-level statements (C# 9):** `Program.cs`'e doğrudan ifadeler yazarsınız; derleyici bir `Program` sınıfı ve `<Main>$` metodu **üretir**. `args` örtük bir değişkendir; `return 3;` exit code'u belirler; `await` kullanırsanız `Main` otomatik `async Task<int>` olur. Bir projede **yalnızca bir dosya** top-level statements içerebilir. ([`Section01`](Sections/Section01_EntryPoint.cs) bunu reflection ile gösterir.)
 
 ```csharp
-// Program.cs                         // Derleyicinin ürettiği (kavramsal)
+// Program.cs                         // What the compiler generates (conceptual)
 Console.WriteLine(args.Length);       // internal class Program {
 return 0;                             //     static int <Main>$(string[] args) { Console.WriteLine(args.Length); return 0; } }
 ```
@@ -81,7 +81,7 @@ Akılda tutma: `protected internal` = `protected` **VEYA** `internal` (birleşim
 
 - **Varsayılanlar:** tip → `internal`, üye → `private`. (İç içe tipte varsayılan `private`.)
 - **Tutarlılık kuralı:** public bir metot, daha kısıtlı erişimli bir tipi imzasında kullanamaz (CS0050/CS0051).
-- **`InternalsVisibleTo`:** `internal` üyeleri belirli "dost" assembly'lere açar; tipik kullanım **test projesi**. csproj'da `<InternalsVisibleTo Include="Proje.Tests" />`. Tasarım notu: `internal` yalnızca bir uygulama detayını gizler; sırf test edebilmek için her şeyi `public` yapmak yerine bunu kullanın.
+- **`InternalsVisibleTo`:** `internal` üyeleri belirli "dost" assembly'lere açar; tipik kullanım **test projesi**. csproj'da `<InternalsVisibleTo Include="MyProject.Tests" />`. Tasarım notu: `internal` yalnızca bir uygulama detayını gizler; sırf test edebilmek için her şeyi `public` yapmak yerine bunu kullanın.
 - **Pratik kural:** en dar düzeyle başlayın; `private` → `internal` → `public` yönünde ihtiyaç oldukça açın. Kütüphane yazıyorsanız public yüzey bir **sözleşmedir**.
 
 > 🛠 [`AccessModifiers/`](AccessModifiers/): `Vault` (6 düzeyden birer üye) + türeyen/türemeyen "dışarıdaki" sınıflar. `ConsoleApp` klasöründe `dotnet run -- J2.1 access-modifiers` geçerli erişimleri ve reflection ile CLR'ın gördüğü düzeyleri; `dotnet build -p:DefineConstants=SHOW_ERRORS` **derleme hatalarını** (CS0122, CS1540) gösterir.
@@ -89,13 +89,13 @@ Akılda tutma: `protected internal` = `protected` **VEYA** `internal` (birleşim
 **Alıştırma — başka assembly'den bakış.** `internal` ve `private protected` farkı ancak **iki assembly** ile gösterilebilir; repodan bağımsız, boş bir klasörde deneyin:
 
 ```bash
-mkdir erisim && cd erisim
+mkdir access && cd access
 dotnet new classlib -n Lib && dotnet new console -n App && dotnet add App reference Lib
-# Lib/Class1.cs → AccessModifiers/Vault.cs'teki Vault sınıfını (namespace'siz) yapıştırın
-# App/Program.cs → aşağıdaki iki sınıfı yazıp her üyeye erişmeyi deneyin:
+# Lib/Class1.cs → paste the Vault class from AccessModifiers/Vault.cs (without the namespace)
+# App/Program.cs → write the two classes below and try to access every member:
 #   class Derived : Vault { void T() { _ = ProtectedMember; _ = ProtectedInternalMember; _ = PrivateProtectedMember; _ = InternalMember; } }
 #   class Other   { void T(Vault v) { _ = v.PublicMember; _ = v.ProtectedInternalMember; _ = v.InternalMember; } }
-dotnet build App      # hangi satırlar CS0122 / CS0103 / CS1061 verir?
+dotnet build App      # which lines give CS0122 / CS0103 / CS1061?
 ```
 
 <details><summary>Çözüm</summary>
@@ -152,9 +152,9 @@ Tamsayı aritmetiğinde taşma **varsayılan olarak `unchecked`**: değer sessiz
 
 ```csharp
 int a = int.MaxValue;
-unchecked(a + 1);     // -2147483648 (varsayılan)
+unchecked(a + 1);     // -2147483648 (default)
 checked(a + 1);       // OverflowException
-checked { ... }       // blok içindeki tüm aritmetik/dönüşümler denetlenir
+checked { ... }       // all arithmetic/conversions inside the block are checked
 ```
 
 - Proje geneli: `<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>`.

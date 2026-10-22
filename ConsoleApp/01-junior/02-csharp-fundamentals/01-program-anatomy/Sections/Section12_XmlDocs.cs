@@ -4,16 +4,16 @@ public static class Section12_XmlDocs
 {
     public static void Run()
     {
-        // `///` ile yazılan XML yorumları: (1) IntelliSense'te açıklama olarak görünür, (2) csproj'daki
-        // <GenerateDocumentationFile> ile .xml dosyası üretilir, (3) Swashbuckle/OpenAPI bu dosyayı okuyup
-        // endpoint açıklamalarını Swagger UI'a taşır (→ J7.5), (4) docfx gibi araçlar dokümantasyon sitesi üretir.
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, "ProgramAnatomy.xml");
-        Console.WriteLine($"Üretilen XML dosyası: {xmlPath}  (var mı: {File.Exists(xmlPath)})");
+        // XML comments written with `///`: (1) show up as descriptions in IntelliSense, (2) <GenerateDocumentationFile>
+        // in the csproj produces a .xml file, (3) Swashbuckle/OpenAPI reads this file and carries the
+        // endpoint descriptions into Swagger UI (→ J7.5), (4) tools like docfx generate a documentation site.
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, typeof(Section12_XmlDocs).Assembly.GetName().Name + ".xml");
+        Console.WriteLine($"Generated XML file: {xmlPath}  (exists: {File.Exists(xmlPath)})");
 
         if (File.Exists(xmlPath))
         {
             var lines = File.ReadLines(xmlPath).SkipWhile(l => !l.Contains("Section12_XmlDocs.Divide")).Take(12);
-            Console.WriteLine("\n--- Divide metodu için üretilen kayıt ---");
+            Console.WriteLine("\n--- Generated entry for the Divide method ---");
             foreach (var l in lines) Console.WriteLine(l);
         }
 
@@ -21,13 +21,13 @@ public static class Section12_XmlDocs
     }
 
     /// <summary>
-    /// İki sayıyı böler ve <b>tamsayı bölme</b> sonucunu döner.
+    /// Divides two numbers and returns the result of the <b>integer division</b>.
     /// </summary>
-    /// <param name="dividend">Bölünen sayı.</param>
-    /// <param name="divisor">Bölen. Sıfır olamaz.</param>
-    /// <returns>Bölümün tam kısmı (ondalık atılır).</returns>
-    /// <exception cref="DivideByZeroException"><paramref name="divisor"/> sıfırsa fırlatılır.</exception>
-    /// <remarks>Ondalık sonuç gerekiyorsa <see cref="decimal"/> overload'ını kullanın.</remarks>
+    /// <param name="dividend">The number to be divided.</param>
+    /// <param name="divisor">The divisor. Cannot be zero.</param>
+    /// <returns>The whole part of the quotient (the fraction is discarded).</returns>
+    /// <exception cref="DivideByZeroException">Thrown if <paramref name="divisor"/> is zero.</exception>
+    /// <remarks>If you need a fractional result, use the <see cref="decimal"/> overload.</remarks>
     /// <example>
     /// <code>var r = Section12_XmlDocs.Divide(10, 4); // 2</code>
     /// </example>

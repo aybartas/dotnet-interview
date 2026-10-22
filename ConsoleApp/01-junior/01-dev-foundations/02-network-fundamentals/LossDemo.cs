@@ -5,30 +5,30 @@ using System.Net.Sockets;
 namespace Junior.DevFoundations.NetworkFundamentals;
 
 /// <summary>
-/// Aynı yükü (N adet, 512 byte'lık, sıra numaralı mesaj) hem UDP hem TCP ile YAVAŞ bir alıcıya gönderir.
+/// Sends the same load (N numbered messages of 512 bytes) to a SLOW receiver over both UDP and TCP.
 ///
-/// Beklenen sonuç:
-///  • UDP: alıcının socket tamponu dolunca işletim sistemi datagram'ları SESSİZCE düşürür → "gönderilen ≠ alınan".
-///         Gönderen hata almaz; kayıp sadece alıcı tarafında sayarak fark edilir.
-///  • TCP: receive window dolunca gönderen YAVAŞLATILIR (flow control) → hiçbir şey kaybolmaz, sıra korunur;
-///         bedeli: toplam süre alıcının hızına bağlanır.
+/// Expected result:
+///  • UDP: when the receiver's socket buffer fills up, the operating system SILENTLY drops datagrams → "sent ≠ received".
+///         The sender gets no error; the loss is only noticed by counting on the receiving side.
+///  • TCP: when the receive window fills up the sender is SLOWED DOWN (flow control) → nothing is lost, order is preserved;
+///         the price: total time is bound to the receiver's speed.
 /// </summary>
 public static class LossDemo
 {
     private const int PayloadSize = 512;
-    private const int SpinPerMessage = 3_000;   // alıcının "iş yapma" süresini simüle eder (yavaş tüketici)
+    private const int SpinPerMessage = 3_000;   // simulates the receiver's "work" time (slow consumer)
 
     public static async Task RunAsync(int count)
     {
-        Console.WriteLine($"Yük: {count:N0} mesaj × {PayloadSize} byte, alıcı bilerek yavaş.\n");
+        Console.WriteLine($"Load: {count:N0} messages × {PayloadSize} bytes, receiver is deliberately slow.\n");
         await RunUdpAsync(count);
         await RunTcpAsync(count);
 
         Console.WriteLine("""
 
-            Sonuç: UDP hız için teslim garantisinden vazgeçer — kaybı ve sırayı uygulama yönetmek zorundadır
-            (DNS, oyun, canlı video, QUIC bu yüzden UDP üstüne kendi güvenilirliğini ekler). TCP ise garanti verir
-            ama bunun bedeli handshake, ACK'ler ve yavaş alıcıya göre yavaşlamaktır.
+            Conclusion: UDP gives up the delivery guarantee for speed — the application must handle loss and ordering itself
+            (DNS, games, live video; QUIC adds its own reliability on top of UDP for this reason). TCP gives the guarantee,
+            but the price is the handshake, the ACKs, and slowing down to the pace of a slow receiver.
             """);
     }
 
@@ -38,8 +38,8 @@ public static class LossDemo
     {
         using var receiver = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         receiver.Bind(new IPEndPoint(IPAddress.Loopback, 0));
-        receiver.ReceiveBufferSize = 4 * 1024;             // bilerek küçük tampon (işletim sistemi alt sınıra yükseltebilir)
-        receiver.ReceiveTimeout = 500;                      // 500 ms sessizlik = gönderim bitti
+        receiver.ReceiveBufferSize = 4 * 1024;             // deliberately small buffer (the OS may raise it to a lower bound)
+        receiver.ReceiveTimeout = 500;                      // 500 ms of silence = sending is finished
         var target = receiver.LocalEndPoint!;
 
         int received = 0, outOfOrder = 0, lastSeq = -1;
@@ -55,7 +55,7 @@ public static class LossDemo
                 if (seq < lastSeq) outOfOrder++;
                 lastSeq = Math.Max(lastSeq, seq);
                 received++;
-                Thread.SpinWait(SpinPerMessage);            // yavaş tüketici
+                Thread.SpinWait(SpinPerMessage);            // slow consumer
             }
         });
 
@@ -66,16 +66,16 @@ public static class LossDemo
             for (int i = 0; i < count; i++)
             {
                 BitConverter.TryWriteBytes(payload, i);
-                sender.SendTo(payload, target);             // hata vermez: kaybolsa bile gönderen bilmez
+                sender.SendTo(payload, target);             // doesn't throw: the sender doesn't know even if it gets lost
             }
         }
         var sendTime = sw.Elapsed;
         await recvTask;
 
         int lost = count - received;
-        Console.WriteLine($"[UDP] gönderilen: {count:N0}   alınan: {received:N0}   KAYIP: {lost:N0} (%{100.0 * lost / count:F1})   sırasız: {outOfOrder}   gönderme süresi: {sendTime.TotalMilliseconds:F0} ms");
+        Console.WriteLine($"[UDP] sent: {count:N0}   received: {received:N0}   LOST: {lost:N0} ({100.0 * lost / count:F1}%)   out of order: {outOfOrder}   send time: {sendTime.TotalMilliseconds:F0} ms");
         if (outOfOrder == 0)
-            Console.WriteLine("      (loopback'te sıra bozulması beklenmez; gerçek ağda farklı yollardan giden datagramlar sırasız gelebilir)");
+            Console.WriteLine("      (reordering isn't expected on loopback; on a real network, datagrams taking different paths can arrive out of order)");
     }
 
     // ───────────────────────────── TCP ─────────────────────────────
@@ -94,9 +94,9 @@ public static class LossDemo
             var buf = new byte[PayloadSize];
             while (true)
             {
-                // TCP bayt akışıdır: "512 byte'lık mesaj" sınırını BİZ çiziyoruz → tam 512 byte okuyana kadar bekle.
+                // TCP is a byte stream: WE draw the "512-byte message" boundary → wait until exactly 512 bytes are read.
                 try { await stream.ReadExactlyAsync(buf); }
-                catch (EndOfStreamException) { break; }     // gönderen kapattı
+                catch (EndOfStreamException) { break; }     // the sender closed
 
                 int seq = BitConverter.ToInt32(buf, 0);
                 if (seq < lastSeq) outOfOrder++;
@@ -115,13 +115,13 @@ public static class LossDemo
             for (int i = 0; i < count; i++)
             {
                 BitConverter.TryWriteBytes(payload, i);
-                await stream.WriteAsync(payload);           // tampon dolunca BURADA bekler: flow control
+                await stream.WriteAsync(payload);           // waits HERE when the buffer is full: flow control
             }
         }
         await serverTask;
         listener.Stop();
 
         int lost = count - received;
-        Console.WriteLine($"[TCP] gönderilen: {count:N0}   alınan: {received:N0}   KAYIP: {lost:N0}              sırasız: {outOfOrder}   toplam süre: {sw.Elapsed.TotalMilliseconds:F0} ms");
+        Console.WriteLine($"[TCP] sent: {count:N0}   received: {received:N0}   LOST: {lost:N0}              out of order: {outOfOrder}   total time: {sw.Elapsed.TotalMilliseconds:F0} ms");
     }
 }

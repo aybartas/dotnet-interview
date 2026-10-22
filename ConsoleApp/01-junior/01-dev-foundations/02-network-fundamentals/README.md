@@ -52,10 +52,10 @@ Yedi katmanı ezberlemek değil, **sorunun hangi katmanda olduğunu** sınıflam
 Veri aşağı inerken her katman kendi header'ını ekler; alıcıda yukarı çıkarken sırayla soyulur:
 
 ```
-L7  [ HTTP: GET /orders ... ]                              ← veri (data)
-L4  [ TCP header | HTTP verisi ]                           ← segment   (src/dst port, seq, flags)
-L3  [ IP header | TCP header | HTTP verisi ]               ← packet    (src/dst IP)
-L2  [ Eth header | IP | TCP | HTTP | Eth trailer ]         ← frame     (MAC adresleri)
+L7  [ HTTP: GET /orders ... ]                              ← data
+L4  [ TCP header | HTTP data ]                            ← segment   (src/dst port, seq, flags)
+L3  [ IP header | TCP header | HTTP data ]                ← packet    (src/dst IP)
+L2  [ Eth header | IP | TCP | HTTP | Eth trailer ]         ← frame     (MAC addresses)
 ```
 
 Her birimin adı farklıdır: **segment** (TCP) / **datagram** (UDP) → **packet** (IP) → **frame** (Ethernet). Wireshark'ta bu iç içe geçmiş header'ları görürsünüz (yakalama alıştırması: 3.10).
@@ -77,7 +77,7 @@ Her birimin adı farklıdır: **segment** (TCP) / **datagram** (UDP) → **packe
 
 - **IPv4:** 32 bit (`192.168.1.10`), ~4,3 milyar adres → tükendi. **IPv6:** 128 bit (`2001:db8::1`).
 - **Subnet / CIDR:** `10.0.1.0/24` = ilk 24 bit ağ kısmı, son 8 bit host kısmı → 256 adres (254 kullanılabilir). `/16` = 65 536 adres, `/32` = tek adres.
-  - Hızlı hesap: adres sayısı = `2^(32 − önek)`.
+  - Hızlı hesap: adres sayısı = `2^(32 − prefix)`.
 - **Private (RFC 1918) aralıklar** — internete yönlendirilmez, iç ağda kullanılır:
 
   | Aralık | CIDR | Tipik kullanım |
@@ -127,11 +127,11 @@ IP **hangi makine**, port **o makinedeki hangi uygulama** demektir (16 bit: 0–
 #### TCP three-way handshake ⭐
 
 ```
-İstemci                                Sunucu
-  │ ── SYN, seq=x ─────────────────────▶ │   "Bağlanmak istiyorum"
-  │ ◀── SYN-ACK, seq=y, ack=x+1 ──────── │   "Tamam, ben de hazırım"
-  │ ── ACK, ack=y+1 ───────────────────▶ │   "Aldım" → bağlantı KURULDU
-  │ ── veri ... ───────────────────────▶ │
+Client                                 Server
+  │ ── SYN, seq=x ─────────────────────▶ │   "I want to connect"
+  │ ◀── SYN-ACK, seq=y, ack=x+1 ──────── │   "OK, I'm ready too"
+  │ ── ACK, ack=y+1 ───────────────────▶ │   "Got it" → connection ESTABLISHED
+  │ ── data ... ───────────────────────▶ │
 ```
 
 - Maliyeti **1 RTT** (round-trip time): veri göndermeden önce bir gidiş-dönüş beklenir. Yüksek gecikmeli hatta (kıtalararası 150 ms) bu, her yeni bağlantıya 150 ms ekler. HTTPS'te üstüne TLS handshake eklenir (→ J1.3). **Bu yüzden bağlantı yeniden kullanımı (keep-alive) önemlidir.**
@@ -141,12 +141,12 @@ IP **hangi makine**, port **o makinedeki hangi uygulama** demektir (16 bit: 0–
 #### Bağlantı kapatma ve `TIME_WAIT`
 
 ```
-İstemci                                Sunucu
-  │ ── FIN ────────────────────────────▶ │   "Gönderecek verim bitti"
+Client                                 Server
+  │ ── FIN ────────────────────────────▶ │   "I have no more data to send"
   │ ◀── ACK ──────────────────────────── │
-  │ ◀── FIN ──────────────────────────── │   sunucu da bitirir
+  │ ◀── FIN ──────────────────────────── │   the server finishes too
   │ ── ACK ────────────────────────────▶ │
-  ▼ TIME_WAIT (~2×MSL, Linux'ta 60 sn)     ▼ kapalı
+  ▼ TIME_WAIT (~2×MSL, 60 s on Linux)      ▼ closed
 ```
 
 Her yön ayrı kapanır (dörtlü). **İlk FIN'i gönderen taraf (active close) `TIME_WAIT`'e girer** ve o bağlantının dörtlüsünü (`src IP:port, dst IP:port`) **2×MSL** (Maximum Segment Lifetime ≈ 30 sn → toplam ~60 sn) boyunca tutar. İki neden:
@@ -174,9 +174,9 @@ Her yön ayrı kapanır (dörtlü). **İlk FIN'i gönderen taraf (active close) 
 **Socket**, uygulamanın ağa açılan kapısıdır: bir **endpoint = IP + port + protokol**. Bir TCP bağlantısı, iki endpoint'in dörtlüsüyle tanımlanır: `(kaynak IP, kaynak port, hedef IP, hedef port)`. Aynı sunucu portuna binlerce istemci bağlanabilir çünkü dörtlü her biri için farklıdır.
 
 ```
-Sunucu (TCP):                          İstemci (TCP):
+Server (TCP):                          Client (TCP):
   socket()                               socket()
-  bind(IP, port)                         connect(IP, port)  ──────▶ (3'lü el sıkışma)
+  bind(IP, port)                         connect(IP, port)  ──────▶ (three-way handshake)
   listen()
   accept()  ◀──────────────────────────
   read()/write()                         write()/read()
@@ -201,7 +201,7 @@ Sunucu (TCP):                          İstemci (TCP):
 Bir bağlantı açıp **ilk kapatan** taraf `TIME_WAIT`'e girer. İstemci her istekte yeni bağlantı açıp kapatırsa:
 
 ```
-istek/sn × 60 sn  ≈  TIME_WAIT'te bekleyen soket sayısı
+requests/s × 60 s  ≈  number of sockets waiting in TIME_WAIT
 ```
 
 Linux varsayılanında ~28 000 ephemeral port vardır. Aynı hedef (IP:port) için saniyede ~470'ten fazla yeni bağlantı açarsanız havuz tükenir ve yeni bağlantı kurulamaz:
@@ -242,17 +242,17 @@ Sonuç: "path'e göre yönlendir", "cookie ile sticky session", "WAF" için L7; 
 
 ### 3.8 Güvenlik duvarı ve "bağlantı neden timeout oluyor" teşhisi
 
-**Firewall / security group / NSG** kuralları `(yön, protokol, kaynak, hedef port)` ile trafiğe izin verir ya da engeller. Bulutta "uygulama çalışıyor ama dışarıdan erişemiyorum" vakasının 1 numaralı sebebi, **ilgili portun security group'ta açılmamış olmasıdır**.
+**Firewall / security group / NSG** kuralları `(direction, protocol, source, destination port)` ile trafiğe izin verir ya da engeller. Bulutta "uygulama çalışıyor ama dışarıdan erişemiyorum" vakasının 1 numaralı sebebi, **ilgili portun security group'ta açılmamış olmasıdır**.
 
 Teşhis ağacı (aşağıdan yukarı):
 
 ```
-1. İsim çözülüyor mu?              nslookup api.firm.com                       ✗ → DNS sorunu (L7/DNS)
-2. IP'ye ulaşılıyor mu?            ping <ip>   /  traceroute <ip>              ✗ → yönlendirme / ICMP engelli olabilir
-3. Port açık mı?                   nc -zv <ip> 443  /  telnet <ip> 443
-      • "Connection refused"  → host'a ulaştık, o portta dinleyen YOK (servis kapalı / yanlış port)  [RST geldi]
-      • "timed out"           → paket sessizce düşüyor: FIREWALL / security group / yanlış IP / route
-4. Servis sağlıklı mı?             curl -v https://<host>/health               ✗ → uygulama / TLS / HTTP sorunu
+1. Does the name resolve?          nslookup api.firm.com                       ✗ → DNS problem (L7/DNS)
+2. Is the IP reachable?            ping <ip>   /  traceroute <ip>              ✗ → routing / ICMP may be blocked
+3. Is the port open?               nc -zv <ip> 443  /  telnet <ip> 443
+      • "Connection refused"  → we reached the host, NOTHING is listening on that port (service down / wrong port)  [RST came back]
+      • "timed out"           → packets are silently dropped: FIREWALL / security group / wrong IP / route
+4. Is the service healthy?        curl -v https://<host>/health               ✗ → application / TLS / HTTP problem
 ```
 
 > Not: Bazı ağlar `ping`'i (ICMP) engeller; `ping` başarısız diye host'un kapalı olduğu sonucuna varmayın, 3. adımla port seviyesinde doğrulayın.
@@ -277,20 +277,20 @@ Wireshark'ta faydalı filtreler: `tcp.port == 5000`, `tcp.flags.syn == 1`, `tcp.
 Bu konunun kodu `ConsoleApp` projesindedir (`ConsoleApp` klasöründen çalıştırın). Her komut ağın farklı bir yönünü gösterir; `dotnet run -- J1.2 help` hepsini listeler:
 
 ```bash
-dotnet run -- J1.2 tcp-server 5000                          # satır tabanlı TCP echo (her istemci için ayrı Task)
-dotnet run -- J1.2 tcp-client 127.0.0.1 5000 merhaba dunya  # ikinci terminal
-dotnet run -- J1.2 udp-server 5001                          # UDP echo: bağlantı YOK, her datagram bağımsız
-dotnet run -- J1.2 udp-client 127.0.0.1 5001 selam          # sunucu kapalıysa cevap gelmez → zaman aşımı
-dotnet run -- J1.2 loss 20000                               # aynı yük TCP ve UDP ile: UDP'de paket kaybı
-dotnet run -- J1.2 time-wait 500 [--reuse]                  # TIME_WAIT birikimi; --reuse tek bağlantı
+dotnet run -- J1.2 tcp-server 5000                          # line-based TCP echo (a separate Task per client)
+dotnet run -- J1.2 tcp-client 127.0.0.1 5000 hello world    # second terminal
+dotnet run -- J1.2 udp-server 5001                          # UDP echo: NO connection, every datagram is independent
+dotnet run -- J1.2 udp-client 127.0.0.1 5001 hi             # if the server is down, no reply → timeout
+dotnet run -- J1.2 loss 20000                               # same load over TCP and UDP: packet loss with UDP
+dotnet run -- J1.2 time-wait 500 [--reuse]                  # TIME_WAIT buildup; --reuse = single connection
 ```
 
 **Handshake'i tcpdump ile yakalamak** (Linux/macOS, root gerekir; .NET gerekmez; Wireshark'ta: loopback, filtre `tcp.port == 5000`):
 
 ```bash
-sudo tcpdump -i lo -n -S "tcp port 5000" &        # macOS'ta arayüz: lo0
-nc -l 127.0.0.1 5000 >/dev/null &                 # sunucu
-printf 'merhaba\n' | nc -q 1 127.0.0.1 5000       # istemci: bağlan, 1 mesaj gönder, kapat
+sudo tcpdump -i lo -n -S "tcp port 5000" &        # on macOS the interface is lo0
+nc -l 127.0.0.1 5000 >/dev/null &                 # server
+printf 'hello\n' | nc -q 1 127.0.0.1 5000         # client: connect, send 1 message, close
 sleep 1; sudo pkill tcpdump
 ```
 
@@ -298,7 +298,7 @@ Nasıl okunur (`Flags`: `S`=SYN, `S.`=SYN-ACK, `.`=ACK, `P.`=veri, `F.`=FIN-ACK)
 1. `[S]` istemci → sunucu: "bağlanmak istiyorum" (seq = x)
 2. `[S.]` sunucu → istemci: "tamam, ben de hazırım" (seq = y, ack = x+1)
 3. `[.]` istemci → sunucu: "aldım" (ack = y+1) → bağlantı kuruldu, **1 RTT**
-4. `[P.]` veri paketi (`merhaba\n` = 8 byte, `length 8`)
+4. `[P.]` veri paketi (`hello\n` = 6 byte, `length 6`)
 5. `[F.]` … `[F.]` … `[.]` kapanış: her yön ayrı FIN ile kapanır (dörtlü); ilk FIN'i gönderen `TIME_WAIT`'e girer.
 
 ---

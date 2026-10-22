@@ -8,22 +8,22 @@ public static class Section03_VirtualCallInConstructor
     {
         var derived = new DerivedWithState();
 
-        Console.WriteLine("Taban constructor'ın İÇİNDE (virtual çağrı) türetilmiş Describe() şunu gördü:");
+        Console.WriteLine("INSIDE the base constructor (virtual call) the derived Describe() saw this:");
         Console.WriteLine($"   {derived.Seen[0]}");
-        Console.WriteLine("Constructor bittikten SONRA aynı metot:");
+        Console.WriteLine("The same method AFTER the constructor finished:");
         Console.WriteLine($"   {derived.Describe()}");
 
         Console.WriteLine("""
 
-        Fark neden?
-          • _fromInitializer  → field initializer, taban ctor'dan ÖNCE çalışır → DOLU
-          • _fromConstructor  → türetilmiş ctor GÖVDESİNDE atanır; taban ctor çalışırken henüz çalışmadı → null
-          • _count            → aynı sebeple 0
-        Override edilen metot nesnenin yarım kurulmuş halini görür → sessiz, bulması zor hatalar. Analyzer: CA2214 (bu proje için .editorconfig ile 'warning').
-        Derleme çıktısında CA2214 uyarısını görmek için:  dotnet build --no-incremental
+        Why the difference?
+          • _fromInitializer  → field initializer, runs BEFORE the base ctor → FILLED
+          • _fromConstructor  → assigned in the derived ctor BODY; hadn't run yet while the base ctor was running → null
+          • _count            → 0 for the same reason
+        The overridden method sees a half-constructed object → silent, hard-to-find bugs. Analyzer: CA2214 ('warning' for this project via .editorconfig).
+        To see the CA2214 warning in the build output:  dotnet build --no-incremental
         """);
 
         var safe = SafeBase.Create<SafeDerived>();
-        Console.WriteLine($"Güvenli alternatif (nesne tamamen kurulduktan sonra çağır): {safe.Result}");
+        Console.WriteLine($"Safe alternative (call after the object is fully constructed): {safe.Result}");
     }
 }

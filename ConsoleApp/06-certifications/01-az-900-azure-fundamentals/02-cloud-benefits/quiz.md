@@ -2,7 +2,7 @@
 
 > Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 20 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. SLA hesapları için: `dotnet run -- C1.2 seri …` / `paralel …` / `kesinti …`. Hedef: **≥ 16/20**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. SLA hesapları için: `dotnet run -- C1.2 serial …` / `parallel …` / `downtime …`. Hedef: **≥ 16/20**.
 
 ---
 
@@ -172,7 +172,7 @@ Aşağıdakilerden **hangi ikisi** *management of the cloud* (bulutun yönetimi)
 
 <details><summary>Cevap</summary>
 
-**C.** `730 sa × 0,001 ≈ 0,73 sa ≈ 43,8 dk`. ~4 dk %99,99'a, ~22 dk %99,95'e, ~7 saat %99'a karşılık gelir. (`dotnet run -- C1.2 kesinti 99.9`)
+**C.** `730 sa × 0,001 ≈ 0,73 sa ≈ 43,8 dk`. ~4 dk %99,99'a, ~22 dk %99,95'e, ~7 saat %99'a karşılık gelir. (`dotnet run -- C1.2 downtime 99.9`)
 </details>
 
 ### 14. Tek seçim
@@ -185,7 +185,7 @@ Bir uygulama, SLA'sı %99,95 olan bir web servisi ile SLA'sı %99,99 olan bir ve
 
 <details><summary>Cevap</summary>
 
-**D.** Seri bağlı bileşenlerde SLA'lar çarpılır: `0,9995 × 0,9999 ≈ 0,9994`. Sonuç en zayıf bileşenden (%99,95) bile düşüktür. (`dotnet run -- C1.2 seri 99.95 99.99`)
+**D.** Seri bağlı bileşenlerde SLA'lar çarpılır: `0,9995 × 0,9999 ≈ 0,9994`. Sonuç en zayıf bileşenden (%99,95) bile düşüktür. (`dotnet run -- C1.2 serial 99.95 99.99`)
 </details>
 
 ### 15. Senaryo
@@ -211,7 +211,7 @@ Composite SLA'sı %99,9 olan aynı uygulama yığını, birbirinden bağımsız 
 
 <details><summary>Cevap</summary>
 
-**D.** Paralel (yedekli) bileşenlerde: `1 − (1 − 0,999)² = 1 − 0,000001 = %99,9999`. Seri bağlantıda çarpım SLA'yı düşürürdü (A); yedeklilik yükseltir. (`dotnet run -- C1.2 paralel 99.9 99.9`)
+**D.** Paralel (yedekli) bileşenlerde: `1 − (1 − 0,999)² = 1 − 0,000001 = %99,9999`. Seri bağlantıda çarpım SLA'yı düşürürdü (A); yedeklilik yükseltir. (`dotnet run -- C1.2 parallel 99.9 99.9`)
 </details>
 
 ### 17. Eşleştirme

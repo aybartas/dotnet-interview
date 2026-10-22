@@ -6,27 +6,27 @@ public static class Section02_Polymorphism
 {
     public static void Run()
     {
-        Console.WriteLine("A) COMPILE-TIME (static / early binding) — hangi metodun çağrılacağına DERLEYİCİ karar verir");
+        Console.WriteLine("A) COMPILE-TIME (static / early binding) — the COMPILER decides which method is called");
 
-        // Overloading: aynı ad, farklı parametre listesi; seçim ARGÜMANLARIN DERLEME ZAMANI tipine göre yapılır
+        // Overloading: same name, different parameter list; the choice is made by the COMPILE-TIME type of the ARGUMENTS
         Console.WriteLine($"   Print(5) → {Print(5)}   Print(\"x\") → {Print("x")}   Print(3.5) → {Print(3.5)}");
-        object o = "bir string";                                   // derleme zamanı tipi: object!
-        Console.WriteLine($"   object o = \"bir string\"; Print(o) → {Print(o)}   ← çalışma zamanı tipi string olsa da overload object'e gider");
-        Console.WriteLine($"   Print((dynamic)o) → {Print((dynamic)o)}   ← dynamic ile seçim çalışma zamanına ertelenir");
+        object o = "a string";                                     // compile-time type: object!
+        Console.WriteLine($"   object o = \"a string\"; Print(o) → {Print(o)}   ← even though the runtime type is string, the overload goes to object");
+        Console.WriteLine($"   Print((dynamic)o) → {Print((dynamic)o)}   ← with dynamic the choice is deferred to runtime");
 
-        // Generics: derleme zamanı tip parametresi
-        Console.WriteLine($"   Sum<int>(1,2) = {Sum(1, 2)}, Sum<double>(1.5,2.5) = {Sum(1.5, 2.5)}   (generic math, her tip için özelleştirilmiş kod)");
+        // Generics: compile-time type parameter
+        Console.WriteLine($"   Sum<int>(1,2) = {Sum(1, 2)}, Sum<double>(1.5,2.5) = {Sum(1.5, 2.5)}   (generic math, specialized code for each type)");
 
         // Operator overloading
         var total = new Money(10m) + new Money(5m);
-        Console.WriteLine($"   Money + Money = {total}   (operator + overload'ı da derleme zamanı çözümüdür)");
+        Console.WriteLine($"   Money + Money = {total}   (the + operator overload is also a compile-time resolution)");
 
-        Console.WriteLine("\nB) RUNTIME (dynamic / late binding) — hangi metodun çalışacağına ÇALIŞMA ZAMANI TİPİ karar verir");
+        Console.WriteLine("\nB) RUNTIME (dynamic / late binding) — the RUNTIME TYPE decides which method runs");
         Animal[] zoo = [new Animal(), new Dog(), new Cat()];
         foreach (var a in zoo)
-            Console.WriteLine($"   Animal referansı → {a.GetType().Name,-6}.Speak() = {a.Speak()}");
-        Console.WriteLine("   virtual/abstract + override: her nesne vtable (sanal metot tablosu) taşır; çağrı, nesnenin GERÇEK tipinin tablosundan çözülür.");
-        Console.WriteLine("   Maliyet: sanal çağrı = 1 ek dolaylama (indirection); sealed/non-virtual çağrılar JIT tarafından inline edilebilir.");
+            Console.WriteLine($"   Animal reference → {a.GetType().Name,-6}.Speak() = {a.Speak()}");
+        Console.WriteLine("   virtual/abstract + override: every object carries a vtable (virtual method table); the call is resolved from the table of the object's ACTUAL type.");
+        Console.WriteLine("   Cost: a virtual call = 1 extra indirection; sealed/non-virtual calls can be inlined by the JIT.");
     }
 
     private static string Print(int x) => $"int({x})";
@@ -43,6 +43,6 @@ public static class Section02_Polymorphism
     }
 
     private class Animal { public virtual string Speak() => "..."; }
-    private sealed class Dog : Animal { public override string Speak() => "Hav"; }
-    private sealed class Cat : Animal { public override string Speak() => "Miyav"; }
+    private sealed class Dog : Animal { public override string Speak() => "Woof"; }
+    private sealed class Cat : Animal { public override string Speak() => "Meow"; }
 }

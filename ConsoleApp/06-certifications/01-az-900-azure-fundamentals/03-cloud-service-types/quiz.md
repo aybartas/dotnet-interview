@@ -2,7 +2,7 @@
 
 > Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 15 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Ürün türünü doğrulamak için: `dotnet run -- C1.3 tur <ürün>`. Hedef: **≥ 12/15**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Ürün türünü doğrulamak için: `dotnet run -- C1.3 lookup <product>`. Hedef: **≥ 12/15**.
 
 ---
 

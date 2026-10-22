@@ -4,8 +4,8 @@ using System.Reflection.Emit;
 namespace Junior.BuildRunBasics.BigPicture;
 
 /// <summary>
-/// Minimal IL "disassembler": bir metodun IL baytlarını (MethodBody.GetILAsByteArray) opcode adlarına çevirir.
-/// ILSpy / ildasm / sharplab.io'nun yaptığının küçük bir özeti — IL'in YIĞIN (stack) tabanlı bir makine dili olduğunu görmek için.
+/// Minimal IL "disassembler": turns the IL bytes of a method (MethodBody.GetILAsByteArray) into opcode names.
+/// A tiny version of what ILSpy / ildasm / sharplab.io do — to see that IL is a STACK-based machine language.
 /// </summary>
 public static class IlDisassembler
 {
@@ -25,7 +25,7 @@ public static class IlDisassembler
         {
             var offset = i;
             var code = (short)il[i++];
-            if (code == 0xFE) code = unchecked((short)(0xFE00 | il[i++]));       // iki baytlık opcode
+            if (code == 0xFE) code = unchecked((short)(0xFE00 | il[i++]));       // two-byte opcode
             var op = Ops[code];
 
             string operand = op.OperandType switch
@@ -71,7 +71,7 @@ public static class IlDisassembler
     {
         var count = ReadInt(il, ref i);
         i += count * 4;
-        return $"({count} hedef)";
+        return $"({count} targets)";
     }
 
     private static string DescribeMethod(Module module, int token, Type[]? typeArgs)

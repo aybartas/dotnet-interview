@@ -8,7 +8,7 @@ namespace Junior.CSharpFundamentals.ModernCSharp.Comparison
 {
     public sealed class Facade7 : IOrderFacade
     {
-        public string StyleName { get { return "C# 7 tarzı"; } }
+        public string StyleName { get { return "C# 7 style"; } }
 
         private static Order Build(string tier, string name, string email, string city, IReadOnlyList<(string Product, int Qty, decimal Price)> lines, OrderStatus status)
         {
@@ -53,19 +53,19 @@ namespace Junior.CSharpFundamentals.ModernCSharp.Comparison
 
         public bool IdenticalOrdersAreEqual()
         {
-            var lines = new[] { ("Kalem", 2, 12.5m) };
-            return Build("Gold", "Ayşe", "a@x.com", "Ankara", lines, OrderStatus.Paid)
-                .Equals(Build("Gold", "Ayşe", "a@x.com", "Ankara", lines, OrderStatus.Paid));
+            var lines = new[] { ("Pen", 2, 12.5m) };
+            return Build("Gold", "Alice", "a@x.com", "London", lines, OrderStatus.Paid)
+                .Equals(Build("Gold", "Alice", "a@x.com", "London", lines, OrderStatus.Paid));
         }
 
         public string RenameIfPresent(bool customerExists, string newName)
         {
-            Customer customer = customerExists ? new Customer("eski", CustomerTier.Standard) : null;
+            Customer customer = customerExists ? new Customer("old", CustomerTier.Standard) : null;
             if (customer != null)
             {
                 customer.Name = newName;
             }
-            return customer != null ? customer.Name : "(müşteri yok)";
+            return customer != null ? customer.Name : "(no customer)";
         }
     }
 }

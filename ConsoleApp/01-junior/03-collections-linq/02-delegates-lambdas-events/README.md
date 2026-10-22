@@ -34,10 +34,10 @@
 ### 3.1 Delegate, `Func`/`Action`/`Predicate`, method group, multicast ([`Section01`](Sections/Section01_Delegates.cs))
 
 ```csharp
-delegate int BinaryOperation(int a, int b);     // delegate TİPİ = imza
-BinaryOperation op = Add;                        // method group → delegate dönüşümü
-Func<int,int,int> add = Add;                     // girdiler + DÖNÜŞ (son tip parametresi)
-Action<string> print = Console.WriteLine;        // dönüş yok
+delegate int BinaryOperation(int a, int b);     // delegate TYPE = signature
+BinaryOperation op = Add;                        // method group → delegate conversion
+Func<int,int,int> add = Add;                     // inputs + RETURN (the last type parameter)
+Action<string> print = Console.WriteLine;        // no return
 Predicate<int> isEven = n => n % 2 == 0;         // ≡ Func<int,bool>
 ```
 - Kendi delegate tipini nadiren yazarsınız; `Func<>` (dönüşlü) ve `Action<>` (void) yeterlidir.
@@ -64,15 +64,15 @@ Lambda hedef tipe göre bir **delegate**'e ya da **`Expression<TDelegate>`**'e d
 **Closure** = lambda + yakaladığı dış değişkenler. Lambda **değeri değil değişkenin kendisini** yakalar; değeri **çalıştığı anda** okur:
 
 ```csharp
-var message = "ilk"; Func<string> read = () => message; message = "sonra";
-read();   // "sonra"
+var message = "first"; Func<string> read = () => message; message = "later";
+read();   // "later"
 ```
 **Klasik tuzak (for döngüsü):**
 
 ```csharp
 var funcs = new List<Func<int>>();
-for (var i = 0; i < 3; i++) funcs.Add(() => i);     // 3 lambda AYNI 'i'yi yakalar
-funcs.Select(f => f());                             // 3, 3, 3   (beklenen 0,1,2)
+for (var i = 0; i < 3; i++) funcs.Add(() => i);     // all 3 lambdas capture the SAME 'i'
+funcs.Select(f => f());                             // 3, 3, 3   (expected 0,1,2)
 ```
 - **Çözüm:** döngü-yerel kopya: `var copy = i; funcs.Add(() => copy);` → `0,1,2`.
 - **`foreach`'te tuzak yoktur:** C# 5'ten beri `foreach` değişkeni **her iterasyonda yenidir**; `for` değişkeni ise **tektir**.

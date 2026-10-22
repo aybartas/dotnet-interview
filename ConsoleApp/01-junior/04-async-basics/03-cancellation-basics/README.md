@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-**Cancellation (iptal)**, çalışan bir işe "artık sonucuna ihtiyacım yok, bırak" demenin standart .NET yoludur: `CancellationTokenSource` iptali **tetikler**, `CancellationToken` iptali **gözler**. İptal **kooperatiftir**: kimse işi zorla öldürmez (`Thread.Abort` .NET Core'da yoktur); token'ı izleyen kod durur, izlemeyen devam eder. Konunun kodu [`Sections/`](Sections/) altında 4 bölümdür (`dotnet run -- J4.3 <numara>`).
+**Cancellation (iptal)**, çalışan bir işe "artık sonucuna ihtiyacım yok, bırak" demenin standart .NET yoludur: `CancellationTokenSource` iptali **tetikler**, `CancellationToken` iptali **gözler**. İptal **kooperatiftir**: kimse işi zorla öldürmez (`Thread.Abort` .NET Core'da yoktur); token'ı izleyen kod durur, izlemeyen devam eder. Konunun kodu [`Sections/`](Sections/) altında 4 bölümdür (`dotnet run -- J4.3 <number>`).
 
 ---
 
@@ -35,15 +35,15 @@
 
 ```csharp
 using var cts = new CancellationTokenSource();
-var work = DoWorkAsync(cts.Token);     // token'ı işe ver
-cts.Cancel();                          // iptal İSTE
+var work = DoWorkAsync(cts.Token);     // give the token to the work
+cts.Cancel();                          // REQUEST cancellation
 
 async Task DoWorkAsync(CancellationToken ct)
 {
     for (var i = 0; i < 20; i++)
     {
-        ct.ThrowIfCancellationRequested();   // iptal istendiyse OperationCanceledException fırlat
-        await Task.Delay(50, ct);            // token alan API'ye geçir
+        ct.ThrowIfCancellationRequested();   // throw OperationCanceledException if cancellation was requested
+        await Task.Delay(50, ct);            // pass it to the API that accepts a token
     }
 }
 ```
@@ -67,7 +67,7 @@ Task<string> LoadReportAsync(string name, int pageSize = 100, CancellationToken 
 - **`OperationCanceledException`** iptali temsil eder; hata değildir (log seviyesi Information/Debug; 500 üretmeyin). Yakalarken kapsamı daraltın:
 
 ```csharp
-catch (OperationCanceledException) when (ct.IsCancellationRequested) { /* bizim iptalimiz */ }
+catch (OperationCanceledException) when (ct.IsCancellationRequested) { /* our own cancellation */ }
 ```
 
 - **`CancelAfter(timeout)`**: süre dolunca otomatik iptal (zaman aşımı). Kullanıcı iptali ve zaman aşımını birleştirmek için `CancellationTokenSource.CreateLinkedTokenSource(a, b)`; hangisinin tetiklediği her iki CTS'in `IsCancellationRequested`'ına bakılarak ayırt edilir.
@@ -78,11 +78,11 @@ catch (OperationCanceledException) when (ct.IsCancellationRequested) { /* bizim 
 Yerel bir Kestrel API'sinde 10 adımlık (1500 ms) rapor üretimi iki endpoint'te:
 
 ```csharp
-// Minimal API: CancellationToken parametresi otomatik olarak HttpContext.RequestAborted'a bağlanır
+// Minimal API: a CancellationToken parameter is automatically bound to HttpContext.RequestAborted
 app.MapGet("/report", async (CancellationToken requestAborted) =>
     await GenerateReportAsync("/report", requestAborted));
 
-// Token'ı geçirmeyen sürüm — istemci gitse de iş sonuna kadar sürer
+// The version that does not pass the token — even if the client is gone, the work runs to the end
 app.MapGet("/report-ignores-token", (CancellationToken requestAborted) =>
     GenerateReportAsync("/report-ignores-token", CancellationToken.None));
 ```
@@ -90,11 +90,11 @@ app.MapGet("/report-ignores-token", (CancellationToken requestAborted) =>
 İstemci 400 ms sonra vazgeçip bağlantıyı kesiyor; sunucu günlüğü:
 
 ```
-[/report] adım 1/10
-[/report] adım 2/10
-[/report] İSTEMCİ KOPTU → RequestAborted tetiklendi, rapor üretimi DURDU
-[/report-ignores-token] adım 1/10 … adım 10/10
-[/report-ignores-token] rapor TAMAMLANDI (kimse beklemiyor olsa bile)
+[/report] step 1/10
+[/report] step 2/10
+[/report] CLIENT DISCONNECTED → RequestAborted fired, report generation STOPPED
+[/report-ignores-token] step 1/10 … step 10/10
+[/report-ignores-token] report COMPLETED (even though nobody is waiting)
 ```
 
 - İstemci bağlantıyı kesince Kestrel `HttpContext.RequestAborted` token'ını iptal eder; endpoint/controller action parametresi olarak `CancellationToken` almak yeterlidir.

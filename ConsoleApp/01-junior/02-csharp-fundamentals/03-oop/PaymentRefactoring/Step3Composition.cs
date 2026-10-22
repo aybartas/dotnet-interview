@@ -1,12 +1,12 @@
 namespace Junior.CSharpFundamentals.Oop.PaymentRefactoring.Step3;
 
 // ═════════════════════════════════════════════════════════════════════════════════════════
-// ADIM 3 — TAM COMPOSITION. Kalıtım hiyerarşisi KALMADI.
-//   Payment (tek, sealed sınıf) = IFeePolicy + IPaymentRule listesi + IPaymentSource
-//   • Doğrulamalar küçük, bağımsız KURALLAR (rule) → istenen kombinasyon listeye eklenerek kurulur
-//   • "Fraud + taksit" artık YENİ SINIF DEĞİL: aynı parçaları farklı birleştirmek (kopya yok)
-//   • Yeni boyut (3D Secure, kampanya) = yeni bir kural/politika SINIFI; mevcut sınıflara dokunulmaz (Open/Closed)
-//   • Her parça tek başına test edilebilir ve değiştirilebilir (düşük coupling, yüksek cohesion)
+// STEP 3 — FULL COMPOSITION. No inheritance hierarchy LEFT.
+//   Payment (a single, sealed class) = IFeePolicy + a list of IPaymentRule + IPaymentSource
+//   • Validations are small, independent RULES → the desired combination is built by adding to a list
+//   • "Fraud + installments" is no longer A NEW CLASS: it's combining the same parts differently (no copy)
+//   • A new dimension (3D Secure, campaign) = a new rule/policy CLASS; existing classes are not touched (Open/Closed)
+//   • Each part can be tested and replaced on its own (low coupling, high cohesion)
 // ═════════════════════════════════════════════════════════════════════════════════════════
 
 public interface IFeePolicy { decimal Calculate(decimal amount); }
@@ -19,7 +19,7 @@ public sealed class NoFee : IFeePolicy { public decimal Calculate(decimal amount
 
 public sealed class PositiveAmountRule : IPaymentRule
 {
-    public void Check(decimal amount) { if (amount <= 0) throw new PaymentRejectedException("Tutar pozitif olmalı"); }
+    public void Check(decimal amount) { if (amount <= 0) throw new PaymentRejectedException("Amount must be positive"); }
 }
 public sealed class MaxAmountRule(decimal limit, string reason) : IPaymentRule
 {
@@ -30,12 +30,12 @@ public sealed class IbanRule(string iban) : IPaymentRule
     public void Check(decimal amount)
     {
         if (iban is not { Length: 26 } || !iban.StartsWith("TR", StringComparison.Ordinal))
-            throw new PaymentRejectedException("Geçersiz IBAN");
+            throw new PaymentRejectedException("Invalid IBAN");
     }
 }
 public sealed class SufficientBalanceRule(WalletAccount wallet) : IPaymentRule
 {
-    public void Check(decimal amount) { if (amount > wallet.Balance) throw new PaymentRejectedException("Yetersiz bakiye"); }
+    public void Check(decimal amount) { if (amount > wallet.Balance) throw new PaymentRejectedException("Insufficient balance"); }
 }
 
 public sealed class NoSource : IPaymentSource { public void Charge(decimal total) { } }
@@ -57,13 +57,13 @@ public sealed class Payment(string method, IFeePolicy fee, IReadOnlyList<IPaymen
     }
 }
 
-/// <summary>Parçaları birleştiren fabrika: "hangi ödeme yöntemi" artık KONFİGÜRASYON, sınıf hiyerarşisi değil.</summary>
+/// <summary>The factory that assembles the parts: "which payment method" is now CONFIGURATION, not a class hierarchy.</summary>
 public static class PaymentFactory
 {
     public static Payment CreditCard(int installments = 1, bool fraudCheck = false)
     {
-        List<IPaymentRule> rules = [new PositiveAmountRule(), new MaxAmountRule(5000m, "Kart limiti aşıldı")];
-        if (fraudCheck) rules.Add(new MaxAmountRule(3000m, "Fraud şüphesi"));
+        List<IPaymentRule> rules = [new PositiveAmountRule(), new MaxAmountRule(5000m, "Card limit exceeded")];
+        if (fraudCheck) rules.Add(new MaxAmountRule(3000m, "Suspected fraud"));
         return new Payment("CreditCard", new PercentageFee(0.02m + 0.01m * (installments - 1)), rules, new NoSource());
     }
 
@@ -76,7 +76,7 @@ public static class PaymentFactory
 
 public sealed class Step3Scenarios : IPaymentScenarios
 {
-    public string StepName => "Adım 3 — tam composition";
+    public string StepName => "Step 3 — full composition";
     public PaymentResult PayCreditCard(decimal amount) => PaymentFactory.CreditCard().Pay(amount);
     public PaymentResult PayInstallmentCreditCard(decimal amount, int installments) => PaymentFactory.CreditCard(installments).Pay(amount);
     public PaymentResult PayFraudCheckedCreditCard(decimal amount) => PaymentFactory.CreditCard(fraudCheck: true).Pay(amount);

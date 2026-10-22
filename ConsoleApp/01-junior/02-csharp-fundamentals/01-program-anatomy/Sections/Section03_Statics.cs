@@ -4,40 +4,40 @@ public static class Section03_Statics
 {
     public static void Run()
     {
-        Console.WriteLine("static class: örneği OLUŞTURULAMAZ, yalnızca static üye taşır (Math, Path, Enumerable gibi).");
-        Console.WriteLine($"static üye   : {Counter.Next()}, {Counter.Next()}, {Counter.Next()}   (tüm çağıranlar AYNI durumu paylaşır → test edilebilirlik sorunu)");
+        Console.WriteLine("static class: CANNOT be instantiated, carries only static members (like Math, Path, Enumerable).");
+        Console.WriteLine($"static member: {Counter.Next()}, {Counter.Next()}, {Counter.Next()}   (all callers share the SAME state → testability problem)");
 
-        Console.WriteLine("\nstatic constructor ne zaman çalışır?");
-        Console.WriteLine("1) const'a erişim → static ctor TETİKLEMEZ (const derleme zamanında gömülür):");
+        Console.WriteLine("\nWhen does the static constructor run?");
+        Console.WriteLine("1) Accessing a const → does NOT trigger the static ctor (const is embedded at compile time):");
         Console.WriteLine($"   Settings.Version = {Settings.Version}");
-        Console.WriteLine("2) İlk static alan/metot/örnek erişiminde — HENÜZ tetiklenmedi, şimdi çağırıyoruz:");
+        Console.WriteLine("2) On the first access to a static field/method/instance — NOT triggered yet, we call it now:");
         Console.WriteLine($"   Settings.StartedAt = {Settings.StartedAt:HH:mm:ss}");
-        Console.WriteLine("3) İkinci erişimde tekrar çalışmaz (tip başına BİR KEZ, runtime thread-safe garanti eder):");
+        Console.WriteLine("3) It doesn't run again on the second access (ONCE per type, the runtime guarantees thread safety):");
         Console.WriteLine($"   Settings.StartedAt = {Settings.StartedAt:HH:mm:ss}");
 
-        Console.WriteLine("\nstatic ctor exception fırlatırsa tip KULLANILAMAZ olur (TypeInitializationException, her erişimde):");
+        Console.WriteLine("\nIf the static ctor throws an exception the type becomes UNUSABLE (TypeInitializationException, on every access):");
         for (var i = 1; i <= 2; i++)
         {
             try { _ = Broken.Value; }
-            catch (TypeInitializationException ex) { Console.WriteLine($"   deneme {i}: {ex.GetType().Name} → iç neden: {ex.InnerException!.Message}"); }
+            catch (TypeInitializationException ex) { Console.WriteLine($"   attempt {i}: {ex.GetType().Name} → inner cause: {ex.InnerException!.Message}"); }
         }
-        Console.WriteLine("(ne zaman/neden çalıştığının derin hali — beforefieldinit — → S1.2)");
+        Console.WriteLine("(the deep version of when/why it runs — beforefieldinit — → S1.2)");
     }
 
     private static class Counter
     {
-        private static int _value;                       // static alan: tip başına TEK kopya
+        private static int _value;                       // static field: ONE copy per type
         public static int Next() => ++_value;
     }
 
     private static class Settings
     {
-        public const string Version = "1.0";             // const → derleme zamanı sabiti, ctor tetiklemez
+        public const string Version = "1.0";             // const → compile-time constant, doesn't trigger the ctor
         public static readonly DateTime StartedAt;
 
-        static Settings()                                // static constructor: parametresiz, erişim belirleyicisiz, elle çağrılamaz
+        static Settings()                                // static constructor: parameterless, no access modifier, can't be called by hand
         {
-            Console.WriteLine("   >> Settings static constructor ÇALIŞTI");
+            Console.WriteLine("   >> Settings static constructor RAN");
             StartedAt = DateTime.Now;
         }
     }
@@ -45,6 +45,6 @@ public static class Section03_Statics
     private static class Broken
     {
         public static readonly int Value = 1;
-        static Broken() => throw new InvalidOperationException("başlatma başarısız");
+        static Broken() => throw new InvalidOperationException("initialization failed");
     }
 }

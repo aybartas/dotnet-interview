@@ -34,10 +34,10 @@
 ### 3.1 `try` / `catch` / `finally`, `using`
 
 ```csharp
-try        { /* riskli iş */ }
-catch (FormatException ex)  { /* bu tipe özel */ }          // yukarıdan aşağı İLK eşleşen
-catch (Exception ex)        { /* genel (en sona) */ }        // özelden genele yazılır (aksi CS0160)
-finally    { /* HER ZAMAN çalışır: temizlik */ }
+try        { /* risky work */ }
+catch (FormatException ex)  { /* specific to this type */ }   // top to bottom, the FIRST match wins
+catch (Exception ex)        { /* general (last) */ }          // write from specific to general (otherwise CS0160)
+finally    { /* ALWAYS runs: cleanup */ }
 ```
 - `finally` hata olsa da olmasa da, hatta `return`'den sonra bile çalışır ([`Section01`](Sections/Section01_TryCatchFinally.cs)). İçine `return`/`throw` koymayın: bekleyen exception'ı **yutar veya ezer**.
 - **`using` / `await using`** = `IDisposable`/`IAsyncDisposable` için `try/finally` şekerlemesi: exception olsa da kaynak bırakılır, catch'ten **önce** Dispose çalışır.
@@ -51,7 +51,7 @@ Exception
 ├─ InvalidOperationException ─ ObjectDisposedException
 ├─ NotSupportedException · NotImplementedException
 ├─ IOException ─ FileNotFoundException, DirectoryNotFoundException
-└─ (kendi domain exception'larınız)
+└─ (your own domain exceptions)
 ```
 **Önce hazır tipi seç:** `ArgumentNullException` (argüman null, `ThrowIfNull`), `ArgumentOutOfRangeException`, `InvalidOperationException` (nesne *bu durumda* bu işlemi yapamaz), `NotSupportedException` (işlem hiç desteklenmiyor).
 
@@ -67,8 +67,8 @@ Filter doğruysa catch devreye girer; yanlışsa exception yakalanmamış gibi y
 ### 3.4 `throw` vs `throw ex` ⭐
 
 ```csharp
-catch (Exception ex) { throw;    }   // ✓ orijinal stack trace KORUNUR
-catch (Exception ex) { throw ex; }   // ✗ stack trace burada SIFIRLANIR
+catch (Exception ex) { throw;    }   // ✓ the original stack trace is PRESERVED
+catch (Exception ex) { throw ex; }   // ✗ the stack trace is RESET here
 ```
 Deney ([`Section04`](Sections/Section04_ThrowVsThrowEx.cs)): zincir `Entry → Middle → ThrowSite`.
 
@@ -147,7 +147,7 @@ Sık sorulanlar: **`throw` vs `throw ex`** ⭐ · `catch (Exception)` ne zaman m
 | Kontrol akışı için exception | `TryParse`, `TryGetValue`, `Result` |
 | Her yerde `catch (Exception)` | Yalnızca sınırlarda |
 | Mesajı string olarak ayrıştırmak | Custom exception + property |
-| `ex.Message` loglayıp stack'i atmak | `LogError(ex, "bağlam")` — exception nesnesini ver |
+| `ex.Message` loglayıp stack'i atmak | `LogError(ex, "context")` — exception nesnesini ver |
 | `finally` içinde `return`/`throw` | Yalnızca temizlik |
 | Yeni exception fırlatırken `innerException`'ı atlamak | `new X("…", ex)` |
 | `ApplicationException`'dan türetmek | `Exception`'dan (veya anlamlı alt tipten) |

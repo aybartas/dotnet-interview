@@ -1,38 +1,40 @@
+using System.Globalization;
 using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.CostManagement;
 
-/// <summary>Maliyet faktörleri; her birine örnek bir etki. Rakamlar ÖRNEKTİR.</summary>
+/// <summary>Cost factors; an example effect for each. The numbers are EXAMPLES.</summary>
 public static class Section01_CostFactors
 {
     public static void Run()
     {
-        Table.Print(["Faktör", "Ne değiştirir?", "Örnek etki (örnek fiyatlar)"],
+        var inv = CultureInfo.InvariantCulture;
+        Table.Print(["Factor", "What it changes", "Example effect (example prices)"],
         [
-            ["Kaynak türü ve ayarları", "SKU, boyut, tier, redundancy", "Aynı VM ailesinde 2 → 8 vCPU ≈ 4× fiyat; LRS → GZRS depolama ≈ 2×"],
-            ["Tüketim modeli", "Pay-as-you-go ↔ reservation/savings plan", "7/24 VM: 3 yıl reservation ile ~%50-60 daha ucuz"],
-            ["Bakım (unutulanlar)", "Kullanılmayan kaynaklar faturada kalır", "VM silindi ama disk + public IP kaldı → her ay ücret"],
-            ["Coğrafya / bölge", "Aynı servisin bölgeye göre fiyatı", "Aynı VM boyutu iki bölgede %10-20 farklı olabilir"],
-            ["Ağ trafiği", "Gelen (ingress) çoğunlukla ücretsiz; giden (egress) ücretli", "Bölgeler/zone'lar arası ve internete çıkan trafik GB başına ücretli"],
-            ["Subscription türü", "Free/kredi, pay-as-you-go, EA, CSP", "Ücretsiz hesap kredisi; kurumsal sözleşmede indirim"],
-            ["Azure Marketplace", "Üçüncü taraf ürünler", "Marketplace imajı: Azure ücreti + satıcının yazılım ücreti"],
+            ["Resource type and settings", "SKU, size, tier, redundancy", "In the same VM family 2 → 8 vCPU ≈ 4x the price; LRS → GZRS storage ≈ 2x"],
+            ["Consumption model", "Pay-as-you-go ↔ reservation/savings plan", "24/7 VM: ~50-60% cheaper with a 3-year reservation"],
+            ["Maintenance (forgotten things)", "Unused resources stay on the bill", "VM deleted but disk + public IP remain → charged every month"],
+            ["Geography / region", "The price of the same service by region", "The same VM size can differ 10-20% between two regions"],
+            ["Network traffic", "Inbound (ingress) mostly free; outbound (egress) charged", "Traffic between regions/zones and out to the internet is charged per GB"],
+            ["Subscription type", "Free/credit, pay-as-you-go, EA, CSP", "Free account credit; discounts under an enterprise agreement"],
+            ["Azure Marketplace", "Third-party products", "Marketplace image: Azure charge + the vendor's software charge"],
         ]);
 
-        // Egress hesabı: aynı veriyi kullanıcılara servis etmek
-        const decimal egressPerGb = 0.08m;   // örnek: internete çıkış, ilk kademe
-        const int freeGb = 100;              // örnek: aylık ücretsiz çıkış kotası
+        // Egress calculation: serving the same data to users
+        const decimal egressPerGb = 0.08m;   // example: egress to the internet, first tier
+        const int freeGb = 100;              // example: monthly free egress allowance
         int[] monthlyGb = [50, 1_000, 20_000];
-        Console.WriteLine("\nAğ çıkışı (egress) örneği — internete servis edilen veri:\n");
-        Table.Print(["Aylık çıkış", "Ücretli kısım", "Aylık egress (örnek)"],
+        Console.WriteLine("\nNetwork egress example — data served to the internet:\n");
+        Table.Print(["Monthly egress", "Billable part", "Monthly egress cost (example)"],
             monthlyGb.Select(gb => (IReadOnlyList<string>)
             [
-                $"{gb:N0} GB", $"{Math.Max(0, gb - freeGb):N0} GB", $"{Math.Max(0, gb - freeGb) * egressPerGb:N2} $",
+                $"{gb.ToString("N0", inv)} GB", $"{Math.Max(0, gb - freeGb).ToString("N0", inv)} GB", $"{(Math.Max(0, gb - freeGb) * egressPerGb).ToString("N2", inv)} $",
             ]));
 
         Console.WriteLine("""
 
-        Sınav kuralları: gelen veri (ingress) genellikle ücretsiz, giden veri (egress) ücretli; fiyat bölgeye göre değişir;
-        VM'i silmek bağlı disk/IP'yi otomatik silmeyebilir — resource group'u silmek hepsini temizler (→ C1.4).
+        Exam rules: inbound data (ingress) is generally free, outbound data (egress) is charged; the price varies by region;
+        deleting a VM may not automatically delete the attached disk/IP — deleting the resource group cleans up everything (→ C1.4).
         """);
     }
 }

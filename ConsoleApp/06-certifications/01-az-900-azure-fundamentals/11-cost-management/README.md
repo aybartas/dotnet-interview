@@ -32,8 +32,8 @@ Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, or
 Kod: `ConsoleApp` projesinde [`Sections/`](Sections/) altında 4 bölüm ve bir **3 yıllık TCO hesaplayıcısı** ([`TcoCalculator.cs`](TcoCalculator.cs)). `ConsoleApp` klasöründe:
 
 ```bash
-dotnet run -- C1.11 all          # tüm bölümler
-dotnet run -- C1.11 tco 20       # 20 sunucu için 3 yıllık CapEx (on-prem) vs OpEx (Azure) karşılaştırması
+dotnet run -- C1.11 all          # all sections
+dotnet run -- C1.11 tco 20       # 3-year CapEx (on-prem) vs OpEx (Azure) comparison for 20 servers
 ```
 
 > Koddaki tüm fiyatlar **örnektir**; amaç maliyet kalemlerinin **yapısını** görmek, gerçek teklif çıkarmak değil.
@@ -110,7 +110,7 @@ Azure (ve bağlanırsa AWS) harcamasını **izleme, analiz etme ve optimize etme
 
 ### 3.4 Resource tags ⭐ ([`Section04`](Sections/Section04_Tags.cs))
 
-**Tag** = kaynağa, resource group'a veya subscription'a eklenen **anahtar-değer** meta verisi: `env=prod`, `costCenter=1001`, `owner=ayse`, `project=eticaret`.
+**Tag** = kaynağa, resource group'a veya subscription'a eklenen **anahtar-değer** meta verisi: `env=prod`, `costCenter=1001`, `owner=alice`, `project=ecommerce`.
 
 | Kullanım | Örnek |
 |---|---|
@@ -121,7 +121,7 @@ Azure (ve bağlanırsa AWS) harcamasını **izleme, analiz etme ve optimize etme
 | Uyumluluk/yönetişim | `owner` tag'i olmayan kaynağa izin verme (Policy) |
 
 **Kurallar:**
-- Tag'ler **varsayılan olarak miras alınmaz**: resource group'un `costCenter=1001` tag'i içerideki kaynağa **geçmez**. `Section04`'te tag'i unutulmuş iki kaynağın maliyeti raporda **"(tag yok)"** satırına düşer.
+- Tag'ler **varsayılan olarak miras alınmaz**: resource group'un `costCenter=1001` tag'i içerideki kaynağa **geçmez**. `Section04`'te tag'i unutulmuş iki kaynağın maliyeti raporda **"(no tag)"** satırına düşer.
 - Mirası ve zorunluluğu **Azure Policy** sağlar: *Require a tag on resources* (**Deny** — tag'siz kaynak oluşturulamaz), *Inherit a tag from the resource group if missing* (**Modify** — eksik tag'i gruptan kopyalar; mevcut kaynaklar için **remediation**) (→ C1.12).
 - *(bağlam)* Cost Management'ın **tag inheritance** ayarı, subscription/RG tag'lerini kaynakların kendisine değil yalnızca **maliyet kayıtlarına** uygular — raporlama için bir kolaylıktır; kaynak üzerindeki tag'ler yine değişmez. Sınavdaki "kaynak, RG'nin tag'lerini devralır mı?" sorusunun cevabı **Hayır**'dır.
 - Tag'ler portal, CLI, PowerShell, ARM/Bicep ile eklenir; her kaynak türü tag desteklemez ve kaynak başına tag sayısı sınırlıdır *(bağlam: 50)*.
@@ -132,34 +132,34 @@ Bütçe ve tag işlemleri **ücretsizdir**; laboratuvarda yalnızca boş resourc
 
 ```bash
 RG=rg-az900-c111
-az group create --name $RG --location westeurope --tags env=dev costCenter=1001 owner=ayse
+az group create --name $RG --location westeurope --tags env=dev costCenter=1001 owner=alice
 
-# 1) Bütçe: aylık 20 birim (start-date ayın ilk günü olmalı) — e-posta eşikleri bütçe ekranından/REST API ile eklenir
-az consumption budget create --budget-name c111-aylik \
+# 1) Budget: 20 units per month (start-date must be the first day of a month) — email thresholds are added from the budget screen / REST API
+az consumption budget create --budget-name c111-monthly \
   --amount 20 --category cost --time-grain monthly \
   --start-date 2026-11-01 --end-date 2027-10-31
 az consumption budget list -o table
 
-# 2) Tag: grubun tag'i kaynağa geçiyor mu? (F1 = ücretsiz plan)
+# 2) Tag: does the group's tag pass down to the resource? (F1 = free plan)
 az appservice plan create --resource-group $RG --name plan-c111 --sku F1 --is-linux
-az resource list --resource-group $RG --query "[].{ad:name, tags:tags}" -o json     # plan'ın tag'i yok!
+az resource list --resource-group $RG --query "[].{name:name, tags:tags}" -o json     # the plan has no tags!
 PLAN_ID=$(az appservice plan show --resource-group $RG --name plan-c111 --query id -o tsv)
-az tag update --resource-id $PLAN_ID --operation Merge --tags costCenter=1001 env=dev   # Merge: mevcutları korur
-az resource list --tag costCenter=1001 -o table                                     # tag ile arama
+az tag update --resource-id $PLAN_ID --operation Merge --tags costCenter=1001 env=dev   # Merge: keeps the existing ones
+az resource list --tag costCenter=1001 -o table                                       # search by tag
 
-# 3) Bölgeye göre fiyat farkı — herkese açık Retail Prices API (kimlik doğrulama gerekmez)
+# 3) Price difference by region — public Retail Prices API (no authentication needed)
 curl -s "https://prices.azure.com/api/retail/prices?\$filter=serviceName%20eq%20'Virtual%20Machines'%20and%20armSkuName%20eq%20'Standard_D2s_v5'%20and%20priceType%20eq%20'Consumption'" \
-  | jq -r '.Items[] | select(.productName | test("Windows") | not) | select(.skuName | test("Spot|Low") | not) | "\(.armRegionName)\t\(.retailPrice) \(.currencyCode)/saat"' \
+  | jq -r '.Items[] | select(.productName | test("Windows") | not) | select(.skuName | test("Spot|Low") | not) | "\(.armRegionName)\t\(.retailPrice) \(.currencyCode)/hour"' \
   | sort -t$'\t' -k2 -n | head -15
 
-# 4) Maliyet önerileri ve gerçekleşen kullanım
+# 4) Cost recommendations and actual usage
 az advisor recommendation list --category Cost -o table
 az consumption usage list --start-date 2026-10-01 --end-date 2026-10-21 \
-  --query "[].{kaynak:instanceName, tutar:pretaxCost, para:currency}" -o table
+  --query "[].{resource:instanceName, amount:pretaxCost, currency:currency}" -o table
 
-# 5) Temizlik (bütçe resource group'a değil subscription'a bağlı — ayrıca sil)
+# 5) Cleanup (the budget is tied to the subscription, not the resource group — delete it separately)
 az group delete --name $RG --yes --no-wait
-az consumption budget delete --budget-name c111-aylik
+az consumption budget delete --budget-name c111-monthly
 ```
 
 > **Alıştırma — Pricing Calculator.** Küçük bir web uygulaması için (West Europe): App Service **B1** (1 instance, 730 saat) + Azure SQL Database (en küçük DTU/vCore katmanı) + Storage (Standard LRS, 50 GB Hot). (a) Aylık tahmini toplamı çıkar. (b) Aynı tahmini başka bir bölge için tekrarla — fark var mı? (c) App Service için 1 yıllık reservation/savings plan seçeneği tahmini nasıl değiştiriyor?
@@ -177,7 +177,7 @@ az consumption budget delete --budget-name c111-aylik
 
 Bir e-ticaret şirketinin bulut faturası üç ayda %60 artmış; FinOps ekibi şu adımları atıyor:
 
-1. **Görünürlük:** Cost analysis'te maliyet **resource group** ve **tag** bazında gruplanıyor. Faturanın %18'i "(tag yok)" satırında → Azure Policy ile `costCenter` ve `env` tag'leri **zorunlu** kılınıyor (Deny) ve mevcut kaynaklara gruptan **kopyalanıyor** (Modify + remediation).
+1. **Görünürlük:** Cost analysis'te maliyet **resource group** ve **tag** bazında gruplanıyor. Faturanın %18'i "(no tag)" satırında → Azure Policy ile `costCenter` ve `env` tag'leri **zorunlu** kılınıyor (Deny) ve mevcut kaynaklara gruptan **kopyalanıyor** (Modify + remediation).
 2. **Bütçe:** Her ekibin aboneliğine aylık budget; %80 tahmini harcamada ekip lideri, %100'de finans e-postası; dev aboneliğinde %100 uyarısı bir **action group** üzerinden dev VM'lerini kapatan bir otomasyonu tetikliyor.
 3. **Bakım:** Advisor; 40 az kullanılan VM, 120 sahipsiz disk ve 30 kullanılmayan public IP buluyor → küçültme ve silme.
 4. **Tüketim modeli:** Üretimdeki 7/24 veritabanı ve web katmanı için 3 yıllık reservation; Windows sunucularında **Azure Hybrid Benefit**; gece çalışan raporlama işleri **spot VM**'lere.

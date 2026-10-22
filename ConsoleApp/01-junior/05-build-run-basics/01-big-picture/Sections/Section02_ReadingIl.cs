@@ -6,21 +6,21 @@ public static class Section02_ReadingIl
 {
     public static void Run()
     {
-        Console.WriteLine("IL = yığın (stack) tabanlı, platformdan bağımsız ara dil. 'a + b' için: iki değeri yığına koy, topla, sonucu döndür.\n");
+        Console.WriteLine("IL = a stack-based, platform-independent intermediate language. For 'a + b': push two values onto the stack, add, return the result.\n");
         Show(nameof(Samples.Add), "public static int Add(int a, int b) => a + b;");
-        Show(nameof(Samples.SumArray), "foreach (var item in items) sum += item;   // dizi üzerinde: IL'de foreach YOK, indeksli döngü var");
-        Show(nameof(Samples.SumList), "foreach (var item in items) sum += item;   // List<T> üzerinde: GetEnumerator/MoveNext/Current + try/finally");
+        Show(nameof(Samples.SumArray), "foreach (var item in items) sum += item;   // over an array: there is NO foreach in IL, just an indexed loop");
+        Show(nameof(Samples.SumList), "foreach (var item in items) sum += item;   // over a List<T>: GetEnumerator/MoveNext/Current + try/finally");
         Show(nameof(Samples.ReadFirstLine), "using var reader = new StreamReader(path); ...  // using: try/finally + Dispose");
-        Show(nameof(Samples.Greet), "$\"Merhaba {name}, {count}\"   // interpolation: DefaultInterpolatedStringHandler çağrıları");
+        Show(nameof(Samples.Greet), "$\"Hello {name}, {count}\"   // interpolation: DefaultInterpolatedStringHandler calls");
 
         Console.WriteLine("""
 
-        Çıkarımlar:
-          • İlk/son satırlar: ldarg = argümanı yığına koy, ldloc/stloc = yerel değişken, add/ret = topla/döndür, call/callvirt = metot çağrısı,
-            br/blt/brtrue = dallanma (if/for/while hepsi bunlara iner).
-          • 'foreach' ve 'using' bir DİL özelliğidir — IL'de karşılığı vardır ama 'foreach'/'using' diye bir komut yoktur (→ 6. bölüm).
-          • Gerçek araçlar: ILSpy (.dll'i C#/IL olarak açar), ildasm, dotnet-ildasm, sharplab.io (yazdığın C#'ın IL'ini ve 'lowered' C#'ını canlı gösterir).
-            Deneyin: bin/Debug/net10.0/ConsoleApp.dll dosyasını ILSpy'de açıp BigPicture → Samples sınıfına bakın.
+        Takeaways:
+          • First/last lines: ldarg = push argument onto the stack, ldloc/stloc = local variable, add/ret = add/return, call/callvirt = method call,
+            br/blt/brtrue = branching (if/for/while all lower to these).
+          • 'foreach' and 'using' are a LANGUAGE feature — IL has an equivalent, but no 'foreach'/'using' instruction (→ section 6).
+          • Real tools: ILSpy (opens a .dll as C#/IL), ildasm, dotnet-ildasm, sharplab.io (shows the IL and the 'lowered' C# of your code live).
+            Try it: open bin/Debug/net10.0/ConsoleApp.dll in ILSpy and look at BigPicture → the Samples class.
         """);
     }
 

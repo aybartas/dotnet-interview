@@ -3,18 +3,18 @@ namespace Junior.DevFoundations.IdeDebugging.Exercises;
 public sealed class Exercise08_SharedReference : Exercise
 {
     public override int Number => 8;
-    public override string Title => "Aynı nesneyi paylaşan iki 'farklı' kullanıcı";
-    public override string Skill => "Make Object ID: iki değişkenin aynı referansı gösterdiğini kanıtlamak";
-    public override string Hint => "Watch penceresinde 'aliGuest' ve 'veliGuest' → sağ tık → Make Object ID. İkisi de $1 ise aynı nesnedir. Liste nerede oluşuyor?";
+    public override string Title => "Two 'different' users sharing the same object";
+    public override string Skill => "Make Object ID: proving that two variables point to the same reference";
+    public override string Hint => "In the Watch window, 'aliceGuest' and 'bobGuest' → right-click → Make Object ID. If both are $1, they are the same object. Where is the list created?";
 
     public override void Run()
     {
-        var aliGuest = Permissions.For("guest");
-        var veliGuest = Permissions.For("guest");
+        var aliceGuest = Permissions.For("guest");
+        var bobGuest = Permissions.For("guest");
 
-        aliGuest.Add("write");                         // sadece Ali'ye yazma yetkisi vermek istedik
+        aliceGuest.Add("write");                         // we only meant to give Alice write permission
 
-        Report("Veli'nin yetkileri", expected: "read", actual: string.Join(",", veliGuest));
+        Report("Bob's permissions", expected: "read", actual: string.Join(",", bobGuest));
     }
 
     private static class Permissions
@@ -23,8 +23,8 @@ public sealed class Exercise08_SharedReference : Exercise
 
         public static List<string> For(string role) => role switch
         {
-            "admin" => ["read", "write", "delete"],     // her çağrıda YENİ liste
-            _ => GuestDefaults,                         // her çağrıda AYNI liste
+            "admin" => ["read", "write", "delete"],     // a NEW list on every call
+            _ => GuestDefaults,                         // the SAME list on every call
         };
     }
 }

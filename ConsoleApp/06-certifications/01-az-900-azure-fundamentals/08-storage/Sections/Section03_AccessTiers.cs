@@ -1,10 +1,11 @@
+using System.Globalization;
 using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.Storage;
 
 /// <summary>
-/// Access tier'ları: depolama ucuzladıkça erişim pahalılaşır. Fiyatlar ÖRNEKTİR (oranlar gerçeğe yakın, rakamlar değil);
-/// güncel fiyat için Pricing Calculator.
+/// Access tiers: the cheaper the storage, the more expensive the access. Prices are EXAMPLES (the ratios are close to reality, the numbers are not);
+/// see the Pricing Calculator for current prices.
 /// </summary>
 public static class Section03_AccessTiers
 {
@@ -12,43 +13,44 @@ public static class Section03_AccessTiers
 
     private static readonly Tier[] Tiers =
     [
-        new("Hot",     "Sık erişilen veri",                  0,   "milisaniye", 0.020m, 0.005m),
-        new("Cool",    "Seyrek erişim, en az 30 gün",        30,  "milisaniye", 0.010m, 0.010m),
-        new("Cold",    "Nadir erişim, en az 90 gün",         90,  "milisaniye", 0.004m, 0.100m),
-        new("Archive", "Çok nadir, en az 180 gün, ÇEVRİMDIŞI", 180, "saatler (rehydrate)", 0.001m, 5.000m),
+        new("Hot",     "Frequently accessed data",              0,   "milliseconds", 0.020m, 0.005m),
+        new("Cool",    "Infrequent access, at least 30 days",   30,  "milliseconds", 0.010m, 0.010m),
+        new("Cold",    "Rare access, at least 90 days",         90,  "milliseconds", 0.004m, 0.100m),
+        new("Archive", "Very rare, at least 180 days, OFFLINE", 180, "hours (rehydrate)", 0.001m, 5.000m),
     ];
 
     public static void Run()
     {
-        Table.Print(["Tier", "Kullanım", "Önerilen en az süre", "İlk byte", "Depolama $/GB-ay*", "10.000 okuma $*"],
+        var inv = CultureInfo.InvariantCulture;
+        Table.Print(["Tier", "Use", "Recommended minimum duration", "First byte", "Storage $/GB-month*", "10,000 reads $*"],
             Tiers.Select(t => (IReadOnlyList<string>)
             [
-                t.Name, t.Use, t.MinDays == 0 ? "—" : $"{t.MinDays} gün", t.FirstByte,
-                t.StoragePerGbMonth.ToString("0.000"), t.ReadPer10k.ToString("0.000"),
+                t.Name, t.Use, t.MinDays == 0 ? "—" : $"{t.MinDays} days", t.FirstByte,
+                t.StoragePerGbMonth.ToString("0.000", inv), t.ReadPer10k.ToString("0.000", inv),
             ]));
 
-        const int sizeGb = 1_000;            // 1 TB yedek
+        const int sizeGb = 1_000;            // 1 TB of backups
         long[] readsPerMonth = [1_000, 1_000_000, 100_000_000];
-        Console.WriteLine($"\n{sizeGb:N0} GB veri için aylık örnek maliyet (depolama + okuma işlemi; veri çıkışı/rehydrate ücreti hariç):\n");
-        Table.Print(["Aylık okuma", .. Tiers.Select(t => t.Name), "En ucuz"],
+        Console.WriteLine($"\nExample monthly cost for {sizeGb.ToString("N0", inv)} GB of data (storage + read operations; data egress/rehydrate charges excluded):\n");
+        Table.Print(["Monthly reads", .. Tiers.Select(t => t.Name), "Cheapest"],
             readsPerMonth.Select(reads =>
             {
                 var costs = Tiers.Select(t => sizeGb * t.StoragePerGbMonth + reads / 10_000m * t.ReadPer10k).ToArray();
                 var cheapest = Tiers[Array.IndexOf(costs, costs.Min())].Name;
-                return (IReadOnlyList<string>)[reads.ToString("N0"), .. costs.Select(c => $"{c:0.00} $"), cheapest];
+                return (IReadOnlyList<string>)[reads.ToString("N0", inv), .. costs.Select(c => c.ToString("0.00", inv) + " $"), cheapest];
             }));
 
         Console.WriteLine("""
 
-        * Örnek fiyatlar. Asıl ders: depolama ucuzladıkça ERİŞİM pahalılaşır — sık okunan veriyi Archive'a koymak pahalıdır.
-          (Archive'da her okuma ayrıca rehydrate gerektirir; tablodaki okuma maliyeti bunu basitleştirir.)
+        * Example prices. The real lesson: the cheaper the storage, the more expensive the ACCESS — putting frequently read data in Archive is expensive.
+          (In Archive every read also needs a rehydrate; the read cost in the table simplifies this.)
 
-        Kurallar:
-          • Archive ÇEVRİMDIŞIDIR: blob okunmadan önce Hot/Cool/Cold'a "rehydrate" edilmelidir — standart öncelikte
-            saatler sürebilir (yüksek öncelik daha hızlı, daha pahalı).
-          • Cool/Cold/Archive'da en az süre dolmadan silmek veya tier değiştirmek "erken silme" ücreti doğurur.
-          • Tier blob düzeyinde ayarlanır; hesap düzeyinde bir varsayılan tier seçilir — Archive varsayılan olamaz.
-          • Lifecycle management kuralları: "30 gün dokunulmayan blob → Cool, 180 gün → Archive" gibi otomatik geçişler.
+        Rules:
+          • Archive is OFFLINE: a blob must be "rehydrated" to Hot/Cool/Cold before it can be read — with standard priority
+            it can take hours (high priority is faster, more expensive).
+          • Deleting or changing the tier of Cool/Cold/Archive data before the minimum duration is up incurs an "early deletion" charge.
+          • The tier is set at the blob level; a default tier is chosen at the account level — Archive cannot be the default.
+          • Lifecycle management rules: automatic transitions such as "blob untouched for 30 days → Cool, 180 days → Archive".
         """);
     }
 }

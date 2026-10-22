@@ -6,37 +6,37 @@ public static class Section08_VarDynamicObject
 {
     public static void Run()
     {
-        Console.WriteLine("var     → DERLEME ZAMANI çıkarım. Hâlâ güçlü tipli! (dinamik değil)");
-        var x = 5;                       // derleyici 'int' çıkardı; IL'de 'var' diye bir şey yok
+        Console.WriteLine("var     → COMPILE-TIME inference. Still strongly typed! (not dynamic)");
+        var x = 5;                       // the compiler inferred 'int'; there is no such thing as 'var' in IL
         var list = new List<string>();
         Console.WriteLine($"   var x = 5 → {x.GetType().Name};   var list → {list.GetType().Name}");
-        // x = "metin";                  // ✗ CS0029: string → int dönüşümü yok (var değişkenin tipi SABİTTİR)
-        var anon = new { Ad = "Ayşe", Yas = 30 };
-        Console.WriteLine($"   anonim tip için 'var' ZORUNLUDUR: {anon}  → {anon.GetType().Name}");
+        // x = "text";                   // ✗ CS0029: no conversion from string to int (the type of a var variable is FIXED)
+        var anon = new { Name = "Alice", Age = 30 };
+        Console.WriteLine($"   'var' is REQUIRED for an anonymous type: {anon}  → {anon.GetType().Name}");
 
-        Console.WriteLine("\nobject  → HER ŞEY; ama üyelere erişmek için CAST gerekir, value type için BOXING olur");
-        object o = "merhaba";
-        // Console.WriteLine(o.Length);  // ✗ CS1061: object'in Length'i yok
-        Console.WriteLine($"   ((string)o).Length = {((string)o).Length}   — derleme zamanı güvenliği korunur, yanlış cast çalışma zamanında patlar");
+        Console.WriteLine("\nobject  → EVERYTHING; but accessing members needs a CAST, and value types get BOXED");
+        object o = "hello";
+        // Console.WriteLine(o.Length);  // ✗ CS1061: object has no Length
+        Console.WriteLine($"   ((string)o).Length = {((string)o).Length}   — compile-time safety is preserved, a wrong cast blows up at run time");
 
-        Console.WriteLine("\ndynamic → ÇALIŞMA ZAMANINDA binding; derleyici denetlemez, hata çalışırken çıkar");
-        dynamic d = "merhaba";
-        Console.WriteLine($"   d.Length = {d.Length}  (çalışma zamanında çözüldü)");
-        try { Console.WriteLine(d.Olmayan); }
-        catch (RuntimeBinderException ex) { Console.WriteLine($"   d.Olmayan → {ex.GetType().Name}: {ex.Message}"); }
-        d = 42;                          // dynamic değişken tip değiştirebilir
+        Console.WriteLine("\ndynamic → binding at RUN TIME; the compiler doesn't check, errors appear while running");
+        dynamic d = "hello";
+        Console.WriteLine($"   d.Length = {d.Length}  (resolved at run time)");
+        try { Console.WriteLine(d.Missing); }
+        catch (RuntimeBinderException ex) { Console.WriteLine($"   d.Missing → {ex.GetType().Name}: {ex.Message}"); }
+        d = 42;                          // a dynamic variable can change type
         Console.WriteLine($"   d = 42 → d + 1 = {d + 1}");
 
         Console.WriteLine("""
 
-        ┌─────────┬──────────────────────┬───────────────────────────┬──────────────────────────────────────┐
-        │         │ Tip ne zaman belli?  │ Hata ne zaman çıkar?      │ Kullanım                             │
-        ├─────────┼──────────────────────┼───────────────────────────┼──────────────────────────────────────┤
-        │ var     │ derleme zamanı       │ derleme zamanı            │ Günlük kod (tip sağda belirgin ise)  │
-        │ object  │ derleme zamanı=object│ cast anında (çalışırken)  │ Gerçekten "her şey" — genelde generic daha iyi │
-        │ dynamic │ ÇALIŞMA ZAMANI       │ çalışırken                │ COM/Office interop, JSON gibi şemasız veri, nadiren │
-        └─────────┴──────────────────────┴───────────────────────────┴──────────────────────────────────────┘
-        dynamic: IntelliSense yok, derleme güvenliği yok, ilk çağrıda binder maliyeti var. Yeni kodda kaçının.
+        ┌─────────┬────────────────────────┬────────────────────────────┬────────────────────────────────────────────────────────┐
+        │         │ Type known when?       │ Error appears when?        │ Usage                                                  │
+        ├─────────┼────────────────────────┼────────────────────────────┼────────────────────────────────────────────────────────┤
+        │ var     │ compile time           │ compile time               │ Everyday code (type obvious on the right)              │
+        │ object  │ compile time = object  │ at cast time (run time)    │ Truly "anything" — generics are usually better         │
+        │ dynamic │ RUN TIME               │ while running              │ COM/Office interop, schemaless data like JSON, rarely  │
+        └─────────┴────────────────────────┴────────────────────────────┴────────────────────────────────────────────────────────┘
+        dynamic: no IntelliSense, no compile-time safety, binder cost on the first call. Avoid it in new code.
         """);
     }
 }

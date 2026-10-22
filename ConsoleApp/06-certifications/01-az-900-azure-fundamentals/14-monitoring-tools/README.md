@@ -90,11 +90,11 @@ Azure, on-prem ve diğer bulutlardaki kaynaklardan **telemetri toplayan, analiz 
 - **Log Analytics:** log verisini toplayan **workspace** ve bu veriyi **KQL** (Kusto Query Language) ile sorgulama aracı; birçok kaynağın log'unu tek yerde birleştirir.
 
   ```kusto
-  // Son 1 günde en çok hata veren 5 istek (Application Insights tablosu)
+  // Top 5 requests with the most failures in the last day (Application Insights table)
   AppRequests
   | where TimeGenerated > ago(1d) and Success == false
-  | summarize hatalar = count() by Name
-  | top 5 by hatalar
+  | summarize failures = count() by Name
+  | top 5 by failures
   ```
 
 - **Azure Monitor alerts:** bir **koşul** sağlandığında (metrik eşiği, log sorgusu sonucu, Activity Log olayı) çalışan **uyarı kuralı** → bir **action group**'u tetikler. Uyarı türleri: **metric alert**, **log search alert**, **activity log alert** (Service Health ve Resource Health uyarıları dahil); *(bağlam)* Prometheus ve smart detection uyarıları. Action group eylemleri: e-posta, SMS, push, sesli arama, **webhook**, **Logic App**, **Azure Function**, Automation runbook, ITSM.
@@ -121,44 +121,44 @@ RG=rg-az900-c114
 LOC=westeurope
 az group create --name $RG --location $LOC
 
-# 1) Advisor önerileri (abonelikteki mevcut kaynaklara göre; boş abonelikte liste boş olabilir)
+# 1) Advisor recommendations (based on existing resources in the subscription; the list may be empty in an empty subscription)
 az advisor recommendation list --output table
 az advisor recommendation list --category Cost --output table
-# CLI kategori adları: Cost, HighAvailability (= Reliability), OperationalExcellence, Performance, Security
+# CLI category names: Cost, HighAvailability (= Reliability), OperationalExcellence, Performance, Security
 
-# 2) Action group: uyarı olunca kime/ne yapılacak
+# 2) Action group: who/what to notify when an alert fires
 az monitor action-group create --resource-group $RG --name ag-ops --short-name ops \
-  --action email ops-ekibi ops@example.com
+  --action email ops-team ops@example.com
 AG_ID=$(az monitor action-group show --resource-group $RG --name ag-ops --query id --output tsv)
 
-# 3) Metrik uyarısı: storage account'taki işlem sayısı eşiği aşarsa e-posta
+# 3) Metric alert: send an email if the transaction count on the storage account exceeds the threshold
 SA=stc114$RANDOM
 az storage account create --resource-group $RG --name $SA --location $LOC --sku Standard_LRS
 SA_ID=$(az storage account show --resource-group $RG --name $SA --query id --output tsv)
 az monitor metrics alert create --resource-group $RG --name alert-sa-transactions \
   --scopes $SA_ID --condition "total Transactions > 1000" \
   --window-size 5m --evaluation-frequency 5m --action $AG_ID \
-  --description "5 dakikada 1000'den fazla istek"
+  --description "More than 1000 requests in 5 minutes"
 az monitor metrics list --resource $SA_ID --metric Transactions --interval PT1H --output table
 
-# 4) Service Health uyarısı: aboneliğimi etkileyen hizmet sorunu / planlı bakım → e-posta
+# 4) Service Health alert: service issue / planned maintenance affecting my subscription → email
 SUB_ID=$(az account show --query id --output tsv)
 az monitor activity-log alert create --resource-group $RG --name alert-service-health \
   --scope /subscriptions/$SUB_ID --condition category=ServiceHealth --action-group $AG_ID
 
-# 5) Log Analytics workspace + KQL sorgusu
+# 5) Log Analytics workspace + KQL query
 az monitor log-analytics workspace create --resource-group $RG --workspace-name law-c114 --location $LOC
 WS=$(az monitor log-analytics workspace show --resource-group $RG --workspace-name law-c114 \
   --query customerId --output tsv)
-# Boş workspace'te de çalışan sorgu: satır içi tablo ile KQL'in where/summarize/order akışı
+# A query that also works on an empty workspace: an inline table to show KQL's where/summarize/order flow
 az monitor log-analytics query --workspace $WS --analytics-query '
-datatable(Servis:string, SureMs:int, Basarili:bool)
+datatable(Service:string, DurationMs:int, Succeeded:bool)
 ["api", 120, true, "api", 900, false, "web", 80, true, "api", 1500, false]
-| where Basarili == false
-| summarize hata = count(), ortSure = avg(SureMs) by Servis
-| order by hata desc' --output table
+| where Succeeded == false
+| summarize failures = count(), avgDuration = avg(DurationMs) by Service
+| order by failures desc' --output table
 
-# 6) Uyarı kurallarını listele, sonra temizle
+# 6) List the alert rules, then clean up
 az monitor metrics alert list --resource-group $RG --output table
 az monitor activity-log alert list --resource-group $RG --output table
 az group delete --name $RG --yes --no-wait

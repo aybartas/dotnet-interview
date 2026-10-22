@@ -3,9 +3,9 @@ namespace Junior.DevFoundations.IdeDebugging.Exercises;
 public sealed class Exercise03_CollectionModified : Exercise
 {
     public override int Number => 3;
-    public override string Title => "foreach sırasında koleksiyonu değiştirmek";
-    public override string Skill => "Exception Settings + stack trace okuma (hatanın kaynağı ile belirtisi farklı yerde)";
-    public override string Hint => "İstisna foreach'te mi yoksa Remove'da mı fırlıyor? Call Stack'e bakın: enumerator'ın MoveNext'i neyi kontrol ediyor? (List<T>._version)";
+    public override string Title => "Modifying a collection during foreach";
+    public override string Skill => "Exception Settings + reading the stack trace (the bug's source and its symptom are in different places)";
+    public override string Hint => "Is the exception thrown in the foreach or in Remove? Look at the Call Stack: what does the enumerator's MoveNext check? (List<T>._version)";
 
     private sealed record Order(int Id, bool IsCancelled);
 
@@ -19,6 +19,6 @@ public sealed class Exercise03_CollectionModified : Exercise
                 orders.Remove(order);
         }
 
-        Report("kalan sipariş sayısı", expected: 2, actual: orders.Count);
+        Report("remaining order count", expected: 2, actual: orders.Count);
     }
 }

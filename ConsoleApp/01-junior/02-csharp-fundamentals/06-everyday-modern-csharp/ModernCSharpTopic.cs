@@ -4,16 +4,16 @@ public static class ModernCSharpTopic
 {
     public static int Run(string[] args)
     {
-        // J2.6 — Günlük Modern C#.
-        //   dotnet run -- J2.6          → bölüm listesi
-        //   dotnet run -- J2.6 10    → AYNI sipariş modeli, C# 7 tarzı vs C# 14 tarzı (satır sayısı + davranış eşitliği)
-        //   dotnet run -- J2.6 all   → hepsi
+        // J2.6 — Everyday Modern C#.
+        //   dotnet run -- J2.6          → section list
+        //   dotnet run -- J2.6 10    → the SAME order model, C# 7 style vs C# 14 style (line count + behavioural equality)
+        //   dotnet run -- J2.6 all   → all sections
 
         if (args.Length == 0)
         {
-            Console.WriteLine("J2.6 Günlük Modern C# — bölümler:\n");
+            Console.WriteLine("J2.6 Everyday Modern C# — sections:\n");
             foreach (var s in Sections.All) Console.WriteLine($"  {s.Number,2}. {s.Title}");
-            Console.WriteLine("\nÇalıştırmak için: dotnet run -- J2.6 <numara> | all");
+            Console.WriteLine("\nTo run: dotnet run -- J2.6 <number> | all");
             return 0;
         }
 

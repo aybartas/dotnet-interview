@@ -27,13 +27,13 @@ Azure'un mimarisi iki eksende anlatılır:
 | **Mantıksal (yönetim) yapı** | **Resource** → **resource group** → **subscription** → **management group** (→ Entra tenant) | Kaynaklarımı **nasıl düzenler**, faturalar ve yetkilendiririm? |
 
 ```
-Fiziksel                                   Mantıksal (yönetim hiyerarşisi)
-────────                                   ───────────────────────────────
-Coğrafya (ör. Avrupa)                      Microsoft Entra tenant
+Physical                                   Logical (management hierarchy)
+────────                                   ──────────────────────────────
+Geography (e.g. Europe)                    Microsoft Entra tenant
  └─ Region pair: North Europe ↔ West Europe  └─ Root management group
-     └─ Region: West Europe                      └─ Management group(lar) (≤ 6 seviye)
+     └─ Region: West Europe                      └─ Management group(s) (≤ 6 levels)
          └─ Availability zone 1, 2, 3                └─ Subscription
-             └─ Datacenter(lar)                          └─ Resource group
+             └─ Datacenter(s)                            └─ Resource group
                                                              └─ Resource (VM, VNet, storage…)
 ```
 
@@ -165,10 +165,10 @@ Subscription türleri: ücretsiz deneme (free account), pay-as-you-go, Visual St
 
 ```
 Entra tenant
-└─ Root management group              ← "Tüm kaynaklar yalnızca AB region'larında" (Policy)
+└─ Root management group              ← "All resources only in EU regions" (Policy)
    ├─ MG: Platform
    │  └─ sub-connectivity
-   └─ MG: Uygulamalar                  ← "Güvenlik ekibi her yerde Reader" (RBAC)
+   └─ MG: Applications                 ← "Security team has Reader everywhere" (RBAC)
       ├─ MG: Prod
       │  └─ sub-prod
       │     └─ rg-shop-prod            ← CanNotDelete lock (→ C1.12)
@@ -185,29 +185,29 @@ Bu laboratuvar **neredeyse ücretsizdir**: boş bir VNet ücret üretmez, boş b
 ```bash
 az login
 
-# 1) Region keşfi
+# 1) Region discovery
 az account list-locations --output table
-# Yalnızca fiziksel region'lar ve eşleşik bölgeleri
+# Only physical regions and their paired regions
 az account list-locations \
-  --query "[?metadata.regionType=='Physical'].{Region:name, Ad:displayName, Cift:metadata.pairedRegion[0].name, Cografya:metadata.geographyGroup}" \
+  --query "[?metadata.regionType=='Physical'].{Region:name, Name:displayName, Pair:metadata.pairedRegion[0].name, Geography:metadata.geographyGroup}" \
   --output table
-# Bir region'da hangi zone'larda VM boyutu var? (C1.2 / 3.5 ile aynı komut)
+# Which zones have the VM size in a region? (same command as C1.2 / 3.5)
 az vm list-skus --location westeurope --size Standard_B1s --zone --output table
 
-# 2) Resource group yaşam döngüsü: iki kaynak, tek silme
+# 2) Resource group lifecycle: two resources, one delete
 az group create --name rg-az900-c14 --location westeurope
 az network vnet create --resource-group rg-az900-c14 --name vnet-c14 --address-prefix 10.14.0.0/16
 az storage account create --resource-group rg-az900-c14 --name stc14$RANDOM \
-  --location northeurope --sku Standard_LRS        # dikkat: RG West Europe, storage North Europe → izinli
-az resource list --resource-group rg-az900-c14 --query "[].{Ad:name, Tur:type, Region:location}" --output table
+  --location northeurope --sku Standard_LRS        # note: RG is West Europe, storage is North Europe → allowed
+az resource list --resource-group rg-az900-c14 --query "[].{Name:name, Type:type, Region:location}" --output table
 
-# 3) Grubu sil → içindeki iki kaynak da gider
+# 3) Delete the group → both resources inside it go too
 az group delete --name rg-az900-c14 --yes
-az resource list --resource-group rg-az900-c14 --output table 2>/dev/null || echo "Grup ve içindeki kaynaklar silindi"
+az resource list --resource-group rg-az900-c14 --output table 2>/dev/null || echo "Group and its resources deleted"
 
-# 4) Hiyerarşindeki yerini bul
+# 4) Find your place in the hierarchy
 az account show --query "{Tenant:tenantId, Subscription:name, Id:id}" --output table
-az account management-group list --output table   # yetkin yoksa boş/hata döner — bu da bir bilgi
+az account management-group list --output table   # returns empty/error if you lack permission — that is information too
 ```
 
 > **Alıştırma — kendi hiyerarşini çiz.** 3 ekibi (web, veri, platform) ve 3 ortamı (dev, test, prod) olan bir şirket için tenant → management group → subscription → resource group şemasını çiz. Şu iki kuralı en **yüksek uygun kapsama** yerleştir: (a) "Tüm kaynaklar yalnızca West Europe ve North Europe'ta", (b) "Prod kaynaklarını yalnızca platform ekibi değiştirebilir".

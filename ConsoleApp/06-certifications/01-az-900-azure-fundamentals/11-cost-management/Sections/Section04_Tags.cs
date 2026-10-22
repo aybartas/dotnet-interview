@@ -1,10 +1,11 @@
+using System.Globalization;
 using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.CostManagement;
 
 /// <summary>
-/// Tag'ler (anahtar-değer meta veri) ile maliyeti departmana/ortama göre raporlamak — Cost analysis'in "group by tag" görünümünün
-/// küçük bir taklidi. Resource group tag'inin kaynaklara VARSAYILAN OLARAK geçmediğini de gösterir. Tutarlar ÖRNEKTİR.
+/// Reporting cost by department/environment using tags (key-value metadata) — a small imitation of Cost analysis' "group by tag" view.
+/// Also shows that a resource group's tags are NOT passed to its resources BY DEFAULT. Amounts are EXAMPLES.
 /// </summary>
 public static class Section04_Tags
 {
@@ -12,44 +13,44 @@ public static class Section04_Tags
 
     private static readonly Dictionary<string, Dictionary<string, string>> GroupTags = new()
     {
-        ["rg-eticaret-prod"] = new() { ["env"] = "prod", ["costCenter"] = "1001" },
-        ["rg-eticaret-dev"] = new() { ["env"] = "dev", ["costCenter"] = "1001" },
-        ["rg-ik"] = new() { ["costCenter"] = "2002" },
+        ["rg-ecommerce-prod"] = new() { ["env"] = "prod", ["costCenter"] = "1001" },
+        ["rg-ecommerce-dev"] = new() { ["env"] = "dev", ["costCenter"] = "1001" },
+        ["rg-hr"] = new() { ["costCenter"] = "2002" },
     };
 
     private static readonly Resource[] Resources =
     [
-        new("app-eticaret",      "rg-eticaret-prod", 420m, new() { ["env"] = "prod", ["costCenter"] = "1001", ["owner"] = "ayse" }),
-        new("sql-eticaret",      "rg-eticaret-prod", 690m, new() { ["env"] = "prod", ["costCenter"] = "1001" }),
-        new("st-eticaret-media", "rg-eticaret-prod", 85m,  new()),  // tag unutulmuş — grubun tag'leri geçmez!
-        new("vm-eticaret-test",  "rg-eticaret-dev",  140m, new() { ["env"] = "dev", ["costCenter"] = "1001" }),
-        new("app-ik-portal",     "rg-ik",            110m, new() { ["env"] = "prod", ["costCenter"] = "2002", ["owner"] = "mehmet" }),
-        new("sql-ik",            "rg-ik",            95m,  new()),  // tag unutulmuş
+        new("app-ecommerce",       "rg-ecommerce-prod", 420m, new() { ["env"] = "prod", ["costCenter"] = "1001", ["owner"] = "alice" }),
+        new("sql-ecommerce",       "rg-ecommerce-prod", 690m, new() { ["env"] = "prod", ["costCenter"] = "1001" }),
+        new("st-ecommerce-media",  "rg-ecommerce-prod", 85m,  new()),  // tag forgotten — the group's tags do not carry over!
+        new("vm-ecommerce-test",   "rg-ecommerce-dev",  140m, new() { ["env"] = "dev", ["costCenter"] = "1001" }),
+        new("app-hr-portal",       "rg-hr",             110m, new() { ["env"] = "prod", ["costCenter"] = "2002", ["owner"] = "bob" }),
+        new("sql-hr",              "rg-hr",             95m,  new()),  // tag forgotten
     ];
 
     public static void Run()
     {
-        Console.WriteLine("Kaynaklar ve tag'leri:\n");
-        Table.Print(["Kaynak", "Resource group", "Aylık (örnek)", "Tag'ler"],
-            Resources.Select(r => (IReadOnlyList<string>)[r.Name, r.ResourceGroup, $"{r.MonthlyCost:N0} $", Format(r.Tags)]));
+        Console.WriteLine("Resources and their tags:\n");
+        Table.Print(["Resource", "Resource group", "Monthly (example)", "Tags"],
+            Resources.Select(r => (IReadOnlyList<string>)[r.Name, r.ResourceGroup, Usd(r.MonthlyCost), Format(r.Tags)]));
 
         Report("costCenter", Resources.Select(r => (r.MonthlyCost, r.Tags)));
 
-        Console.WriteLine("\nResource group'ların da tag'i var — ama Azure bunları içerideki kaynaklara KENDİLİĞİNDEN kopyalamaz:");
+        Console.WriteLine("\nThe resource groups have tags too — but Azure does NOT copy them to the resources inside on its own:");
         foreach (var (rg, tags) in GroupTags) Console.WriteLine($"   {rg,-18} {Format(tags)}");
 
-        Console.WriteLine("\nAzure Policy 'Inherit a tag from the resource group if missing' (Modify etkisi) + remediation sonrası:");
+        Console.WriteLine("\nAfter Azure Policy 'Inherit a tag from the resource group if missing' (Modify effect) + remediation:");
         Report("costCenter", Resources.Select(r => (r.MonthlyCost, Inherit(r))));
 
         Console.WriteLine("""
 
-        Kurallar:
-          • Tag = kaynağa eklenen anahtar-değer çifti (env=prod, costCenter=1001, owner=ayse); kaynak başına çok sayıda tag olabilir.
-          • Kullanım: maliyet raporlama (Cost analysis → group by tag), kaynak arama/yönetim, otomasyon (ör. env=dev olanları gece kapat),
-            güvenlik/veri sınıflandırma, uyumluluk.
-          • Tag'ler varsayılan olarak MİRAS ALINMAZ: resource group'un tag'i içerideki kaynağa geçmez.
-          • Zorunlu kılmak veya gruptan kopyalamak için Azure Policy (Deny: "Require a tag…", Modify: "Inherit a tag…") → C1.12.
-          • (bağlam) Cost Management'ın "tag inheritance" ayarı grup tag'lerini yalnızca MALİYET KAYITLARINA uygular; kaynak değişmez.
+        Rules:
+          • A tag = a key-value pair attached to a resource (env=prod, costCenter=1001, owner=alice); a resource can have many tags.
+          • Uses: cost reporting (Cost analysis → group by tag), finding/managing resources, automation (e.g. shut down env=dev at night),
+            security/data classification, compliance.
+          • Tags are NOT INHERITED by default: a resource group's tag does not pass to the resources inside.
+          • To enforce them or copy them from the group, use Azure Policy (Deny: "Require a tag…", Modify: "Inherit a tag…") → C1.12.
+          • (context) Cost Management's "tag inheritance" setting applies group tags only to COST RECORDS; the resource does not change.
         """);
     }
 
@@ -63,11 +64,13 @@ public static class Section04_Tags
     private static void Report(string tagKey, IEnumerable<(decimal Cost, Dictionary<string, string> Tags)> items)
     {
         Console.WriteLine($"\nCost analysis — group by tag '{tagKey}':");
-        Table.Print([tagKey, "Aylık maliyet"],
-            items.GroupBy(i => i.Tags.GetValueOrDefault(tagKey) ?? "(tag yok)")
-                 .OrderBy(g => g.Key)
-                 .Select(g => (IReadOnlyList<string>)[g.Key, $"{g.Sum(i => i.Cost):N0} $"]));
+        Table.Print([tagKey, "Monthly cost"],
+            items.GroupBy(i => i.Tags.GetValueOrDefault(tagKey) ?? "(no tag)")
+                 .OrderBy(g => g.Key, StringComparer.Ordinal)
+                 .Select(g => (IReadOnlyList<string>)[g.Key, Usd(g.Sum(i => i.Cost))]));
     }
+
+    private static string Usd(decimal value) => value.ToString("N0", CultureInfo.InvariantCulture) + " $";
 
     private static string Format(Dictionary<string, string> tags) =>
         tags.Count == 0 ? "—" : string.Join(", ", tags.Select(t => $"{t.Key}={t.Value}"));

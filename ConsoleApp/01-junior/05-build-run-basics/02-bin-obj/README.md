@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-Her .NET projesi derlenince iki klasör oluşur: **`obj/`** (MSBuild'in çalışma masası: restore sonucu ve ara çıktılar) ve **`bin/`** (dağıtılabilir **son çıktı**). İkisi de kaynaktan **üretilebilir** dosyalardır. Konunun kodu [`Sections/`](Sections/) altında 4 bölümdür (`dotnet run -- J5.2 <numara>`); program **kendi** `bin/` ve `obj/` klasörünü listeler ve her dosyayı açıklar.
+Her .NET projesi derlenince iki klasör oluşur: **`obj/`** (MSBuild'in çalışma masası: restore sonucu ve ara çıktılar) ve **`bin/`** (dağıtılabilir **son çıktı**). İkisi de kaynaktan **üretilebilir** dosyalardır. Konunun kodu [`Sections/`](Sections/) altında 4 bölümdür (`dotnet run -- J5.2 <number>`); program **kendi** `bin/` ve `obj/` klasörünü listeler ve her dosyayı açıklar.
 
 ---
 

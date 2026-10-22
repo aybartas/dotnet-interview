@@ -24,8 +24,8 @@ Azure'da bir kaynağı oluşturmanın, değiştirmenin ve silmenin birden çok y
 ```
  Azure portal ─┐
  Azure CLI ────┤
- PowerShell ───┼──►  Azure Resource Manager  ──►  kimlik doğrulama + RBAC + Policy + lock + tag
- REST API/SDK ─┤          (tek yönetim katmanı)        ──►  resource provider'lar (Compute, Storage, …)
+ PowerShell ───┼──►  Azure Resource Manager  ──►  authentication + RBAC + Policy + lock + tag
+ REST API/SDK ─┤          (single management layer)    ──►  resource providers (Compute, Storage, …)
  ARM/Bicep ────┘
 ```
 
@@ -79,8 +79,8 @@ Konunun kodu yoktur; pratik, README'deki `az` CLI ve Bicep laboratuvarıdır (3.
 Çıktıyı süzmek: Azure CLI'da `--query` (JMESPath) ve `-o table|tsv|json`; PowerShell'de nesne boru hattı (`Where-Object`, `Select-Object`):
 
 ```bash
-az vm list --query "[?location=='westeurope'].{ad:name, rg:resourceGroup}" -o table
-az group show --name rg-demo --query id -o tsv     # tek değeri değişkene almak için
+az vm list --query "[?location=='westeurope'].{name:name, rg:resourceGroup}" -o table
+az group show --name rg-demo --query id -o tsv     # to capture a single value into a variable
 ```
 
 ### 3.3 Azure Arc
@@ -213,9 +213,9 @@ az group create --name $RG --location westeurope
 az storage account create --name stc113$SUFFIX --resource-group $RG --sku Standard_LRS
 az appservice plan create --name plan-c113 --resource-group $RG --sku F1 --is-linux
 az webapp create --name app-c113-$SUFFIX --resource-group $RG --plan plan-c113 \
-  --runtime "DOTNETCORE:10.0"                       # geçerli değerler: az webapp list-runtimes --os linux
-az resource list --resource-group $RG --query "[].{ad:name, tur:type}" -o table
-az group delete --name $RG --yes                    # dört kaynak tek komutla gider
+  --runtime "DOTNETCORE:10.0"                       # valid values: az webapp list-runtimes --os linux
+az resource list --resource-group $RG --query "[].{name:name, type:type}" -o table
+az group delete --name $RG --yes                    # all four resources go with one command
 ```
 
 **(b) Deklaratif: Bicep ile dağıt, ikinci dağıtımda değişiklik olmadığını gör**
@@ -225,7 +225,7 @@ RG=rg-az900-c113-iac
 ST=stc113iac$RANDOM
 az group create --name $RG --location westeurope
 
-# 3.6'daki Bicep içeriğini dosyaya yaz (Cloud Shell'de: code storage.bicep ile de açabilirsin)
+# Write the Bicep content from 3.6 to a file (in Cloud Shell you can also open it with: code storage.bicep)
 cat > storage.bicep <<'EOF'
 param storageName string
 param location string = resourceGroup().location
@@ -240,22 +240,22 @@ resource st 'Microsoft.Storage/storageAccounts@2023-05-01' = {
 output blobEndpoint string = st.properties.primaryEndpoints.blob
 EOF
 
-# 1) İlk dağıtımdan önce önizleme → "+ Create" (1 kaynak oluşturulacak)
+# 1) Preview before the first deployment → "+ Create" (1 resource will be created)
 az deployment group what-if --resource-group $RG --template-file storage.bicep --parameters storageName=$ST
 
-# 2) Dağıt ve çıktıyı oku
+# 2) Deploy and read the output
 az deployment group create --resource-group $RG --template-file storage.bicep \
   --parameters storageName=$ST --query properties.outputs.blobEndpoint.value -o tsv
 
-# 3) Aynı şablonu tekrar önizle → "= Nochange": idempotent, hiçbir şey yeniden oluşturulmaz
+# 3) Preview the same template again → "= Nochange": idempotent, nothing is recreated
 az deployment group what-if --resource-group $RG --template-file storage.bicep --parameters storageName=$ST
 
-# 4) Şablonda bir değeri değiştir (ör. allowBlobPublicAccess: true) → what-if "~ Modify" gösterir; geri al
+# 4) Change a value in the template (e.g. allowBlobPublicAccess: true) → what-if shows "~ Modify"; revert it
 
 # 5) Bicep → ARM JSON
 az bicep build --file storage.bicep --stdout | head -40
 
-# Temizlik
+# Cleanup
 az group delete --name $RG --yes --no-wait
 rm storage.bicep
 ```
