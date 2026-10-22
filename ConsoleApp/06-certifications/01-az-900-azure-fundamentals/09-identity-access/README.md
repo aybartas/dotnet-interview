@@ -184,10 +184,10 @@ Portalda politika oluşturma ekranları ve hazır şablonlar (ör. *Require MFA 
 **Azure RBAC**, Azure kaynaklarına **kimin, nerede, ne yapabileceğini** belirler. Bir **rol ataması** (role assignment) üç parçadan oluşur:
 
 ```
-Rol ataması = Güvenlik sorumlusu (KİM)  +  Rol tanımı (NE)  +  Kapsam (NEREDE)
-              kullanıcı, grup,             izin kümesi:          management group,
-              service principal,           Owner, Contributor,   subscription,
-              managed identity             Reader, …             resource group, kaynak
+Role assignment = Security principal (WHO)  +  Role definition (WHAT)  +  Scope (WHERE)
+                  user, group,                 permission set:            management group,
+                  service principal,           Owner, Contributor,        subscription,
+                  managed identity             Reader, …                  resource group, resource
 ```
 
 **Built-in roller (sınavın sorduğu dört temel rol):**
@@ -221,17 +221,17 @@ Bu laboratuvar **ücretsizdir**: Entra ID'de kullanıcı/grup oluşturmak ve bo�
 ```bash
 az login
 TENANT_DOMAIN=$(az ad signed-in-user show --query userPrincipalName -o tsv | cut -d@ -f2)
-echo "$TENANT_DOMAIN"          # ör. contoso.onmicrosoft.com
+echo "$TENANT_DOMAIN"          # e.g. contoso.onmicrosoft.com
 
-# 1) İki resource group: yetki yalnızca birinde olacak
+# 1) Two resource groups: the permission will exist on only one
 az group create --name rg-az900-c19-a --location westeurope
 az group create --name rg-az900-c19-b --location westeurope
 
-# 2) Entra ID'de bir kullanıcı ve bir grup
+# 2) A user and a group in Entra ID
 az ad user create \
-  --display-name "AZ900 Okuyucu" \
+  --display-name "AZ900 Reader" \
   --user-principal-name "az900reader@$TENANT_DOMAIN" \
-  --password "Gecici-Sifre-$RANDOM!aA" \
+  --password "Temp-Password-$RANDOM!aA" \
   --force-change-password-next-sign-in true
 az ad group create --display-name grp-az900-readers --mail-nickname grp-az900-readers
 
@@ -240,17 +240,17 @@ GROUP_ID=$(az ad group show --group grp-az900-readers --query id -o tsv)
 az ad group member add --group grp-az900-readers --member-id "$USER_ID"
 az ad group member list --group grp-az900-readers --query "[].userPrincipalName" -o tsv
 
-# 3) Reader rolünü GRUBA, yalnızca rg-az900-c19-a kapsamında ata (en az yetki + gruba atama)
+# 3) Assign the Reader role to the GROUP, only at the rg-az900-c19-a scope (least privilege + assign to groups)
 SCOPE_A=$(az group show --name rg-az900-c19-a --query id -o tsv)
 az role assignment create --assignee-object-id "$GROUP_ID" --assignee-principal-type Group \
   --role Reader --scope "$SCOPE_A"
 
-# 4) Doğrula: atama yalnızca A kapsamında var, B'de yok
+# 4) Verify: the assignment exists only at scope A, not at B
 az role assignment list --scope "$SCOPE_A" --output table
 az role assignment list --scope "$(az group show --name rg-az900-c19-b --query id -o tsv)" --output table
-az role assignment list --all --assignee "$GROUP_ID" --query "[].{rol:roleDefinitionName, kapsam:scope}" -o table
+az role assignment list --all --assignee "$GROUP_ID" --query "[].{role:roleDefinitionName, scope:scope}" -o table
 
-# 5) Rollerin içine bak: Reader yalnızca */read; Contributor her şey ama yetki yönetimi hariç
+# 5) Look inside the roles: Reader is only */read; Contributor can do everything except manage permissions
 az role definition list --name Reader      --query "[].permissions[0].actions"    -o tsv
 az role definition list --name Contributor --query "[].permissions[0].notActions" -o tsv
 az role definition list --name Owner       --query "[].permissions[0].actions"    -o tsv
@@ -263,9 +263,9 @@ Beklenen gözlem: Kullanıcı (portalda veya `az login` ile, ilk girişte şifre
 ```bash
 az rest --method POST --url "https://graph.microsoft.com/v1.0/invitations" \
   --headers "Content-Type=application/json" \
-  --body '{"invitedUserEmailAddress":"ortak@example.com","inviteRedirectUrl":"https://myapps.microsoft.com","sendInvitationMessage":true}'
-# Davet edilen kullanıcı tenant'ta userType=Guest olarak görünür:
-az ad user list --filter "userType eq 'Guest'" --query "[].{ad:displayName, upn:userPrincipalName}" -o table
+  --body '{"invitedUserEmailAddress":"partner@example.com","inviteRedirectUrl":"https://myapps.microsoft.com","sendInvitationMessage":true}'
+# The invited user appears in the tenant as userType=Guest:
+az ad user list --filter "userType eq 'Guest'" --query "[].{name:displayName, upn:userPrincipalName}" -o table
 ```
 
 **Temizlik:**
@@ -274,7 +274,7 @@ az ad user list --filter "userType eq 'Guest'" --query "[].{ad:displayName, upn:
 az role assignment delete --assignee "$GROUP_ID" --role Reader --scope "$SCOPE_A"
 az ad group delete --group grp-az900-readers
 az ad user delete --id "az900reader@$TENANT_DOMAIN"
-# (davet ettiysen) az ad user delete --id <misafir kullanıcının id'si>
+# (if you sent an invitation) az ad user delete --id <guest user's id>
 az group delete --name rg-az900-c19-a --yes --no-wait
 az group delete --name rg-az900-c19-b --yes --no-wait
 ```

@@ -148,29 +148,29 @@ Foundational CSPM **ücretsizdir** ve subscription'da varsayılan olarak etkindi
 ```bash
 az login
 
-# 1) Mevcut güvenlik duruşu: secure score ve kontroller (salt okunur)
+# 1) Current security posture: secure score and controls (read-only)
 az security secure-scores list --output table
 az security secure-score-controls list --output table
 
-# 2) Hangi Defender planları açık? (Free = yalnızca Foundational CSPM; Standard = ücretli plan)
+# 2) Which Defender plans are on? (Free = Foundational CSPM only; Standard = paid plan)
 az security pricing list --query "value[].{plan:name, tier:pricingTier}" --output table
 
-# 3) Bilerek "kötü" yapılandırılmış bir storage account: anonim blob erişimine izin veriyor
+# 3) A deliberately "bad" storage account: it allows anonymous blob access
 az group create --name rg-az900-c110 --location westeurope
 ST=staz900c110$RANDOM
 az storage account create --name "$ST" --resource-group rg-az900-c110 --location westeurope \
   --sku Standard_LRS --allow-blob-public-access true
 
-# 4) Değerlendirmeler (assessments): sağlıksız olanları listele
-#    Not: Yeni kaynağın değerlendirmeye girmesi birkaç saat (en çok ~24 saat) sürebilir.
+# 4) Assessments: list the unhealthy ones
+#    Note: it can take a few hours (up to ~24 hours) for a new resource to show up in assessments.
 az security assessment list \
-  --query "[?status.code=='Unhealthy'].{oneri:displayName, kaynak:resourceDetails.Id}" --output table
+  --query "[?status.code=='Unhealthy'].{recommendation:displayName, resource:resourceDetails.Id}" --output table
 
-# 5) Öneriyi uygula: anonim blob erişimini kapat
+# 5) Apply the recommendation: disable anonymous blob access
 az storage account update --name "$ST" --resource-group rg-az900-c110 --allow-blob-public-access false
 az storage account show --name "$ST" --resource-group rg-az900-c110 --query allowBlobPublicAccess
 
-# 6) Temizlik
+# 6) Cleanup
 az group delete --name rg-az900-c110 --yes --no-wait
 ```
 

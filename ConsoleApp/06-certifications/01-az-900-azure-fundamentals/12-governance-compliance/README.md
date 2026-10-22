@@ -117,42 +117,42 @@ Maliyet: politika ve lock'lar **ücretsizdir**; laboratuvardaki tek ücretli kay
 
 ```bash
 RG=rg-az900-c112
-ST=stc112$RANDOM                      # storage account adı: küçük harf + rakam, global benzersiz
+ST=stc112$RANDOM                      # storage account name: lowercase + digits, globally unique
 az group create --name $RG --location westeurope
 
-# 1) Built-in "Allowed locations" tanımını bul
+# 1) Find the built-in "Allowed locations" definition
 az policy definition list \
   --query "[?displayName=='Allowed locations'].{name:name, displayName:displayName}" -o table
 # name: e56962a6-4747-49cd-b67b-bf8b01975c4c
 
-# 2) RG kapsamına ata: yalnızca West Europe
+# 2) Assign at RG scope: West Europe only
 az policy assignment create \
   --name allowed-locations-c112 \
-  --display-name "C1.12 - yalnızca westeurope" \
+  --display-name "C1.12 - westeurope only" \
   --policy e56962a6-4747-49cd-b67b-bf8b01975c4c \
   --scope $(az group show --name $RG --query id -o tsv) \
   --params '{ "listOfAllowedLocations": { "value": [ "westeurope" ] } }'
 
-# 3) İzin verilmeyen bölgede kaynak dene → RequestDisallowedByPolicy ile reddedilmeli
-#    (atamanın etkinleşmesi birkaç dakika sürebilir; hemen reddedilmezse biraz bekleyip tekrar dene)
+# 3) Try to create a resource in a disallowed region → should be rejected with RequestDisallowedByPolicy
+#    (the assignment can take a few minutes to take effect; if it is not rejected right away, wait a bit and retry)
 az storage account create --name $ST --resource-group $RG --location eastus --sku Standard_LRS
 
-# 4) İzin verilen bölgede aynı kaynak → başarılı
+# 4) The same resource in an allowed region → succeeds
 az storage account create --name $ST --resource-group $RG --location westeurope --sku Standard_LRS
 
-# 5) CanNotDelete lock: grup silinemez
+# 5) CanNotDelete lock: the group cannot be deleted
 az lock create --name lock-nodelete --lock-type CanNotDelete --resource-group $RG
 az lock list --resource-group $RG -o table
-az group delete --name $RG --yes                     # → ScopeLocked hatası
-az storage account update --name $ST --resource-group $RG --tags env=lab   # değişiklik serbest ✅
+az group delete --name $RG --yes                     # → ScopeLocked error
+az storage account update --name $ST --resource-group $RG --tags env=lab   # changes are allowed ✅
 
-# 6) ReadOnly lock (kaynak düzeyinde): değiştirme ve anahtar listeleme de engellenir
+# 6) ReadOnly lock (resource level): modifying and listing keys are blocked too
 az lock create --name lock-readonly --lock-type ReadOnly --resource-group $RG \
   --resource-name $ST --resource-type Microsoft.Storage/storageAccounts
 az storage account update --name $ST --resource-group $RG --tags env=prod  # → ScopeLocked
-az storage account keys list --account-name $ST --resource-group $RG       # → ScopeLocked (POST engeli)
+az storage account keys list --account-name $ST --resource-group $RG       # → ScopeLocked (POST is blocked)
 
-# 7) Temizlik: önce lock'lar, sonra atama, sonra grup
+# 7) Cleanup: locks first, then the assignment, then the group
 az lock delete --name lock-readonly --resource-group $RG \
   --resource-name $ST --resource-type Microsoft.Storage/storageAccounts
 az lock delete --name lock-nodelete --resource-group $RG
