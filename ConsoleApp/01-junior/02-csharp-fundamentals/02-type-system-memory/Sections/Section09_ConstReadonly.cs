@@ -6,15 +6,15 @@ public static class Section09_ConstReadonly
 {
     public sealed class Settings
     {
-        public const int MaxItems = 100;                              // const: derleme zamanı sabiti, ÇAĞIRANLARA GÖMÜLÜR
-        public static readonly DateTime StartedAt = DateTime.Now;     // static readonly: çalışma zamanında bir kez atanır
-        public readonly Guid InstanceId = Guid.NewGuid();             // readonly (örnek alanı): constructor'da/bildirimde atanır
+        public const int MaxItems = 100;                              // const: compile-time constant, EMBEDDED INTO CALLERS
+        public static readonly DateTime StartedAt = DateTime.Now;     // static readonly: assigned once at run time
+        public readonly Guid InstanceId = Guid.NewGuid();             // readonly (instance field): assigned in the constructor/declaration
     }
 
     public static void Run()
     {
         var t = typeof(Settings);
-        Console.WriteLine("Reflection ile fark:");
+        Console.WriteLine("Difference via reflection:");
         foreach (var name in new[] { nameof(Settings.MaxItems), nameof(Settings.StartedAt), nameof(Settings.InstanceId) })
         {
             var f = t.GetField(name)!;
@@ -23,21 +23,21 @@ public static class Section09_ConstReadonly
 
         Console.WriteLine("""
 
-        const                : yalnızca derleme zamanında bilinen ilkel/string/enum/null değerler; implicit static; DEĞER, kullanıldığı her yere (başka assembly dahil) KOPYALANIR (IL'e literal olarak yazılır).
-        static readonly      : çalışma zamanında hesaplanabilir (DateTime.Now, new List<>()); bir kez atanır; başka assembly'ler DEĞERİ çalışırken OKUR.
-        readonly (instance)  : her nesne için kendi değeri; yalnızca constructor/initializer'da atanır.
+        const                : only primitive/string/enum/null values known at compile time; implicitly static; the VALUE is COPIED to every place it is used (even in other assemblies) (written into the IL as a literal).
+        static readonly      : can be computed at run time (DateTime.Now, new List<>()); assigned once; other assemblies READ the VALUE at run time.
+        readonly (instance)  : each object has its own value; assigned only in the constructor/initializer.
 
-        ⚠ VERSİYONLAMA TUZAĞI: Kütüphanedeki `public const int MaxRetries = 3` değerini 5 yapıp YALNIZCA kütüphaneyi yeniden derleyip dağıtırsanız,
-          onu kullanan uygulama yeniden derlenmediği sürece HÂLÂ 3'ü kullanır (değer onun IL'ine gömülmüştür).
-          Kanıt için: dotnet run -- J2.2 const-embedding (adımlar README 3.9)
-          Kural: değişme ihtimali olan ve public olan değer için `public static readonly` (veya property) kullanın; const'ı gerçekten değişmeyen şeyler için ayırın (Math.PI, sabit alan sayıları).
-        (readonly ≠ immutable: `readonly List<int> L` alanı yeniden atanamaz ama listenin İÇİ değiştirilebilir.)
+        ⚠ VERSIONING TRAP: If you change the `public const int MaxRetries = 3` in a library to 5 and recompile and ship ONLY the library,
+          the application that uses it STILL uses 3 until it is recompiled (the value is embedded in its IL).
+          To prove it: dotnet run -- J2.2 const-embedding (steps in README 3.9)
+          Rule: for a public value that may change use `public static readonly` (or a property); reserve const for things that truly never change (Math.PI, fixed number of days of the week).
+        (readonly ≠ immutable: a `readonly List<int> L` field can't be reassigned but the INSIDE of the list can be modified.)
         """);
 
         var readonlyList = new List<int> { 1 };
         var holder = new ReadonlyHolder(readonlyList);
-        holder.Items.Add(2);                                      // izinli: referans sabit, nesne mutable
-        Console.WriteLine($"readonly List içine eleman eklendi → [{string.Join(",", holder.Items)}]");
+        holder.Items.Add(2);                                      // allowed: the reference is fixed, the object is mutable
+        Console.WriteLine($"item added to the readonly List → [{string.Join(",", holder.Items)}]");
     }
 
     private sealed class ReadonlyHolder(List<int> items) { public readonly List<int> Items = items; }

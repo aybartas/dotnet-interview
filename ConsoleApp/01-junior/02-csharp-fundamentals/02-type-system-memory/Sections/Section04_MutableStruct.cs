@@ -4,38 +4,38 @@ public static class Section04_MutableStruct
 {
     public static void Run()
     {
-        Console.WriteLine("Mutable struct = 'kopyaya yazıp orijinalin değiştiğini sanma' hatası.\n");
+        Console.WriteLine("Mutable struct = the mistake of 'writing to a copy and thinking the original changed'.\n");
 
-        // TUZAK 1: List<T> indexer'ı değerin KOPYASINI döner
+        // PITFALL 1: the List<T> indexer returns a COPY of the value
         var list = new List<Counter> { new() };
-        // list[0].Value++;                      // ✗ CS1612: Dönüş değeri bir değişken olmadığı için değiştirilemez (derleyici seni korur)
-        var copy = list[0];                      // kopya
+        // list[0].Value++;                      // ✗ CS1612: Cannot modify the return value because it is not a variable (the compiler protects you)
+        var copy = list[0];                      // copy
         copy.Value++;
-        Console.WriteLine($"1) list[0] kopyası artırıldı → list[0].Value = {list[0].Value} (değişmedi!), copy.Value = {copy.Value}");
-        list[0] = copy;                          // doğru yol: kopyala-değiştir-geri ata
-        Console.WriteLine($"   geri atanınca        → list[0].Value = {list[0].Value}");
+        Console.WriteLine($"1) incremented the copy of list[0] → list[0].Value = {list[0].Value} (unchanged!), copy.Value = {copy.Value}");
+        list[0] = copy;                          // the right way: copy-modify-assign back
+        Console.WriteLine($"   after assigning back  → list[0].Value = {list[0].Value}");
 
-        // TUZAK 2: foreach değişkeni de kopyadır
+        // PITFALL 2: the foreach variable is a copy too
         var items = new[] { new Counter(), new Counter() };
         foreach (var item in items) { var tmp = item; tmp.Value = 10; }
-        Console.WriteLine($"2) foreach içindeki kopya değiştirildi → dizi: {items[0].Value}, {items[1].Value} (dizi elemanı DEĞİŞMEDİ)");
-        for (var i = 0; i < items.Length; i++) items[i].Value = 10;   // dizi indexer'ı REFERANS verir → bu çalışır
-        Console.WriteLine($"   for + dizi indexer ile → dizi: {items[0].Value}, {items[1].Value} (diziler özel: eleman yerinde değiştirilebilir)");
+        Console.WriteLine($"2) modified the copy inside foreach → array: {items[0].Value}, {items[1].Value} (the array element did NOT change)");
+        for (var i = 0; i < items.Length; i++) items[i].Value = 10;   // the array indexer gives a REFERENCE → this works
+        Console.WriteLine($"   with for + array indexer → array: {items[0].Value}, {items[1].Value} (arrays are special: elements can be modified in place)");
 
-        // TUZAK 3: readonly alandaki struct — metot çağrısı SAVUNMACI KOPYA üzerinde çalışır (sessizce işe yaramaz)
+        // PITFALL 3: a struct in a readonly field — a method call works on a DEFENSIVE COPY (silently does nothing)
         var holder = new Holder();
         holder.IncrementReadonlyField();
-        Console.WriteLine($"3) readonly alandaki struct'ta Increment() → Value = {holder.ReadonlyCounterValue} (hâlâ 0: defensive copy)");
+        Console.WriteLine($"3) Increment() on a struct in a readonly field → Value = {holder.ReadonlyCounterValue} (still 0: defensive copy)");
 
-        // TUZAK 4: struct metodu kendini değiştirir ama kopyada
+        // PITFALL 4: a struct method modifies itself, but on the copy
         var c = new Counter();
         IncrementCopy(c);
-        Console.WriteLine($"4) metoda struct geçirildi → c.Value = {c.Value} (değişmedi)");
+        Console.WriteLine($"4) struct passed to a method → c.Value = {c.Value} (unchanged)");
 
         Console.WriteLine("""
 
-        ÇÖZÜM: struct'ları IMMUTABLE yapın → 'readonly struct' / 'readonly record struct'.
-        Değişiklik gerekiyorsa yeni bir kopya üretin (with ifadesi / yeni örnek). Derleyici de savunmacı kopya yapmaz → daha hızlı.
+        FIX: make structs IMMUTABLE → 'readonly struct' / 'readonly record struct'.
+        If you need a change, produce a new copy (with expression / new instance). The compiler doesn't make defensive copies either → faster.
         """);
 
         var money = new ImmutableMoney(10m, "TRY");
@@ -48,13 +48,13 @@ public static class Section04_MutableStruct
     private struct Counter
     {
         public int Value;
-        public void Increment() => Value++;      // 'mutating' metot
+        public void Increment() => Value++;      // 'mutating' method
     }
 
     private sealed class Holder
     {
         private readonly Counter _counter = new();
-        public void IncrementReadonlyField() => _counter.Increment();   // readonly alan → kopya üzerinde çalışır
+        public void IncrementReadonlyField() => _counter.Increment();   // readonly field → works on a copy
         public int ReadonlyCounterValue => _counter.Value;
     }
 

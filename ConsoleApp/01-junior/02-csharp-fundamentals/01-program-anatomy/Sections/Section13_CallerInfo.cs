@@ -6,22 +6,22 @@ public static class Section13_CallerInfo
 {
     public static void Run()
     {
-        // Caller attribute'ları: DERLEME ZAMANINDA çağıran yerin bilgisi varsayılan parametre değerine ENJEKTE EDİLİR
-        // (reflection/StackTrace yok → sıfır çalışma zamanı maliyeti, refactor'a dayanıklı).
-        Log("uygulama başladı");
+        // Caller attributes: the caller's info is INJECTED into the default parameter value AT COMPILE TIME
+        // (no reflection/StackTrace → zero runtime cost, refactor-proof).
+        Log("application started");
         DoWork();
 
-        // CallerArgumentExpression: argümanın KAYNAK KODDAKİ METNİ — guard clause'larda şahane
+        // CallerArgumentExpression: the argument's TEXT in the SOURCE CODE — great for guard clauses
         var items = new List<int>();
         string? name = null;
         try { Guard.NotNull(name); }
         catch (ArgumentNullException ex) { Console.WriteLine($"\nGuard.NotNull(name)             → paramName = \"{ex.ParamName}\""); }
         try { Guard.That(items.Count > 0); }
         catch (ArgumentException ex) { Console.WriteLine($"Guard.That(items.Count > 0)      → {ex.Message}"); }
-        // .NET'in kendisi de kullanır: ArgumentNullException.ThrowIfNull(name) paramName'i böyle bulur.
+        // .NET itself uses it too: ArgumentNullException.ThrowIfNull(name) finds paramName this way.
     }
 
-    private static void DoWork() => Log("iş yapılıyor");     // [CallerMemberName] → "DoWork"
+    private static void DoWork() => Log("doing work");     // [CallerMemberName] → "DoWork"
 
     private static void Log(
         string message,
@@ -40,6 +40,6 @@ public static class Guard
 
     public static void That(bool condition, [CallerArgumentExpression(nameof(condition))] string? expr = null)
     {
-        if (!condition) throw new ArgumentException($"Koşul sağlanmadı: {expr}");
+        if (!condition) throw new ArgumentException($"Condition not met: {expr}");
     }
 }

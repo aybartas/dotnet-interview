@@ -4,12 +4,12 @@ public static class Section08_CheckedUnchecked
 {
     public static void Run()
     {
-        // VARSAYILAN = UNCHECKED: taşma SESSİZCE sarar (wrap-around). Hata vermez, yanlış sonuç üretir!
-        int max = int.MaxValue;                           // 2.147.483.647
+        // DEFAULT = UNCHECKED: overflow SILENTLY wraps around. No error, just a wrong result!
+        int max = int.MaxValue;                           // 2,147,483,647
         int wrapped = unchecked(max + 1);
-        Console.WriteLine($"unchecked: int.MaxValue + 1 = {wrapped}   (negatif! sessiz taşma)");
+        Console.WriteLine($"unchecked: int.MaxValue + 1 = {wrapped}   (negative! silent overflow)");
 
-        // checked: taşma OverflowException fırlatır
+        // checked: overflow throws OverflowException
         try
         {
             int boom = checked(max + 1);
@@ -20,7 +20,7 @@ public static class Section08_CheckedUnchecked
             Console.WriteLine($"checked  : int.MaxValue + 1 → {ex.GetType().Name}");
         }
 
-        // checked bloğu birden çok işlem için
+        // checked block for multiple operations
         try
         {
             checked
@@ -30,26 +30,26 @@ public static class Section08_CheckedUnchecked
                 Console.WriteLine(b);
             }
         }
-        catch (OverflowException) { Console.WriteLine("checked blok: a * 2 → OverflowException"); }
+        catch (OverflowException) { Console.WriteLine("checked block: a * 2 → OverflowException"); }
 
-        // Dönüşümlerde de geçerli
+        // Applies to conversions as well
         long big = 5_000_000_000;
         Console.WriteLine($"unchecked cast: (int){big} = {unchecked((int)big)}");
         try { _ = checked((int)big); }
         catch (OverflowException) { Console.WriteLine("checked   cast: (int)5_000_000_000 → OverflowException"); }
 
-        // Taşmayı KAÇIRMAK gerçek hata sebebidir: toplam/çarpım hesaplayan kod
+        // MISSING an overflow is a real source of bugs: code that computes totals/products
         int itemCount = 70_000;
         int pricePerItemInCents = 40_000;
-        Console.WriteLine($"\n70.000 × 40.000 (int) = {itemCount * pricePerItemInCents}   (beklenen 2.800.000.000 → taştı, negatif!)");
-        Console.WriteLine($"Çözüm 1: daha geniş tip → {(long)itemCount * pricePerItemInCents}");
-        Console.WriteLine($"Çözüm 2: checked derleme/blok → OverflowException ile ANINDA görünür");
+        Console.WriteLine($"\n70,000 × 40,000 (int) = {itemCount * pricePerItemInCents}   (expected 2,800,000,000 → overflowed, negative!)");
+        Console.WriteLine($"Fix 1: a wider type → {(long)itemCount * pricePerItemInCents}");
+        Console.WriteLine($"Fix 2: checked compilation/block → visible IMMEDIATELY via OverflowException");
 
-        // Math.Abs(int.MinValue) tuzağı: +2.147.483.648 int'e sığmaz
+        // The Math.Abs(int.MinValue) trap: +2,147,483,648 doesn't fit in an int
         try { _ = Math.Abs(int.MinValue); }
         catch (OverflowException) { Console.WriteLine("Math.Abs(int.MinValue) → OverflowException"); }
 
-        Console.WriteLine("\nProje geneli: csproj'a <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow> (varsayılan false; performans maliyeti küçük).");
-        Console.WriteLine("Not: decimal HER ZAMAN checked davranır; float/double taşmada Infinity üretir, exception atmaz.");
+        Console.WriteLine("\nProject-wide: <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow> in the csproj (default false; the performance cost is small).");
+        Console.WriteLine("Note: decimal ALWAYS behaves as checked; float/double produce Infinity on overflow, they don't throw.");
     }
 }

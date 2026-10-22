@@ -1,4 +1,4 @@
-#define DEMO_SYMBOL                  // Bu dosya için derleme sembolü tanımlar (using'lerden ÖNCE olmalı; dosya kapsamlıdır)
+#define DEMO_SYMBOL                  // Defines a compilation symbol for this file (must come BEFORE the usings; it is file-scoped)
 
 #nullable enable
 namespace Junior.CSharpFundamentals.ProgramAnatomy;
@@ -7,39 +7,39 @@ public static class Section11_Preprocessor
 {
     public static void Run()
     {
-        // #if / #elif / #else / #endif: KOŞULLU DERLEME — seçilmeyen kod derlemeye hiç girmez (Release'de IL'e yazılmaz)
+        // #if / #elif / #else / #endif: CONDITIONAL COMPILATION — the unselected code never enters the compilation (isn't written to IL in Release)
 #if DEBUG
-        Console.WriteLine("Derleme: DEBUG yapılandırması (dotnet run). Release için:  dotnet run -c Release");
+        Console.WriteLine("Build: DEBUG configuration (dotnet run). For Release:  dotnet run -c Release");
 #else
-        Console.WriteLine("Derleme: RELEASE yapılandırması");
+        Console.WriteLine("Build: RELEASE configuration");
 #endif
 
 #if DEMO_SYMBOL
-        Console.WriteLine("DEMO_SYMBOL bu dosyada #define edildi.");
+        Console.WriteLine("DEMO_SYMBOL was #define'd in this file.");
 #endif
 
 #if NET10_0_OR_GREATER
-        Console.WriteLine("Hedef framework: net10.0 veya üstü  (NETxx_0_OR_GREATER sembolleri SDK tarafından otomatik tanımlanır; çoklu hedefte işe yarar)");
+        Console.WriteLine("Target framework: net10.0 or later  (NETxx_0_OR_GREATER symbols are defined automatically by the SDK; useful with multi-targeting)");
 #endif
 
-        // #region / #endregion: SADECE editörde katlanabilir bölge. Derlemeye etkisi YOK. (Büyük #region'lar çoğu zaman sınıfın bölünmesi gerektiğini gösteren kod kokusudur.)
-        #region Katlanabilir bölge
-        Console.WriteLine("#region sadece IDE'de katlanır.");
+        // #region / #endregion: a region that is foldable ONLY in the editor. NO effect on compilation. (Large #regions are often a code smell showing the class should be split.)
+        #region Foldable region
+        Console.WriteLine("#region folds only in the IDE.");
         #endregion
 
-        // #nullable: nullable analizini dosya/bölge bazında aç-kapat
+        // #nullable: turn nullable analysis on/off per file/region
 #nullable disable
-        string legacy = null;                             // uyarı YOK (nullable bağlam kapalı: eski kodla birlikte çalışma)
+        string legacy = null;                             // NO warning (nullable context is off: interop with legacy code)
 #nullable restore
-        Console.WriteLine($"#nullable disable bölgesinde 'string legacy = null' uyarı üretmedi → legacy is null: {legacy is null}");
+        Console.WriteLine($"'string legacy = null' in the #nullable disable region produced no warning → legacy is null: {legacy is null}");
 
-        // #pragma warning: belirli uyarıyı bölgesel sustur (NEDENİNİ yazın!)
-#pragma warning disable CS0219                           // atanmış ama hiç kullanılmamış değişken uyarısı
+        // #pragma warning: silence a specific warning regionally (write the REASON!)
+#pragma warning disable CS0219                           // assigned-but-never-used variable warning
         var unused = 42;
 #pragma warning restore CS0219
-        Console.WriteLine("#pragma warning disable/restore ile CS0219 yalnızca iki satır arasında susturuldu.");
+        Console.WriteLine("CS0219 was silenced only between the two lines with #pragma warning disable/restore.");
 
-        // #error / #warning derleme sırasında kendi hata/uyarınızı üretir (ör. geçersiz sembol kombinasyonu):
-        // #error Bu yapılandırma desteklenmiyor
+        // #error / #warning produce your own error/warning at compile time (e.g. an invalid symbol combination):
+        // #error This configuration is not supported
     }
 }

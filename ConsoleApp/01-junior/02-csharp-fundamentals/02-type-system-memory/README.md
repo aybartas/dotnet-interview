@@ -21,7 +21,7 @@ Mülakatın en klasik açılışı: *"Value type ile reference type farkı nedir
 
 .NET'in **Common Type System**'i (CTS): her değerin bir tipi vardır ve bu tip, değerin **nasıl kopyalandığını**, **nerede yaşadığını** ve **nasıl karşılaştırıldığını** belirler. Bu konu; value/reference ayrımını, `struct`/`class`/`record` seçimini, boxing'i, `string`'in özel durumunu, null'ı, parametre geçirme biçimlerini (`ref/out/in`), tuple'ları ve enum'ları kapsar.
 
-Konu 12 deney içerir (`dotnet run -- J2.2 <numara>`) ve ayrıca const gömülmesi deneyi (`dotnet run -- J2.2 const-embedding`, 3.9'da): `const` ile `static readonly` farkını IL'de gösterir; gerçek iki-assembly senaryosu README'deki alıştırmadadır.
+Konu 12 deney içerir (`dotnet run -- J2.2 <number>`) ve ayrıca const gömülmesi deneyi (`dotnet run -- J2.2 const-embedding`, 3.9'da): `const` ile `static readonly` farkını IL'de gösterir; gerçek iki-assembly senaryosu README'deki alıştırmadadır.
 
 ---
 
@@ -81,8 +81,8 @@ Tersi de doğrudur: *"reference type heap'tedir"* — referansın kendisi (işar
 
 ```csharp
 var list = new List<Counter> { new() };
-list[0].Value++;          // ✗ CS1612 — indexer KOPYA döner; derleyici sizi korur
-var c = list[0]; c.Value++; list[0] = c;   // kopyala-değiştir-geri ata
+list[0].Value++;          // ✗ CS1612 — the indexer returns a COPY; the compiler protects you
+var c = list[0]; c.Value++; list[0] = c;   // copy-modify-assign back
 ```
 `foreach` değişkeni kopyadır; `readonly` alandaki struct'ın metodu **savunmacı kopya** üzerinde çalışır (sessizce işe yaramaz); interface üzerinden değiştirmek *kutulanmış kopyayı* değiştirir. Çözüm: **`readonly struct` / `readonly record struct`** — değişiklik gerekirse `with` ile yeni kopya.
 
@@ -117,8 +117,8 @@ int i = (int)o;         // unboxing
 
 ```csharp
 "title".ToUpper(new CultureInfo("tr-TR"))   // "TİTLE"  (invariant: "TITLE")
-"FILE".ToLower(new CultureInfo("tr-TR"))    // "fıle"   → "file" ile EŞİT DEĞİL
-if (cmd.ToLower() == "file")                // Türkçe cihazlarda false! (tipik "yalnızca bende/müşteride patlıyor" hatası)
+"FILE".ToLower(new CultureInfo("tr-TR"))    // "fıle"   → NOT EQUAL to "file"
+if (cmd.ToLower() == "file")                // false on Turkish devices! (the typical "breaks only on my/the customer's machine" bug)
 ```
 **Kural:** dil-bağımsız tanımlayıcılar (komut, dosya yolu, URL, header, config anahtarı, enum adı) → `StringComparison.Ordinal`/`OrdinalIgnoreCase`, dönüşümde `ToUpperInvariant()`/`ToLowerInvariant()`. Kullanıcıya gösterilen ve sıralanan metin → kültür duyarlı. Analyzer'lar (CA1304, CA1307, CA1309, CA1310, CA1311) bunu yakalar. Bu repoda kökte `InvariantGlobalization=true` olduğundan, kültür deneyleri için proje bu ayarı `false` yapar (ICU gerekir; Alpine container'da `icu-libs` kurulumu veya invariant mod bilinçli seçilmelidir → J12).
 
@@ -126,7 +126,7 @@ if (cmd.ToLower() == "file")                // Türkçe cihazlarda false! (tipik
 
 - **Nullable value types:** `int?` = `Nullable<int>` — **gerçek bir struct** (`HasValue` + `Value`). `null.Value` → `InvalidOperationException`. Lifted operatörler: `null + 1 = null`, `null < 5 = false` (`null >= 5` de false!). Boxing'de `Nullable<T>` kutulanmaz: `null` → `null` referans, dolu → `T`'nin kutusu.
 - **Nullable reference types:** `string?` **yalnızca derleme zamanı** analizidir; çalışma zamanında ayrı bir tip yoktur (`typeof(string?)` bile yazılamaz), yalnızca metadata'da öznitelik olarak tutulur ve **zorlanmaz**. `!` (null-forgiving) uyarıyı susturur, null'ı kaldırmaz (→ J1.5).
-- **Operatörler:** `?.` (null ise zinciri kes), `?[]`, `??` (null ise varsayılan), `??=` (null ise ata). `order?.Customer?.Address?.City ?? "adres yok"` üç seviye kontrolü tek satıra indirir.
+- **Operatörler:** `?.` (null ise zinciri kes), `?[]`, `??` (null ise varsayılan), `??=` (null ise ata). `order?.Customer?.Address?.City ?? "no address"` üç seviye kontrolü tek satıra indirir.
 
 ### 3.8 `var` vs `dynamic` vs `object`
 
@@ -146,22 +146,22 @@ if (cmd.ToLower() == "file")                // Türkçe cihazlarda false! (tipik
 **Deney — const gömülmesini kanıtlayın.** (a) `ConsoleApp` klasöründe `dotnet run -- J2.2 const-embedding`: iki metot `Config`'e aynı biçimde bakar; IL'de `const` okuyan metot `ldc.i4.3` (3 IL'in **içine yazılı**), `static readonly` okuyan metot `ldsfld` (alanı **çalışırken** okur) içerir. (b) Asıl senaryo (kütüphane güncellenir, uygulama yeniden derlenmez) iki assembly ister; repodan bağımsız, boş bir klasörde:
 
 ```bash
-mkdir constdeney && cd constdeney
+mkdir constexperiment && cd constexperiment
 dotnet new classlib -n Lib && dotnet new console -n App && dotnet add App reference Lib
 printf 'public static class Config\n{\n    public const int MaxRetries = 3;\n    public static readonly int Timeout = 30;\n}\n' > Lib/Class1.cs
 echo 'Console.WriteLine($"MaxRetries={Config.MaxRetries}, Timeout={Config.Timeout}");' > App/Program.cs
 
-# 1) v1 ile derle ve çalıştır              → MaxRetries=3, Timeout=30
+# 1) build and run with v1                 → MaxRetries=3, Timeout=30
 dotnet build -nologo -v q App && dotnet App/bin/Debug/net10.0/App.dll
 
-# 2) Lib'i v2 yap, SADECE Lib'i derle, yeni dll'i App'in yanına kopyala (App'i YENİDEN DERLEME!)
+# 2) make Lib v2, build ONLY Lib, copy the new dll next to App (do NOT REBUILD App!)
 sed -i 's/= 3;/= 5;/; s/= 30;/= 60;/' Lib/Class1.cs
 dotnet build -nologo -v q Lib && cp Lib/bin/Debug/net10.0/Lib.dll App/bin/Debug/net10.0/
 
-# 3) Tekrar çalıştır                       → Timeout=60 (çalışırken okundu) ama MaxRetries HÂLÂ 3 (App'in IL'ine gömülmüştü)
+# 3) run again                             → Timeout=60 (read at run time) but MaxRetries is STILL 3 (it was embedded in App's IL)
 dotnet App/bin/Debug/net10.0/App.dll
 
-# 4) App'i yeniden derle                   → MaxRetries artık 5
+# 4) rebuild App                           → MaxRetries is now 5
 dotnet build -nologo -v q App && dotnet App/bin/Debug/net10.0/App.dll
 ```
 
