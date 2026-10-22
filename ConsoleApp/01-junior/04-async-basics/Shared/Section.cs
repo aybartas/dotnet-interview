@@ -1,18 +1,18 @@
 namespace Junior.AsyncBasics.Shared;
 
-/// <summary>Bir konunun çalıştırılabilir bölümü (async: bu modülde her şey Task döner).</summary>
+/// <summary>A runnable section of a topic (async: everything in this module returns a Task).</summary>
 public sealed record Section(int Number, string Title, Func<Task> Run);
 
-/// <summary>Konu giriş noktalarının ortak mantığı: argümansız → liste, &lt;numara&gt; → o bölüm, all → hepsi.</summary>
+/// <summary>Shared logic of the topic entry points: no arguments → list, &lt;number&gt; → that section, all → every section.</summary>
 public static class SectionRunner
 {
     public static async Task<int> RunAsync(string topicId, string topicTitle, IReadOnlyList<Section> sections, string[] args)
     {
         if (args.Length == 0)
         {
-            Console.WriteLine($"J{topicId} {topicTitle} — bölümler:\n");
+            Console.WriteLine($"J{topicId} {topicTitle} — sections:\n");
             foreach (var s in sections) Console.WriteLine($"  {s.Number,2}. {s.Title}");
-            Console.WriteLine($"\nÇalıştırmak için: dotnet run -- J{topicId} <numara> | all");
+            Console.WriteLine($"\nRun with: dotnet run -- J{topicId} <number> | all");
             return 0;
         }
 

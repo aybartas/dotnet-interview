@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 namespace Junior.AsyncBasics.Shared;
 
 /// <summary>
-/// Demolar için yerel, internetsiz bir Kestrel API'si (rastgele boş port). HTTP çağrılarının "dışarıdaki yavaş servis"i bu sunucudur:
-///   GET /delay/{ms}  → ms kadar bekleyip cevap verir (bekleme istemci kopunca iptal olur).
-/// Ek uç noktalar için <c>map</c> verilir.
+/// A local, internet-free Kestrel API for the demos (random free port). This server is the "slow external service" behind the HTTP calls:
+///   GET /delay/{ms}  → waits ms milliseconds and then responds (the wait is cancelled when the client disconnects).
+/// Pass <c>map</c> to add extra endpoints.
 /// </summary>
 public sealed class LocalApi : IAsyncDisposable
 {
@@ -24,14 +24,14 @@ public sealed class LocalApi : IAsyncDisposable
     public static async Task<LocalApi> StartAsync(Action<WebApplication>? map = null)
     {
         var builder = WebApplication.CreateSlimBuilder();
-        builder.Logging.ClearProviders();                       // demo çıktısını sunucu loglarıyla kirletme
-        builder.WebHost.UseUrls("http://127.0.0.1:0");          // 0 = işletim sistemi boş bir port seçsin
+        builder.Logging.ClearProviders();                       // do not pollute the demo output with server logs
+        builder.WebHost.UseUrls("http://127.0.0.1:0");          // 0 = let the operating system pick a free port
         var app = builder.Build();
 
         app.MapGet("/delay/{ms:int}", async (int ms, CancellationToken ct) =>
         {
             await Task.Delay(ms, ct);
-            return $"{ms} ms sonra cevap";
+            return $"response after {ms} ms";
         });
 
         map?.Invoke(app);

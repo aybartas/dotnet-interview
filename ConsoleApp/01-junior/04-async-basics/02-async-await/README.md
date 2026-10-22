@@ -17,7 +17,7 @@
 
 ## 1. Ne?
 
-`async`/`await`, bekleme gerektiren işleri (ağ, disk, veritabanı) **thread'i bloklamadan** ama **sıralı koda benzeyen** biçimde yazmayı sağlar. Derleyici `async` metodu bir **state machine**'e çevirir; `await` noktasında iş bitmemişse metodun geri kalanı "devam kodu" olarak kaydedilir ve çağıran hemen serbest kalır (iç yapısı → M4.2). Konunun kodu [`Sections/`](Sections/) altında 7 bölümdür (`dotnet run -- J4.2 <numara>`), adım adım dönüşüm örneği [`Conversion/ConversionSteps.cs`](Conversion/ConversionSteps.cs) dosyasındadır.
+`async`/`await`, bekleme gerektiren işleri (ağ, disk, veritabanı) **thread'i bloklamadan** ama **sıralı koda benzeyen** biçimde yazmayı sağlar. Derleyici `async` metodu bir **state machine**'e çevirir; `await` noktasında iş bitmemişse metodun geri kalanı "devam kodu" olarak kaydedilir ve çağıran hemen serbest kalır (iç yapısı → M4.2). Konunun kodu [`Sections/`](Sections/) altında 7 bölümdür (`dotnet run -- J4.2 <number>`), adım adım dönüşüm örneği [`Conversion/ConversionSteps.cs`](Conversion/ConversionSteps.cs) dosyasındadır.
 
 ---
 
@@ -34,14 +34,14 @@
 ### 3.1 `Task`, `Task<T>`, `async` imzası, `await` ([`Section01`](Sections/Section01_TaskBasics.cs))
 
 ```csharp
-static async Task<int> ComputeAsync(int x)   // dönüş: Task<int>; sonek: Async
+static async Task<int> ComputeAsync(int x)   // return: Task<int>; suffix: Async
 {
-    await Task.Delay(100);                    // thread bloklanmaz; devam kodu sonra çalışır
-    return x * 2;                             // Task<int>'in sonucu
+    await Task.Delay(100);                    // the thread is not blocked; the continuation runs later
+    return x * 2;                             // the result of the Task<int>
 }
 
-var task = ComputeAsync(21);   // başlar (task "sıcak"); ilk await'e kadar ÇAĞIRANIN thread'inde senkron çalışır
-var result = await task;       // sonucu bekle (bloklamadan)
+var task = ComputeAsync(21);   // starts (the task is "hot"); runs synchronously on the CALLER's thread until the first await
+var result = await task;       // wait for the result (without blocking)
 ```
 
 | Dönüş tipi | Anlamı |
@@ -72,8 +72,8 @@ Aynı iş (dosya oku + iki bağımsız HTTP çağrısı) üç biçimde; tıklar 
 ```csharp
 static async void FailsVoid() { await Task.Delay(100); throw new InvalidOperationException("..."); }
 
-try { FailsVoid(); }          // hatasız DÖNER: exception henüz fırlatılmadı
-catch (Exception) { }         // asla çalışmaz — çağıran bir Task alamaz
+try { FailsVoid(); }          // RETURNS without error: the exception has not been thrown yet
+catch (Exception) { }         // never runs — the caller gets no Task
 ```
 
 - Hata `await`'ten **sonra**, başka bir thread'de fırlar; yakalayan olmadığı için **yakalanmamış exception → process çöker** (demo bunu ayrı bir alt process'te çalıştırır; çıkış kodu 134, stderr'de `Unhandled exception`).
@@ -116,9 +116,9 @@ static async IAsyncEnumerable<int> ReadPagesAsync([EnumeratorCancellation] Cance
     for (var page = 1; page <= 5; page++) { await Task.Delay(100, ct); yield return page; }
 }
 
-await foreach (var page in ReadPagesAsync().WithCancellation(token)) { /* sayfa geldikçe işle */ }
+await foreach (var page in ReadPagesAsync().WithCancellation(token)) { /* process each page as it arrives */ }
 
-await using (var connection = new Connection()) { }   // IAsyncDisposable: DisposeAsync await edilir
+await using (var connection = new Connection()) { }   // IAsyncDisposable: DisposeAsync is awaited
 ```
 
 - `IAsyncEnumerable<T>`: veriyi **geldikçe** işler (ilk sonuç 100 ms'de; `Task<List<T>>` ile 500 ms'de hepsi birden). Büyük/yavaş veri, sayfalı API, DB okuyucu için.

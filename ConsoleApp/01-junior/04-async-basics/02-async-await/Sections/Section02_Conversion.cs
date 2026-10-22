@@ -10,23 +10,23 @@ public static class Section02_Conversion
         await using var api = await LocalApi.StartAsync();
         using var client = api.CreateClient();
         var path = Path.Combine(Path.GetTempPath(), $"j4-async-{Environment.ProcessId}.txt");
-        await File.WriteAllTextAsync(path, "dosya içeriği");
+        await File.WriteAllTextAsync(path, "file content");
 
         try
         {
-            await client.GetStringAsync("/delay/1");                                       // ısınma
-            Console.WriteLine("Her adım 'UI thread'inde başlatılır; 20 ms'lik bir zamanlayıcı aynı thread'de tık atar. Tık sayısı = arayüzün ne kadar DUYARLI kaldığı.\n");
+            await client.GetStringAsync("/delay/1");                                       // warm-up
+            Console.WriteLine("Each step is started on the 'UI thread'; a 20 ms timer ticks on the same thread. Tick count = how RESPONSIVE the interface stayed.\n");
 
             var s1 = await UiMeter.MeasureAsync(() => { _ = ConversionSteps.Step1_Sync(client, path); return Task.CompletedTask; });
-            Console.WriteLine($"Adım 1 — senkron                : {s1.Ms,4} ms, UI tık sayısı: {s1.Ticks,2}   ← UI thread'i bloklandı (donmuş arayüz)");
+            Console.WriteLine($"Step 1 — synchronous            : {s1.Ms,4} ms, UI ticks: {s1.Ticks,2}   ← the UI thread was blocked (frozen interface)");
 
             var s2 = await UiMeter.MeasureAsync(() => ConversionSteps.Step2_FakeAsync(client, path));
-            Console.WriteLine($"Adım 2 — Task.Run ile sarmak    : {s2.Ms,4} ms, UI tık sayısı: {s2.Ticks,2}   ← UI serbest ama bir havuz thread'i yine bloklandı; süre aynı");
+            Console.WriteLine($"Step 2 — wrapped in Task.Run    : {s2.Ms,4} ms, UI ticks: {s2.Ticks,2}   ← UI is free but a pool thread was blocked anyway; same duration");
 
             var s3 = await UiMeter.MeasureAsync(() => ConversionSteps.Step3_AsyncAllTheWay(client, path));
-            Console.WriteLine($"Adım 3 — async all the way      : {s3.Ms,4} ms, UI tık sayısı: {s3.Ticks,2}   ← hiçbir thread bloklanmadı + bağımsız çağrılar paralel → daha hızlı");
+            Console.WriteLine($"Step 3 — async all the way      : {s3.Ms,4} ms, UI ticks: {s3.Ticks,2}   ← no thread was blocked + independent calls run in parallel → faster");
 
-            Console.WriteLine($"\nİçerik doğrulaması: {await ConversionSteps.Step3_AsyncAllTheWay(client, path)}");
+            Console.WriteLine($"\nContent check: {await ConversionSteps.Step3_AsyncAllTheWay(client, path)}");
         }
         finally
         {
@@ -35,13 +35,13 @@ public static class Section02_Conversion
 
         Console.WriteLine("""
 
-        Dönüşüm reçetesi (kod: 02-async-await/Conversion/ConversionSteps.cs):
-          1. Bloklayan API'yi async karşılığıyla değiştir: File.ReadAllText → ReadAllTextAsync, HttpClient.Send/.Result → await GetStringAsync.
-          2. Metodu async yap, dönüş tipini Task/Task<T> yap, adına Async ekle.
-          3. ÇAĞIRANLARI da await et → zincir yukarı doğru uzar: ASYNC ALL THE WAY (giriş noktasına kadar: controller, Main, event handler).
-          4. Bağımsız işleri await etmeden başlat, Task.WhenAll ile birlikte bekle.
-          5. CancellationToken ekle ve aşağı geçir (→ J4.3).
-        Karıştırma: senkron kodun ortasında .Result/.Wait() (deadlock/starvation, → 4. bölüm) ve async kodun ortasında bloklayan çağrı.
+        Conversion recipe (code: 02-async-await/Conversion/ConversionSteps.cs):
+          1. Replace the blocking API with its async counterpart: File.ReadAllText → ReadAllTextAsync, HttpClient.Send/.Result → await GetStringAsync.
+          2. Make the method async, make the return type Task/Task<T>, add Async to its name.
+          3. Await the CALLERS too → the chain grows upwards: ASYNC ALL THE WAY (up to the entry point: controller, Main, event handler).
+          4. Start independent work without awaiting it, then await it together with Task.WhenAll.
+          5. Add a CancellationToken and pass it down (→ J4.3).
+        Do not mix: .Result/.Wait() in the middle of synchronous code (deadlock/starvation, → section 4) and a blocking call in the middle of async code.
         """);
     }
 }

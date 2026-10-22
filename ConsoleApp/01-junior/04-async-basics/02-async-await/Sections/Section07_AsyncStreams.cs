@@ -5,17 +5,17 @@ namespace Junior.AsyncBasics.AsyncAwait;
 
 public static class Section07_AsyncStreams
 {
-    // Sayfa sayfa gelen veriyi (API sayfalama, DB okuyucu, dosya satırları) geldikçe üreten async akış
+    // An async stream that produces data arriving page by page (API paging, DB reader, file lines) as it arrives
     private static async IAsyncEnumerable<int> ReadPagesAsync([EnumeratorCancellation] CancellationToken ct = default)
     {
         for (var page = 1; page <= 5; page++)
         {
-            await Task.Delay(100, ct);              // her sayfa 100 ms'de "ağdan" gelir
+            await Task.Delay(100, ct);              // each page arrives "from the network" in 100 ms
             yield return page;
         }
     }
 
-    private static async Task<List<int>> ReadAllPagesAsync()                  // aynı iş, ama hepsini bekleyip liste döndürür
+    private static async Task<List<int>> ReadAllPagesAsync()                  // the same job, but it waits for everything and returns a list
     {
         var list = new List<int>();
         await foreach (var p in ReadPagesAsync()) list.Add(p);
@@ -26,8 +26,8 @@ public static class Section07_AsyncStreams
     {
         public async ValueTask DisposeAsync()
         {
-            await Task.Delay(50);                                              // kaynağı ASYNC kapat (ör. buffer flush, ağ kapanışı)
-            Console.WriteLine("   [Connection] DisposeAsync tamamlandı (async temizlik)");
+            await Task.Delay(50);                                              // close the resource ASYNCHRONOUSLY (e.g. buffer flush, network shutdown)
+            Console.WriteLine("   [Connection] DisposeAsync completed (async cleanup)");
         }
     }
 
@@ -35,39 +35,39 @@ public static class Section07_AsyncStreams
     {
         var sw = Stopwatch.StartNew();
 
-        Console.WriteLine("1) await foreach: ilk sonuç beklemeden işlenir (streaming):");
+        Console.WriteLine("1) await foreach: the first result is processed without waiting (streaming):");
         await foreach (var page in ReadPagesAsync())
-            Console.WriteLine($"   {sw.ElapsedMilliseconds,4} ms → sayfa {page} işlendi");
+            Console.WriteLine($"   {sw.ElapsedMilliseconds,4} ms → page {page} processed");
 
         sw.Restart();
         var all = await ReadAllPagesAsync();
-        Console.WriteLine($"\n2) Task<List<int>>: tüm sayfalar bitince birden: {sw.ElapsedMilliseconds} ms sonra [{string.Join(", ", all)}]  (ilk veri de 500 ms'de!)");
+        Console.WriteLine($"\n2) Task<List<int>>: all at once when every page is done: after {sw.ElapsedMilliseconds} ms [{string.Join(", ", all)}]  (even the first data at 500 ms!)");
 
-        Console.WriteLine("\n3) İptal: WithCancellation(token) — 250 ms'de iptal:");
+        Console.WriteLine("\n3) Cancellation: WithCancellation(token) — cancelled at 250 ms:");
         using var cts = new CancellationTokenSource(250);
         try
         {
             await foreach (var page in ReadPagesAsync().WithCancellation(cts.Token))
-                Console.WriteLine($"   sayfa {page}");
+                Console.WriteLine($"   page {page}");
         }
         catch (OperationCanceledException)
         {
-            Console.WriteLine("   OperationCanceledException → akış durdu (üretici [EnumeratorCancellation] ile token'ı alır)");
+            Console.WriteLine("   OperationCanceledException → the stream stopped (the producer receives the token via [EnumeratorCancellation])");
         }
 
-        Console.WriteLine("\n4) await using: IAsyncDisposable kaynağını ASYNC temizler:");
+        Console.WriteLine("\n4) await using: cleans up an IAsyncDisposable resource ASYNCHRONOUSLY:");
         await using (var connection = new Connection())
         {
-            Console.WriteLine("   [using bloğu] kaynak kullanılıyor");
-        }                                                                      // blok bitince DisposeAsync await edilir
-        Console.WriteLine("   blok sonrası");
+            Console.WriteLine("   [using block] the resource is in use");
+        }                                                                      // DisposeAsync is awaited when the block ends
+        Console.WriteLine("   after the block");
 
         Console.WriteLine("""
 
-        • IAsyncEnumerable<T> = "async foreach edilebilen" akış: büyük/yavaş veriyi bellekte biriktirmeden, geldikçe işlemek için.
-          ASP.NET Core Minimal API'de IAsyncEnumerable<T> döndürmek yanıtı akıtır; EF Core: AsQueryable().AsAsyncEnumerable().
-        • await using / IAsyncDisposable: Dispose'ın kendisi I/O yapıyorsa (Stream.FlushAsync, DbConnection, kanal kapatma). Senkron Dispose'a sarmak bloklar.
-        • Yazarken: yield return + await aynı metotta; iptal için [EnumeratorCancellation] CancellationToken.
+        • IAsyncEnumerable<T> = a stream you can "async foreach": for processing large/slow data as it arrives, without accumulating it in memory.
+          Returning IAsyncEnumerable<T> from an ASP.NET Core Minimal API streams the response; EF Core: AsQueryable().AsAsyncEnumerable().
+        • await using / IAsyncDisposable: when Dispose itself does I/O (Stream.FlushAsync, DbConnection, closing a channel). Wrapping it in a synchronous Dispose blocks.
+        • When writing one: yield return + await in the same method; for cancellation, [EnumeratorCancellation] CancellationToken.
         """);
     }
 }
