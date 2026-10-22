@@ -75,16 +75,16 @@ Metin içi çapraz referanslar bu ID'lerle yapılır: **(→ M6.3)** "bu konunun
 ```
 ConsoleApp/
 ├── ConsoleApp.csproj
-├── Program.cs                 # TÜM konsol konularının menüsü: dotnet run -- J3.2 [bölüm | all]
-└── <seviye>/<NN-modül>/<NN-konu>/
-    ├── README.md               # kavramsal anlatım (aşağıdaki şablon)
-    ├── <kod dosyaları>         # konunun kodu (<Konu>Topic.cs, Sections/, Models/ …)
-    └── interview-questions.md  # 10-20 soru + cevap
+├── Program.cs                 # menu for ALL console topics: dotnet run -- J3.2 [section | all]
+└── <level>/<NN-module>/<NN-topic>/
+    ├── README.md               # conceptual explanation (template below)
+    ├── <code files>            # the topic's code (<Topic>Topic.cs, Sections/, Models/ …)
+    └── interview-questions.md  # 10-20 questions + answers
 WebApp/
 ├── WebApp.csproj
-├── Program.cs                 # web konularının AddServices / Map metotlarını çağırır
-└── <seviye>/<NN-modül>/<NN-konu>/   # aynı biçim: README.md + endpoint kodu + interview-questions.md
-docker-compose.yml             # (ilk altyapı isteyen konu — J8 — geldiğinde eklenir) DB, Redis, Keycloak, broker …
+├── Program.cs                 # calls the web topics' AddServices / Map methods
+└── <level>/<NN-module>/<NN-topic>/  # same shape: README.md + endpoint code + interview-questions.md
+docker-compose.yml             # (added with the first infra topic — J8) DB, Redis, Keycloak, broker …
 ```
 
 - **Konu ID'leri:** konsolda `dotnet run -- J3.2` (Junior), `M…`, `S…`, `D…`, `C1.8` (sertifika); `Program.cs`'e her konu tek satırla eklenir.
@@ -4214,15 +4214,15 @@ Klasör hiyerarşisi roadmap'in birebir aynısıdır: **seviye → modül → ko
 
 ```
 dotnet-interview/
-├── DotnetInterview.slnx            # TEK solution: Visual Studio'da bunu açın (ConsoleApp + WebApp)
+├── DotnetInterview.slnx            # the ONE solution: open this in Visual Studio (ConsoleApp + WebApp)
 ├── README.md
-├── ROADMAP.md                      # bu dosya
+├── ROADMAP.md                      # this file
 ├── CLAUDE.md
-├── docker-compose.yml              # (ilk altyapı konusu — J8 — geldiğinde eklenir): PostgreSQL, Redis, broker …
+├── docker-compose.yml              # (added with the first infra topic — J8): PostgreSQL, Redis, broker …
 │
-├── ConsoleApp/                     # TEK console projesi: konsol konularının hepsi
+├── ConsoleApp/                     # the ONE console project: every console topic
 │   ├── ConsoleApp.csproj
-│   ├── Program.cs                  # konu menüsü: dotnet run -- J3.2 [bölüm | all]
+│   ├── Program.cs                  # topic menu: dotnet run -- J3.2 [section | all]
 │   │
 │   ├── 01-junior/
 │   │   ├── 01-dev-foundations/
@@ -4292,14 +4292,14 @@ dotnet-interview/
 │   │   ├── 05-technical-leadership/
 │   │   └── 06-mock-checklist/
 │   │
-│   └── 06-certifications/              # seviyelerden bağımsız sertifika pisti
-│       ├── 01-az-900-azure-fundamentals/      # 15 konu (README + quiz; kod yalnızca C1.1–C1.3, C1.8, C1.11)
-│       └── 02-ai-200-azure-ai-cloud-developer/ # 14 konu (Azure SDK + emülatörler: kökteki docker-compose.yml)
+│   └── 06-certifications/              # level-independent certification track
+│       ├── 01-az-900-azure-fundamentals/      # 15 topics (README + quiz; code only in C1.1–C1.3, C1.8, C1.11)
+│       └── 02-ai-200-azure-ai-cloud-developer/ # 14 topics (Azure SDK + emulators: root docker-compose.yml)
 │
-└── WebApp/                         # TEK web projesi: HTTP sunucusu gerektiren konular (J1.3, J6, J7, M3, M5 …)
+└── WebApp/                         # the ONE web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …)
     ├── WebApp.csproj
-    ├── Program.cs                  # konuların AddServices / Map metotlarını çağırır
-    └── 01-junior/ …                # ConsoleApp ile aynı seviye/modül/konu klasör adları
+    ├── Program.cs                  # calls the topics' AddServices / Map methods
+    └── 01-junior/ …                # same level/module/topic folder names as ConsoleApp
 ```
 
 **Örnek — bir modülün açılmış hali:**

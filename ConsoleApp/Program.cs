@@ -1,4 +1,3 @@
-using System.Globalization;
 using Certification.AzureFundamentals.CloudBenefits;
 using Certification.AzureFundamentals.CloudComputing;
 using Certification.AzureFundamentals.CloudServiceTypes;
@@ -22,85 +21,80 @@ using Junior.CSharpFundamentals.TypeSystemMemory;
 using Junior.DevFoundations.IdeDebugging.Exercises;
 using Junior.DevFoundations.NetworkFundamentals;
 
-// Tüm konsol konuları bu tek dosyadan çalışır. Visual Studio'da F5 → konu menüsü açılır; bir konu seçin, sonra bölüm numarası veya "all" yazın.
-// Bu dosyanın KENDİSİ "top-level statements" örneğidir (bkz. J2.1 Section01): class ve Main yazmadık; derleyici üretti.
-// `args` komut satırı argümanlarıdır, `return <int>` process exit code'udur, `await` kullanınca Main `async Task<int>` olur (bkz. J4).
+// Every console topic runs from this single file. In Visual Studio press F5 → the topic menu opens; pick a topic,
+// then type a section number, "all", or a topic-specific command.
+// This file ITSELF is a "top-level statements" example (see J2.1 Section01): we did not write a class or Main; the compiler generated them.
+// `args` are the command-line arguments, `return <int>` is the process exit code, and using `await` makes Main `async Task<int>` (see J4).
 //
-// J = Junior, C = Sertifika. HTTP sunucusu gerektiren konular WebApp projesindedir.
-// Menüsüz kullanım (terminal):  dotnet run -- J3.2 4   ·   dotnet run -- C1.2 seri 99.95 99.99
+// J = Junior, C = Certification. Topics that need an HTTP server live in the WebApp project.
+// Without the menu (terminal):  dotnet run -- J3.2 4   ·   dotnet run -- C1.2 serial 99.95 99.99
 
 Topic[] topics =
 [
     // ── Junior ──
-    new("J1.2", "Ağ Temelleri (TCP / UDP / Socket)",                       NetworkFundamentalsTopic.Run),
-    new("J1.5", "IDE, Debugging & Kod Kalitesi",                           IdeDebuggingTopic.Run),
-    new("J2.1", "Program Anatomisi",                                       ProgramAnatomyTopic.Run),
-    new("J2.2", "Tip Sistemi & Bellek Modeli",                             TypeSystemMemoryTopic.Run),
-    new("J2.3", "OOP Temelleri",                                           OopTopic.Run),
-    new("J2.4", "Sınıf Üyeleri & Nesne Semantiği",                         ClassMembersTopic.Run),
+    new("J1.2", "Network Fundamentals (TCP / UDP / Sockets)",              NetworkFundamentalsTopic.Run),
+    new("J1.5", "IDE, Debugging & Code Quality",                           IdeDebuggingTopic.Run),
+    new("J2.1", "Program Anatomy",                                         ProgramAnatomyTopic.Run),
+    new("J2.2", "Type System & Memory Model",                              TypeSystemMemoryTopic.Run),
+    new("J2.3", "OOP Fundamentals",                                        OopTopic.Run),
+    new("J2.4", "Class Members & Object Semantics",                        ClassMembersTopic.Run),
     new("J2.5", "Exception Handling",                                      ExceptionHandlingTopic.Run),
-    new("J2.6", "Günlük Modern C#",                                        ModernCSharpTopic.Run),
+    new("J2.6", "Everyday Modern C#",                                      ModernCSharpTopic.Run),
     new("J3.1", "Collections & Generics",                                  CollectionsGenericsTopic.Run),
     new("J3.2", "Delegates, Lambdas & Events",                             DelegatesLambdasEventsTopic.Run),
-    new("J3.3", "LINQ Temelleri",                                          LinqBasicsTopic.Run),
-    new("J4.1", "Temel Kavramlar (concurrency, parallelism, I/O vs CPU)",  ConceptsTopic.Run),
-    new("J4.2", "async/await Kullanımı",                                   AsyncAwaitTopic.Run),
-    new("J4.3", "Cancellation Temelleri",                                  CancellationBasicsTopic.Run),
-    new("J5.1", "C# → IL → Native: Büyük Resim",                           BigPictureTopic.Run),
-    new("J5.2", "bin/ ve obj/",                                            BinObjTopic.Run),
+    new("J3.3", "LINQ Basics",                                             LinqBasicsTopic.Run),
+    new("J4.1", "Core Concepts (concurrency, parallelism, I/O vs CPU)",    ConceptsTopic.Run),
+    new("J4.2", "async/await in Practice",                                 AsyncAwaitTopic.Run),
+    new("J4.3", "Cancellation Basics",                                     CancellationBasicsTopic.Run),
+    new("J5.1", "C# → IL → Native: The Big Picture",                       BigPictureTopic.Run),
+    new("J5.2", "bin/ and obj/",                                           BinObjTopic.Run),
     new("J5.3", "run vs build vs publish",                                 RunBuildPublishTopic.Run),
 
-    // ── Sertifika: AZ-900 (kodu olan konular; diğerleri yalnızca README + quiz) ──
-    new("C1.1",  "Cloud Computing, Cloud Modelleri ve Fiyatlandırma",      CloudComputingTopic.Run),
-    new("C1.2",  "Cloud'un Faydaları (HA, ölçek, SLA…)",                   CloudBenefitsTopic.Run),
-    new("C1.3",  "Cloud Hizmet Türleri: IaaS, PaaS, SaaS, Serverless",     CloudServiceTypesTopic.Run),
-    new("C1.8",  "Azure Storage: Blob, Files, Taşıma ve Migration",        StorageTopic.Run),
-    new("C1.11", "Azure'da Maliyet Yönetimi",                              CostManagementTopic.Run),
+    // ── Certification: AZ-900 (only topics with code are listed; the others are README + quiz only) ──
+    new("C1.1",  "Cloud Computing, Cloud Models and Pricing",              CloudComputingTopic.Run),
+    new("C1.2",  "Benefits of the Cloud (HA, scale, SLA…)",                CloudBenefitsTopic.Run),
+    new("C1.3",  "Cloud Service Types: IaaS, PaaS, SaaS, Serverless",      CloudServiceTypesTopic.Run),
+    new("C1.8",  "Azure Storage: Blob, Files, Data Transfer and Migration", StorageTopic.Run),
+    new("C1.11", "Cost Management in Azure",                               CostManagementTopic.Run),
 ];
 
 Topic? Find(string id) => topics.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
 
 void PrintTopics()
 {
-    Console.WriteLine("\nKonular:\n");
+    Console.WriteLine("\nTopics:\n");
     foreach (var t in topics) Console.WriteLine($"  {t.Id,-5} {t.Title}");
-    Console.WriteLine("\n  (Yalnızca README olan konular: J1.1 Git, J1.4 .NET CLI, C1.4–C1.7, C1.9–C1.10, C1.12–C1.15)");
+    Console.WriteLine("\n  (README-only topics, no code: J1.1 Git, J1.4 .NET CLI, C1.4–C1.7, C1.9–C1.10, C1.12–C1.15)");
 }
 
-Task<int> RunTopic(Topic topic, string[] topicArgs)
-{
-    if (topic.Id.StartsWith('C')) CultureInfo.DefaultThreadCurrentCulture = CultureInfo.CurrentCulture = new CultureInfo("tr-TR");   // yüzde/para çıktıları tr-TR
-    return topic.Run(topicArgs);
-}
-
-// Menüsüz: dotnet run -- J3.2 4
+// Without the menu: dotnet run -- J3.2 4
 if (args.Length > 0)
 {
     if (Find(args[0]) is not { } direct) { PrintTopics(); return 1; }
-    return await RunTopic(direct, args[1..]);
+    return await direct.Run(args[1..]);
 }
 
-// Menü: konu → (bölüm no | all | konuya özel komut) → tekrar
-Console.WriteLine("Not: static başlatma, JIT, ilk çağrı gibi demolar yalnızca süreç ilk açıldığında doğru görünür; temiz sonuç için programı yeniden başlatın.");
+// Menu: topic → (section number | all | topic-specific command) → repeat
+Console.WriteLine("Note: demos about static initialization, JIT and first calls only look right the first time the process runs; restart the program for a clean result.");
 while (true)
 {
     PrintTopics();
-    Console.Write("\nKonu (ör. J3.2; boş = çıkış): ");
+    Console.Write("\nTopic (e.g. J3.2; empty = quit): ");
     var id = Console.ReadLine()?.Trim();
     if (string.IsNullOrEmpty(id)) return 0;
-    if (Find(id) is not { } topic) { Console.WriteLine($"Bilinmeyen konu: {id}"); continue; }
+    if (Find(id) is not { } topic) { Console.WriteLine($"Unknown topic: {id}"); continue; }
 
-    await RunTopic(topic, []);                       // bölüm / komut listesini yazar
+    await topic.Run([]);                             // prints the section / command list
     while (true)
     {
-        Console.Write($"\n{topic.Id} › bölüm no, all veya komut (boş = konu listesi): ");
+        Console.Write($"\n{topic.Id} › section number, all, or a command (empty = back to topics): ");
         var line = Console.ReadLine()?.Trim();
         if (string.IsNullOrEmpty(line)) break;
-        await RunTopic(topic, line.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        await topic.Run(line.Split(' ', StringSplitOptions.RemoveEmptyEntries));
     }
 }
 
-/// <summary>Bir konu: Id (ör. "J3.2"), başlık ve giriş noktası (kalan argümanları alır, exit code döner). Senkron konular için ikinci yapıcı var.</summary>
+/// <summary>A topic: Id (e.g. "J3.2"), title and entry point (receives the remaining arguments, returns an exit code). A second constructor accepts synchronous topics.</summary>
 public sealed record Topic(string Id, string Title, Func<string[], Task<int>> Run)
 {
     public Topic(string id, string title, Func<string[], int> run) : this(id, title, args => Task.FromResult(run(args))) { }
