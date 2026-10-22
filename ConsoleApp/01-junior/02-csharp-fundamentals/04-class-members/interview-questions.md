@@ -57,7 +57,7 @@ Shallow copy yalnızca üst düzey alanları kopyalar; iç içe referans tipler 
 Varsayılan değer metodun içine değil **çağıran assembly'nin IL'ine** derlenir (`const` ile aynı mantık). Kütüphanede varsayılanı değiştirip yalnızca kütüphaneyi yayınlarsanız yeniden derlenmemiş tüketiciler eski değeri kullanmaya devam eder. Public API'de overload'lar daha güvenlidir. Ayrıca optional parametreli bir metot ile optional'sız overload birlikte olunca çözümleme kafa karıştırıcı olur.
 
 ### 19. Anonim tip nedir? Ne zaman `record` veya tuple tercih edilir?
-Derleyicinin ürettiği, adsız, salt okunur, değer eşitlikli bir sınıftır (`new { Ad = "A", Yas = 1 }`); metot sınırını geçemez (dönüş tipi olarak yazılamaz), LINQ ara projeksiyonları için uygundur. Metotlar arası taşınacak veya kalıcı veri için `record` (isimli tip), özel/yerel çok değerli dönüş için tuple tercih edilir.
+Derleyicinin ürettiği, adsız, salt okunur, değer eşitlikli bir sınıftır (`new { Name = "A", Age = 1 }`); metot sınırını geçemez (dönüş tipi olarak yazılamaz), LINQ ara projeksiyonları için uygundur. Metotlar arası taşınacak veya kalıcı veri için `record` (isimli tip), özel/yerel çok değerli dönüş için tuple tercih edilir.
 
 ### 20. GC varken neden `IDisposable`'a ihtiyaç var? `using` ne yapar?
 GC yalnızca yönetilen belleği toplar ve ne zaman çalışacağı belirsizdir. Dosya tanıtıcısı, soket, DB bağlantısı gibi yönetilmeyen kaynakların deterministik biçimde bırakılması gerekir. `using` (blok veya declaration) `Dispose()`'un exception olsa bile çağrılmasını garanti eder (`try/finally` şekerlemesi); birden çok kaynak tanımlanma sırasının tersiyle bırakılır. Dispose pattern'in tamamı → M1.5.

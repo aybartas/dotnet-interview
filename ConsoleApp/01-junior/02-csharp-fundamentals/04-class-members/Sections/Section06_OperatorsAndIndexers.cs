@@ -16,24 +16,24 @@ public static class Section06_OperatorsAndIndexers
         catch (InvalidOperationException ex) { Console.WriteLine($"a + usd → {ex.Message}"); }
 
         Money implicitMoney = 50m;                                  // implicit: decimal → Money (TRY)
-        var raw = (decimal)a;                                        // explicit: para birimi kaybolur
+        var raw = (decimal)a;                                        // explicit: the currency is lost
         Console.WriteLine($"implicit: Money m = 50m → {implicitMoney};  explicit: (decimal)a → {raw}");
-        Console.WriteLine($"Eşitlik tutarlılığı: a.Equals(copy) = {a.Equals(new Money(100m, "TRY"))}, hash'ler eşit = {a.GetHashCode() == new Money(100m, "TRY").GetHashCode()}");
+        Console.WriteLine($"Equality consistency: a.Equals(copy) = {a.Equals(new Money(100m, "TRY"))}, hashes equal = {a.GetHashCode() == new Money(100m, "TRY").GetHashCode()}");
 
         Console.WriteLine("\nINDEXER — MoneyBag");
         var bag = new MoneyBag { a, b, usd, new Money(4m, "usd") };
         Console.WriteLine($"bag[0] = {bag[0]};  bag[^1] (Index) = {bag[^1]};  bag.Count = {bag.Count}");
-        Console.WriteLine($"bag[\"TRY\"] = {bag["TRY"]} (string indexer: para birimi toplamı);  bag[\"USD\", 1] = {bag["USD", 1]} (çok parametreli)");
+        Console.WriteLine($"bag[\"TRY\"] = {bag["TRY"]} (string indexer: total per currency);  bag[\"USD\", 1] = {bag["USD", 1]} (multi-parameter)");
         bag[0] = new Money(1m, "TRY");                                // set accessor
-        Console.WriteLine($"bag[0] = ... atandı → {bag[0]};  foreach: {string.Join(" | ", bag)}");
+        Console.WriteLine($"bag[0] = ... assigned → {bag[0]};  foreach: {string.Join(" | ", bag)}");
         try { _ = bag[99]; }
         catch (ArgumentOutOfRangeException) { Console.WriteLine("bag[99] → ArgumentOutOfRangeException"); }
 
         Console.WriteLine("""
 
-        Operator overloading ne zaman? Gerçek bir MATEMATİKSEL/doğal anlam varsa (Money, Vector, TimeSpan, DateTime - DateTime).
-        Anlamsız overload (örn. Order + Order) okunabilirliği bozar. Kural: ==/!= ve </> çiftleri birlikte; Equals/GetHashCode/IEquatable tutarlı.
-        Indexer: koleksiyon benzeri API (this[...]); int dışında tip ve birden çok parametre alabilir; get-only olabilir. İsim yok → 'Item' property'si olarak derlenir.
+        When to use operator overloading? When there is a real MATHEMATICAL/natural meaning (Money, Vector, TimeSpan, DateTime - DateTime).
+        A meaningless overload (e.g. Order + Order) hurts readability. Rules: ==/!= and </> come in pairs; Equals/GetHashCode/IEquatable consistent.
+        Indexer: a collection-like API (this[...]); can take types other than int and multiple parameters; can be get-only. No name → compiled as an 'Item' property.
         """);
     }
 }

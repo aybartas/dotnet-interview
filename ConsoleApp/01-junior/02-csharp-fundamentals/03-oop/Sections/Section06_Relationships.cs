@@ -9,55 +9,55 @@ public static class Section06_Relationships
     {
         Console.WriteLine("""
         ┌──────────────┬────────────────┬──────────────────────────────┬──────────────────────┐
-        │ İlişki       │ Anlam          │ Yaşam süresi                 │ Örnek                │
+        │ Relationship │ Meaning        │ Lifetime                     │ Example              │
         ├──────────────┼────────────────┼──────────────────────────────┼──────────────────────┤
         │ Inheritance  │ "is-a"         │ —                            │ SavingsAccount:Account│
-        │ Association  │ "uses-a"       │ Bağımsız, sahiplik yok       │ Order ↔ Courier      │
-        │ Aggregation  │ zayıf "has-a"  │ Parça bütünden UZUN yaşar    │ Team ↔ Employee      │
-        │ Composition  │ güçlü "has-a"  │ Parça bütünle BİRLİKTE ölür  │ Order ↔ OrderLine    │
+        │ Association  │ "uses-a"       │ Independent, no ownership    │ Order ↔ Courier      │
+        │ Aggregation  │ weak "has-a"   │ Part OUTLIVES the whole      │ Team ↔ Employee      │
+        │ Composition  │ strong "has-a" │ Part dies WITH the whole     │ Order ↔ OrderLine    │
         └──────────────┴────────────────┴──────────────────────────────┴──────────────────────┘
         """);
 
         Console.WriteLine("AGGREGATION — Team / Employee");
-        var ali = new Employee("Ali");                       // çalışan takımdan BAĞIMSIZ oluşturuldu
-        var veli = new Employee("Veli");
+        var alice = new Employee("Alice");                   // the employee was created INDEPENDENTLY of the team
+        var bob = new Employee("Bob");
         var backend = new Team("Backend");
         var platform = new Team("Platform");
-        backend.Add(ali); backend.Add(veli);
-        platform.Add(veli);                                  // Veli başka takıma TAŞINDI
+        backend.Add(alice); backend.Add(bob);
+        platform.Add(bob);                                   // Bob was MOVED to another team
         Console.WriteLine($"   backend: [{string.Join(", ", backend.Members.Select(m => m.Name))}]  platform: [{string.Join(", ", platform.Members.Select(m => m.Name))}]");
         backend.Disband();
-        Console.WriteLine($"   backend dağıtıldı → Ali hâlâ var mı? Evet (Team = {(ali.Team is null ? "yok" : ali.Team.Name)}); Veli: Team = {veli.Team?.Name}");
+        Console.WriteLine($"   backend disbanded → does Alice still exist? Yes (Team = {(alice.Team is null ? "none" : alice.Team.Name)}); Bob: Team = {bob.Team?.Name}");
 
         Console.WriteLine("\nCOMPOSITION — Order / OrderLine");
         var order = new Order();
-        var line = order.AddLine("Kalem", 3, 12.5m);          // satırı SİPARİŞ yaratır
-        order.AddLine("Defter", 1, 40m);
-        Console.WriteLine($"   sipariş toplamı: {order.Total:N2}; satır sahibi sipariş mi? {ReferenceEquals(line.Owner, order)}");
-        Console.WriteLine($"   OrderLine ctor public mi? {typeof(OrderLine).GetConstructors().Length > 0} (dışarıdan tek başına üretilemez)");
+        var line = order.AddLine("Pen", 3, 12.5m);            // the ORDER creates the line
+        order.AddLine("Notebook", 1, 40m);
+        Console.WriteLine($"   order total: {order.Total:N2}; is the line's owner the order? {ReferenceEquals(line.Owner, order)}");
+        Console.WriteLine($"   is the OrderLine ctor public? {typeof(OrderLine).GetConstructors().Length > 0} (cannot be created standalone from outside)");
         order.Cancel();
-        Console.WriteLine($"   sipariş iptal → satır sayısı: {order.Lines.Count}; eski satır yetim mi? {line.IsOrphaned}");
+        Console.WriteLine($"   order cancelled → line count: {order.Lines.Count}; is the old line an orphan? {line.IsOrphaned}");
 
-        // ── Yaşam süresi farkının GC ile kanıtı (WeakReference: nesneyi hayatta tutmaz, toplandı mı diye sorar) ──
-        Console.WriteLine("\nGC İLE KANIT (WeakReference)");
-        var (company, weakTeam) = CreateCompanyAndTeam();        // çalışanlar 'company' listesinde (dışarıda) tutuluyor
+        // ── Proving the lifetime difference with the GC (WeakReference: doesn't keep the object alive, only asks whether it was collected) ──
+        Console.WriteLine("\nPROOF WITH THE GC (WeakReference)");
+        var (company, weakTeam) = CreateCompanyAndTeam();        // the employees are held in the 'company' list (outside)
         var (weakOrder, weakLines) = CreateOrderWithLines();
         var (keptLine, weakOwner) = CreateOrderAndKeepLine();
         ForceGc();
-        Console.WriteLine($"   Aggregation: takım toplandı mı? {!weakTeam.TryGetTarget(out _)}; çalışanlar hâlâ erişilebilir mi? {company.All(e => e.Name.Length > 0)}");
-        Console.WriteLine($"   Composition: sipariş toplandı mı? {!weakOrder.TryGetTarget(out _)}; satırları da toplandı mı? {weakLines.All(w => !w.TryGetTarget(out _))}");
-        Console.WriteLine($"   Satır hâlâ tutuluyorsa sipariş de yaşar mı? {weakOwner.TryGetTarget(out var o) && ReferenceEquals(o, keptLine.Owner)} (satır → Owner → sipariş zinciri)");
+        Console.WriteLine($"   Aggregation: was the team collected? {!weakTeam.TryGetTarget(out _)}; are the employees still reachable? {company.All(e => e.Name.Length > 0)}");
+        Console.WriteLine($"   Composition: was the order collected? {!weakOrder.TryGetTarget(out _)}; were its lines collected too? {weakLines.All(w => !w.TryGetTarget(out _))}");
+        Console.WriteLine($"   If a line is still held, does the order live too? {weakOwner.TryGetTarget(out var o) && ReferenceEquals(o, keptLine.Owner)} (line → Owner → order chain)");
         GC.KeepAlive(company);
     }
 
-    // NoInlining: yerel değişkenlerin JIT tarafından uzun süre canlı tutulmasını engeller; GC.Collect'ten ÖNCE nesneler erişilemez olur.
+    // NoInlining: prevents the JIT from keeping locals alive for long; the objects become unreachable BEFORE GC.Collect.
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static (List<Employee> Company, WeakReference<Team> Team) CreateCompanyAndTeam()
     {
-        var company = new List<Employee> { new("Ali"), new("Veli") };
-        var team = new Team("Geçici");
+        var company = new List<Employee> { new("Alice"), new("Bob") };
+        var team = new Team("Temporary");
         foreach (var e in company) team.Add(e);
-        team.Disband();                                          // ilişki koparılır → çalışanlar takıma referans tutmaz
+        team.Disband();                                          // the relationship is severed → employees hold no reference to the team
         return (company, new WeakReference<Team>(team));
     }
 
@@ -65,7 +65,7 @@ public static class Section06_Relationships
     private static (WeakReference<Order>, List<WeakReference<OrderLine>>) CreateOrderWithLines()
     {
         var order = new Order();
-        List<WeakReference<OrderLine>> lines = [new(order.AddLine("Kalem", 1, 1m)), new(order.AddLine("Defter", 2, 2m))];
+        List<WeakReference<OrderLine>> lines = [new(order.AddLine("Pen", 1, 1m)), new(order.AddLine("Notebook", 2, 2m))];
         return (new WeakReference<Order>(order), lines);
     }
 
@@ -73,7 +73,7 @@ public static class Section06_Relationships
     private static (OrderLine, WeakReference<Order>) CreateOrderAndKeepLine()
     {
         var order = new Order();
-        var line = order.AddLine("Kalem", 1, 1m);
+        var line = order.AddLine("Pen", 1, 1m);
         return (line, new WeakReference<Order>(order));
     }
 

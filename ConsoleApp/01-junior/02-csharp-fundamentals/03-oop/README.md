@@ -88,8 +88,8 @@ class Base            { public virtual string Hello() => "Base"; }
 class ViaOverride : Base { public override string Hello() => "Override"; }
 class ViaNew      : Base { public new      string Hello() => "New"; }
 
-Base a = new ViaOverride();  a.Hello();   // "Override"  ← nesnenin GERÇEK tipi (polimorfizm)
-Base b = new ViaNew();       b.Hello();   // "Base"      ← DEĞİŞKENİN tipi (method hiding; polimorfizm YOK)
+Base a = new ViaOverride();  a.Hello();   // "Override"  ← the object's ACTUAL type (polymorphism)
+Base b = new ViaNew();       b.Hello();   // "Base"      ← the VARIABLE's type (method hiding; NO polymorphism)
 ((ViaNew)b).Hello();                      // "New"
 ```
 

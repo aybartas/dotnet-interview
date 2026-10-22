@@ -1,8 +1,8 @@
 namespace Junior.CSharpFundamentals.ClassMembers.Models;
 
-// ═════════ ÖNCE: public field'lı model ═════════
-// Sorunlar: (1) doğrulama yapılamaz — Price = -5 serbest, (2) salt okunur/yalnızca-ctor-set yapılamaz,
-// (3) sonradan property'ye çevirmek BINARY BREAKING CHANGE (aşağıda), (4) data binding/serileştirme/EF çoğu araç property bekler.
+// ═════════ BEFORE: a model with public fields ═════════
+// Problems: (1) no validation — Price = -5 is allowed, (2) can't be read-only/set-only-in-ctor,
+// (3) converting to a property later is a BINARY BREAKING CHANGE (below), (4) data binding/serialization/EF mostly expect properties.
 public class ProductBefore
 {
     public string Name = "";
@@ -10,26 +10,26 @@ public class ProductBefore
     public int Stock;
 }
 
-// ═════════ SONRA: property + doğrulama + invariant koruma ═════════
+// ═════════ AFTER: property + validation + invariant protection ═════════
 public class ProductAfter
 {
-    // required (C# 11): nesne oluşturulurken bu üyenin ATANMASI ZORUNLU (object initializer ile) — "yarım nesne" oluşmaz
-    public required string Name { get; init; }            // init: yalnızca oluşturma sırasında atanır, sonra salt okunur
+    // required (C# 11): this member MUST be assigned when the object is created (via object initializer) — no "half-built object"
+    public required string Name { get; init; }            // init: assigned only during creation, read-only afterwards
 
-    // C# 14 'field' keyword: backing field'ı elle yazmadan setter'da doğrulama
+    // C# 14 'field' keyword: validation in the setter without hand-writing the backing field
     public decimal Price
     {
         get;
-        set => field = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Fiyat negatif olamaz");
+        set => field = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Price cannot be negative");
     }
 
-    // private setter: dışarıdan değiştirilemez, durumu yalnızca sınıfın kendi metotları değiştirir
+    // private setter: can't be changed from outside, state is changed only by the class's own methods
     public int Stock { get; private set; }
 
-    // computed (hesaplanan) property: depolama yok; ucuz ve yan etkisiz olmalı
+    // computed property: no storage; should be cheap and side-effect-free
     public bool InStock => Stock > 0;
 
-    public void AddStock(int quantity)                    // PAHALI/yan etkili iş → metot (property değil)
+    public void AddStock(int quantity)                    // EXPENSIVE/side-effecting work → method (not a property)
     {
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity));
         Stock += quantity;
@@ -37,15 +37,15 @@ public class ProductAfter
 
     public void Remove(int quantity)
     {
-        if (quantity > Stock) throw new InvalidOperationException("Yetersiz stok");
+        if (quantity > Stock) throw new InvalidOperationException("Insufficient stock");
         Stock -= quantity;
     }
 
-    // static property: tip düzeyinde paylaşılan değer
+    // static property: a value shared at the type level
     public static int CreatedCount { get; private set; }
     public ProductAfter() => CreatedCount++;
 
-    // readonly alan ile { get; } farkı: alan bellekte bir slot; property bir METOT çifti (get_X). Public API'de property tercih edilir.
+    // readonly field vs { get; }: a field is a slot in memory; a property is a pair of METHODS (get_X). Prefer properties in public APIs.
     public readonly DateTime CreatedAtField = DateTime.UtcNow;
     public DateTime CreatedAtProperty { get; } = DateTime.UtcNow;
 }

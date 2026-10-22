@@ -1,6 +1,6 @@
 namespace Junior.CSharpFundamentals.Oop.PaymentRefactoring;
 
-/// <summary>Bir ödemenin sonucu. Üç refactor adımının hepsi AYNI sonucu üretmek zorundadır (davranış sözleşmesi).</summary>
+/// <summary>The result of a payment. All three refactor steps must produce the SAME result (behavior contract).</summary>
 public sealed record PaymentResult(string Method, decimal Amount, decimal Fee, decimal Total);
 
 public sealed class PaymentRejectedException(string reason) : Exception(reason);
@@ -11,15 +11,15 @@ internal static class Rounding
 }
 
 /// <summary>
-/// DAVRANIŞ SÖZLEŞMESİ. Her refactor adımı bu arayüzü uygular; senaryolar yalnızca bunu bilir.
-/// Refactor = dış davranışı değiştirmeden iç yapıyı değiştirmek → senaryolar HER adımda aynı sonucu vermeli.
+/// BEHAVIOR CONTRACT. Every refactor step implements this interface; the scenarios know only this.
+/// Refactoring = changing the internal structure without changing the external behavior → the scenarios must give the same result at EVERY step.
 ///
-/// İş kuralları (tüm adımlarda aynı):
-///   • Tutar pozitif olmalı.
-///   • Kredi kartı: %2 komisyon; işlem limiti 5.000. Taksitli: %2 + her ek taksit için %1 (3 taksit = %4).
-///     Fraud kontrolü açıksa 3.000'in üstü reddedilir.
-///   • Havale: sabit 5 TL komisyon; IBAN "TR" ile başlayıp 26 karakter olmalı.
-///   • Cüzdan: komisyon yok; bakiye yetersizse reddedilir; başarılı ödemede bakiye düşer.
+/// Business rules (the same in all steps):
+///   • The amount must be positive.
+///   • Credit card: 2% fee; transaction limit 5,000. Installments: 2% + 1% for each extra installment (3 installments = 4%).
+///     If the fraud check is on, anything above 3,000 is rejected.
+///   • Bank transfer: flat fee of 5; the IBAN must start with "TR" and be 26 characters long.
+///   • Wallet: no fee; rejected if the balance is insufficient; the balance is deducted on a successful payment.
 /// </summary>
 public interface IPaymentScenarios
 {

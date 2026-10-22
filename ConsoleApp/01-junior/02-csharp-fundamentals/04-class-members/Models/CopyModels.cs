@@ -8,16 +8,16 @@ public sealed class Address
     public string Street { get; set; } = "";
 }
 
-/// <summary>İç içe nesne (Address) ve koleksiyon (Tags) içeren sipariş modeli: kopyalama stratejilerini göstermek için.</summary>
+/// <summary>An order model with a nested object (Address) and a collection (Tags): to demonstrate copy strategies.</summary>
 public sealed class OrderModel
 {
     public string Number { get; set; } = "";
-    public Address ShippingAddress { get; set; } = new();       // referans tip → paylaşım riski
-    public List<string> Tags { get; set; } = [];                // referans tip → paylaşım riski
+    public Address ShippingAddress { get; set; } = new();       // reference type → sharing risk
+    public List<string> Tags { get; set; } = [];                // reference type → sharing risk
 
     public OrderModel() { }
 
-    /// <summary>Copy constructor: DERİN kopya (iç referanslar da yeniden oluşturulur). Açık, hızlı, tip güvenli.</summary>
+    /// <summary>Copy constructor: DEEP copy (inner references are recreated too). Explicit, fast, type-safe.</summary>
     public OrderModel(OrderModel other)
     {
         Number = other.Number;
@@ -25,22 +25,22 @@ public sealed class OrderModel
         Tags = [.. other.Tags];
     }
 
-    /// <summary>object.MemberwiseClone() SHALLOW'dur: değer tipli alanlar kopyalanır, referans tipli alanlar PAYLAŞILIR.</summary>
+    /// <summary>object.MemberwiseClone() is SHALLOW: value-type fields are copied, reference-type fields are SHARED.</summary>
     public OrderModel ShallowCopy() => (OrderModel)MemberwiseClone();
 
-    /// <summary>Elle deep copy (copy constructor'a delege).</summary>
+    /// <summary>Manual deep copy (delegates to the copy constructor).</summary>
     public OrderModel DeepCopy() => new(this);
 
-    /// <summary>JSON round-trip ile deep copy: yazması kolay ama yavaş (serileştir+ayrıştır) ve tip kısıtlı (ctor/properties/dairesel referans).</summary>
+    /// <summary>Deep copy via JSON round-trip: easy to write but slow (serialize+parse) and type-restricted (ctor/properties/circular references).</summary>
     public OrderModel DeepCopyViaJson() => JsonSerializer.Deserialize<OrderModel>(JsonSerializer.Serialize(this))!;
 }
 
-/// <summary>record + 'with' de SHALLOW'dur: iç içe referanslar paylaşılır.</summary>
+/// <summary>record + 'with' is also SHALLOW: nested references are shared.</summary>
 public sealed record OrderRecord(string Number, Address ShippingAddress, List<string> Tags);
 
-/// <summary>ICloneable.Clone() object döner ve shallow mı deep mi olduğunu SÖZLEŞMEDE belirtmez → Microsoft public API'de kullanılmamasını önerir.</summary>
+/// <summary>ICloneable.Clone() returns object and does NOT state in the CONTRACT whether it is shallow or deep → Microsoft recommends not using it in public APIs.</summary>
 public sealed class LegacyCloneable : ICloneable
 {
     public List<int> Items { get; set; } = [1, 2, 3];
-    public object Clone() => MemberwiseClone();                  // kullanıcı bunun shallow olduğunu nasıl bilecek?
+    public object Clone() => MemberwiseClone();                  // how will the user know this is shallow?
 }

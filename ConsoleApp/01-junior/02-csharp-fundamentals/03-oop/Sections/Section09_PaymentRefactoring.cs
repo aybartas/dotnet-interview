@@ -6,37 +6,37 @@ public static class Section09_PaymentRefactoring
 {
     public static void Run()
     {
-        Console.WriteLine("Aynı iş kuralları, üç farklı iç yapı. Aynı senaryolar HER adımda aynı sonucu verir.\n");
+        Console.WriteLine("Same business rules, three different internal structures. The same scenarios give the same result at EVERY step.\n");
 
         IPaymentScenarios[] steps = [new PaymentRefactoring.Step1.Step1Scenarios(), new PaymentRefactoring.Step2.Step2Scenarios(), new PaymentRefactoring.Step3.Step3Scenarios()];
 
         foreach (var step in steps)
         {
             Console.WriteLine($"── {step.StepName} ──");
-            Show("   kredi kartı 1000          ", () => step.PayCreditCard(1000m));
-            Show("   3 taksit 1000             ", () => step.PayInstallmentCreditCard(1000m, 3));
-            Show("   fraud kontrollü 4000      ", () => step.PayFraudCheckedCreditCard(4000m));
-            Show("   fraud + 3 taksit 2000     ", () => step.PayFraudCheckedInstallmentCreditCard(2000m, 3));
-            Show("   havale 1000 (geçerli IBAN)", () => step.PayBankTransfer(1000m, "TR" + new string('0', 24)));
-            Show("   havale (geçersiz IBAN)    ", () => step.PayBankTransfer(1000m, "XX123"));
-            Show("   cüzdan 100 (bakiye 150)   ", () => step.PayWallet(100m, 150m).Result);
-            Show("   cüzdan 200 (bakiye 150)   ", () => step.PayWallet(200m, 150m).Result);
+            Show("   credit card 1000          ", () => step.PayCreditCard(1000m));
+            Show("   3 installments 1000       ", () => step.PayInstallmentCreditCard(1000m, 3));
+            Show("   fraud-checked 4000        ", () => step.PayFraudCheckedCreditCard(4000m));
+            Show("   fraud + 3 inst. 2000      ", () => step.PayFraudCheckedInstallmentCreditCard(2000m, 3));
+            Show("   transfer 1000 (valid IBAN)", () => step.PayBankTransfer(1000m, "TR" + new string('0', 24)));
+            Show("   transfer (invalid IBAN)   ", () => step.PayBankTransfer(1000m, "XX123"));
+            Show("   wallet 100 (balance 150)  ", () => step.PayWallet(100m, 150m).Result);
+            Show("   wallet 200 (balance 150)  ", () => step.PayWallet(200m, 150m).Result);
             Console.WriteLine();
         }
 
         Console.WriteLine("""
-        Ne değişti? (Davranış AYNI, yapı farklı)
-          Adım 1: 3 temel + 3 "yeni gereksinim" sınıfı; fraud mantığı iki yerde KOPYA; çoklu kalıtım yok → birleştirilemiyor.
-          Adım 2: komisyon IFeePolicy nesnesi oldu → taksit sınıfı silindi. Fraud hâlâ alt sınıfta.
-          Adım 3: tek Payment sınıfı + küçük politika/kural sınıfları. "Yöntem" = konfigürasyon. Yeni gereksinim = yeni küçük sınıf (mevcut koda dokunmadan).
+        What changed? (Behavior is the SAME, structure differs)
+          Step 1: 3 base classes + 3 "new requirement" classes; fraud logic COPIED in two places; no multiple inheritance → can't be combined.
+          Step 2: the fee became an IFeePolicy object → the installment class was deleted. Fraud is still in a subclass.
+          Step 3: a single Payment class + small policy/rule classes. "Method" = configuration. New requirement = new small class (without touching existing code).
 
-        Composition over inheritance — NEDEN?
-          • Fragile base class: taban sınıftaki değişiklik tüm alt sınıfları sessizce etkiler (Validate sırası, protected davranış sözleşmesi).
-          • Derin hiyerarşi bakım maliyeti: davranışı anlamak için zincirin tamamını okumak gerekir.
-          • Tek kalıtım kısıtı: iki "boyutu" (taksit × fraud) aynı anda kalıtımla birleştiremezsiniz.
-          • Kalıtım COMPILE-TIME'da sabit; composition ÇALIŞMA ZAMANINDA değiştirilebilir (strateji değişimi).
-          • Test: parçalar ayrı ayrı test edilir; kalıtımda taban sınıfı da kurmak zorundasınız.
-        Kalıtım yine de doğru araç: gerçek "is-a" + Liskov uyumu (Exception hiyerarşisi, Stream türleri, UI kontrolleri).
+        Composition over inheritance — WHY?
+          • Fragile base class: a change in the base class silently affects all subclasses (Validate order, protected behavior contract).
+          • Deep hierarchy maintenance cost: understanding the behavior means reading the whole chain.
+          • Single inheritance limit: you can't combine two "dimensions" (installments × fraud) via inheritance at the same time.
+          • Inheritance is fixed at COMPILE-TIME; composition can be changed at RUNTIME (swapping a strategy).
+          • Testing: the parts are tested separately; with inheritance you must also set up the base class.
+        Inheritance is still the right tool: a real "is-a" + Liskov compliance (the Exception hierarchy, Stream types, UI controls).
         """);
     }
 
@@ -45,11 +45,11 @@ public static class Section09_PaymentRefactoring
         try
         {
             var r = pay();
-            Console.WriteLine($"{label} → {r.Method}: tutar {r.Amount:N2}, komisyon {r.Fee:N2}, toplam {r.Total:N2}");
+            Console.WriteLine($"{label} → {r.Method}: amount {r.Amount:N2}, fee {r.Fee:N2}, total {r.Total:N2}");
         }
         catch (PaymentRejectedException ex)
         {
-            Console.WriteLine($"{label} → REDDEDİLDİ: {ex.Message}");
+            Console.WriteLine($"{label} → REJECTED: {ex.Message}");
         }
     }
 }
