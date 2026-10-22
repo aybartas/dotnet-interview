@@ -7,7 +7,7 @@ Türkçe, uygulamalı bir .NET mülakat hazırlık reposu. Hedef platform **.NET
 1. .NET 10 SDK'yı kurun (`dotnet --version` → `10.x`).
 2. **`DotnetInterview.slnx`** dosyasını Visual Studio'da açın. Solution'da yalnızca **iki proje** var:
    - **`ConsoleApp`** — konuların çoğu. **F5** → konu menüsü açılır: bir konu yazın (ör. `J3.2`), sonra bölüm numarası ya da `all`.
-   - **`WebApp`** — HTTP sunucusu gerektiren konular (şimdilik J1.3). `WebApp`'e sağ tık → *Debug → Start New Instance*; tarayıcı `http://localhost:5080`'i açar.
+   - **`WebApp`** — HTTP sunucusu gerektiren konular (J1.3, J6). `WebApp`'e sağ tık → *Debug → Start New Instance* → bir konu seçin (ör. `J6.2`); sunucu `http://localhost:5080`'de açılır, `Ctrl+C` ile durur. Aynı anda tek konu çalışır.
 3. Konunun anlatımı, konu klasöründeki `README.md`'dir; mülakat soruları aynı klasördeki `interview-questions.md` (sertifika pistinde `quiz.md`).
 
 Terminalden de aynı şekilde:
@@ -16,7 +16,7 @@ Terminalden de aynı şekilde:
 cd ConsoleApp
 dotnet run                          # menu
 dotnet run -- J3.2 4                # without the menu: section 4 of J3.2  (all: every section)
-cd ../WebApp && dotnet run          # web topics
+cd ../WebApp && dotnet run -- J6.2  # web topics: one topic at a time (menu without the argument)
 ```
 
 ## Klasör yapısı
@@ -37,7 +37,7 @@ ConsoleApp/
 ├── 02-mid/  03-senior/  04-dsa/  05-interview/   # filled in order
 └── 06-certifications/                  # Azure certification track (AZ-900, AI-200)
 WebApp/
-├── Program.cs                          # calls the web topics
+├── Program.cs                          # menu; runs ONE web topic at a time
 └── 01-junior/01-dev-foundations/03-how-the-web-works/
 ```
 

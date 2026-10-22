@@ -5,18 +5,28 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 namespace Junior.DevFoundations.HowTheWebWorks;
 
 /// <summary>
-/// J1.3 — How does the web work? A small Kestrel app that shows the raw request. WebApp/Program.cs calls the two methods:
+/// J1.3 — How does the web work? A small Kestrel app that shows the raw request.
 ///
-///   dotnet run                  → http://localhost:5080
-///   dotnet run -- --https       → also https://localhost:5443  (first:  dotnet dev-certs https --trust)
+///   dotnet run -- J1.3            → http://localhost:5080
+///   dotnet run -- J1.3 --https    → also https://localhost:5443  (first:  dotnet dev-certs https --trust)
 ///
 /// Every request is written to the console in its RAW form (see RawRequestLoggingMiddleware). The endpoints demonstrate HTTP concepts.
 /// To try it: requests.http (VS Code / Rider / VS) or the curl commands in the README.
 /// </summary>
 public static class HowTheWebWorksTopic
 {
+    public static int Run(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+        AddServices(builder, useHttps: args.Contains("--https"));
+        var app = builder.Build();
+        Map(app);
+        app.Run();
+        return 0;
+    }
+
     /// <summary>Kestrel ports and the CORS service.</summary>
-    public static void AddServices(WebApplicationBuilder builder, bool useHttps)
+    private static void AddServices(WebApplicationBuilder builder, bool useHttps)
     {
         builder.WebHost.ConfigureKestrel(kestrel =>
         {
@@ -39,7 +49,7 @@ public static class HowTheWebWorksTopic
     }
 
     /// <summary>Middleware and endpoints.</summary>
-    public static void Map(WebApplication app)
+    private static void Map(WebApplication app)
     {
         app.UseMiddleware<RawRequestLoggingMiddleware>();            // BEFORE CORS: so we also see the OPTIONS (preflight) request
         app.UseCors();

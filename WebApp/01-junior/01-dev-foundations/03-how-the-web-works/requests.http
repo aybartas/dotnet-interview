@@ -1,6 +1,6 @@
 ### J1.3 — Request collection
 ### VS Code (REST Client / Humao extension), JetBrains Rider and Visual Studio 2022+ run this file directly.
-### Start the app first:  dotnet run            (for the HTTPS experiments:  dotnet run -- --https)
+### Start the app first:  dotnet run -- J1.3            (for the HTTPS experiments:  dotnet run -- J1.3 --https)
 ### Requests are separated by ###; run them with "Send Request" / the green arrow. See the RAW request in the server console.
 
 @host = http://localhost:5080
@@ -76,5 +76,5 @@ Access-Control-Request-Headers: content-type
 GET {{host}}/cors/data
 Origin: http://evil.example
 
-### 9) HTTPS (requires dotnet run -- --https) — the response carries the Strict-Transport-Security (HSTS) header
+### 9) HTTPS (requires dotnet run -- J1.3 --https) — the response carries the Strict-Transport-Security (HSTS) header
 GET {{secureHost}}/hello

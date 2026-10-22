@@ -68,7 +68,7 @@ ConsoleApp/
     └── interview-questions.md                      # 10-20 Q&A
 WebApp/
 ├── WebApp.csproj
-├── Program.cs                                      # calls each web topic's AddServices(builder) / Map(app)
+├── Program.cs                                      # menu; runs ONE web topic at a time (dotnet run -- J6.2 [topic args])
 └── 01-junior/01-dev-foundations/03-how-the-web-works/   # web topic: README + endpoint code + requests.http + questions
 ```
 
@@ -103,7 +103,7 @@ Conventions:
 dotnet build DotnetInterview.slnx                     # whole repo
 cd ConsoleApp && dotnet run                           # interactive menu (F5 in Visual Studio)
 cd ConsoleApp && dotnet run -- J3.2 [4|all]           # without the menu: one topic / one section / all sections
-cd WebApp && dotnet run                               # web topics (http://localhost:5080)
+cd WebApp && dotnet run [-- J6.2]                     # web topics: menu or direct; one topic at a time (http://localhost:5080)
 ```
 
 Gotchas of the single console project:
@@ -112,7 +112,7 @@ Gotchas of the single console project:
 - Topics that re-launch themselves (J4.2 async-void) pass the prefixed id (`J4.2`); J5 locates the project directory by `ConsoleApp.csproj` (`ProjectLocator`).
 - A type named like its own namespace (`Exercises`) must live in that namespace; type names must not clash with a project-wide global using (alias them).
 - Culture: `Program.cs` sets tr-TR only for `C…` topics; other topics use the machine culture.
-- Web topics: `WebApp/Program.cs` calls `Topic.AddServices(builder)` and `Topic.Map(app)`; J1.3 uses global middleware + `MapFallback`, so a second web topic must move to route groups.
+- Web topics: `WebApp/Program.cs` is a menu like the console one, but a web topic's `Run(string[] args)` builds and runs its **own** host (`WebApplication.CreateBuilder(args)`, fixed `http://localhost:5080`) and blocks until Ctrl+C. Only one topic runs at a time, so topics can use global middleware, `MapFallback`, their own configuration and environment without disturbing each other. Arguments after the topic id are forwarded to the host (`--https`, `--environment Production`).
 
 ## Certification track (`06-certifications/`)
 
@@ -142,7 +142,7 @@ When asked to implement a topic, derive everything from the ROADMAP rather than 
 1. Locate the topic heading; take the topic folder name from the heading and the module path from the module's `📁` line. Create the folder under `ConsoleApp/` (or `WebApp/` if it needs an HTTP server). **Do not create a project.**
 2. Create the topic folder with `README.md`, the code, and `interview-questions.md` (certification track: `quiz.md` instead — see above). **No `src/`, no `tests/`** (tests only if the topic is about testing).
 3. Write `README.md` from the topic's bullets — they are effectively its outline — using the 8-heading template above; prose in Turkish, code blocks in English (see the language policy). Start it with `> 📁 \`ConsoleApp/<path>/\`` (or `WebApp/…`). Command-line exercises go in as code blocks (no scripts).
-4. Write the code to the scope in the `🛠 **Kod:**` line, no more and no less. Many of those lines ask for a *deliberately broken* case to diagnose (bad probe, wrong env var, OOM) — implement that too, it is the point of the exercise. Console topics follow the section pattern: `Sections/SectionNN_*.cs` (`Run()`), `Sections/Sections.cs` (list), `<Topic>Topic.cs` (`Run(args)`: list / `<n>` / `all`), one namespace per topic. **Register the topic with one line in `ConsoleApp/Program.cs`** (`new("J8.2", "Title", SqlBasicsTopic.Run)`); a web topic exposes `AddServices`/`Map` and is called from `WebApp/Program.cs`.
+4. Write the code to the scope in the `🛠 **Kod:**` line, no more and no less. Many of those lines ask for a *deliberately broken* case to diagnose (bad probe, wrong env var, OOM) — implement that too, it is the point of the exercise. Console topics follow the section pattern: `Sections/SectionNN_*.cs` (`Run()`), `Sections/Sections.cs` (list), `<Topic>Topic.cs` (`Run(args)`: list / `<n>` / `all`), one namespace per topic. **Register the topic with one line in `ConsoleApp/Program.cs`** (`new("J8.2", "Title", SqlBasicsTopic.Run)`); a web topic exposes `public static int Run(string[] args)` that builds and runs its own host, and is registered with one line in `WebApp/Program.cs`.
 5. Put the module's `🎯` questions plus topic-specific ones into `interview-questions.md`, with answers.
 6. If the topic needs infra, add the service to the root `docker-compose.yml` (create it with the first infra topic); don't add a per-topic compose file.
 7. Cross-reference instead of duplicating: if a sub-topic belongs to a deeper level, link it as `(→ M6.3)`.

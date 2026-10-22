@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "WebApp": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "http://localhost:5080"
-    }
-  }
-}
