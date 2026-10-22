@@ -1,32 +1,34 @@
+using System.Globalization;
 using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.CostManagement;
 
-/// <summary>Aynı aylık VM faturasına farklı tasarruf yolları. İndirim oranları ÖRNEKTİR.</summary>
+/// <summary>Different ways to save on the same monthly VM bill. The discount rates are EXAMPLES.</summary>
 public static class Section03_Savings
 {
     public static void Run()
     {
-        const decimal monthlyBill = 10_000m;  // 7/24 çalışan Windows VM filosunun pay-as-you-go faturası (örnek)
-        Console.WriteLine($"Başlangıç: aylık {monthlyBill:N0} $ pay-as-you-go VM faturası (7/24, Windows, üretim).\n");
+        const decimal monthlyBill = 10_000m;  // pay-as-you-go bill of a 24/7 Windows VM fleet (example)
+        Console.WriteLine(string.Create(CultureInfo.InvariantCulture, $"Starting point: a monthly pay-as-you-go VM bill of {monthlyBill:N0} $ (24/7, Windows, production).\n"));
 
-        Table.Print(["Yöntem", "Nasıl?", "Örnek yeni fatura", "Uygun iş yükü / şart"],
+        Table.Print(["Method", "How?", "Example new bill", "Suitable workload / condition"],
         [
-            ["Reservation (1/3 yıl)", "Belirli VM boyutu + bölge için taahhüt", Bill(monthlyBill, 0.55m), "Sabit, uzun süreli; kullanılmasa da ödenir"],
-            ["Savings plan for compute", "Saatlik harcama tutarına 1/3 yıl taahhüt", Bill(monthlyBill, 0.45m), "Boyut/bölge değişebilen ama sürekli compute"],
-            ["Azure Hybrid Benefit", "Mevcut Windows Server/SQL Server lisansını kullan", Bill(monthlyBill, 0.30m), "Software Assurance'lı lisanslar"],
-            ["Spot VM", "Boşta kapasite; Azure geri alabilir", Bill(monthlyBill, 0.80m), "Yalnızca kesintiye dayanıklı işler"],
-            ["Dev/test fiyatlandırması", "Dev/test aboneliklerinde indirimli oranlar", Bill(monthlyBill, 0.40m), "Yalnızca üretim DIŞI ortamlar"],
-            ["Otomatik kapatma", "Mesai dışı VM'i deallocate et (12 sa/gün, hafta içi)", Bill(monthlyBill, 1 - (12m * 5) / (24m * 7)), "Geliştirme/test ortamları"],
-            ["Doğru boyutlandırma", "Advisor'ın az kullanılan VM önerisi (→ C1.14)", Bill(monthlyBill, 0.50m), "CPU'su sürekli düşük VM'ler (bir boy küçült)"],
+            ["Reservation (1/3 years)", "Commit to a specific VM size + region", Bill(monthlyBill, 0.55m), "Steady, long-lived; paid even if unused"],
+            ["Savings plan for compute", "1/3-year commitment to an hourly spend amount", Bill(monthlyBill, 0.45m), "Size/region may change but compute is continuous"],
+            ["Azure Hybrid Benefit", "Use your existing Windows Server/SQL Server license", Bill(monthlyBill, 0.30m), "Licenses with Software Assurance"],
+            ["Spot VM", "Spare capacity; Azure can reclaim it", Bill(monthlyBill, 0.80m), "Only interruption-tolerant jobs"],
+            ["Dev/test pricing", "Discounted rates on dev/test subscriptions", Bill(monthlyBill, 0.40m), "Only NON-production environments"],
+            ["Automatic shutdown", "Deallocate the VM outside business hours (12 h/day, weekdays)", Bill(monthlyBill, 1 - (12m * 5) / (24m * 7)), "Development/test environments"],
+            ["Right-sizing", "Advisor's recommendation for underused VMs (→ C1.14)", Bill(monthlyBill, 0.50m), "VMs with constantly low CPU (go one size down)"],
         ]);
 
         Console.WriteLine("""
 
-        Birleştirme: reservation + Hybrid Benefit birlikte kullanılabilir (indirimler çarpılarak uygulanır).
-        Spot, üretimdeki 7/24 kritik iş için doğru cevap DEĞİLDİR; dev/test fiyatı üretimde kullanılamaz.
+        Combining: reservation + Hybrid Benefit can be used together (the discounts are applied multiplicatively).
+        Spot is NOT the right answer for a 24/7 critical production job; dev/test pricing cannot be used in production.
         """);
     }
 
-    private static string Bill(decimal bill, decimal discount) => $"{bill * (1 - discount):N0} $  (−%{discount * 100:0})";
+    private static string Bill(decimal bill, decimal discount) =>
+        string.Create(CultureInfo.InvariantCulture, $"{bill * (1 - discount):N0} $  (−{discount * 100:0}%)");
 }

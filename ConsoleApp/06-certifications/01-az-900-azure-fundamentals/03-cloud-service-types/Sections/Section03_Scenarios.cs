@@ -2,32 +2,32 @@ using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.CloudServiceTypes;
 
-/// <summary>Senaryo sorularında hizmet türünü seçtiren ifadeler.</summary>
+/// <summary>Phrases in scenario questions that point to the service type.</summary>
 public static class Section03_Scenarios
 {
     public static void Run()
     {
-        Table.Print(["Senaryodaki ifade", "Tür", "Neden"],
+        Table.Print(["Phrase in the scenario", "Type", "Why"],
         [
-            ["\"İşletim sistemine tam erişim / özel sürücü kurulacak\"", "IaaS", "OS'u yalnızca IaaS'ta sen yönetirsin"],
-            ["\"Mevcut sunucuları değiştirmeden buluta taşı\" (lift-and-shift)", "IaaS", "Uygulama aynen VM'e taşınır"],
-            ["\"Geçici test ortamı hızla açılıp kapatılsın\"", "IaaS", "VM'ler dakikada açılır, silinince ücret biter"],
-            ["\"Geliştiriciler yalnızca kod yazsın, OS yaması dert olmasın\"", "PaaS", "Runtime ve OS Microsoft'ta"],
-            ["\"Yönetilen veritabanı; yedek ve yama otomatik\"", "PaaS", "Azure SQL Database, Cosmos DB"],
-            ["\"Kod yalnızca bir dosya yüklendiğinde çalışsın, boşta ücret olmasın\"", "Serverless", "Olay tetiklemeli, çağrı başına ücret"],
-            ["\"Kod yazmadan iki SaaS arasında iş akışı kur\"", "Serverless", "Logic Apps (low-code)"],
-            ["\"Kullanıcılar e-posta ve ofis uygulamalarını hemen kullansın\"", "SaaS", "Hazır uygulama: Microsoft 365"],
-            ["\"En az yönetim yükü, hazır CRM\"", "SaaS", "Dynamics 365"],
+            ["\"Full access to the operating system / a custom driver will be installed\"", "IaaS", "You manage the OS only in IaaS"],
+            ["\"Move existing servers to the cloud unchanged\" (lift-and-shift)", "IaaS", "The application moves to a VM as is"],
+            ["\"A temporary test environment should be spun up and torn down quickly\"", "IaaS", "VMs start in minutes, billing stops when deleted"],
+            ["\"Developers should only write code, OS patching should not be their concern\"", "PaaS", "Runtime and OS are Microsoft's"],
+            ["\"Managed database; backup and patching are automatic\"", "PaaS", "Azure SQL Database, Cosmos DB"],
+            ["\"Code should run only when a file is uploaded, no charge when idle\"", "Serverless", "Event-triggered, billed per call"],
+            ["\"Build a workflow between two SaaS apps without writing code\"", "Serverless", "Logic Apps (low-code)"],
+            ["\"Users should start using email and office apps right away\"", "SaaS", "Ready-made application: Microsoft 365"],
+            ["\"Least management burden, ready-made CRM\"", "SaaS", "Dynamics 365"],
         ]);
 
         Console.WriteLine("""
 
-        Karar sırası (yukarıdan aşağı ilk "evet"te dur):
-          1. İhtiyacı karşılayan HAZIR bir uygulama var mı?             → SaaS
-          2. Kendi kodun var, olayla/aralıklı mı çalışıyor?              → Serverless (Functions, Logic Apps)
-          3. Kendi kodun var, OS'a erişim gerekmiyor mu?                 → PaaS (App Service, SQL Database)
-          4. OS/ağ üzerinde tam kontrol veya aynen taşıma mı gerekiyor?  → IaaS (VM)
-        "En az yönetim yükü" sorusunda dikkat: hazır uygulama varsa SaaS; kendi kodunu çalıştıracaksan PaaS/serverless.
+        Decision order (stop at the first "yes" from top to bottom):
+          1. Is there a READY-MADE application that meets the need?             → SaaS
+          2. Do you have your own code, and does it run on events/intermittently? → Serverless (Functions, Logic Apps)
+          3. Do you have your own code, and no OS access is needed?             → PaaS (App Service, SQL Database)
+          4. Do you need full control over OS/network or an as-is migration?    → IaaS (VM)
+        Watch out for "least management burden": if a ready-made application exists, SaaS; if you will run your own code, PaaS/serverless.
         """);
     }
 }

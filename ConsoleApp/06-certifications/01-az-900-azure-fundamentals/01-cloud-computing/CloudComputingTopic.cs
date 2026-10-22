@@ -4,8 +4,8 @@ namespace Certification.AzureFundamentals.CloudComputing;
 
 public static class CloudComputingTopic
 {
-    public static int Run(string[] args) => args is ["kim", var layer, var model]
+    public static int Run(string[] args) => args is ["who", var layer, var model]
         ? ResponsibilityMatrix.Answer(layer, model)
-        : SectionRunner.Run("1.1", "Cloud Computing, Cloud Modelleri ve Fiyatlandırma", Sections.All, args,
-            "Soru sor: dotnet run -- C1.1 kim <katman> <model>   (ör. kim os paas · katmanlar: veri, cihaz, hesap, kimlik-altyapisi, uygulama, ag, os, fiziksel-host, fiziksel-ag, datacenter · modeller: onprem, iaas, paas, saas)");
+        : SectionRunner.Run("1.1", "Cloud Computing, Cloud Models and Pricing", Sections.All, args,
+            "Ask a question: dotnet run -- C1.1 who <layer> <model>   (e.g. who os paas · layers: data, device, account, identity-infra, app, network, os, physical-host, physical-network, datacenter · models: onprem, iaas, paas, saas)");
 }

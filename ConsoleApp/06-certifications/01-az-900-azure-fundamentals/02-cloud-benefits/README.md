@@ -35,10 +35,10 @@ Resmî hedef, bulutun faydalarını **dört çift** halinde sayar: *high availab
 Kod: `ConsoleApp` projesinde [`Sections/`](Sections/) altında 5 bölüm ve bir **SLA hesaplayıcısı** ([`SlaCalculator.cs`](SlaCalculator.cs)). `ConsoleApp` klasöründe:
 
 ```bash
-dotnet run -- C1.2 all                     # tüm bölümler
-dotnet run -- C1.2 kesinti 99.95           # SLA → günlük/haftalık/aylık/yıllık kesinti bütçesi
-dotnet run -- C1.2 seri 99.95 99.99        # seri bağlı bileşenlerin composite SLA'sı
-dotnet run -- C1.2 paralel 99.94 99.94     # yedekli bileşenlerin composite SLA'sı
+dotnet run -- C1.2 all                     # all sections
+dotnet run -- C1.2 downtime 99.95          # SLA → daily/weekly/monthly/yearly downtime budget
+dotnet run -- C1.2 serial 99.95 99.99      # composite SLA of components in series
+dotnet run -- C1.2 parallel 99.94 99.94    # composite SLA of redundant components
 ```
 
 ---
@@ -116,17 +116,17 @@ Bir uygulama birden çok servisten oluşuyorsa uygulamanın toplam SLA'sı tek t
   `1 − (1 − 0,9994)² ≈ %99,99996` → yedeklilik SLA'yı **yükseltir**. Varsayım: arızalar birbirinden **bağımsız** ve trafiği yönlendiren katman (Front Door/Traffic Manager) çalışıyor — o katman da seri bağlıdır, onun SLA'sıyla da çarpılır.
 
 ```bash
-dotnet run -- C1.2 seri 99.95 99.99                 # %99,94001
-dotnet run -- C1.2 paralel 99.94 99.94              # %99,99996
-dotnet run -- C1.2 seri 99.99 99.95 99.99 99.9      # dört bileşenli zincir
+dotnet run -- C1.2 serial 99.95 99.99               # 99.94001%
+dotnet run -- C1.2 parallel 99.94 99.94             # 99.99996%
+dotnet run -- C1.2 serial 99.99 99.95 99.99 99.9    # a chain of four components
 ```
 
 > **Alıştırma.** Bir uygulama: Front Door (%99,99) → App Service (%99,95) → Azure SQL Database (%99,99) → Storage (%99,9). (a) Toplam SLA nedir? (b) Bunun aylık kesinti bütçesi kaç dakikadır? (c) Hangi bileşeni iyileştirmek toplam SLA'ya en çok katkı verir?
 >
 > <details><summary>Çözüm</summary>
 >
-> (a) `0,9999 × 0,9995 × 0,9999 × 0,999 ≈ %99,83` — `dotnet run -- C1.2 seri 99.99 99.95 99.99 99.9`.
-> (b) ≈ **1 sa 14 dk**/ay (`dotnet run -- C1.2 kesinti 99.83`).
+> (a) `0,9999 × 0,9995 × 0,9999 × 0,999 ≈ %99,83` — `dotnet run -- C1.2 serial 99.99 99.95 99.99 99.9`.
+> (b) ≈ **1 sa 14 dk**/ay (`dotnet run -- C1.2 downtime 99.83`).
 > (c) En **düşük** SLA'lı bileşen (Storage %99,9): zincirin en zayıf halkası toplamı en çok aşağı çeker. Örneğin daha yüksek SLA'lı bir yedeklilik seçeneği veya okuma için ikinci bölge kullanmak.
 > </details>
 
@@ -149,9 +149,9 @@ Hangi VM boyutunun bir region'da hangi availability zone'larda sunulduğunu sorg
 
 ```bash
 az login
-# West Europe'ta B serisi küçük boyutların zone desteği (Zones sütunu: 1,2,3)
+# Zone support of small B-series sizes in West Europe (Zones column: 1,2,3)
 az vm list-skus --location westeurope --size Standard_B1s --zone --output table
-# Aynı boyut başka bir region'da (--zone yalnızca zone destekli SKU'ları listeler; çıktı boşsa orada zone desteği yok)
+# The same size in another region (--zone lists only zone-capable SKUs; if the output is empty there is no zone support there)
 az vm list-skus --location northeurope --size Standard_B1s --zone --output table
 ```
 

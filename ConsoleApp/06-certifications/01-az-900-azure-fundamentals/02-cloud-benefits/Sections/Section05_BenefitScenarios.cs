@@ -2,31 +2,31 @@ using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.CloudBenefits;
 
-/// <summary>Sınavda fayda soruları çoğunlukla "bu senaryo hangi faydayı anlatıyor?" kalıbındadır. Anahtar kelimeyi yakala.</summary>
+/// <summary>Benefit questions on the exam are mostly of the form "which benefit does this scenario describe?". Catch the keyword.</summary>
 public static class Section05_BenefitScenarios
 {
     public static void Run()
     {
-        Console.WriteLine("Senaryodaki anahtar ifade → doğru fayda:\n");
-        Table.Print(["Senaryo", "Anahtar ifade", "Fayda"],
+        Console.WriteLine("Key phrase in the scenario → correct benefit:\n");
+        Table.Print(["Scenario", "Key phrase", "Benefit"],
         [
-            ["Bir datacenter'da elektrik kesildi, site başka zone'dan yayında kaldı", "kesintiye rağmen çalışmaya devam", "High availability"],
-            ["Kampanya için 2 VM'den 20 VM'e çıkılabildi", "kapasite eklenebilir", "Scalability"],
-            ["CPU %70'i geçince instance sayısı kendiliğinden arttı", "otomatik, yüke göre", "Elasticity"],
-            ["Bölgesel felaketten sonra sistem eşleşik bölgede ayağa kalktı", "felaketten toparlanma", "Reliability"],
-            ["Önümüzdeki çeyreğin bulut faturası tahmin edilebildi", "maliyeti önceden kestirmek", "Predictability (maliyet)"],
-            ["Trafik artsa da yanıt süresi hedefte kaldı (autoscale + LB)", "performansı önceden kestirmek", "Predictability (performans)"],
-            ["PaaS'ta OS yamalarını Microsoft otomatik uyguladı", "yamalar/koruma sağlayıcıda", "Security"],
-            ["Yalnızca AB bölgelerinde kaynak açılmasına izin veriliyor", "standart/regülasyona uyum", "Governance"],
-            ["Kaynaklar şablonla dağıtılıyor, metriklere göre uyarı geliyor", "bulutun yönetimi (of)", "Manageability"],
-            ["Ekip kaynakları portal, CLI ve REST API ile yönetiyor", "bulutta yönetim (in)", "Manageability"],
+            ["Power failed in one datacenter, the site stayed up from another zone", "keeps running despite the outage", "High availability"],
+            ["For a campaign, capacity could be raised from 2 VMs to 20 VMs", "capacity can be added", "Scalability"],
+            ["The instance count rose by itself when CPU exceeded 70%", "automatic, according to load", "Elasticity"],
+            ["After a regional disaster the system came back up in the paired region", "recovering from disaster", "Reliability"],
+            ["Next quarter's cloud bill could be forecast", "forecasting cost in advance", "Predictability (cost)"],
+            ["Response time stayed on target even as traffic grew (autoscale + LB)", "forecasting performance in advance", "Predictability (performance)"],
+            ["In PaaS, Microsoft applied the OS patches automatically", "patches/protection on the provider", "Security"],
+            ["Resources may only be created in EU regions", "compliance with standards/regulation", "Governance"],
+            ["Resources are deployed from templates, alerts fire on metrics", "management of the cloud (of)", "Manageability"],
+            ["The team manages resources through the portal, CLI and REST API", "management in the cloud (in)", "Manageability"],
         ]);
 
         Console.WriteLine("""
 
-        Taktik: önce fiile bak — "devam etti" (HA), "toparlandı" (reliability), "eklenebildi" (scalability),
-        "kendiliğinden/otomatik" (elasticity), "tahmin edildi" (predictability), "uyum/kural" (governance),
-        "koruma/yama/tehdit" (security), "araç/izleme/şablon" (manageability).
+        Tactic: look at the verb first — "kept running" (HA), "recovered" (reliability), "could be added" (scalability),
+        "by itself/automatic" (elasticity), "was forecast" (predictability), "compliance/rule" (governance),
+        "protection/patch/threat" (security), "tool/monitoring/template" (manageability).
         """);
     }
 }

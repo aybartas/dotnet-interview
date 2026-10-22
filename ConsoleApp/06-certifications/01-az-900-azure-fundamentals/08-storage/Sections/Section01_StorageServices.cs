@@ -6,31 +6,31 @@ public static class Section01_StorageServices
 {
     public static void Run()
     {
-        Console.WriteLine("Bir storage account = benzersiz ad alanı + her servis için bir endpoint:\n");
-        Table.Print(["Servis", "Ne saklar?", "Endpoint", "Tipik kullanım"],
+        Console.WriteLine("A storage account = a unique namespace + one endpoint per service:\n");
+        Table.Print(["Service", "What it stores", "Endpoint", "Typical use"],
         [
-            ["Blob", "Nesne: yapılandırılmamış veri", "https://<ad>.blob.core.windows.net", "Görsel, video, yedek, log, statik site"],
-            ["Azure Files", "SMB/NFS dosya paylaşımı", "https://<ad>.file.core.windows.net", "Paylaşılan klasör, lift-and-shift uygulama"],
-            ["Queue", "Basit mesaj kuyruğu (mesaj ≤ 64 KB)", "https://<ad>.queue.core.windows.net", "Bileşenler arası asenkron iş"],
-            ["Table", "NoSQL anahtar-değer (şemasız)", "https://<ad>.table.core.windows.net", "Basit yapılandırılmış veri, meta veri"],
-            ["Disks", "VM'e bağlanan blok depolama (managed disk)", "— (VM'e bağlı kaynak)", "VM işletim sistemi ve veri diskleri"],
+            ["Blob", "Objects: unstructured data", "https://<name>.blob.core.windows.net", "Images, video, backups, logs, static website"],
+            ["Azure Files", "SMB/NFS file share", "https://<name>.file.core.windows.net", "Shared folder, lift-and-shift application"],
+            ["Queue", "Simple message queue (message ≤ 64 KB)", "https://<name>.queue.core.windows.net", "Asynchronous work between components"],
+            ["Table", "NoSQL key-value (schemaless)", "https://<name>.table.core.windows.net", "Simple structured data, metadata"],
+            ["Disks", "Block storage attached to a VM (managed disk)", "— (resource attached to a VM)", "VM operating system and data disks"],
         ]);
 
-        Console.WriteLine("\nStorage account türleri:\n");
-        Table.Print(["Tür", "Desteklediği", "Redundancy", "Ne zaman?"],
+        Console.WriteLine("\nStorage account types:\n");
+        Table.Print(["Type", "Supports", "Redundancy", "When?"],
         [
-            ["Standard general-purpose v2", "Blob, Files, Queue, Table", "LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS", "Çoğu senaryo (varsayılan seçim)"],
-            ["Premium block blobs", "Block/append blob", "LRS, ZRS", "Düşük gecikme, yüksek işlem hızı"],
-            ["Premium file shares", "Azure Files", "LRS, ZRS", "Kurumsal, yüksek performanslı dosya paylaşımı"],
-            ["Premium page blobs", "Page blob", "LRS, ZRS", "Yüksek performanslı page blob senaryoları"],
+            ["Standard general-purpose v2", "Blob, Files, Queue, Table", "LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS", "Most scenarios (the default choice)"],
+            ["Premium block blobs", "Block/append blob", "LRS, ZRS", "Low latency, high transaction rate"],
+            ["Premium file shares", "Azure Files", "LRS, ZRS", "Enterprise, high-performance file share"],
+            ["Premium page blobs", "Page blob", "LRS, ZRS", "High-performance page blob scenarios"],
         ]);
 
         Console.WriteLine("""
 
-        Kurallar:
-          • Storage account adı Azure GENELİNDE benzersizdir (URL'nin parçası): 3-24 karakter, yalnızca küçük harf ve rakam.
-          • Blob hiyerarşisi: storage account → container → blob. Blob türleri: block (dosyalar), append (log), page (VM diskleri).
-          • Premium seçenekler SSD tabanlıdır ve coğrafi (GRS/GZRS) redundancy sunmaz.
+        Rules:
+          • A storage account name is unique ACROSS ALL OF AZURE (it is part of the URL): 3-24 characters, lowercase letters and digits only.
+          • Blob hierarchy: storage account → container → blob. Blob types: block (files), append (logs), page (VM disks).
+          • Premium options are SSD-based and do not offer geo (GRS/GZRS) redundancy.
         """);
     }
 }

@@ -1,10 +1,10 @@
 namespace Certification.AzureFundamentals.CloudComputing;
 
-public enum Owner { Musteri, Paylasimli, Microsoft }
+public enum Owner { Customer, Shared, Microsoft }
 
 public enum DeploymentModel { OnPrem, IaaS, PaaS, SaaS }
 
-/// <summary>Shared responsibility model — Microsoft'un yayımladığı katman tablosunun bu repodaki karşılığı (README 3.2).</summary>
+/// <summary>Shared responsibility model — this repo's version of the layer table Microsoft publishes (README 3.2).</summary>
 public static class ResponsibilityMatrix
 {
     public sealed record Layer(string Key, string Name, Owner OnPrem, Owner IaaS, Owner PaaS, Owner SaaS)
@@ -20,22 +20,22 @@ public static class ResponsibilityMatrix
 
     public static IReadOnlyList<Layer> Layers { get; } =
     [
-        new("veri",              "Bilgi ve veri",                    Owner.Musteri, Owner.Musteri,  Owner.Musteri,    Owner.Musteri),
-        new("cihaz",             "Cihazlar (mobil ve PC)",           Owner.Musteri, Owner.Musteri,  Owner.Musteri,    Owner.Musteri),
-        new("hesap",             "Hesaplar ve kimlikler",            Owner.Musteri, Owner.Musteri,  Owner.Musteri,    Owner.Musteri),
-        new("kimlik-altyapisi",  "Kimlik ve directory altyapısı",    Owner.Musteri, Owner.Musteri,  Owner.Paylasimli, Owner.Paylasimli),
-        new("uygulama",          "Uygulamalar",                      Owner.Musteri, Owner.Musteri,  Owner.Paylasimli, Owner.Microsoft),
-        new("ag",                "Ağ kontrolleri",                   Owner.Musteri, Owner.Musteri,  Owner.Paylasimli, Owner.Microsoft),
-        new("os",                "İşletim sistemi",                  Owner.Musteri, Owner.Musteri,  Owner.Microsoft,  Owner.Microsoft),
-        new("fiziksel-host",     "Fiziksel host'lar",                Owner.Musteri, Owner.Microsoft, Owner.Microsoft, Owner.Microsoft),
-        new("fiziksel-ag",       "Fiziksel ağ",                      Owner.Musteri, Owner.Microsoft, Owner.Microsoft, Owner.Microsoft),
-        new("datacenter",        "Fiziksel datacenter",              Owner.Musteri, Owner.Microsoft, Owner.Microsoft, Owner.Microsoft),
+        new("data",              "Information and data",                  Owner.Customer, Owner.Customer,  Owner.Customer,  Owner.Customer),
+        new("device",            "Devices (mobile and PC)",               Owner.Customer, Owner.Customer,  Owner.Customer,  Owner.Customer),
+        new("account",           "Accounts and identities",               Owner.Customer, Owner.Customer,  Owner.Customer,  Owner.Customer),
+        new("identity-infra",    "Identity and directory infrastructure", Owner.Customer, Owner.Customer,  Owner.Shared,    Owner.Shared),
+        new("app",               "Applications",                          Owner.Customer, Owner.Customer,  Owner.Shared,    Owner.Microsoft),
+        new("network",           "Network controls",                      Owner.Customer, Owner.Customer,  Owner.Shared,    Owner.Microsoft),
+        new("os",                "Operating system",                      Owner.Customer, Owner.Customer,  Owner.Microsoft, Owner.Microsoft),
+        new("physical-host",     "Physical hosts",                        Owner.Customer, Owner.Microsoft, Owner.Microsoft, Owner.Microsoft),
+        new("physical-network",  "Physical network",                      Owner.Customer, Owner.Microsoft, Owner.Microsoft, Owner.Microsoft),
+        new("datacenter",        "Physical datacenter",                   Owner.Customer, Owner.Microsoft, Owner.Microsoft, Owner.Microsoft),
     ];
 
     public static string Label(Owner owner) => owner switch
     {
-        Owner.Musteri => "Müşteri",
-        Owner.Paylasimli => "Paylaşımlı",
+        Owner.Customer => "Customer",
+        Owner.Shared => "Shared",
         _ => "Microsoft",
     };
 
@@ -52,13 +52,13 @@ public static class ResponsibilityMatrix
         return Enum.IsDefined(model);
     }
 
-    /// <summary>`dotnet run -- C1.1 kim os paas` → "İşletim sistemi · PaaS → Microsoft".</summary>
+    /// <summary>`dotnet run -- C1.1 who os paas` → "Operating system · PaaS → Microsoft".</summary>
     public static int Answer(string layerKey, string modelText)
     {
         var layer = Layers.FirstOrDefault(l => l.Key == layerKey.ToLowerInvariant());
         if (layer is null || !TryParseModel(modelText, out var model))
         {
-            Console.Error.WriteLine("Bilinmeyen katman veya model. Katmanlar: " + string.Join(", ", Layers.Select(l => l.Key)) + " · modeller: onprem, iaas, paas, saas");
+            Console.Error.WriteLine("Unknown layer or model. Layers: " + string.Join(", ", Layers.Select(l => l.Key)) + " · models: onprem, iaas, paas, saas");
             return 1;
         }
 
@@ -66,10 +66,10 @@ public static class ResponsibilityMatrix
         Console.WriteLine($"{layer.Name} · {model} → {Label(owner)}");
         Console.WriteLine(owner switch
         {
-            Owner.Musteri when layer.Key is "veri" or "cihaz" or "hesap" => "   Bu katman HER modelde müşteridedir — sınavın en sevdiği kural.",
-            Owner.Microsoft when layer.Key.StartsWith("fiziksel") || layer.Key == "datacenter" => "   Fiziksel katmanlar bulutta (IaaS/PaaS/SaaS) her zaman Microsoft'tadır.",
-            Owner.Paylasimli => "   Paylaşımlı: platformu Microsoft sağlar, yapılandırmasını ve doğru kullanımını müşteri üstlenir.",
-            _ => "   Sorumluluk, modelin yönetim düzeyine göre kayar (IaaS → PaaS → SaaS geçtikçe Microsoft'a geçer).",
+            Owner.Customer when layer.Key is "data" or "device" or "account" => "   This layer belongs to the customer in EVERY model — the exam's favorite rule.",
+            Owner.Microsoft when layer.Key.StartsWith("physical") || layer.Key == "datacenter" => "   Physical layers always belong to Microsoft in the cloud (IaaS/PaaS/SaaS).",
+            Owner.Shared => "   Shared: Microsoft provides the platform, the customer owns its configuration and correct use.",
+            _ => "   Responsibility shifts with the management level of the model (moves to Microsoft as you go IaaS → PaaS → SaaS).",
         });
         return 0;
     }

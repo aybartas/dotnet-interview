@@ -1,55 +1,58 @@
+using System.Globalization;
 using Certification.AzureFundamentals.Shared;
 
 namespace Certification.AzureFundamentals.CloudComputing;
 
 /// <summary>
-/// CapEx vs OpEx: aynı 12 aylık talebi kendi donanımınla (zirveye göre boyutlanmış, peşin ödenmiş) ve
-/// tüketim bazlı bulutla (yalnızca kullanılan kapasite kadar) karşılamak. Fiyatlar ÖRNEKTİR, gerçek fiyat değildir.
+/// CapEx vs OpEx: meeting the same 12 months of demand with your own hardware (sized for the peak, paid upfront) and with
+/// the consumption-based cloud (only as much capacity as is used). Prices are EXAMPLES, not real prices.
 /// </summary>
 public static class Section04_ConsumptionModel
 {
-    // Aylık ihtiyaç duyulan sunucu sayısı (ör. bir e-ticaret sitesi: kasım-aralık zirvesi)
+    // Servers needed per month (e.g. an e-commerce site: November-December peak)
     private static readonly int[] DemandPerMonth = [4, 4, 5, 4, 4, 5, 5, 4, 6, 8, 16, 20];
-    private static readonly string[] Months = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
+    private static readonly string[] Months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    private const decimal ServerPurchasePrice = 120_000m;      // bir sunucunun peşin bedeli (örnek, TL)
-    private const int DepreciationYears = 4;                     // donanımın kullanım ömrü
-    private const decimal OnPremMonthlyRunCostPerServer = 900m;  // enerji, soğutma, bakım (örnek)
-    private const decimal CloudMonthlyPricePerServer = 4_500m;   // eşdeğer bulut VM'inin aylık pay-as-you-go bedeli (örnek)
+    private const decimal ServerPurchasePrice = 120_000m;      // upfront price of one server (example, USD)
+    private const int DepreciationYears = 4;                     // useful life of the hardware
+    private const decimal OnPremMonthlyRunCostPerServer = 900m;  // power, cooling, maintenance (example)
+    private const decimal CloudMonthlyPricePerServer = 4_500m;   // monthly pay-as-you-go price of an equivalent cloud VM (example)
+
+    private static string Usd(decimal value) => "$" + value.ToString("N0", CultureInfo.InvariantCulture);
 
     public static void Run()
     {
         var peak = DemandPerMonth.Max();
 
-        // On-prem: zirve kadar sunucu peşin alınır; yıllık amortisman + her ay tüm sunucuların işletme maliyeti
+        // On-prem: servers for the peak are bought upfront; yearly depreciation + running cost of ALL servers every month
         var upfront = peak * ServerPurchasePrice;
         var onPremYear = upfront / DepreciationYears + peak * OnPremMonthlyRunCostPerServer * 12;
         var idleServerMonths = DemandPerMonth.Sum(d => peak - d);
 
-        // Bulut: her ay yalnızca o ayın ihtiyacı kadar
+        // Cloud: each month only as much as that month needs
         var cloudYear = DemandPerMonth.Sum(d => d * CloudMonthlyPricePerServer);
 
-        Console.WriteLine("Aylık sunucu ihtiyacı: " + string.Join(" ", Months.Zip(DemandPerMonth, (m, d) => $"{m}:{d}")));
-        Console.WriteLine($"Zirve: {peak} sunucu (Aralık)\n");
+        Console.WriteLine("Servers needed per month: " + string.Join(" ", Months.Zip(DemandPerMonth, (m, d) => $"{m}:{d}")));
+        Console.WriteLine($"Peak: {peak} servers (December)\n");
 
-        Table.Print(["", "Kendi datacenter'ın (CapEx)", "Bulut — tüketim bazlı (OpEx)"],
+        Table.Print(["", "Your own datacenter (CapEx)", "Cloud — consumption-based (OpEx)"],
         [
-            ["Baştaki ödeme", upfront.ToString("C0"), "0 ₺"],
-            ["Kapasite", $"Her ay {peak} sunucu (zirveye göre)", "Her ay o ayın ihtiyacı kadar"],
-            ["Boşta bekleyen sunucu-ay", idleServerMonths.ToString(), "0"],
-            ["Yıllık maliyet (örnek)", $"{onPremYear:C0}  (amortisman + işletme)", $"{cloudYear:C0}"],
-            ["Muhasebe", "Varlık; yıllara yayılan amortisman", "Dönem gideri"],
+            ["Upfront payment", Usd(upfront), "$0"],
+            ["Capacity", $"{peak} servers every month (sized for the peak)", "Exactly what each month needs"],
+            ["Idle server-months", idleServerMonths.ToString(CultureInfo.InvariantCulture), "0"],
+            ["Yearly cost (example)", $"{Usd(onPremYear)}  (depreciation + running)", Usd(cloudYear)],
+            ["Accounting", "Asset; depreciation spread over the years", "Period expense"],
         ]);
 
-        Console.WriteLine($"""
+        Console.WriteLine(FormattableString.Invariant($"""
 
-        Gözlem: yükün {peak / (double)DemandPerMonth.Min():0}× dalgalandığı bu iş yükünde on-prem kapasitenin %{100.0 * idleServerMonths / (peak * 12):0}'i yıl boyunca boşta.
-        Tüketim bazlı modelde boşta kapasite için ödeme yapılmaz; tahmin hatası riski (az ya da fazla alım) ortadan kalkar.
-        Ama dikkat: yük SABİT ve 7/24 ise fark kapanır — o zaman reserved instance gibi taahhütlü fiyatlar devreye girer (5. bölüm).
+        Observation: with a workload that fluctuates {peak / (double)DemandPerMonth.Min():0}x, {100.0 * idleServerMonths / (peak * 12):0}% of the on-prem capacity sits idle all year.
+        The consumption-based model pays nothing for idle capacity; the risk of forecasting errors (buying too little or too much) disappears.
+        But note: if the load is CONSTANT and 24/7, the gap closes — then committed prices such as reserved instances come into play (section 5).
 
-        CapEx (capital expenditure): fiziksel altyapıya baştan yapılan, yıllara yayılan sabit yatırım.
-        OpEx (operational expenditure): hizmet/ürün için dönem dönem ödenen, kullanıma göre değişen gider.
-        Bulut, harcamayı CapEx'ten OpEx'e kaydırır. (Bu hesaplamadaki tüm fiyatlar örnektir.)
-        """);
+        CapEx (capital expenditure): a fixed investment made upfront in physical infrastructure, spread over the years.
+        OpEx (operational expenditure): an expense paid period by period for a service/product, varying with usage.
+        The cloud shifts spending from CapEx to OpEx. (All prices in this calculation are examples.)
+        """));
     }
 }

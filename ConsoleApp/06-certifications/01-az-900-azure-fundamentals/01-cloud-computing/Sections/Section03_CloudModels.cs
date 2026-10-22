@@ -8,27 +8,27 @@ public static class Section03_CloudModels
 
     public static void Run()
     {
-        Table.Print(["Model", "Altyapı kimin?", "Artı", "Eksi"],
+        Table.Print(["Model", "Who owns the infrastructure?", "Pro", "Con"],
         [
-            ["Public cloud", "Sağlayıcının; birçok müşteri paylaşır", "CapEx yok, hızlı, neredeyse sınırsız ölçek, kullandıkça öde", "Fiziksel kontrol ve donanım seçimi yok"],
-            ["Private cloud", "Tek kuruluşun (kendi DC'si veya ayrılmış)", "Tam kontrol, özel uyumluluk/regülasyon", "Donanım, bakım, kapasite yine sende (CapEx)"],
-            ["Hybrid cloud", "İkisi birlikte, aralarında bağlantı", "Esneklik: hassas/eski sistem içeride, değişken yük bulutta", "Yönetim karmaşıklığı, iki ortamın güvenliği"],
-            ["Multicloud (bağlam)", "Birden çok public sağlayıcı", "Sağlayıcı bağımlılığını azaltma, en iyi servisi seçme", "Farklı araçlar/beceriler; Azure Arc ile ortak yönetim"],
+            ["Public cloud", "The provider; many customers share it", "No CapEx, fast, nearly unlimited scale, pay as you go", "No physical control or hardware choice"],
+            ["Private cloud", "A single organization (own DC or dedicated)", "Full control, special compliance/regulation", "Hardware, maintenance, capacity still yours (CapEx)"],
+            ["Hybrid cloud", "Both together, with a connection between them", "Flexibility: sensitive/legacy systems on-site, variable load in the cloud", "Management complexity, security of two environments"],
+            ["Multicloud (context)", "More than one public provider", "Less vendor lock-in, pick the best service", "Different tools/skills; common management with Azure Arc"],
         ]);
 
         Scenario[] scenarios =
         [
-            new("Regülasyon gereği müşteri verisi kurum içindeki veri merkezinde kalmalı; web sitesi ise bayram kampanyalarında 10 kat yük alıyor.",
-                "Hybrid", "Veri private/on-prem tarafta, ani yük bulutta (cloud bursting)."),
-            new("Girişim; ön yatırım bütçesi yok, ürünü haftalar içinde dünyaya açmak istiyor.",
-                "Public", "Ön yatırım yok, hızlı başlangıç, küresel bölgeler."),
-            new("Savunma kurumu; donanım ve ağ üzerinde tam fiziksel kontrol istiyor, internet bağlantısı kısıtlı.",
-                "Private", "Tam kontrol ve izolasyon; maliyet ve bakım kuruluşta."),
-            new("Şirket iki farklı bulut sağlayıcısında iş yükü çalıştırıyor ve hepsini tek yerden yönetmek istiyor.",
-                "Multicloud (+ Azure Arc)", "Arc, Azure dışındaki kaynakları Azure Resource Manager'dan yönetir (→ C1.13)."),
+            new("Regulation requires customer data to stay in the organization's own datacenter; the website gets 10x load during holiday campaigns.",
+                "Hybrid", "Data stays on the private/on-prem side, sudden load goes to the cloud (cloud bursting)."),
+            new("A startup has no upfront budget and wants to launch its product worldwide within weeks.",
+                "Public", "No upfront investment, fast start, global regions."),
+            new("A defense agency wants full physical control over hardware and network, and has restricted internet connectivity.",
+                "Private", "Full control and isolation; cost and maintenance stay with the organization."),
+            new("A company runs workloads on two different cloud providers and wants to manage everything from one place.",
+                "Multicloud (+ Azure Arc)", "Arc manages non-Azure resources from Azure Resource Manager (→ C1.13)."),
         ];
 
-        Console.WriteLine("\nSenaryo → model:");
+        Console.WriteLine("\nScenario → model:");
         foreach (var s in scenarios)
         {
             Console.WriteLine($"   • {s.Description}");
