@@ -82,7 +82,7 @@ ConsoleApp/
     └── interview-questions.md  # 10-20 questions + answers
 WebApp/
 ├── WebApp.csproj
-├── Program.cs                 # calls the web topics' AddServices / Map methods
+├── Program.cs                 # menu; runs ONE web topic at a time
 └── <level>/<NN-module>/<NN-topic>/  # same shape: README.md + endpoint code + interview-questions.md
 docker-compose.yml             # (added with the first infra topic — J8) DB, Redis, Keycloak, broker …
 ```
@@ -4298,7 +4298,7 @@ dotnet-interview/
 │
 └── WebApp/                         # the ONE web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …)
     ├── WebApp.csproj
-    ├── Program.cs                  # calls the topics' AddServices / Map methods
+    ├── Program.cs                  # menu; runs ONE web topic at a time
     └── 01-junior/ …                # same level/module/topic folder names as ConsoleApp
 ```
 

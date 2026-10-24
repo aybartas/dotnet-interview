@@ -269,11 +269,11 @@ Proxy arkasındayken sunucu **gerçek istemci IP'sini** doğrudan göremez; `X-F
 
 ### 3.11 Pratik — Kestrel ile ham isteği görmek
 
-Uygulama `WebApp` projesindedir (`WebApp` klasöründen çalıştırın; `Program.cs` bu konunun `AddServices` ve `Map` metotlarını çağırır):
+Uygulama `WebApp` projesindedir (`WebApp` klasöründen çalıştırın ya da Visual Studio'da F5 ile menüden `J1.3`'ü seçin):
 
 ```bash
-dotnet run                       # http://localhost:5080
-dotnet run -- --https            # also https://localhost:5443 (first: dotnet dev-certs https --trust)
+dotnet run -- J1.3                # http://localhost:5080
+dotnet run -- J1.3 --https        # also https://localhost:5443 (first: dotnet dev-certs https --trust)
 ```
 
 | Dosya | Ne için? |

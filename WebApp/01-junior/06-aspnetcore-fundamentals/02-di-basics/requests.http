@@ -1,0 +1,18 @@
+### J6.2 — Dependency Injection basics: request collection
+### VS Code (REST Client / Humao extension), JetBrains Rider and Visual Studio 2022+ run this file directly.
+### Start the app first (from the WebApp folder):  dotnet run -- J6.2
+### Requests are separated by ###; run them with "Send Request" / the green arrow.
+
+@host = http://localhost:5080
+
+### 0) Index
+GET {{host}}/
+
+### 1) Lifetimes: send this several times — Transient changes on every resolve, Scoped once per request, Singleton never
+GET {{host}}/lifetimes
+
+### 2) Several IGreeter registrations: IEnumerable<IGreeter> (all, in order) vs IGreeter (the last one wins) + TryAdd* log
+GET {{host}}/greeters?name=Ada
+
+### 3) Captive dependency (singleton -> scoped): validation ON throws, validation OFF stays silent, IServiceScopeFactory fixes it
+GET {{host}}/captive
