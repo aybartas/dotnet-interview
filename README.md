@@ -7,7 +7,7 @@ Türkçe, uygulamalı bir .NET mülakat hazırlık reposu. Hedef platform **.NET
 1. .NET 10 SDK'yı kurun (`dotnet --version` → `10.x`).
 2. **`DotnetInterview.slnx`** dosyasını Visual Studio'da açın. Solution'da yalnızca **iki proje** var:
    - **`ConsoleApp`** — konuların çoğu. **F5** → konu menüsü açılır: bir konu yazın (ör. `J3.2`), sonra bölüm numarası ya da `all`.
-   - **`WebApp`** — HTTP sunucusu gerektiren konular (J1.3, J6). `WebApp`'e sağ tık → *Debug → Start New Instance* → bir konu seçin (ör. `J6.2`); sunucu `http://localhost:5080`'de açılır, `Ctrl+C` ile durur. Aynı anda tek konu çalışır.
+   - **`WebApp`** — HTTP sunucusu gerektiren konular (J1.3, J6.1–J6.6). `WebApp`'e sağ tık → *Debug → Start New Instance* → bir konu seçin (ör. `J6.2`); sunucu `http://localhost:5080`'de açılır, `Ctrl+C` ile durur. Aynı anda tek konu çalışır.
 3. Konunun anlatımı, konu klasöründeki `README.md`'dir; mülakat soruları aynı klasördeki `interview-questions.md` (sertifika pistinde `quiz.md`).
 
 Terminalden de aynı şekilde:
@@ -38,14 +38,14 @@ ConsoleApp/
 └── 06-certifications/                  # Azure certification track (AZ-900, AI-200)
 WebApp/
 ├── Program.cs                          # menu; runs ONE web topic at a time
-└── 01-junior/01-dev-foundations/03-how-the-web-works/
+└── 01-junior/                          # J1.3 (how-the-web-works) and J6 (06-aspnetcore-fundamentals)
 ```
 
 ROADMAP'teki `📁` yolları uygulama klasörüne göredir (ör. `01-junior/03-collections-linq/` → `ConsoleApp/01-junior/03-collections-linq/`). Konu ID'leri `J` (Junior), `M`, `S`, `D`, `C` (sertifika) ile başlar: `J2.3`, `C1.8`.
 
 | Seviye | Klasör | Durum |
 |--------|--------|-------|
-| [Junior](ROADMAP.md#seviye-1--junior) (J1–J13) | `01-junior/` | J1 (5 konu), J2 (6 konu), J3 (3 konu), J4 (3 konu), J5 (3 konu) yazıldı; devamı sırayla |
+| [Junior](ROADMAP.md#seviye-1--junior) (J1–J13) | `01-junior/` | J1 (5 konu), J2 (6 konu), J3 (3 konu), J4 (3 konu), J5 (3 konu), J6 (6 konu) yazıldı; devamı sırayla |
 | [Mid](ROADMAP.md#seviye-2--mid) (M1–M15) | `02-mid/` | planlandı |
 | [Senior](ROADMAP.md#seviye-3--senior) (S1–S10) | `03-senior/` | planlandı |
 | [DSA](ROADMAP.md#dsa-pisti--veri-yapıları--algoritmalar) (D1–D11) | `04-dsa/` | planlandı (seviyelerle paralel; tek proje) |
