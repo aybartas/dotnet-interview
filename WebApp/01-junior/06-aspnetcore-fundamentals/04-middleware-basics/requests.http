@@ -1,0 +1,66 @@
+### J6.4 — Request collection
+### VS Code (REST Client / Humao extension), JetBrains Rider and Visual Studio 2022+ run this file directly.
+### Start the app first:  dotnet run -- J6.4
+### Look at the response HEADERS (X-Elapsed-Ms, X-Correlation-Id) and at the server console (log lines with "=> CorrelationId=...").
+
+@host = http://localhost:5080
+
+### 1) Main pipeline: timing + correlation id + inline logger + terminal Run
+GET {{host}}/hello
+
+### 2) Same, but the caller supplies the correlation id (it is reused and echoed back)
+GET {{host}}/hello
+X-Correlation-Id: demo-42
+
+### 3) Short-circuit: the middleware does not call next()
+GET {{host}}/blocked
+
+### 4) Exception from a middleware, caught by the exception handler registered FIRST
+GET {{host}}/throw
+
+### 5) UseWhen: the branch runs, then REJOINS the main pipeline (see X-Debug)
+GET {{host}}/hello?debug
+
+### 6) MapWhen: a branch that never rejoins
+GET {{host}}/hello?mapwhen
+
+### 7) Map: the prefix moves from Path to PathBase
+GET {{host}}/map-demo/a/b
+
+### 8) Pitfall: header set AFTER next() — missing, error in the server log
+GET {{host}}/pitfall/naive
+
+### 9) Fix: header set via Response.OnStarting
+GET {{host}}/pitfall/ok
+
+### ── ORDERING EXPERIMENT: the same 7 middlewares, two different orders ──────────────────────────────────
+
+### 10a) order-a (recommended): X-Elapsed-Ms includes the 150 ms of the Slow middleware
+GET {{host}}/order-a/hello
+X-Correlation-Id: demo-42
+
+### 10b) order-b (shuffled): X-Elapsed-Ms is only a few ms — Timing stands inside Slow
+GET {{host}}/order-b/hello
+X-Correlation-Id: demo-42
+
+### 11a) Short-circuit on order-a: the 403 still carries both headers and is logged with the id
+GET {{host}}/order-a/hello?deny=1
+X-Correlation-Id: demo-42
+
+### 11b) Short-circuit on order-b: the 403 has NO custom headers and is not logged at all
+GET {{host}}/order-b/hello?deny=1
+X-Correlation-Id: demo-42
+
+### 12a) A middleware throws, order-a: the exception handler stands first → JSON 500 with headers
+GET {{host}}/order-a/hello?fail=1
+X-Correlation-Id: demo-42
+
+### 12b) A middleware throws, order-b: the handler stands after it → empty 500 + Kestrel error log
+GET {{host}}/order-b/hello?fail=1
+X-Correlation-Id: demo-42
+
+### 13a) The ENDPOINT throws, order-a
+GET {{host}}/order-a/hello?boom=1
+
+### 13b) The ENDPOINT throws, order-b: caught here too, because the handler is right in front of the endpoint
+GET {{host}}/order-b/hello?boom=1
