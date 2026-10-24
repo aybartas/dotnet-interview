@@ -1,0 +1,18 @@
+### J6.1 — Program.cs & Host: request collection
+### VS Code (REST Client / Humao extension), JetBrains Rider and Visual Studio 2022+ run this file directly.
+### Start the app first:  cd WebApp && dotnet run -- J6.1
+### Watch the server console too: the "pipeline out" lines (middleware 2 -> middleware 1) show the response direction.
+
+@host = http://localhost:5080
+
+### 1) The hint endpoint — lists what this demo offers
+GET {{host}}/
+
+### 2) The request journey — Kestrel -> middleware 1 -> routing -> middleware 2 -> endpoint -> response
+GET {{host}}/pipeline
+
+### 3) Unknown path — routing finds no endpoint; middleware 1 and 2 still run, the response is 404
+GET {{host}}/does-not-exist
+
+### 4) Wrong method — no endpoint matches POST /pipeline -> 405 Method Not Allowed (a path match with the wrong method is not a 404)
+POST {{host}}/pipeline
