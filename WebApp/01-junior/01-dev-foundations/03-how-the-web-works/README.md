@@ -131,7 +131,7 @@ Bu klasördeki Kestrel uygulaması (3.11) gelen isteği tam bu biçimde konsola 
 | `PATCH` | Kısmi güncelleme | ❌ | ❌ (genelde) | ✓ |
 
 - **Safe:** Sunucu durumunu **değiştirmez** (okuma). Crawler, prefetch, tarayıcı geri tuşu GET'i güvenle tekrarlar → **GET ile silme/güncelleme yapmayın.**
-- **Idempotent:** Aynı isteği 1 kez ya da N kez yapmak **sunucudaki sonuç durumu aynı** bırakır. Ağ hatasında istemcinin **otomatik yeniden deneme (retry)** yapabilmesinin temelidir: `PUT /counter/42`'yi 3 kez göndermek = 1 kez göndermek. `POST /counter/increment`'i 3 kez göndermek = 3 sipariş/3 artış. (Denemek için: [`requests.http`](requests.http) 5. ve 5b.)
+- **Idempotent:** Aynı isteği 1 kez ya da N kez yapmak **sunucudaki sonuç durumu aynı** bırakır. Ağ hatasında istemcinin **otomatik yeniden deneme (retry)** yapabilmesinin temelidir: `PUT /counter/42`'yi 3 kez göndermek = 1 kez göndermek. `POST /counter/increment`'i 3 kez göndermek = 3 sipariş/3 artış.
   - `DELETE` idempotenttir: ilk çağrı 204, ikincisi 404 dönebilir — *yanıt* farklı olsa da sunucunun *durumu* (kayıt yok) aynıdır.
   - Aşağıdaki sorunun cevabı: *"Ödeme POST'u zaman aşımına uğradı, tekrar deneyeyim mi?"* — Hayır, çift ödeme riski; çözüm **Idempotency-Key** header'ıdır (→ M5.1).
 
@@ -253,7 +253,7 @@ Access-Control-Max-Age: 600            ← preflight result cached for 10 min (n
 ```
 Preflight onaylanırsa tarayıcı gerçek isteği gönderir.
 
-> **Kritik nokta:** CORS bir **tarayıcı** korumasıdır. `curl`, Postman, sunucudan-sunucuya çağrı CORS'a takılmaz. "Postman'de çalışıyor ama tarayıcıda CORS hatası alıyorum" cümlesi bu yüzden klasiktir. İstek çoğu zaman sunucuya ulaşır ve işlenir; **engeli tarayıcı uygular** (cevabı JS'e vermez). Bu yüzden `AllowAnyOrigin` + `AllowCredentials` gibi gevşek ayar bir güvenlik açığıdır. Denemek için [`requests.http`](requests.http) 8. adım.
+> **Kritik nokta:** CORS bir **tarayıcı** korumasıdır. `curl`, Postman, sunucudan-sunucuya çağrı CORS'a takılmaz. "Postman'de çalışıyor ama tarayıcıda CORS hatası alıyorum" cümlesi bu yüzden klasiktir. İstek çoğu zaman sunucuya ulaşır ve işlenir; **engeli tarayıcı uygular** (cevabı JS'e vermez). Bu yüzden `AllowAnyOrigin` + `AllowCredentials` gibi gevşek ayar bir güvenlik açığıdır.
 
 ### 3.10 Proxy, reverse proxy, load balancer, CDN
 
@@ -280,7 +280,6 @@ dotnet run -- J1.3 --https        # also https://localhost:5443 (first: dotnet d
 |-------|----------|
 | [`RawRequestLoggingMiddleware.cs`](RawRequestLoggingMiddleware.cs) | Gelen isteği ham metne en yakın biçimde loglar |
 | [`HowTheWebWorksTopic.cs`](HowTheWebWorksTopic.cs) | `MapFallback` (her şeyi yansıt), status code, redirect, idempotency, cookie, ETag/304, CORS, HSTS uç noktaları |
-| [`requests.http`](requests.http) | Aynı senaryolar için `.http` dosyası (VS Code REST Client, Rider, Visual Studio 2022+) |
 
 Uygulama çalışırken ikinci terminalden `curl` ile inceleyin (`-k`: güvenilmeyen geliştirme sertifikasını atla — **sadece yerel deney**, prod'da asla):
 

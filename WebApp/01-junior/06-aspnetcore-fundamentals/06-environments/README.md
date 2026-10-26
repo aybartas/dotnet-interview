@@ -324,7 +324,7 @@ Beklenen cevaplar (uzun hali [`interview-questions.md`](interview-questions.md))
 - [Configuration in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/)
 - [RFC 9457 — Problem Details for HTTP APIs](https://www.rfc-editor.org/rfc/rfc9457)
 - [OWASP — Improper Error Handling](https://owasp.org/www-community/Improper_Error_Handling)
-- Bu klasör: [`EnvironmentsTopic.cs`](EnvironmentsTopic.cs) · [`ErrorPipeline.cs`](ErrorPipeline.cs) · [`requests.http`](requests.http)
+- Bu klasör: [`EnvironmentsTopic.cs`](EnvironmentsTopic.cs) · [`ErrorPipeline.cs`](ErrorPipeline.cs)
 
 ---
 

@@ -11,7 +11,7 @@ namespace Junior.AspNetCoreFundamentals.ConfigurationBasics;
 ///   Smtp__Password=s3cret dotnet run -- J6.3 --require-password    → starts (value comes from an environment variable)
 ///   dotnet run -- J6.3 --Smtp:Port=70000                     → command line wins, then ValidateOnStart rejects it
 ///
-/// Endpoints: /priority, /priority/live, /hierarchy, /smtp (see README and requests.http).
+/// Endpoints: /priority, /priority/live, /hierarchy, /smtp (see README).
 /// </summary>
 public static class ConfigurationBasicsTopic
 {

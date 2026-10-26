@@ -324,7 +324,7 @@ Pratik sonuçlar:
 - **Transient + `IDisposable`** root provider'dan çözülürse (singleton içinden, ya da scope açmadan `app.Services.GetRequiredService<T>()`) dispose'u uygulama sonuna kalır, container hepsini listede tutar → **bellek sızıntısı**. Scope içinde çözün.
 - Singleton `IDisposable` ise host kapanırken `Dispose` çalışır; scoped servis bundan sonra kullanılmaz.
 
-### 3.8 Komut satırı ve `requests.http`
+### 3.8 Komut satırı
 
 ```bash
 cd WebApp
@@ -336,8 +336,6 @@ curl http://localhost:5080/lifetimes               # call twice: which Id change
 curl "http://localhost:5080/greeters?name=Ada"
 curl http://localhost:5080/captive
 ```
-
-[`requests.http`](requests.http) dosyası aynı istekleri VS Code / Rider / Visual Studio'da gönderir.
 
 ---
 

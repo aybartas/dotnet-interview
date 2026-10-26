@@ -5,7 +5,7 @@ namespace Junior.AspNetCoreFundamentals.MiddlewareBasics;
 ///
 ///   dotnet run -- J6.4          → http://localhost:5080
 ///
-/// Contents (try the URLs from README.md or requests.http):
+/// Contents (try the URLs from README.md):
 ///   /order-a/...  /order-b/...   the ORDERING EXPERIMENT: same middlewares, different order, different behavior (OrderExperiment.cs)
 ///   /pitfall/naive  /pitfall/ok  setting a header after next() vs. via Response.OnStarting
 ///   /map-demo  ?mapwhen  ?debug  Map / MapWhen / UseWhen

@@ -11,7 +11,7 @@ namespace Junior.DevFoundations.HowTheWebWorks;
 ///   dotnet run -- J1.3 --https    → also https://localhost:5443  (first:  dotnet dev-certs https --trust)
 ///
 /// Every request is written to the console in its RAW form (see RawRequestLoggingMiddleware). The endpoints demonstrate HTTP concepts.
-/// To try it: requests.http (VS Code / Rider / VS) or the curl commands in the README.
+/// To try it: the curl commands in the README.
 /// </summary>
 public static class HowTheWebWorksTopic
 {

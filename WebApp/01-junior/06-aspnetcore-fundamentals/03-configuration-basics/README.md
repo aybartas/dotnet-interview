@@ -41,7 +41,6 @@ Konunun kodu bu klasörde:
 | [`PriorityDemo.cs`](PriorityDemo.cs) | Aynı key'i 5 kaynaktan veren **izole** `ConfigurationBuilder` — kim kazanıyor? |
 | [`SmtpOptions.cs`](SmtpOptions.cs) | Strongly-typed options + DataAnnotations |
 | [`appsettings.json`](appsettings.json), [`appsettings.Development.json`](appsettings.Development.json), [`appsettings.Production.json`](appsettings.Production.json) | Demo ayar dosyaları (`Smtp:Password` **bilerek yok**) |
-| [`requests.http`](requests.http) | VS / Rider / VS Code için istek koleksiyonu |
 
 ---
 
