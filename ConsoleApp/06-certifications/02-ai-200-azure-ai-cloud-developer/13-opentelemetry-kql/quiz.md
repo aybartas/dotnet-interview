@@ -137,14 +137,14 @@ requests
 | render timechart
 ```
 
-- A) `floor`
+- A) `round`
 - B) `bin`
 - C) `bucket_by`
 - D) `startofday`
 
 <details><summary>Cevap</summary>
 
-**B.** `bin(timestamp, 5m)` değeri 5 dakikalık kovaya yuvarlar; `render timechart` zaman ekseni ister. `startofday` günlük kovadır; C geçerli bir fonksiyon değildir; `floor` sayısal yuvarlamadır (`bin`'in takma adıdır ama zamanlar için standart ifade `bin`'dir).
+**B.** `bin(timestamp, 5m)` değeri 5 dakikalık kovaya yuvarlar; `render timechart` zaman ekseni ister. `startofday` yalnızca günlük kovadır; `bucket_by` geçerli bir fonksiyon değildir; `round` ise `datetime` değerini 5 dakikalık kovaya yuvarlamak için kullanılmaz.
 </details>
 
 ### 9. KQL tamamlama
@@ -165,7 +165,7 @@ requests
 
 <details><summary>Cevap</summary>
 
-**B.** `extend` mevcut sütunlara **hesaplanmış** sütun ekler; ardından `project` ile seçilir. `project` ile yazsaydık `total`/`failed` düşerdi (aslında burada çalışırdı ama sonraki `project` gereksiz olurdu; sınav kalıbı extend + project'tir). `where` süzer, `distinct` tekilleştirir.
+**B.** `extend` mevcut sütunlara (`total`, `failed`) **hesaplanmış** bir sütun ekler; ardından `project` ile yalnızca gereken sütunlar seçilir. Burada `project` kullanmak `total`/`failed` sütunlarını düşürürdü (ve sonraki `project` anlamsızlaşırdı); `where` satır süzer, `distinct` tekilleştirir.
 </details>
 
 ### 10. KQL okuma — sonuç
