@@ -13,7 +13,7 @@
 7. [Performans & trade-off](#7-performans--trade-off)
 8. [Kaynaklar](#8-kaynaklar)
 
-**Kod:** [`ProgramHostTopic.cs`](ProgramHostTopic.cs) (her satırı yorumlanmış `Program.cs`) · [`requests.http`](requests.http)
+**Kod:** [`ProgramHostTopic.cs`](ProgramHostTopic.cs) (her satırı yorumlanmış `Program.cs`)
 
 ---
 

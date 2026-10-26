@@ -13,7 +13,7 @@
 7. [Performans & trade-off](#7-performans--trade-off)
 8. [Kaynaklar](#8-kaynaklar)
 
-**Bu klasördeki kod:** [`LoggingBasicsTopic.cs`](LoggingBasicsTopic.cs) (host, endpoint'ler) · [`OrderService.cs`](OrderService.cs) (her seviyede log) · [`StructuredLoggingDemo.cs`](StructuredLoggingDemo.cs) (template vs interpolation, scope) · [`ShippingService.cs`](ShippingService.cs) (`[LoggerMessage]`) · [`CapturingLoggerProvider.cs`](CapturingLoggerProvider.cs) (provider'ın gerçekte ne aldığını gösteren in-memory provider) · [`AccountService.cs`](AccountService.cs) + [`LogRedactor.cs`](LogRedactor.cs) (hassas veri) · [`appsettings.json`](appsettings.json) / [`.Development`](appsettings.Development.json) / [`.Production`](appsettings.Production.json) · [`requests.http`](requests.http)
+**Bu klasördeki kod:** [`LoggingBasicsTopic.cs`](LoggingBasicsTopic.cs) (host, endpoint'ler) · [`OrderService.cs`](OrderService.cs) (her seviyede log) · [`StructuredLoggingDemo.cs`](StructuredLoggingDemo.cs) (template vs interpolation, scope) · [`ShippingService.cs`](ShippingService.cs) (`[LoggerMessage]`) · [`CapturingLoggerProvider.cs`](CapturingLoggerProvider.cs) (provider'ın gerçekte ne aldığını gösteren in-memory provider) · [`AccountService.cs`](AccountService.cs) + [`LogRedactor.cs`](LogRedactor.cs) (hassas veri) · [`appsettings.json`](appsettings.json) / [`.Development`](appsettings.Development.json) / [`.Production`](appsettings.Production.json)
 
 ---
 
