@@ -170,7 +170,7 @@ Kaynak sistemler ─▶ Data Factory ─▶ Data Lake Storage Gen2 ─▶ Synaps
 IoT cihazları ─▶ Event Hubs ─▶ Stream Analytics ─▶ (Data Lake / Power BI canlı panel)
 ```
 
-> Ayrı bir hat: **Microsoft Purview** veri yönetişimi ve sınıflandırma (→ C1.12), **Azure Machine Learning/AI servisleri** (→ C1.20 — başka ajanın konusu; burada yalnızca ad olarak anılır).
+> Ayrı bir hat: **Microsoft Purview** veri yönetişimi ve sınıflandırma (→ C1.12), **Azure Machine Learning ve AI servisleri** (→ C1.20).
 
 ### 3.6 Taşıma ve güvenlik özeti
 
@@ -230,7 +230,7 @@ az group delete --name $RG --yes --no-wait
 
 | Adım | Gözlem | Kavram |
 |---|---|---|
-| 2–3 | `compute-model Serverless`, `autoPauseDelay: 60` (dakika; serverless'ta en düşük değer 60) | Serverless: boşta duraklar, compute ücreti kesilir |
+| 2–3 | `compute-model Serverless`, `autoPauseDelay: 60` (dakika cinsinden boşta kalma süresi) | Serverless: boşta duraklar, compute ücreti kesilir |
 | 2 | `--use-free-limit` reddedilirse: abonelikte zaten 10 ücretsiz veritabanı vardır veya bölge/teklif kısıtı var | Ücretsiz teklif limitleri |
 | 4 | Yedek politikası kendiliğinden vardır | PaaS: otomatik yedek |
 | 5 | `--enable-free-tier` ikinci hesapta hata verir | Aboneliğe bir free tier hesabı |
