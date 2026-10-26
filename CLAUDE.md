@@ -6,7 +6,7 @@ Guidance for Claude Code when working in this repository.
 
 A .NET Junior → Mid → Senior interview-prep study repo (target: **.NET 10 LTS / C# 14**; .NET 11 / C# 15 features only when marked **(.NET 11)**). `ROADMAP.md` is the master plan (6 tracks, 51 modules, ~300 topics); the repo is filled in one topic at a time.
 
-Written so far: **J1–J6** (J1 5 topics, J2 6, J3 3, J4 3, J5 3, J6 6) and **C1 (AZ-900) — all 15 topics** (`README.md` + `quiz.md`; code only in C1.1–C1.3, C1.8, C1.11).
+Written so far: **J1–J6** (J1 5 topics, J2 6, J3 3, J4 3, J5 3, J6 6) **C1 (AZ-900) — 22 topics** (C1.1–C1.15 official objectives + practice exam, C1.16–C1.22 extended course coverage) and **C2 (AI-200) — all 14 topics** (`README.md` + `quiz.md`; code only in C1.1–C1.3, C1.8, C1.11; C2 has no code, labs are `az` CLI / C# / Python code blocks).
 
 ## Structure (keep it this simple)
 
