@@ -64,7 +64,7 @@ void PrintTopics()
 {
     Console.WriteLine("\nTopics:\n");
     foreach (var t in topics) Console.WriteLine($"  {t.Id,-5} {t.Title}");
-    Console.WriteLine("\n  (README-only topics, no code: J1.1 Git, J1.4 .NET CLI, C1.4–C1.7, C1.9–C1.10, C1.12–C1.15)");
+    Console.WriteLine("\n  (README-only topics, no code: J1.1 Git, J1.4 .NET CLI, C1.4–C1.7, C1.9–C1.10, C1.12–C1.22, all of C2)");
 }
 
 // Without the menu: dotnet run -- J3.2 4
