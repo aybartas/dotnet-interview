@@ -1,8 +1,3 @@
-using Certification.AzureFundamentals.CloudBenefits;
-using Certification.AzureFundamentals.CloudComputing;
-using Certification.AzureFundamentals.CloudServiceTypes;
-using Certification.AzureFundamentals.CostManagement;
-using Certification.AzureFundamentals.Storage;
 using Junior.AsyncBasics.AsyncAwait;
 using Junior.AsyncBasics.CancellationBasics;
 using Junior.AsyncBasics.Concepts;
@@ -27,7 +22,7 @@ using Junior.DevFoundations.NetworkFundamentals;
 // `args` are the command-line arguments, `return <int>` is the process exit code, and using `await` makes Main `async Task<int>` (see J4).
 //
 // J = Junior, C = Certification. Topics that need an HTTP server live in the WebApp project.
-// Without the menu (terminal):  dotnet run -- J3.2 4   ·   dotnet run -- C1.2 serial 99.95 99.99
+// Without the menu (terminal):  dotnet run -- J3.2 4
 
 Topic[] topics =
 [
@@ -49,13 +44,6 @@ Topic[] topics =
     new("J5.1", "C# → IL → Native: The Big Picture",                       BigPictureTopic.Run),
     new("J5.2", "bin/ and obj/",                                           BinObjTopic.Run),
     new("J5.3", "run vs build vs publish",                                 RunBuildPublishTopic.Run),
-
-    // ── Certification: AZ-900 (only topics with code are listed; the others are README + quiz only) ──
-    new("C1.1",  "Cloud Computing, Cloud Models and Pricing",              CloudComputingTopic.Run),
-    new("C1.2",  "Benefits of the Cloud (HA, scale, SLA…)",                CloudBenefitsTopic.Run),
-    new("C1.3",  "Cloud Service Types: IaaS, PaaS, SaaS, Serverless",      CloudServiceTypesTopic.Run),
-    new("C1.8",  "Azure Storage: Blob, Files, Data Transfer and Migration", StorageTopic.Run),
-    new("C1.11", "Cost Management in Azure",                               CostManagementTopic.Run),
 ];
 
 Topic? Find(string id) => topics.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -64,7 +52,7 @@ void PrintTopics()
 {
     Console.WriteLine("\nTopics:\n");
     foreach (var t in topics) Console.WriteLine($"  {t.Id,-5} {t.Title}");
-    Console.WriteLine("\n  (README-only topics, no code: J1.1 Git, J1.4 .NET CLI, C1.4–C1.7, C1.9–C1.10, C1.12–C1.22, all of C2)");
+    Console.WriteLine("\n  (Documentation/Study-Guide topics: J1.1 Git, J1.4 .NET CLI, C1 AZ-900 Study Guide, all of C2)");
 }
 
 // Without the menu: dotnet run -- J3.2 4

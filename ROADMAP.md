@@ -4369,7 +4369,7 @@ dotnet-interview/
 │   │   └── 06-mock-checklist/
 │   │
 │   └── 06-certifications/              # level-independent certification track
-│       ├── 01-az-900-azure-fundamentals/      # 22 topics (README + quiz; code only in C1.1–C1.3, C1.8, C1.11)
+│       ├── 01-az-900-azure-fundamentals/      # AZ-900 Study Guide (kapsamlı MD dokümanı + 400+ quiz ve deneme sınavı)
 │       └── 02-ai-200-azure-ai-cloud-developer/ # 14 topics (Azure SDK + emulators: root docker-compose.yml)
 │
 └── WebApp/                         # the ONE web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …)
