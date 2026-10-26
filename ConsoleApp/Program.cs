@@ -13,7 +13,6 @@ using Junior.CSharpFundamentals.ModernCSharp;
 using Junior.CSharpFundamentals.Oop;
 using Junior.CSharpFundamentals.ProgramAnatomy;
 using Junior.CSharpFundamentals.TypeSystemMemory;
-using Junior.DevFoundations.IdeDebugging.Exercises;
 using Junior.DevFoundations.NetworkFundamentals;
 
 // Every console topic runs from this single file. In Visual Studio press F5 → the topic menu opens; pick a topic,
@@ -28,7 +27,6 @@ Topic[] topics =
 [
     // ── Junior ──
     new("J1.2", "Network Fundamentals (TCP / UDP / Sockets)",              NetworkFundamentalsTopic.Run),
-    new("J1.5", "IDE, Debugging & Code Quality",                           IdeDebuggingTopic.Run),
     new("J2.1", "Program Anatomy",                                         ProgramAnatomyTopic.Run),
     new("J2.2", "Type System & Memory Model",                              TypeSystemMemoryTopic.Run),
     new("J2.3", "OOP Fundamentals",                                        OopTopic.Run),
