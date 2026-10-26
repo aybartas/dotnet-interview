@@ -223,7 +223,7 @@ Her konunun `README.md`'si şu şablonu izler:
 
 | ID | Modül | Sertifika · alanlar |
 |----|-------|---------------------|
-| [C1](#c1-microsoft-azure-fundamentals-az-900) | Microsoft Azure Fundamentals | **AZ-900** (July 20, 2026) · 15 konu: cloud computing & shared responsibility, faydalar & SLA, IaaS/PaaS/SaaS & serverless, temel mimari, VM'ler & scale set & availability set, App Service/container/AVD/Functions, ağ, storage & migration, Entra ID & RBAC, Zero Trust & Defender, maliyet, yönetişim, yönetim araçları & ARM, izleme + deneme sınavı |
+| [C1](#c1-microsoft-azure-fundamentals-az-900) | Microsoft Azure Fundamentals | **AZ-900** (July 20, 2026) · 22 konu (15 resmî hedef + deneme sınavı, 7 genişletilmiş): cloud computing & shared responsibility, faydalar & SLA, IaaS/PaaS/SaaS & serverless, temel mimari, VM'ler & scale set & availability set, App Service/container/AVD/Functions, ağ, storage & migration, Entra ID & RBAC, Zero Trust & Defender, maliyet, yönetişim, yönetim araçları & ARM, izleme + deneme sınavı + genişletilmiş kapsam: veri servisleri, yük dengeleme, ağ güvenliği & Key Vault, yedekleme & DR, AI/IoT, entegrasyon & DevOps, destek planları & SLA & CAF/WAF |
 | [C2](#c2-azure-ai-cloud-developer-associate-ai-200) | Azure AI Cloud Developer Associate | **AI-200** (October 7, 2026) · 14 konu: ACR, Container Apps & KEDA, AKS; Cosmos DB (NoSQL, vector, change feed), pgvector, Managed Redis; Functions, Service Bus, Event Grid; Key Vault, App Configuration, OpenTelemetry & KQL + deneme sınavı |
 
 ---
@@ -3653,7 +3653,7 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 
 ### C1. Microsoft Azure Fundamentals (AZ-900)
 
-> 📁 `06-certifications/01-az-900-azure-fundamentals/` · ⏱ ~5 hafta · Önkoşul: — (J12 sonrasında çalışmak en verimli yoldur; Docker/CLI aşinalığı laboratuvarları kolaylaştırır)
+> 📁 `06-certifications/01-az-900-azure-fundamentals/` · ⏱ ~6 hafta · Önkoşul: — (J12 sonrasında çalışmak en verimli yoldur; Docker/CLI aşinalığı laboratuvarları kolaylaştırır)
 > 📜 **Sertifika:** Microsoft Azure Fundamentals (**AZ-900**) — giriş seviyesi, **genişlik** sınavı. Müfredat: resmî study guide, **"skills measured as of July 20, 2026"**. Değişiklik kaydına göre bu sürümde compute & networking, kaynak yönetimi/dağıtımı ve izleme araçları bölümlerinde **küçük** düzenlemeler var; alan ağırlıkları değişmedi.
 >
 > | Sınav alanı | Ağırlık | Konular |
@@ -3661,12 +3661,13 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 > | Describe cloud concepts | %25-30 | C1.1 – C1.3 |
 > | Describe Azure architecture and services | %35-40 | C1.4 – C1.10 |
 > | Describe Azure management and governance | %30-35 | C1.11 – C1.14 |
+> | *Genişletilmiş kapsam (study guide dışı, kurs müfredatları — bağlam)* | — | C1.16 – C1.22 |
 >
 > Her konuda dört katman var: **📌 Resmî hedef** (study guide'daki hangi maddeyi kapsadığı) · **Teori** (README) · **🛠 Pratik** (az CLI laboratuvarı ve/veya `ConsoleApp` içindeki kod; portal demoları yok, gereken bilgi teoride) · **📝 Quiz** (sınav formatında, gerekçeli). *(bağlam)* etiketli maddeler sınav hedefinde açıkça yazmaz ama soruyu anlamak ve gerçek işte kullanmak için gereklidir.
 > Sınav bilgileri (süre, geçme puanı 700/1000, ücret, dil) zaman zaman değişir — sınavdan önce resmî [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)'ı ve değişiklik kaydını kontrol et. Geliştirici derinliği → C2 (AI-200); çözüm mimarisi → S8.3 (AZ-305).
 > **Quiz notu:** Gerçek sınav soruları Microsoft'un gizlilik sözleşmesi kapsamındadır; "çıkmış soru"/braindump kullanılmaz. Sorular sınav formatında (tek seçim, çoklu seçim, evet/hayır tablosu, sıralama, senaryo), resmî alan ağırlıklarına göre **özgün** yazılır.
 
-**Kapsam kontrol listesi** — AZ-900 hazırlık kurslarındaki standart bölüm başlıklarının hepsi bu modülde:
+**Kapsam kontrol listesi** — AZ-900 hazırlık kurslarındaki standart bölüm başlıklarının hepsi bu modülde (resmî hedefler C1.1–C1.14; kurs müfredatlarında geçen ek konular C1.16–C1.22):
 
 | Bölüm | Başlıklar | Konu |
 |---|---|---|
@@ -3685,6 +3686,13 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 | Araçlar | Azure portal · Cloud Shell (CLI/PowerShell ile kaynak oluşturma) · Azure Arc · IaC · ARM templates (portalda şablon üretme dahil) | C1.13 |
 | İzleme | Azure Advisor · Azure Service Health · Azure Monitor merkezi dashboard'u · Azure Monitor raporları (Workbooks) | C1.14 |
 | Sınav | Deneme sınavı, puanlama, strateji | C1.15 |
+| Genişletilmiş kapsam *(bağlam)* | Azure SQL/Cosmos DB/Fabric/Synapse/Databricks/Data Factory | C1.16 |
+| | Load Balancer · Application Gateway · Front Door · Traffic Manager | C1.17 |
+| | NSG/ASG · Azure Firewall · DDoS Protection · Bastion · Key Vault | C1.18 |
+| | Azure Backup · Site Recovery · Azure Migrate · Database Migration Service | C1.19 |
+| | Azure AI services · Azure Machine Learning · IoT Hub/Central | C1.20 |
+| | Logic Apps · Event Grid · Service Bus · Event Hubs · API Management · Azure DevOps/GitHub | C1.21 |
+| | Destek planları · SLA · preview/GA yaşam döngüsü · Cloud Adoption Framework · Well-Architected | C1.22 |
 
 #### C1.1 Cloud Computing, Cloud Modelleri ve Fiyatlandırma · `01-cloud-computing` ⭐
 - 📌 **Resmî hedef:** *Describe cloud computing* — cloud computing'i tanımla · shared responsibility model · cloud modelleri (public, private, hybrid) · her modelin kullanım senaryosu · consumption-based model · cloud fiyatlandırma modellerini karşılaştır · serverless *(serverless → C1.3'te hizmet türleriyle birlikte)*
@@ -4023,6 +4031,73 @@ Her biri ayrı alt klasörde tasarım dokümanı + kritik kısmın prototipi:
 - 🛠 **Pratik:** Deneme sınavını zamanlı çöz → yanlışları C1.x ile eşleştir → zayıf alan tekrar listesi; ardından resmî practice assessment'ı kapalı kitap çöz.
 - 📝 **Quiz:** Deneme sınavı + cevap anahtarı, gerekçeler ve alan bazlı puan tablosu
 
+#### Genişletilmiş kapsam — C1.16 – C1.22 (kurs müfredatlarında işlenen, study guide'ın kenarındaki veya dışındaki konular)
+
+> **Neden ek konular?** Resmî study guide (July 20, 2026) yalnızca yukarıdaki C1.1 – C1.14 hedeflerini ölçer; deneme sınavı (C1.15) da bunlardan çıkar. Ama Udemy/Microsoft Learn/eğitim kurumu AZ-900 kurslarının büyük çoğunluğu — ve gerçek Azure işi — şu konuları da işler: **veri ve analitik servisleri, yük dengeleme, ağ güvenliği, yedekleme/felaket kurtarma, AI/IoT servisleri, entegrasyon ve DevOps araçları, destek planları/SLA/servis yaşam döngüsü**. Bunlar sınavda *doğrudan hedef olarak yazmaz* ama (a) eski sürüm soruları ve çalışma materyalleri bunlara dayanır, (b) senaryo sorularında seçeneklerde (distractor) geçerler, (c) AI-200 (C2) ve AZ-305 (S8.3) için zemindir. Hepsi **(bağlam)** etiketlidir; her konu hangi resmî hedefe bağlandığını README başında söyler. Hedef: geniş kurs kataloğunu bu repoda tek yerde kapatmak. Sıra serbest; sınav alanı eşlemesi her konunun başındadır.
+
+#### C1.16 Azure Veri ve Analitik Servisleri · `16-data-analytics-services` *(bağlam)*
+- 📌 **Bağlantı:** *Describe Azure architecture and services* alanındaki servis tanıma soruları; C2.4–C2.7 (geliştirici derinliği) ve M6/M8 (veritabanı) için zemin
+- **Teori — ilişkisel (yönetilen) veritabanları:** Azure SQL ailesi ⭐ (**Azure SQL Database** — tek veritabanı/elastic pool, **SQL Managed Instance** — neredeyse tam SQL Server uyumu, **SQL Server on Azure VM** — IaaS) ile **Azure Database for PostgreSQL / MySQL**; PaaS faydaları (otomatik yedek, yama, HA, ölçekleme), DTU ↔ vCore, serverless compute tier; hangi senaryoda hangisi (lift-and-shift → Managed Instance; yeni uygulama → SQL Database)
+- **Teori — NoSQL ve diğer:** **Azure Cosmos DB** ⭐ (çok modelli, küresel dağıtım, tek haneli ms gecikme, tutarlılık düzeyleri, RU/s), **Azure Managed Redis** (cache), **Table/Blob** (Storage'ta NoSQL benzeri); ilişkisel ↔ NoSQL karar tablosu
+- **Teori — analitik ve büyük veri:** **Microsoft Fabric** (birleşik analitik SaaS), **Azure Synapse Analytics**, **Azure Databricks**, **HDInsight**, **Azure Data Factory** (ETL/ELT orkestrasyonu), **Azure Data Lake Storage Gen2**, **Stream Analytics**/**Event Hubs** (akan veri); OLTP ↔ OLAP, batch ↔ streaming; hangi servis hangi iş (veri taşıma, dönüştürme, depolama, analiz, raporlama — Power BI)
+- **Teori — taşıma ve güvenlik:** **Azure Database Migration Service** / Azure Migrate (→ C1.19), şifreleme (TDE, bağlantıda TLS), Entra kimlik doğrulama, private endpoint (→ C1.7), geo-replication ve yedekleme özeti
+- **Sınav tuzakları:** "yönetilen veritabanı = PaaS" (VM'de SQL ≠ PaaS); Managed Instance ↔ SQL Database; Cosmos DB'nin "birden çok region'da yazma"; "veri ambarı/analitik" → Synapse/Fabric, "Spark tabanlı ortak çalışma" → Databricks; ETL → Data Factory
+- 🛠 **Pratik:** `az sql server create` + `az sql db create --compute-model Serverless` (otomatik duraklatma) ile ücretsiz/ucuz bir SQL Database ve temizlik; Cosmos DB free tier ve emulator'ü *(bağlam)* README'de; karar tablosu alıştırması (senaryo → servis). Portal demoları yok.
+- 📝 **Quiz:** servis seçimi, SQL ailesi karşılaştırması, ilişkisel/NoSQL, analitik servis eşleştirme (≈15 soru)
+
+#### C1.17 Yük Dengeleme ve Trafik Dağıtımı · `17-load-balancing-traffic` *(bağlam)* ⭐
+- 📌 **Bağlantı:** *Describe Azure networking services* (study guide'da "load balancing" adıyla yazmaz ama C1.7 ve C1.5'in senaryo soruları bunu varsayar); S8.3 (AZ-305) için zemin
+- **Teori:** dört servis, iki eksen ⭐ — **bölgesel ↔ global** ve **katman 4 (TCP/UDP) ↔ katman 7 (HTTP/HTTPS)**: **Azure Load Balancer** (L4, bölgesel; public/internal; Standard ↔ Basic; health probe, yük dengeleme kuralları, inbound NAT, zone-redundant frontend) · **Application Gateway** (L7, bölgesel; URL/host tabanlı yönlendirme, SSL termination, cookie affinity, **WAF**) · **Azure Front Door** (L7, **global**; CDN + hızlandırma + WAF + yüklü failover; edge'de POP) · **Traffic Manager** (DNS tabanlı, **global**; yönlendirme yöntemleri: priority, weighted, performance, geographic, multivalue, subnet — trafik içinden geçmez, yalnızca DNS yanıtı)
+- **Teori:** karar ağacı (internal mi/public mi · bölgesel/global · HTTP/non-HTTP · WAF gerekli mi · DNS-based failover) ve **kombinasyon örüntüleri** (Front Door + Application Gateway + Load Balancer); health probe mantığı, availability zone ile birlikte kullanım (→ C1.4)
+- **Teori — bağlam:** **Azure CDN** (statik içerik önbellekleme), **Azure Bastion** (→ C1.18); 2026 notları — hangi ürünler yeniden markalandı/emekli oldu (doğrula: Azure CDN (klasik) sunumları, Front Door tier'ları)
+- **Sınav tuzakları:** Traffic Manager ↔ Front Door (DNS ↔ proxy); Application Gateway ↔ Load Balancer (L7 ↔ L4); "SSL offload/WAF/URL routing" → Application Gateway/Front Door; "global HTTP + hızlandırma" → Front Door
+- 🛠 **Pratik:** `az network lb create` + iki VM'li backend pool ve health probe (veya `az network traffic-manager profile create` — ucuz, DNS tabanlı) ile yönlendirme yöntemini değiştirip `nslookup` ile sonucu görme; temizlik.
+- 📝 **Quiz:** senaryo → hangi servis tabloları, L4/L7, bölgesel/global eşleştirme, Traffic Manager yöntemleri (≈16 soru)
+
+#### C1.18 Ağ Güvenliği, Bastion ve Key Vault · `18-network-security-key-vault` *(bağlam)* ⭐
+- 📌 **Bağlantı:** *Describe Azure identity, access, and security* + C1.7/C1.10'daki "defense in depth" soruları; C2.11 (Key Vault geliştirici derinliği), M9, S8.3
+- **Teori — ağ güvenliği:** **Network Security Group (NSG)** ⭐ (subnet/NIC; öncelik, allow/deny, hizmet etiketleri, varsayılan kurallar; **stateful**) · **Application Security Group (ASG)** · **Azure Firewall** (yönetilen, stateful L3–L7, FQDN kuralları, threat intelligence; NSG ile farkı) · **Azure DDoS Protection** (Network ↔ IP; temel koruma her zaman açık) · **Web Application Firewall** (→ C1.17) · **Azure Bastion** (portaldan/SSH-RDP, public IP'siz VM erişimi) · **service endpoint ↔ private endpoint** (→ C1.7) · **Just-in-time VM erişimi** (→ C1.10)
+- **Teori — sırlar ve anahtarlar:** **Azure Key Vault** ⭐ (secret, key, certificate; Standard ↔ Premium/HSM; **Managed HSM** özeti; erişim: **RBAC** önerilir ↔ eski access policy; soft delete + purge protection; **managed identity** ile kimlik bilgisiz erişim); şifreleme özeti: encryption at rest (Storage/SQL/disk — platform-managed ↔ customer-managed key), in transit (TLS), **Azure Disk Encryption**
+- **Teori — bağlam:** **Microsoft Sentinel** (SIEM/SOAR özeti), **Microsoft Defender XDR** ailesi ile Defender for Cloud ilişkisi (→ C1.10), **Customer Lockbox**; güvenlik sorumluluğu paylaşımı (→ C1.1)
+- **Sınav tuzakları:** NSG ↔ Azure Firewall (alt ağ filtresi ↔ merkezi, FQDN'li); DDoS koruması temel/standart farkı; Bastion = public IP'siz erişim; "secret'ı kodda tutma" → Key Vault + managed identity
+- 🛠 **Pratik:** `az network nsg create` + `rule create` (80/443 izin, 22/3389 kaynak IP kısıtı); `az keyvault create --enable-rbac-authorization` + secret oluşturma/okuma + soft delete/purge; Bastion'ı **ücretli olduğu için teoride** bırak (README'de maliyet uyarısı); temizlik.
+- 📝 **Quiz:** NSG/Firewall/DDoS/Bastion seçimi, Key Vault kavramları, savunma katmanları eşleştirme (≈16 soru)
+
+#### C1.19 Yedekleme, Felaket Kurtarma ve Taşıma · `19-backup-dr-migration` *(bağlam)*
+- 📌 **Bağlantı:** *Describe Azure storage services* (Azure Migrate, Data Box → C1.8) ve *benefits of the cloud* (reliability/HA → C1.2); S8.3 için zemin
+- **Teori:** yedekleme ↔ felaket kurtarma ↔ yüksek erişilebilirlik ayrımı ⭐; **RPO / RTO** kavramları; **Azure Backup** (Recovery Services vault, **Backup vault**, desteklenen iş yükleri: VM, SQL/SAP HANA in VM, Azure Files, Blobs, diskler; saklama politikaları, soft delete, immutable vault; backup ↔ snapshot) · **Azure Site Recovery** (VM/fiziksel/on-prem → Azure veya region→region replikasyon, failover/failback, recovery plan, test failover) · **depolama redundancy'sinin yedek olmadığı** (silmeyi/bozmayı kopyalar → C1.8)
+- **Teori — taşıma:** **Azure Migrate** (discover/assess/migrate hub'ı; 5R/6R kavramı: rehost, refactor, rearchitect, rebuild, replace), **Azure Database Migration Service**, **Azure Data Box** ailesi (→ C1.8), **Azure Resource Mover** *(bağlam)*, **Azure Arc** ile hibrit yönetim (→ C1.13); Cloud Adoption Framework'ün "migrate" aşaması (→ C1.22)
+- **Sınav tuzakları:** Backup ↔ Site Recovery (veri geri yükleme ↔ iş sürekliliği/failover); "GRS yedektir" yanılgısı; Azure Migrate'in "değerlendir + taşı" rolü; "çevrimdışı büyük veri taşıma" → Data Box
+- 🛠 **Pratik:** `az backup vault create` + VM için varsayılan politika ile korumayı açma + isteğe bağlı yedek tetikleme; soft delete davranışı; temizlik (vault'ta koruma durdurulmadan silinmeyeceği uyarısı dahil).
+- 📝 **Quiz:** RPO/RTO yorumlama, Backup/Site Recovery/Migrate eşleştirme, taşıma stratejisi senaryoları (≈14 soru)
+
+#### C1.20 Azure AI, Machine Learning ve IoT Servisleri · `20-ai-iot-services` *(bağlam)*
+- 📌 **Bağlantı:** AZ-900'ün eski sürümlerinde ve birçok kursta "popular Azure services" bölümü; **AI-200 (C2) ve AI-102/AI-900 yoluna zemin**
+- **Teori — AI servisleri:** **Microsoft Foundry** (eski adlarıyla Azure AI Foundry / AI Studio — 2026 adlandırmasını doğrula) ve **Azure OpenAI/Foundry Models**, **Azure AI services** (Vision, Speech, Language, Document Intelligence, Translator, AI Search) ↔ **Azure Machine Learning** (kendi modelini eğit/yönet; MLOps) ↔ **Azure AI Bot/Agent** servisleri özeti; hazır API ↔ özel model karar tablosu; sorumlu AI ilkeleri (fairness, reliability & safety, privacy & security, inclusiveness, transparency, accountability) *(bağlam)*
+- **Teori — IoT:** **Azure IoT Hub** (cihaz-bulut çift yönlü, device twin, **DPS**), **IoT Central** (SaaS), **Azure Digital Twins**, **Azure Sphere/IoT Edge** özeti; uçtan uca akış: cihaz → IoT Hub → Stream Analytics/Event Hubs → depolama/Power BI
+- **Teori — diğer:** **Azure Batch**/HPC *(bağlam)*, **Azure Stack / Azure Local** (hibrit; → C1.1), **Azure Communication Services** özeti
+- **Sınav tuzakları:** "hazır bilişsel API" → AI services ↔ "özel model eğitimi" → Azure Machine Learning; IoT Hub ↔ Event Hubs (cihaz yönetimi/çift yönlü ↔ salt yüksek hacimli alım)
+- 🛠 **Pratik:** `az cognitiveservices account create` ile (free tier F0) bir Language/Vision kaynağı ve REST ile tek çağrı; ya da `az iot hub create --sku F1` + simüle cihaz *(F1 abonelik başına 1 tane — doğrula)*; temizlik. Anahtarı koda gömme uyarısı (→ C1.18).
+- 📝 **Quiz:** senaryo → hangi AI/IoT servisi, sorumlu AI ilkeleri eşleştirme (≈12 soru)
+
+#### C1.21 Entegrasyon, Mesajlaşma ve DevOps Araçları · `21-integration-devops-tools` *(bağlam)*
+- 📌 **Bağlantı:** C1.6'daki Functions/Logic Apps sorularının devamı; **C2.8–C2.10** (Functions, Service Bus, Event Grid) ve M12 (mesajlaşma) için zemin; *Describe management and deployment tools* ile (→ C1.13) birlikte okunur
+- **Teori — entegrasyon:** **Azure Logic Apps** (no/low-code workflow, 1000+ connector; Functions ↔ Logic Apps) · **Event Grid** (reaktif olay yönlendirme, push) · **Service Bus** (kurumsal mesajlaşma: kuyruk/topic, dead-letter, sıralama) · **Event Hubs** (yüksek hacimli olay/telemetri alımı, Kafka uyumluluğu) · **Storage Queue** (basit/ucuz kuyruk) · **API Management** (API gateway: kota, auth, dönüştürme, geliştirici portalı) · seçim tablosu: olay ↔ mesaj ⭐ (→ C2.9, C2.10, M12)
+- **Teori — DevOps:** **Azure DevOps** (Boards, Repos, Pipelines, Test Plans, Artifacts) ↔ **GitHub** (Actions, Codespaces, Copilot) · **Azure Pipelines/GitHub Actions** ile CI/CD akışı, **Azure DevTest Labs** (geliştirme/test ortamlarında maliyet kontrolü), **Azure Deployment Environments**, **Azure Developer CLI (azd)** *(bağlam)*; IaC ile ilişki (→ C1.13), kalıcı kimlik bilgisi yerine **workload identity federation (OIDC)** *(bağlam)*
+- **Sınav tuzakları:** Event Grid ↔ Service Bus ↔ Event Hubs ayrımı; Logic Apps (tasarımcı, connector'lar) ↔ Functions (kod); API Management'ın rolü
+- 🛠 **Pratik:** `az servicebus namespace create` + queue + CLI ile mesaj gönderme/alma (Basic/Standard ucuz; temizlik); bir GitHub Actions workflow YAML'ını README'de oku/yaz (çalıştırma yok); karar tablosu alıştırması.
+- 📝 **Quiz:** entegrasyon servisi seçimi, olay ↔ mesaj ayrımı, DevOps araç eşleştirme (≈14 soru)
+
+#### C1.22 Destek Planları, SLA'lar, Servis Yaşam Döngüsü ve Benimseme Çerçeveleri · `22-support-sla-lifecycle` *(bağlam)* ⭐
+- 📌 **Bağlantı:** *Describe Azure management and governance* alanının eski sürümlerindeki ve kurslardaki "Azure support, SLA and service lifecycle" bölümü; C1.2 (SLA hesapları) ve C1.12 (uyumluluk) ile birlikte okunur
+- **Teori — destek planları ⭐:** **Basic** (ücretsiz: faturalama/abonelik desteği, self-help, Service Health) · **Developer** · **Standard** · **Professional Direct** · **Premier/Unified** (güncel adları ve fiyat/yanıt sürelerini doğrula); teknik destek, 7/24, yanıt süresi (Sev A/B/C), TAM; **support request** açma (portal, abonelik türüne göre), **Microsoft Q&A / Learn / Docs / Azure Updates / Azure Status** gibi self-service kaynakları
+- **Teori — SLA'lar ⭐:** SLA nasıl okunur (hizmet kredisi, aylık % → dakika; → C1.2), **composite SLA**, SLA'yı yükseltme (availability zone, çok region), **SLA yok/free/preview** hizmetler; **Azure SLA sayfası**
+- **Teori — servis yaşam döngüsü ⭐:** **Private preview → Public preview → General Availability (GA)**; preview'da SLA ve destek **garantisi yoktur** (sözleşmesel destek kapsamı farklı); **Azure Updates** ile değişiklik/emeklilik takibi (retirement duyuruları, → C1.2 reliability), **özellik önizleme (Preview features)**; **Azure Marketplace** ve **Azure Government/China** kısa notları (→ C1.4, C1.12)
+- **Teori — benimseme çerçeveleri:** **Microsoft Cloud Adoption Framework (CAF)** — strategy, plan, ready, adopt (migrate/innovate), govern, manage, secure; **Azure Well-Architected Framework** — beş sütun: **reliability, security, cost optimization, operational excellence, performance efficiency** (Advisor kategorileriyle eşleşme → C1.14); **Azure landing zone** kavramı *(bağlam)*; **Azure Architecture Center**
+- **Sınav tuzakları:** "preview hizmetinin SLA'sı" → yok; "ücretsiz destek planı hangisi" → Basic; WAF (framework) ↔ WAF (web application firewall) kısaltma tuzağı; Advisor'ın beş kategorisi = Well-Architected sütunları
+- 🛠 **Pratik:** destek planlarını/SLA'ları karşılaştıran bir karar tablosu alıştırması; `az monitor activity-log list` ile bir Service Health olayını bulma; Azure SLA belgesinden iki servisin composite SLA'sını hesaplama (C1.2'nin `serial` demosu ile).
+- 📝 **Quiz:** destek planı seçimi, preview/GA, SLA yorumlama, CAF/WAF eşleştirme (≈14 soru)
+
 📝 **Sınav:** "Shared responsibility'de hangi sorumluluk her zaman müşteride?" · "CapEx ile OpEx; consumption-based model?" · "Scale up / scale out / elasticity?" · "HA ile reliability farkı?" · "%99,95 SLA aylık kaç dakika kesinti?" · "Ürün → IaaS/PaaS/SaaS eşleştirme; serverless nitelikleri?" · "Availability zone ile region pair?" · "Resource group silinince; bir kaynak iki grupta olabilir mi?" · "Politikayı tüm subscription'lara uygula?" · "Availability set ile scale set ile availability zone?" · "Proximity placement group ne sağlar?" · "Tek container'ı orkestrasyonsuz çalıştır?" · "VPN Gateway ile ExpressRoute; peering transitive mi?" · "LRS/ZRS/GRS/GZRS/RA-GRS hangi arızaya dayanır?" · "Archive tier'dan okuma?" · "File Sync, AzCopy, Storage Explorer farkı?" · "Data Box ne zaman; Azure Migrate ne yapar?" · "Entra ID ile Entra Domain Services; B2B ile B2C?" · "Conditional Access ne yapar; MFA faktörleri?" · "Owner, Contributor, Reader farkı?" · "Zero Trust'ın üç ilkesi; defense in depth katman sırası?" · "Defender for Cloud ne yapar?" · "Pricing Calculator ile TCO?" · "Tag'ler miras alınır mı?" · "RBAC ile Azure Policy; Policy etkileri?" · "Resource lock Owner'ı da durdurur mu?" · "Purview ne yapar?" · "Azure Arc ne yapar; ARM template neden?" · "Advisor, Service Health, Resource Health farkı?" · "Workbooks ne için?"
 
 ---
@@ -4293,7 +4368,7 @@ dotnet-interview/
 │   │   └── 06-mock-checklist/
 │   │
 │   └── 06-certifications/              # level-independent certification track
-│       ├── 01-az-900-azure-fundamentals/      # 15 topics (README + quiz; code only in C1.1–C1.3, C1.8, C1.11)
+│       ├── 01-az-900-azure-fundamentals/      # 22 topics (README + quiz; code only in C1.1–C1.3, C1.8, C1.11)
 │       └── 02-ai-200-azure-ai-cloud-developer/ # 14 topics (Azure SDK + emulators: root docker-compose.yml)
 │
 └── WebApp/                         # the ONE web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …)
@@ -4394,7 +4469,7 @@ Sertifika pisti seviye sırasının parçası değildir; ilgili modüller bittik
 
 | Zamanlama | Modül | Not |
 |-----------|-------|-----|
-| Junior hafta ~21-29 (J12 sonrası) | **C1 AZ-900** (~5 hafta) | Junior capstone'dan önce veya hemen sonra; Azure'a ilk temas |
+| Junior hafta ~21-29 (J12 sonrası) | **C1 AZ-900** (~6 hafta) | Junior capstone'dan önce veya hemen sonra; Azure'a ilk temas |
 | Mid hafta ~35-43 ve sonrası (M9, M12, M13, M14, M15.4 sonrası) | **C2 AI-200** (~8 hafta) | Mid capstone öncesi/paralel; sınavdan önce M6/M8 (veri), M9 (kimlik), M12 (mesajlaşma) tekrarı |
 
 > Sınava girme kararı sana aittir: C1/C2'yi **bilgi** olarak çalışıp sınava girmeyebilirsin; quiz ve deneme sınavı yine seviye ölçer. Sınavdan önce resmî study guide'ı ve **practice assessment**'ı kontrol et.
