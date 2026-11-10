@@ -6,7 +6,7 @@ Guidance for Claude Code when working in this repository.
 
 A .NET Junior → Mid → Senior interview-prep study repo (target: **.NET 10 LTS / C# 14**; .NET 11 / C# 15 features only when marked **(.NET 11)**). `ROADMAP.md` is the master plan (6 tracks, 51 modules, ~300 topics); the repo is filled in one topic at a time.
 
-Written so far: **J1–J6** (J1 5 topics, J2 6, J3 3, J4 3, J5 3, J6 6) **C1 (AZ-900) — 22 topics** (C1.1–C1.15 official objectives + practice exam, C1.16–C1.22 extended course coverage) and **C2 (AI-200) — all 14 topics** (`README.md` + `quiz.md`; code only in C1.1–C1.3, C1.8, C1.11; C2 has no code, labs are `az` CLI / C# / Python code blocks).
+Written so far: **J1–J6** (J1 5 topics, J2 6, J3 3, J4 3, J5 3, J6 6) **C1 (AZ-900) — 22 topics** (C1.1–C1.15 official objectives + practice exam, C1.16–C1.22 extended course coverage) and **C2 (AI-200) — all 14 topics** (one Markdown file per section, theory + quiz; no code projects, labs are `az` CLI / C# / Python code blocks).
 
 ## Structure (keep it this simple)
 
@@ -53,7 +53,7 @@ Gotchas: `GlobalUsings.cs` (J2) is project-wide — alias any type that clashes 
 
 ## Certification track (`ConsoleApp/06-certifications/`)
 
-C1 = AZ-900, C2 = AI-200 (level-independent). Each topic: `README.md` (📌 official objective, "skills measured as of …" date) + `quiz.md` (original exam-format questions, answers and rationale in `<details>`; **never reproduce real exam questions**). Labs are `az` CLI code blocks in the README, cheap, ending with a cleanup step and a budget-alarm note. Fact-check Azure claims against the official study guide; record sources in ROADMAP `## 2026 Radarı`.
+C1 = AZ-900, C2 = AI-200 (level-independent). Each certification folder holds a `README.md` (exam domains + table of contents) and one file per section named `<part>.<topic>-<slug>.md` (e.g. `2.4-networking.md`; `5.1`–`5.3` = strategy, practice exam, scoring). Each section file has the topic text (📌 official objective, "skills measured as of …" date) followed by its quiz (original exam-format questions, answers and rationale in `<details>`; **never reproduce real exam questions**). Keep files split per section; do not merge them back into one study guide. Labs are `az` CLI code blocks in the topic text, cheap, ending with a cleanup step and a budget-alarm note. Fact-check Azure claims against the official study guide; record sources in ROADMAP `## 2026 Radarı`.
 
 ## Editing ROADMAP.md
 

@@ -4369,8 +4369,8 @@ dotnet-interview/
 │   │   └── 06-mock-checklist/
 │   │
 │   └── 06-certifications/              # level-independent certification track
-│       ├── 01-az-900-azure-fundamentals/      # AZ-900 Study Guide (kapsamlı MD dokümanı + 400+ quiz ve deneme sınavı)
-│       └── 02-ai-200-azure-ai-cloud-developer/ # AI-200 Study Guide (kapsamlı MD dokümanı + 260 quiz ve deneme sınavı)
+│       ├── 01-az-900-azure-fundamentals/      # AZ-900 Study Guide (README.md içindekiler + bölüm başına bir MD dosyası: 1.1–5.3; 400+ quiz ve deneme sınavı)
+│       └── 02-ai-200-azure-ai-cloud-developer/ # AI-200 Study Guide (README.md içindekiler + bölüm başına bir MD dosyası: 1.1–5.3; 260 quiz ve deneme sınavı)
 │
 └── WebApp/                         # the ONE web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …)
     ├── WebApp.csproj
@@ -4402,7 +4402,7 @@ Modülün konuları kökteki `docker-compose.yml`'deki servisleri (PostgreSQL + 
 - Proje ayarları (`InvariantGlobalization`, `GenerateDocumentationFile`, `EnforceCodeStyleInBuild`) iki `.csproj`'a yazılır; yalnızca bir konuyu ilgilendiren analyzer ayarları o konu klasöründeki `.editorconfig`'e
 - Altyapı kökteki `docker-compose.yml`'den gelir; connection string'ler `appsettings.Development.json` + User Secrets
 - Capstone'lar katmanlı mimariyi göstermek için ek projeler içerebilir; hepsi aynı solution'a eklenir (tek istisna)
-- **Sertifika pisti:** `ConsoleApp/06-certifications/` altında sertifika = klasör (`01-az-900-azure-fundamentals`, `02-ai-200-azure-ai-cloud-developer`); konu klasöründe `README.md` + (varsa) kod + **`quiz.md`** (sınav tarzı sorular, cevaplar `<details>` içinde); son konu = deneme sınavı. `interview-questions.md` yerine `quiz.md` kullanılır; testler yine yoktur.
+- **Sertifika pisti:** `ConsoleApp/06-certifications/` altında sertifika = klasör (`01-az-900-azure-fundamentals`, `02-ai-200-azure-ai-cloud-developer`); sertifika klasöründe `README.md` (sınav alanları + içindekiler) ve konu başına bir dosya (`<bölüm>.<konu>-<slug>.md`, ör. `2.4-networking.md`); her dosya konunun anlatımını ve sonundaki **Quiz Soruları** bölümünü (sınav tarzı sorular, cevaplar `<details>` içinde) içerir; `5.1`–`5.3` = sınav stratejisi, deneme sınavı, puanlama. `interview-questions.md` yerine quiz kullanılır; testler yine yoktur.
 
 ---
 
