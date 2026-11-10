@@ -10,14 +10,30 @@
 
 Bulut hizmetleri, sağlayıcının yığının **ne kadarını** yönettiğine göre üç ana türe ayrılır; serverless, PaaS'ın en "yönetimsiz" biçimidir:
 
-| | **IaaS** (Infrastructure as a Service) | **PaaS** (Platform as a Service) | **SaaS** (Software as a Service) |
-|---|---|---|---|
-| Ne kiralarsın | Altyapı: sanal makine, ağ, depolama | Platform: çalışma ortamı (runtime), veritabanı, ara katman | Hazır uygulama |
-| Kontrol / esneklik | **En fazla** | Orta | **En az** |
-| Yönetim yükü / sorumluluk | **En fazla** | Orta | **En az** |
-| Sen ne yaparsın | OS, yama, runtime, uygulama, veri, ağ kuralları | Kod ve veri; uygulama yapılandırması | Kullanıcılar, veri, ayarlar |
-| Kullanım senaryosu | **Lift-and-shift** taşıma, test/geliştirme ortamı, özel yazılım, depolama/yedekleme, yüksek performanslı hesap (HPC) | Web/API geliştirme, iş zekâsı/analitik, geliştirme çerçeveleri, IoT backend | E-posta ve iletişim, ofis uygulamaları, CRM/ERP, iş birliği |
-| Azure örnekleri | Virtual Machines, VM Scale Sets, Virtual Network, Managed Disks | App Service, Azure SQL Database, Cosmos DB, AKS, **Functions** | Microsoft 365, Dynamics 365, Outlook.com |
+- **Ne kiralarsın**
+  - IaaS (Infrastructure as a Service): Altyapı: sanal makine, ağ, depolama
+  - PaaS (Platform as a Service): Platform: çalışma ortamı (runtime), veritabanı, ara katman
+  - SaaS (Software as a Service): Hazır uygulama
+- **Kontrol / esneklik**
+  - IaaS (Infrastructure as a Service): **En fazla**
+  - PaaS (Platform as a Service): Orta
+  - SaaS (Software as a Service): **En az**
+- **Yönetim yükü / sorumluluk**
+  - IaaS (Infrastructure as a Service): **En fazla**
+  - PaaS (Platform as a Service): Orta
+  - SaaS (Software as a Service): **En az**
+- **Sen ne yaparsın**
+  - IaaS (Infrastructure as a Service): OS, yama, runtime, uygulama, veri, ağ kuralları
+  - PaaS (Platform as a Service): Kod ve veri; uygulama yapılandırması
+  - SaaS (Software as a Service): Kullanıcılar, veri, ayarlar
+- **Kullanım senaryosu**
+  - IaaS (Infrastructure as a Service): **Lift-and-shift** taşıma, test/geliştirme ortamı, özel yazılım, depolama/yedekleme, yüksek performanslı hesap (HPC)
+  - PaaS (Platform as a Service): Web/API geliştirme, iş zekâsı/analitik, geliştirme çerçeveleri, IoT backend
+  - SaaS (Software as a Service): E-posta ve iletişim, ofis uygulamaları, CRM/ERP, iş birliği
+- **Azure örnekleri**
+  - IaaS (Infrastructure as a Service): Virtual Machines, VM Scale Sets, Virtual Network, Managed Disks
+  - PaaS (Platform as a Service): App Service, Azure SQL Database, Cosmos DB, AKS, **Functions**
+  - SaaS (Software as a Service): Microsoft 365, Dynamics 365, Outlook.com
 
 
 ---
@@ -36,17 +52,15 @@ Bulut hizmetleri, sağlayıcının yığının **ne kadarını** yönettiğine g
 
 Klasik uygulama yığını gösterimi (Sen = müşteri, MS = Microsoft):
 
-| Katman | On-prem | IaaS | PaaS | SaaS |
-|---|---|---|---|---|
-| Uygulama | Sen | Sen | Sen | MS |
-| Veri | Sen | Sen | Sen | MS* |
-| Runtime | Sen | Sen | MS | MS |
-| Middleware | Sen | Sen | MS | MS |
-| İşletim sistemi | Sen | Sen | MS | MS |
-| Sanallaştırma | Sen | MS | MS | MS |
-| Sunucular | Sen | MS | MS | MS |
-| Depolama | Sen | MS | MS | MS |
-| Ağ (fiziksel) | Sen | MS | MS | MS |
+- **Uygulama** — On-prem: Sen · IaaS: Sen · PaaS: Sen · SaaS: MS
+- **Veri** — On-prem: Sen · IaaS: Sen · PaaS: Sen · SaaS: MS*
+- **Runtime** — On-prem: Sen · IaaS: Sen · PaaS: MS · SaaS: MS
+- **Middleware** — On-prem: Sen · IaaS: Sen · PaaS: MS · SaaS: MS
+- **İşletim sistemi** — On-prem: Sen · IaaS: Sen · PaaS: MS · SaaS: MS
+- **Sanallaştırma** — On-prem: Sen · IaaS: MS · PaaS: MS · SaaS: MS
+- **Sunucular** — On-prem: Sen · IaaS: MS · PaaS: MS · SaaS: MS
+- **Depolama** — On-prem: Sen · IaaS: MS · PaaS: MS · SaaS: MS
+- **Ağ (fiziksel)** — On-prem: Sen · IaaS: MS · PaaS: MS · SaaS: MS
 
 \* Bu klasik gösterim bir **sadeleştirmedir**: SaaS'ta verinin saklanması Microsoft'ta olsa da verinin kendisi, hesaplar ve erişim **her modelde müşterinin sorumluluğundadır**. Sınav C1.1'deki shared responsibility tablosunu temel alır.
 
@@ -117,35 +131,46 @@ Azure'da serverless örnekleri:
 
 **Aynı teknoloji, farklı tür:** belirleyici olan ürünün adı değil **yönetim düzeyidir**:
 
-| Teknoloji | IaaS | PaaS | SaaS |
-|---|---|---|---|
-| SQL Server | SQL Server on Azure VM | Azure SQL Database, SQL Managed Instance | — |
-| Web sitesi | VM'e IIS/nginx kurmak | App Service | Hazır site oluşturucu |
-| E-posta | VM'de Exchange Server | — | Exchange Online (Microsoft 365) |
-| Container | VM'e Docker kurmak | AKS, Container Instances | — |
+- **SQL Server**
+  - IaaS: SQL Server on Azure VM
+  - PaaS: Azure SQL Database, SQL Managed Instance
+  - SaaS: —
+- **Web sitesi** — IaaS: VM'e IIS/nginx kurmak · PaaS: App Service · SaaS: Hazır site oluşturucu
+- **E-posta** — IaaS: VM'de Exchange Server · PaaS: — · SaaS: Exchange Online (Microsoft 365)
+- **Container** — IaaS: VM'e Docker kurmak · PaaS: AKS, Container Instances · SaaS: —
 
 #### 3.7 Pratik — aynı uygulama, üç hizmet türü
 
 **(a) Pricing Calculator karşılaştırması.** Küçük bir "Todo" web uygulaması (aylık ~50.000 istek, 1 GB veri, 20 kullanıcılı ekip) için [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/)'da iki tahmin çıkar ve tabloyu doldur:
 
-| | IaaS | PaaS | SaaS |
-|---|---|---|---|
-| Bileşenler | 1 Linux VM (küçük boyut) + VM'de veritabanı + disk | App Service planı + Azure SQL Database (en küçük katman) | Hazır bir görev yönetimi SaaS ürünü (kullanıcı başı abonelik) |
-| Aylık tahmini maliyet | | | |
-| OS yamasını kim yapar? | | | |
-| Veritabanı yedeğini kim alır? | | | |
-| Ölçeklemek için ne gerekir? | | | |
-| Özelleştirme sınırı | | | |
+- **Bileşenler**
+  - IaaS: 1 Linux VM (küçük boyut) + VM'de veritabanı + disk
+  - PaaS: App Service planı + Azure SQL Database (en küçük katman)
+  - SaaS: Hazır bir görev yönetimi SaaS ürünü (kullanıcı başı abonelik)
+- **Aylık tahmini maliyet** — IaaS: — · PaaS: — · SaaS: —
+- **OS yamasını kim yapar?** — IaaS: — · PaaS: — · SaaS: —
+- **Veritabanı yedeğini kim alır?** — IaaS: — · PaaS: — · SaaS: —
+- **Ölçeklemek için ne gerekir?** — IaaS: — · PaaS: — · SaaS: —
+- **Özelleştirme sınırı** — IaaS: — · PaaS: — · SaaS: —
 
 <details><summary>Beklenen sonuç (fiyatlar region'a ve zamana göre değişir; yapıyı karşılaştır)</summary>
 
-| | IaaS | PaaS | SaaS |
-|---|---|---|---|
-| Aylık maliyet | Küçük VM + disk sabit; 7/24 açık kalırsa kullanılmasa da ödenir | Küçük katmanlarda benzer veya daha düşük; yedek/HA fiyata dahil | Kullanıcı sayısı × abonelik; altyapı maliyeti yok |
-| OS yaması | **Sen** | Microsoft | Microsoft |
-| Veritabanı yedeği | **Sen** (veya VM yedeği kurarsın) | Microsoft (otomatik yedek, saklama süresini sen seçersin) | Sağlayıcı |
-| Ölçekleme | Daha büyük VM veya scale set + load balancer kurmak | Plan katmanını/instance sayısını değiştirmek (autoscale) | Daha çok lisans almak |
-| Özelleştirme | Sınırsız | Platformun izin verdiği kadar | Uygulamanın sunduğu ayarlar kadar |
+- **Aylık maliyet**
+  - IaaS: Küçük VM + disk sabit; 7/24 açık kalırsa kullanılmasa da ödenir
+  - PaaS: Küçük katmanlarda benzer veya daha düşük; yedek/HA fiyata dahil
+  - SaaS: Kullanıcı sayısı × abonelik; altyapı maliyeti yok
+- **OS yaması** — IaaS: **Sen** · PaaS: Microsoft · SaaS: Microsoft
+- **Veritabanı yedeği**
+  - IaaS: **Sen** (veya VM yedeği kurarsın)
+  - PaaS: Microsoft (otomatik yedek, saklama süresini sen seçersin)
+  - SaaS: Sağlayıcı
+- **Ölçekleme**
+  - IaaS: Daha büyük VM veya scale set + load balancer kurmak
+  - PaaS: Plan katmanını/instance sayısını değiştirmek (autoscale)
+  - SaaS: Daha çok lisans almak
+- **Özelleştirme**
+  - IaaS: Sınırsız · PaaS: Platformun izin verdiği kadar
+  - SaaS: Uygulamanın sunduğu ayarlar kadar
 
 Sonuç: Kontrol IaaS → SaaS yönünde azalır; yönetim yükü de onunla birlikte azalır. Maliyet karşılaştırmasında yalnızca fatura değil **operasyon emeği** (yama, yedek, izleme) de hesaba katılmalıdır.
 </details>
@@ -181,13 +206,21 @@ Gözlem: App Service için ne bir OS imajı seçtin ne de bir disk; VM için ima
 
 Bir lojistik şirketi on yıllık uygulama portföyünü buluta taşıyor ve her iş yükü için hizmet türünü seçiyor:
 
-| İş yükü | Karar | Neden |
-|---|---|---|
-| Üreticisi artık destek vermeyen, özel bir Windows sürücüsüne bağımlı depo yönetim yazılımı | **IaaS** (VM, lift-and-shift) | Kod değiştirilemiyor, OS düzeyinde kontrol gerekiyor; datacenter kapanış tarihine yetişmeli |
-| Müşterilerin gönderi takip ettiği web sitesi ve API | **PaaS** (App Service + Azure SQL Database) | Ekip kod yazıyor, OS yönetmek istemiyor; kampanyada autoscale |
-| Sürücülerin yüklediği teslimat fotoğraflarını küçültüp etiketleyen işlem | **Serverless** (Azure Functions, blob yükleme tetikleyicisi) | Gün içinde düzensiz, gece neredeyse hiç; boşta ücret yok |
-| Muhasebe sistemine fatura aktaran onay akışı | **Serverless** (Logic Apps) | Hazır connector'larla kod yazmadan entegrasyon |
-| Kurum içi e-posta ve doküman paylaşımı | **SaaS** (Microsoft 365) | Hazır ürün; sunucu yönetimi tamamen kalkıyor |
+- Üreticisi artık destek vermeyen, özel bir Windows sürücüsüne bağımlı depo yönetim yazılımı
+  - Karar: **IaaS** (VM, lift-and-shift)
+  - Neden: Kod değiştirilemiyor, OS düzeyinde kontrol gerekiyor; datacenter kapanış tarihine yetişmeli
+- **Müşterilerin gönderi takip ettiği web sitesi ve API**
+  - Karar: **PaaS** (App Service + Azure SQL Database)
+  - Neden: Ekip kod yazıyor, OS yönetmek istemiyor; kampanyada autoscale
+- Sürücülerin yüklediği teslimat fotoğraflarını küçültüp etiketleyen işlem
+  - Karar: **Serverless** (Azure Functions, blob yükleme tetikleyicisi)
+  - Neden: Gün içinde düzensiz, gece neredeyse hiç; boşta ücret yok
+- **Muhasebe sistemine fatura aktaran onay akışı**
+  - Karar: **Serverless** (Logic Apps)
+  - Neden: Hazır connector'larla kod yazmadan entegrasyon
+- **Kurum içi e-posta ve doküman paylaşımı**
+  - Karar: **SaaS** (Microsoft 365)
+  - Neden: Hazır ürün; sunucu yönetimi tamamen kalkıyor
 
 Bir yıl sonra depo yazılımı yeniden yazıldığında o da VM'den PaaS'a geçiriliyor (**refactor**): lift-and-shift hızlı taşımanın, PaaS ise uzun vadeli işletme kolaylığının aracıdır.
 
@@ -236,14 +269,24 @@ Bir yıl sonra depo yazılımı yeniden yazıldığında o da VM'den PaaS'a geç
 
 ### 7. Performans & trade-off
 
-| Boyut | IaaS | PaaS | Serverless | SaaS |
-|---|---|---|---|---|
-| Kontrol/özelleştirme | ★★★★ | ★★★ | ★★ | ★ |
-| Yönetim yükü | Yüksek | Orta | Düşük | En düşük |
-| Ölçekleme | Kendin kurarsın (scale set, LB) | Yerleşik (plan/instance, autoscale) | Otomatik, sıfıra kadar | Sağlayıcı |
-| Maliyet modeli | Çalıştığı süre (boşta da) | Plan/instance süresi | Çağrı + çalışma süresi; boşta 0 | Kullanıcı başı abonelik |
-| Taşıma hızı (mevcut uygulama) | En hızlı (değişiklik yok) | Uygulama uyarlanmalı | Yeniden tasarım gerekir | Veri taşıma + süreç değişikliği |
-| Tipik risk | Yama/güvenlik ihmali | Platform kısıtları | Cold start, süre sınırı, satıcı bağımlılığı | Özelleştirme ve veri konumu sınırları |
+- **Kontrol/özelleştirme** — IaaS: ★★★★ · PaaS: ★★★ · Serverless: ★★ · SaaS: ★
+- **Yönetim yükü** — IaaS: Yüksek · PaaS: Orta · Serverless: Düşük · SaaS: En düşük
+- **Ölçekleme**
+  - IaaS: Kendin kurarsın (scale set, LB)
+  - PaaS: Yerleşik (plan/instance, autoscale)
+  - Serverless: Otomatik, sıfıra kadar · SaaS: Sağlayıcı
+- **Maliyet modeli**
+  - IaaS: Çalıştığı süre (boşta da) · PaaS: Plan/instance süresi
+  - Serverless: Çağrı + çalışma süresi; boşta 0
+  - SaaS: Kullanıcı başı abonelik
+- **Taşıma hızı (mevcut uygulama)**
+  - IaaS: En hızlı (değişiklik yok) · PaaS: Uygulama uyarlanmalı
+  - Serverless: Yeniden tasarım gerekir
+  - SaaS: Veri taşıma + süreç değişikliği
+- **Tipik risk**
+  - IaaS: Yama/güvenlik ihmali · PaaS: Platform kısıtları
+  - Serverless: Cold start, süre sınırı, satıcı bağımlılığı
+  - SaaS: Özelleştirme ve veri konumu sınırları
 
 Kural: **İşletme yükünü azaltabildiğin kadar yukarı (SaaS'a doğru) çık; kontrol gerektiren yerde aşağıda (IaaS) kal.**
 

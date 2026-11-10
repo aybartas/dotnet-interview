@@ -10,16 +10,38 @@
 
 Resmî hedef, bulutun faydalarını **dört çift** halinde sayar: *high availability & scalability*, *reliability & predictability*, *security & governance* ve *manageability*. Sınav bunları tek tek tanımlatmaktan çok **senaryodan faydayı buldurur** ve en çok birbirine benzeyenleri (HA ↔ reliability, scalability ↔ elasticity, security ↔ governance) şık yapar.
 
-| Fayda | Tanım | Bulutta nasıl sağlanır | Azure örneği |
-|---|---|---|---|
-| **High availability** | Arıza olsa bile hizmetin **hedeflenen çalışma süresinde** kalması | Yedeklilik, tek arıza noktasını kaldırmak, otomatik failover | **SLA**'lar, availability zone, scale set |
-| **Scalability** | Talebe göre **kapasiteyi artırma/azaltma** yeteneği | **Vertical** (scale up/down) · **horizontal** (scale out/in) | VM boyutu değiştirme, VM Scale Sets, App Service plan |
-| **Elasticity** | Ölçeklemenin yüke göre **otomatik** yapılması | Metrik/zaman tabanlı **autoscale** kuralları | Autoscale, Functions'ın otomatik ölçeklemesi |
-| **Reliability** | Arızadan **toparlanma** ve çalışmaya devam etme | Dağıtık tasarım, zone/bölge yedekliliği, felaket kurtarma | Region pair, geo-redundant storage, *(bağlam)* Azure Site Recovery |
-| **Predictability** | **Performansın** ve **maliyetin** öngörülebilir olması | Performans: autoscale, load balancing, HA · Maliyet: kullanım takibi ve tahmin | Pricing Calculator, Cost Management, Well-Architected Framework (→ S8.3) |
-| **Security** | Güvenlik kontrolleri üzerinde **istenen düzeyde kontrol** | IaaS'ta tam kontrol, PaaS/SaaS'ta yamalar sağlayıcıda; altyapı düzeyinde koruma | Defender for Cloud, Key Vault, DDoS Protection |
-| **Governance** | Kurumsal standartlara ve regülasyonlara **uyum** | Şablonlar, politikalar, denetim ve uyumluluk raporları | Azure Policy, management group'lar, Purview |
-| **Manageability** | Bulutun yönetimi (*of*) ve bulutta yönetim (*in*) | *Of:* otomatik ölçek, izleme ve uyarı, şablonla dağıtım · *In:* portal, CLI, API, PowerShell | Azure Monitor, ARM/Bicep, portal, Cloud Shell |
+- **High availability**
+  - Tanım: Arıza olsa bile hizmetin **hedeflenen çalışma süresinde** kalması
+  - Bulutta nasıl sağlanır: Yedeklilik, tek arıza noktasını kaldırmak, otomatik failover
+  - Azure örneği: **SLA**'lar, availability zone, scale set
+- **Scalability**
+  - Tanım: Talebe göre **kapasiteyi artırma/azaltma** yeteneği
+  - Bulutta nasıl sağlanır: **Vertical** (scale up/down) · **horizontal** (scale out/in)
+  - Azure örneği: VM boyutu değiştirme, VM Scale Sets, App Service plan
+- **Elasticity**
+  - Tanım: Ölçeklemenin yüke göre **otomatik** yapılması
+  - Bulutta nasıl sağlanır: Metrik/zaman tabanlı **autoscale** kuralları
+  - Azure örneği: Autoscale, Functions'ın otomatik ölçeklemesi
+- **Reliability**
+  - Tanım: Arızadan **toparlanma** ve çalışmaya devam etme
+  - Bulutta nasıl sağlanır: Dağıtık tasarım, zone/bölge yedekliliği, felaket kurtarma
+  - Azure örneği: Region pair, geo-redundant storage, *(bağlam)* Azure Site Recovery
+- **Predictability**
+  - Tanım: **Performansın** ve **maliyetin** öngörülebilir olması
+  - Bulutta nasıl sağlanır: Performans: autoscale, load balancing, HA · Maliyet: kullanım takibi ve tahmin
+  - Azure örneği: Pricing Calculator, Cost Management, Well-Architected Framework (→ S8.3)
+- **Security**
+  - Tanım: Güvenlik kontrolleri üzerinde **istenen düzeyde kontrol**
+  - Bulutta nasıl sağlanır: IaaS'ta tam kontrol, PaaS/SaaS'ta yamalar sağlayıcıda; altyapı düzeyinde koruma
+  - Azure örneği: Defender for Cloud, Key Vault, DDoS Protection
+- **Governance**
+  - Tanım: Kurumsal standartlara ve regülasyonlara **uyum**
+  - Bulutta nasıl sağlanır: Şablonlar, politikalar, denetim ve uyumluluk raporları
+  - Azure örneği: Azure Policy, management group'lar, Purview
+- **Manageability**
+  - Tanım: Bulutun yönetimi (*of*) ve bulutta yönetim (*in*)
+  - Bulutta nasıl sağlanır: *Of:* otomatik ölçek, izleme ve uyarı, şablonla dağıtım · *In:* portal, CLI, API, PowerShell
+  - Azure örneği: Azure Monitor, ARM/Bicep, portal, Cloud Shell
 
 
 ---
@@ -74,13 +96,11 @@ Resmî hedef, bulutun faydalarını **dört çift** halinde sayar: *high availab
 
 **SLA (Service Level Agreement)**, Microsoft'un bir hizmet için taahhüt ettiği **aylık çalışma süresi yüzdesidir**. Taahhüt tutturulamazsa müşteri, faturasından indirim olarak **servis kredisi** talep edebilir. Ay = 730 saat:
 
-| SLA | Günlük | Haftalık | Aylık | Yıllık |
-|---|---|---|---|---|
-| %99 | 14 dk 24 sn | 1 sa 40 dk | 7 sa 18 dk | 3,65 gün |
-| %99,9 | 1 dk 26 sn | 10 dk 4 sn | **43 dk 48 sn** | 8 sa 45 dk |
-| %99,95 | 43 sn | 5 dk 2 sn | **21 dk 53 sn** | 4 sa 22 dk |
-| %99,99 | 8 sn | 1 dk 0 sn | **4 dk 22 sn** | 52 dk 33 sn |
-| %99,999 | < 1 sn | 6 sn | 26 sn | 5 dk 15 sn |
+- **%99** — Günlük: 14 dk 24 sn · Haftalık: 1 sa 40 dk · Aylık: 7 sa 18 dk · Yıllık: 3,65 gün
+- **%99,9** — Günlük: 1 dk 26 sn · Haftalık: 10 dk 4 sn · Aylık: **43 dk 48 sn** · Yıllık: 8 sa 45 dk
+- **%99,95** — Günlük: 43 sn · Haftalık: 5 dk 2 sn · Aylık: **21 dk 53 sn** · Yıllık: 4 sa 22 dk
+- **%99,99** — Günlük: 8 sn · Haftalık: 1 dk 0 sn · Aylık: **4 dk 22 sn** · Yıllık: 52 dk 33 sn
+- **%99,999** — Günlük: < 1 sn · Haftalık: 6 sn · Aylık: 26 sn · Yıllık: 5 dk 15 sn
 
 - Her ek "9" kesinti bütçesini **10'a böler**.
 - SLA'lar **ürüne ve yapılandırmaya** göre değişir. Örnek (Microsoft'un yayımladığı tipik değerler; güncelini SLA belgesinden kontrol et): tek instance VM (Premium SSD) **%99,9** · aynı availability set'te 2+ VM **%99,95** · iki+ availability zone'a yayılmış 2+ VM **%99,99**.
@@ -118,12 +138,19 @@ python3 -c "print(f'{0.9999 * 0.9995 * 0.9999 * 0.999 * 100:.3f} %')"
 
 Simülasyon, gündüz yoğun bir iş uygulamasının 24 saatlik instance ihtiyacını dört stratejiyle karşılar ve **maliyet (instance-saat)**, **yetersiz kalınan saat** ve **boşta kapasite** sayar:
 
-| Strateji | Kavram | 1. gün (her günkü yük) | 2. gün (habersiz kampanya) |
-|---|---|---|---|
-| Sabit 4 instance | Ölçekleme yok | Ucuz ama gündüz 14 saat yetersiz | Aynı |
-| Sabit 10 instance | Zirveye göre boyutlama | Hiç takılmaz, kapasitenin büyük kısmı boşta | Beklenmedik zirvede **o da yetmez** |
-| Elle: 08:00'de 10'a çık, 20:00'de 4'e in | **Scalability** | İyi; yalnızca rampa saatlerinde kaçırır | Kampanyayı kaçırır (insan tahminine bağlı) |
-| Autoscale: ihtiyaç + 1, saatte en fazla +4 | **Elasticity** | Maliyet ihtiyaca en yakın, kesinti yok | Zirveyi **kendiliğinden** karşılar, bitince küçülür; yalnızca ani sıçramanın ilk saati eksik |
+- **Sabit 4 instance** — Kavram: Ölçekleme yok · 1. gün (her günkü yük): Ucuz ama gündüz 14 saat yetersiz · 2. gün (habersiz kampanya): Aynı
+- **Sabit 10 instance**
+  - Kavram: Zirveye göre boyutlama
+  - 1. gün (her günkü yük): Hiç takılmaz, kapasitenin büyük kısmı boşta
+  - 2. gün (habersiz kampanya): Beklenmedik zirvede **o da yetmez**
+- **Elle: 08:00'de 10'a çık, 20:00'de 4'e in**
+  - Kavram: **Scalability**
+  - 1. gün (her günkü yük): İyi; yalnızca rampa saatlerinde kaçırır
+  - 2. gün (habersiz kampanya): Kampanyayı kaçırır (insan tahminine bağlı)
+- **Autoscale: ihtiyaç + 1, saatte en fazla +4**
+  - Kavram: **Elasticity**
+  - 1. gün (her günkü yük): Maliyet ihtiyaca en yakın, kesinti yok
+  - 2. gün (habersiz kampanya): Zirveyi **kendiliğinden** karşılar, bitince küçülür; yalnızca ani sıçramanın ilk saati eksik
 
 Çıkarım: yük öngörülebilir ise zamanlanmış ölçek bile iyi iş görür; elasticity'nin asıl değeri **öngörülemeyen** yüktedir.
 
@@ -198,14 +225,24 @@ Bir bilet satış platformu büyük bir konser satışından önce mimarisini g�
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Tek VM → iki zone'a yayılmış VM'ler | SLA %99,9 → %99,99; aylık kesinti bütçesi ~44 dk → ~4 dk | ~2× compute maliyeti; uygulamanın çok instance'a uygun (stateless) olması |
-| Tek region → iki region (aktif-pasif / aktif-aktif) | Bölgesel felakete dayanıklılık (reliability), çok yüksek composite SLA | Maliyet, veri replikasyonu ve tutarlılık karmaşıklığı, yönlendirme katmanı |
-| Scale up | Basit, uygulama değişikliği gerekmez | Üst sınır, yeniden başlatma, tek arıza noktası |
-| Scale out | Neredeyse sınırsız, HA'ya katkı | Stateless tasarım, load balancer, oturum/önbellek yönetimi |
-| Autoscale (elasticity) | Maliyet talebi izler, insan müdahalesi yok | Tepki gecikmesi (cold start, cool-down), yanlış kuralla dalgalanma veya fatura sürprizi |
-| Sabit zirve kapasitesi | Öngörülebilir performans | Yılın çoğunda boşta kapasite için ödeme |
+- **Tek VM → iki zone'a yayılmış VM'ler**
+  - Kazanç: SLA %99,9 → %99,99; aylık kesinti bütçesi ~44 dk → ~4 dk
+  - Bedel: ~2× compute maliyeti; uygulamanın çok instance'a uygun (stateless) olması
+- **Tek region → iki region (aktif-pasif / aktif-aktif)**
+  - Kazanç: Bölgesel felakete dayanıklılık (reliability), çok yüksek composite SLA
+  - Bedel: Maliyet, veri replikasyonu ve tutarlılık karmaşıklığı, yönlendirme katmanı
+- **Scale up**
+  - Kazanç: Basit, uygulama değişikliği gerekmez
+  - Bedel: Üst sınır, yeniden başlatma, tek arıza noktası
+- **Scale out**
+  - Kazanç: Neredeyse sınırsız, HA'ya katkı
+  - Bedel: Stateless tasarım, load balancer, oturum/önbellek yönetimi
+- **Autoscale (elasticity)**
+  - Kazanç: Maliyet talebi izler, insan müdahalesi yok
+  - Bedel: Tepki gecikmesi (cold start, cool-down), yanlış kuralla dalgalanma veya fatura sürprizi
+- **Sabit zirve kapasitesi**
+  - Kazanç: Öngörülebilir performans
+  - Bedel: Yılın çoğunda boşta kapasite için ödeme
 
 ---
 

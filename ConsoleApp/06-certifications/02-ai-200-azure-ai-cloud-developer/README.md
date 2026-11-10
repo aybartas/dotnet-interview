@@ -9,13 +9,21 @@
 
 ## 📋 Sınav Alanları ve Ağırlıkları
 
-| Sınav Alanı (Domain) | Ağırlık | Bölümler / Konular |
-|---|---|---|
-| **Develop containerized solutions on Azure** | %20-25 | Bölüm 1 (C2.1 ACR, C2.2 Container Apps, C2.3 AKS) |
-| **Develop AI solutions by using Azure data management services** | **%30-35** | Bölüm 2 (C2.4 Cosmos NoSQL, C2.5 Vector/Change Feed, C2.6 PostgreSQL/pgvector, C2.7 Managed Redis) |
-| **Connect to and consume Azure services** | %20-25 | Bölüm 3 (C2.8 Functions, C2.9 Service Bus, C2.10 Event Grid) |
-| **Secure, monitor, and troubleshoot Azure solutions** | %20-25 | Bölüm 4 (C2.11 Managed Identity/Key Vault, C2.12 App Configuration, C2.13 OpenTelemetry/KQL) |
-| **Deneme Sınavı & Strateji** | 50 Soru | Bölüm 5 (5.1, 5.2 - 2 Vaka Çalışması Dahil, 5.3) |
+- **Develop containerized solutions on Azure**
+  - Ağırlık: %20-25
+  - Bölümler / Konular: Bölüm 1 (C2.1 ACR, C2.2 Container Apps, C2.3 AKS)
+- **Develop AI solutions by using Azure data management services**
+  - Ağırlık: **%30-35**
+  - Bölümler / Konular: Bölüm 2 (C2.4 Cosmos NoSQL, C2.5 Vector/Change Feed, C2.6 PostgreSQL/pgvector, C2.7 Managed Redis)
+- **Connect to and consume Azure services**
+  - Ağırlık: %20-25
+  - Bölümler / Konular: Bölüm 3 (C2.8 Functions, C2.9 Service Bus, C2.10 Event Grid)
+- **Secure, monitor, and troubleshoot Azure solutions**
+  - Ağırlık: %20-25
+  - Bölümler / Konular: Bölüm 4 (C2.11 Managed Identity/Key Vault, C2.12 App Configuration, C2.13 OpenTelemetry/KQL)
+- **Deneme Sınavı & Strateji**
+  - Ağırlık: 50 Soru
+  - Bölümler / Konular: Bölüm 5 (5.1, 5.2 - 2 Vaka Çalışması Dahil, 5.3)
 
 ---
 

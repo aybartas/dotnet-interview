@@ -43,16 +43,16 @@ Bu konu, AI-200'ün *Develop containerized solutions* alanının temelidir: sonr
 
 #### 3.1 SKU'lar ⭐
 
-| Özellik | **Basic** | **Standard** | **Premium** |
-|---|---|---|---|
-| Dahil depolama (yaklaşık, fiyat sayfası) | ~10 GiB | ~100 GiB | ~500 GiB |
-| Programatik yetenekler (push/pull, ACR Tasks, RBAC) | ✔ | ✔ | ✔ |
-| Throughput / limitler | düşük | orta | **en yüksek** |
-| **Geo-replication** (tek registry, çok bölge) | ✘ | ✘ | ✔ |
-| **Private endpoint** (Private Link) | ✘ | ✘ | ✔ |
-| Content trust (Docker Content Trust) | ✘ | ✘ | ✔ **(emekli ediliyor, aşağıya bak)** |
-| Retention policy (untagged manifest) | ✘ | ✘ | ✔ *(preview)* |
-| Customer-managed key, dedicated data endpoint, connected registry | ✘ | ✘ | ✔ |
+- **Dahil depolama (yaklaşık, fiyat sayfası)** — Basic: ~10 GiB · Standard: ~100 GiB · Premium: ~500 GiB
+- **Programatik yetenekler (push/pull, ACR Tasks, RBAC)** — Basic: ✔ · Standard: ✔ · Premium: ✔
+- **Throughput / limitler** — Basic: düşük · Standard: orta · Premium: **en yüksek**
+- **Geo-replication** (tek registry, çok bölge) — Basic: ✘ · Standard: ✘ · Premium: ✔
+- **Private endpoint** (Private Link) — Basic: ✘ · Standard: ✘ · Premium: ✔
+- **Content trust (Docker Content Trust)**
+  - Basic: ✘ · Standard: ✘
+  - Premium: ✔ **(emekli ediliyor, aşağıya bak)**
+- **Retention policy (untagged manifest)** — Basic: ✘ · Standard: ✘ · Premium: ✔ *(preview)*
+- **Customer-managed key, dedicated data endpoint, connected registry** — Basic: ✘ · Standard: ✘ · Premium: ✔
 
 - SKU'lar **aynı API'yi** sunar; fark depolama, throughput ve **ağ/güvenlik/dağıtım** özelliklerindedir. SKU sonradan yükseltilebilir/düşürülebilir (`az acr update --sku Premium`).
 - Dahil kotanın üstü için günlük depolama ücreti alınır; geo-replication'da **her replika bölgesi** ayrıca ücretlendirilir. Tam rakamlar için fiyat sayfasına bak (rakamları ezberleme).
@@ -60,13 +60,17 @@ Bu konu, AI-200'ün *Develop containerized solutions* alanının temelidir: sonr
 
 #### 3.2 Tag stratejisi ve digest ⭐
 
-| Yaklaşım | Örnek | Ne zaman | Risk |
-|---|---|---|---|
-| **semver** | `:1.4.2` | Sürüm notlu release'ler | Aynı tag yeniden push edilirse içerik değişir |
-| **commit SHA** | `:sha-3fa91c2` | CI çıktıları, tam izlenebilirlik | Okunaksız; temizlik gerekir |
-| **Build ID** | `:{{.Run.ID}}` (ACR Tasks) | Her build benzersiz | İnsan için anlamsız |
-| **`:latest`** | `:latest` | Yalnızca yerel deneme | Üretimde **yasak**: ne çalıştığı belirsiz, geri alma imkânsız |
-| **Digest** | `@sha256:…` | **Üretim deploy'u** (immutable) | Güncelleme için yeni digest gerekir |
+- **semver**
+  - Örnek: `:1.4.2` · Ne zaman: Sürüm notlu release'ler
+  - Risk: Aynı tag yeniden push edilirse içerik değişir
+- **commit SHA** — Örnek: `:sha-3fa91c2` · Ne zaman: CI çıktıları, tam izlenebilirlik · Risk: Okunaksız; temizlik gerekir
+- **Build ID** — Örnek: `:{{.Run.ID}}` (ACR Tasks) · Ne zaman: Her build benzersiz · Risk: İnsan için anlamsız
+- **`:latest`**
+  - Örnek: `:latest` · Ne zaman: Yalnızca yerel deneme
+  - Risk: Üretimde **yasak**: ne çalıştığı belirsiz, geri alma imkânsız
+- **Digest**
+  - Örnek: `@sha256:…` · Ne zaman: **Üretim deploy'u** (immutable)
+  - Risk: Güncelleme için yeni digest gerekir
 
 - **Tag değişebilir, digest değişmez.** Aynı `:1.4.2` tag'i yeniden push edilirse başka bir manifest'e işaret eder; digest ise içeriğin kendisidir. Üretimde "ne test ettiysek tam olarak onu çalıştır" için **digest ile deploy** edilir.
 - Birden çok tag aynı digest'e işaret edebilir (`1.4.2`, `1.4`, `sha-3fa91c2`).
@@ -82,13 +86,19 @@ az acr manifest list-metadata --registry $ACR --name todoapi -o table   # digest
 
 #### 3.3 Kimlik ve yetkilendirme ⭐
 
-| Yöntem | Ne zaman | Not |
-|---|---|---|
-| **Entra kimliği** (kullanıcı) | Geliştirici `az acr login` | Kısa ömürlü token |
-| **Managed identity** + rol | Container Apps, AKS, Functions, App Service'in image çekmesi | Üretimde **önerilen**: secret yok |
-| **Service principal** | Kurum dışı CI sistemleri | Secret/sertifika yönetimi gerekir |
-| **Repository-scoped token / scope map** | Tek repository'ye sınırlı dış erişim | Registry'ye özel token |
-| **Admin user** | Hızlı demo | **Varsayılan kapalı**; tek paylaşılan parola — üretimde kapalı kal |
+- **Entra kimliği** (kullanıcı) — Ne zaman: Geliştirici `az acr login` · Not: Kısa ömürlü token
+- **Managed identity** + rol
+  - Ne zaman: Container Apps, AKS, Functions, App Service'in image çekmesi
+  - Not: Üretimde **önerilen**: secret yok
+- **Service principal**
+  - Ne zaman: Kurum dışı CI sistemleri
+  - Not: Secret/sertifika yönetimi gerekir
+- **Repository-scoped token / scope map**
+  - Ne zaman: Tek repository'ye sınırlı dış erişim
+  - Not: Registry'ye özel token
+- **Admin user**
+  - Ne zaman: Hızlı demo
+  - Not: **Varsayılan kapalı**; tek paylaşılan parola — üretimde kapalı kal
 
 Yerleşik roller (klasik **RBAC registry** modu):
 
@@ -105,12 +115,16 @@ Yerleşik roller (klasik **RBAC registry** modu):
 
 #### 3.4 ACR Tasks ⭐
 
-| Görev türü | Komut | Ne işe yarar |
-|---|---|---|
-| **Quick build** | `az acr build` | Kaynağı buluta gönder, orada build + push; **yerel Docker gerekmez** |
-| **Quick run** | `az acr run` | Bir container'ı (veya `acr purge` gibi komutu) registry bağlamında çalıştırır |
-| **Automatically triggered task** | `az acr task create` | Tetikleyicilerle otomatik build |
-| **Multi-step task** | `az acr task create --file task.yaml` / `az acr run --file` | YAML ile build → test → push zinciri |
+- **Quick build**
+  - Komut: `az acr build`
+  - Ne işe yarar: Kaynağı buluta gönder, orada build + push; **yerel Docker gerekmez**
+- **Quick run**
+  - Komut: `az acr run`
+  - Ne işe yarar: Bir container'ı (veya `acr purge` gibi komutu) registry bağlamında çalıştırır
+- **Automatically triggered task** — Komut: `az acr task create` · Ne işe yarar: Tetikleyicilerle otomatik build
+- **Multi-step task**
+  - Komut: `az acr task create --file task.yaml` / `az acr run --file`
+  - Ne işe yarar: YAML ile build → test → push zinciri
 
 **Tetikleyiciler (task'a bağlanır):**
 
@@ -144,12 +158,16 @@ steps:
 
 #### 3.5 Bakım ve maliyet
 
-| Araç | Ne yapar | Not |
-|---|---|---|
-| `az acr repository delete --image …` | Tag/manifest siler | Digest ile silmek tüm tag'leri götürür |
-| **`acr purge`** (`az acr run --cmd`) | `--filter`, `--ago`, `--keep`, `--untagged`, `--dry-run` ile toplu temizlik | Timer task'a bağlanıp otomatikleştirilir; OCI manifest'lerini de temizler |
-| **Retention policy** (Premium, preview) | Untagged manifest'i N gün sonra siler (0–365; varsayılan 7) | `az acr config retention update --status Enabled --days 30 --type UntaggedManifests`; OCI medya tipli manifest'lerde çalışmaz |
-| Tag kilidi (`--write-enabled false`) | Release tag'ini korur | Purge de kilitli tag'i silemez |
+- **`az acr repository delete --image …`**
+  - Ne yapar: Tag/manifest siler
+  - Not: Digest ile silmek tüm tag'leri götürür
+- **`acr purge`** (`az acr run --cmd`)
+  - Ne yapar: `--filter`, `--ago`, `--keep`, `--untagged`, `--dry-run` ile toplu temizlik
+  - Not: Timer task'a bağlanıp otomatikleştirilir; OCI manifest'lerini de temizler
+- **Retention policy** (Premium, preview)
+  - Ne yapar: Untagged manifest'i N gün sonra siler (0–365; varsayılan 7)
+  - Not: `az acr config retention update --status Enabled --days 30 --type UntaggedManifests`; OCI medya tipli manifest'lerde çalışmaz
+- **Tag kilidi (`--write-enabled false`)** — Ne yapar: Release tag'ini korur · Not: Purge de kilitli tag'i silemez
 
 Untagged manifest, bir tag'in başka bir image'a taşınmasıyla "yetim" kalır, ama **depolama ücreti** doğurmaya devam eder. Temizlik yapılmazsa registry şişer.
 
@@ -273,16 +291,30 @@ for tag in client.list_tag_properties("todoapi", order_by=ArtifactTagOrder.LAST_
 
 Bir e-ticaret ekibi 12 mikroservisi ACR'da tutuyor:
 
-| İhtiyaç | Karar | Neden |
-|---|---|---|
-| Geliştiricilerin laptop'unda Docker olmayabilir, CI ajanı küçük | `az acr build` | Build bulutta; ajanda Docker gerekmez |
-| Production deploy'unda "tam olarak test edilen image" | **Digest ile** deploy (`@sha256:…`) | Tag yeniden yazılsa bile içerik sabit |
-| .NET runtime'ında kritik güvenlik yaması çıktı | **Base image trigger'lı ACR Task** | Tüm servis image'ları otomatik yeniden build; sonra pipeline yeniden deploy eder |
-| Avrupa + ABD'deki AKS kümeleri aynı image'ı çekiyor | **Premium** + **geo-replication** | Yerel bölgeden hızlı pull, bölge kesintisinde dayanıklılık |
-| Registry yalnızca VNet içinden erişilebilmeli | **Premium** + **private endpoint** | Genel erişim kapatılır |
-| Container Apps ve AKS image çekecek | Managed identity + **`AcrPull`**, admin user kapalı | Secret yok, en az yetki |
-| Registry maliyeti sürekli artıyor | `acr purge` timer task / retention policy | Yetim (untagged) manifest'ler birikmesin |
-| Image imzalama gereksinimi | Notation + Key Vault (Content Trust yerine) | Docker Content Trust 2028'de kalkıyor |
+- **Geliştiricilerin laptop'unda Docker olmayabilir, CI ajanı küçük**
+  - Karar: `az acr build`
+  - Neden: Build bulutta; ajanda Docker gerekmez
+- **Production deploy'unda "tam olarak test edilen image"**
+  - Karar: **Digest ile** deploy (`@sha256:…`)
+  - Neden: Tag yeniden yazılsa bile içerik sabit
+- **.NET runtime'ında kritik güvenlik yaması çıktı**
+  - Karar: **Base image trigger'lı ACR Task**
+  - Neden: Tüm servis image'ları otomatik yeniden build; sonra pipeline yeniden deploy eder
+- **Avrupa + ABD'deki AKS kümeleri aynı image'ı çekiyor**
+  - Karar: **Premium** + **geo-replication**
+  - Neden: Yerel bölgeden hızlı pull, bölge kesintisinde dayanıklılık
+- **Registry yalnızca VNet içinden erişilebilmeli**
+  - Karar: **Premium** + **private endpoint**
+  - Neden: Genel erişim kapatılır
+- **Container Apps ve AKS image çekecek**
+  - Karar: Managed identity + **`AcrPull`**, admin user kapalı
+  - Neden: Secret yok, en az yetki
+- **Registry maliyeti sürekli artıyor**
+  - Karar: `acr purge` timer task / retention policy
+  - Neden: Yetim (untagged) manifest'ler birikmesin
+- **Image imzalama gereksinimi**
+  - Karar: Notation + Key Vault (Content Trust yerine)
+  - Neden: Docker Content Trust 2028'de kalkıyor
 
 ---
 
@@ -332,15 +364,27 @@ Bir e-ticaret ekibi 12 mikroservisi ACR'da tutuyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Basic → Standard → Premium | Daha fazla depolama ve throughput | Daha yüksek sabit ücret |
-| Geo-replication | Düşük gecikmeli bölgesel pull, dayanıklılık | Her replika bölgesi ayrı ücretli; push sonrası replikasyon gecikmesi |
-| Digest ile deploy | Değişmezlik, tam izlenebilirlik | Okunaksız; güncellemek için pipeline yeni digest'i yazmalı |
-| `az acr build` (bulut) vs yerel build | Docker gerekmez, tutarlı ortam, doğrudan registry'ye | Kaynak yükleme süresi, bulut build dakikaları ücretli |
-| Base image'ı kendi registry'ne import etmek | Yama zinciri, rate limit'ten bağımsızlık | Import'u güncel tutma sorumluluğu |
-| Agresif `acr purge` | Düşük depolama maliyeti | Eski tag'lere geri dönüş imkânı azalır; `--keep` ve `--dry-run` kullan |
-| Private endpoint | Ağ izolasyonu | Premium ücreti, DNS (`privatelink.azurecr.io`) ve build/CI erişimi karmaşıklığı |
+- **Basic → Standard → Premium**
+  - Kazanç: Daha fazla depolama ve throughput
+  - Bedel: Daha yüksek sabit ücret
+- **Geo-replication**
+  - Kazanç: Düşük gecikmeli bölgesel pull, dayanıklılık
+  - Bedel: Her replika bölgesi ayrı ücretli; push sonrası replikasyon gecikmesi
+- **Digest ile deploy**
+  - Kazanç: Değişmezlik, tam izlenebilirlik
+  - Bedel: Okunaksız; güncellemek için pipeline yeni digest'i yazmalı
+- **`az acr build` (bulut) vs yerel build**
+  - Kazanç: Docker gerekmez, tutarlı ortam, doğrudan registry'ye
+  - Bedel: Kaynak yükleme süresi, bulut build dakikaları ücretli
+- **Base image'ı kendi registry'ne import etmek**
+  - Kazanç: Yama zinciri, rate limit'ten bağımsızlık
+  - Bedel: Import'u güncel tutma sorumluluğu
+- **Agresif `acr purge`**
+  - Kazanç: Düşük depolama maliyeti
+  - Bedel: Eski tag'lere geri dönüş imkânı azalır; `--keep` ve `--dry-run` kullan
+- **Private endpoint**
+  - Kazanç: Ağ izolasyonu
+  - Bedel: Premium ücreti, DNS (`privatelink.azurecr.io`) ve build/CI erişimi karmaşıklığı
 
 ---
 

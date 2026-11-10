@@ -74,11 +74,9 @@ options.Connect(endpoint, new DefaultAzureCredential())
 
 Bir ASP.NET Core uygulaması `AddAzureAppConfiguration` ile dinamik yenileme kurmuş.
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) `app.UseAzureAppConfiguration()` eklenmezse yenileme kontrolleri tetiklenmez. | ☐ | ☐ |
-| b) Yenileme kontrolü, aralık dolduktan sonra gelen bir istekle tetiklenir; uygulama tamamen boştaysa kontrol yapılmaz. | ☐ | ☐ |
-| c) `IOptions<T>` (singleton) ile okunan değer yenilemeden sonra otomatik güncellenir. | ☐ | ☐ |
+- a) `app.UseAzureAppConfiguration()` eklenmezse yenileme kontrolleri tetiklenmez. — Evet: ☐ · Hayır: ☐
+- b) Yenileme kontrolü, aralık dolduktan sonra gelen bir istekle tetiklenir; uygulama tamamen boştaysa kontrol yapılmaz. — Evet: ☐ · Hayır: ☐
+- c) `IOptions<T>` (singleton) ile okunan değer yenilemeden sonra otomatik güncellenir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

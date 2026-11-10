@@ -10,21 +10,27 @@
 
 **Azure Managed Redis (AMR)**, Redis Ltd. ile birlikte sunulan, **Redis Enterprise** yazılımı üzerine kurulu, bellek-içi, yönetilen Redis hizmetidir. Önceki **Azure Cache for Redis** (Basic/Standard/Premium ve Enterprise/Enterprise Flash) ürünlerinin **halefidir**. İki işte kullanılır:
 
-| Kullanım | Ne yapar? | Anahtar kavramlar |
-|---|---|---|
-| **Cache** | Yavaş/pahalı kaynağın (veritabanı, API, LLM) önüne milisaniyenin altında okuma katmanı koyar | cache-aside, **TTL (expiration)**, **invalidation**, stampede önleme |
-| **Vector index** | Embedding'leri saklar, **KNN benzerlik araması** ve **semantic cache** sağlar | RediSearch modülü, `FT.CREATE ... VECTOR`, HNSW / FLAT |
+- **Cache**
+  - Ne yapar?: Yavaş/pahalı kaynağın (veritabanı, API, LLM) önüne milisaniyenin altında okuma katmanı koyar
+  - Anahtar kavramlar: cache-aside, **TTL (expiration)**, **invalidation**, stampede önleme
+- **Vector index**
+  - Ne yapar?: Embedding'leri saklar, **KNN benzerlik araması** ve **semantic cache** sağlar
+  - Anahtar kavramlar: RediSearch modülü, `FT.CREATE ... VECTOR`, HNSW / FLAT
 
 **Geçiş notu (tarihleri resmî duyurudan doğrula):** Azure Cache for Redis **Basic/Standard/Premium** katmanlarının emeklilik tarihi **30 Eylül 2028**; **Enterprise/Enterprise Flash** için **31 Mart 2027** olarak duyurulmuştur ve Microsoft yeni projelerde AMR'yi önerir; yeni oluşturmalar da kademeli olarak kapatılmaktadır. Sınav güncel ürün olan **Azure Managed Redis**'i sorar.
 
 **AMR katmanları** (bellek:vCPU oranına göre):
 
-| Katman | Bellek : vCPU | Ne için? |
-|---|---|---|
-| **Memory Optimized** | 8:1 | Bellek-yoğun, en yüksek throughput gerekmeyen iş yükleri |
-| **Balanced** | 4:1 | Standart/çoğu iş yükü (**varsayılan başlangıç noktası**) |
-| **Compute Optimized** | 2:1 | En yüksek throughput, CPU-yoğun |
-| **Flash Optimized** | RAM + NVMe | Çok büyük veri setleri, seyrek erişilen kısım NVMe'de — **RediSearch/vector modülü bu katmanda desteklenmez** *(doğrula)* |
+- **Memory Optimized**
+  - Bellek : vCPU: 8:1
+  - Ne için?: Bellek-yoğun, en yüksek throughput gerekmeyen iş yükleri
+- **Balanced**
+  - Bellek : vCPU: 4:1
+  - Ne için?: Standart/çoğu iş yükü (**varsayılan başlangıç noktası**)
+- **Compute Optimized** — Bellek : vCPU: 2:1 · Ne için?: En yüksek throughput, CPU-yoğun
+- **Flash Optimized**
+  - Bellek : vCPU: RAM + NVMe
+  - Ne için?: Çok büyük veri setleri, seyrek erişilen kısım NVMe'de — **RediSearch/vector modülü bu katmanda desteklenmez** *(doğrula)*
 
 ---
 
@@ -42,11 +48,15 @@
 
 Üç karar **oluşturma sırasında** verilir ve sonradan değiştirilemez (veya kısıtlıdır — güncel dokümanı doğrula):
 
-| Karar | Seçenekler | Kural |
-|---|---|---|
-| **Modüller** | RediSearch (arama + vector), RedisJSON, RedisBloom, RedisTimeSeries | **Oluşturma sırasında seçilir; sonradan eklenemez.** Vector için **RediSearch** şart |
-| **Clustering policy** | **OSS** cluster API (en yüksek performans, cluster-aware istemci ister) · **Enterprise** (tek endpoint gibi görünür, cluster-aware olmayan istemciler çalışır) | Oluşturma sonrası değişmez. **RediSearch → Enterprise policy** gerekir |
-| **Eviction policy** | `noeviction`, `volatile-lru`, `allkeys-lru`, `volatile-lfu`, `allkeys-lfu`, `volatile-ttl`, `volatile-random`, `allkeys-random` | **RediSearch → yalnızca `NoEviction`**. Geo-replication grubunda oluşturma sonrası değişmez |
+- **Modüller**
+  - Seçenekler: RediSearch (arama + vector), RedisJSON, RedisBloom, RedisTimeSeries
+  - Kural: **Oluşturma sırasında seçilir; sonradan eklenemez.** Vector için **RediSearch** şart
+- **Clustering policy**
+  - Seçenekler: **OSS** cluster API (en yüksek performans, cluster-aware istemci ister) · **Enterprise** (tek endpoint gibi görünür, cluster-aware olmayan istemciler çalışır)
+  - Kural: Oluşturma sonrası değişmez. **RediSearch → Enterprise policy** gerekir
+- **Eviction policy**
+  - Seçenekler: `noeviction`, `volatile-lru`, `allkeys-lru`, `volatile-lfu`, `allkeys-lfu`, `volatile-ttl`, `volatile-random`, `allkeys-random`
+  - Kural: **RediSearch → yalnızca `NoEviction`**. Geo-replication grubunda oluşturma sonrası değişmez
 
 - **Bağlantı:** TLS, port **10000**, ad biçimi `<ad>.<region>.redis.azure.net`. Klasik `6380` portu eski ürünündü.
 - **Kimlik:** **Microsoft Entra ID** (managed identity) önerilir; access key kimlik doğrulaması yeni örneklerde varsayılan kapalıdır *(doğrula)*. Kimlik, cache üzerinde Redis kullanıcısı olarak tanımlanmalıdır.
@@ -77,22 +87,36 @@ write(key, v):
 
 **TTL (expiration) ≠ eviction** ⭐:
 
-| | **Expiration (TTL)** | **Eviction** |
-|---|---|---|
-| Tetikleyen | Anahtara verilen **süre** doldu (uygulama kararı) | **Bellek doldu** (sunucu kararı) |
-| Hangi anahtar? | Süresi dolan | Eviction policy'ye göre seçilen (LRU/LFU/random/TTL'i en yakın) |
-| Amaç | Veriyi **bayatlamadan** temizlemek | Sistemi **çökmeden** ayakta tutmak |
-| `noeviction` iken | Çalışır | Bellek dolunca **yazma hatası (OOM)** |
+- **Tetikleyen**
+  - Expiration (TTL): Anahtara verilen **süre** doldu (uygulama kararı)
+  - Eviction: **Bellek doldu** (sunucu kararı)
+- **Hangi anahtar?**
+  - Expiration (TTL): Süresi dolan
+  - Eviction: Eviction policy'ye göre seçilen (LRU/LFU/random/TTL'i en yakın)
+- **Amaç**
+  - Expiration (TTL): Veriyi **bayatlamadan** temizlemek
+  - Eviction: Sistemi **çökmeden** ayakta tutmak
+- **`noeviction` iken**
+  - Expiration (TTL): Çalışır
+  - Eviction: Bellek dolunca **yazma hatası (OOM)**
 
 **Invalidation stratejileri:**
 
-| Strateji | Nasıl? | Artı / eksi |
-|---|---|---|
-| **TTL ile yaşlanma** | Sadece süre | En basit; süre boyunca bayat veri kabul edilmeli |
-| **Yazınca sil** (write-invalidate) | DB yazısından sonra `DEL key` | Bayatlığı azaltır; DB yazısı başarılı + `DEL` başarısız olursa bayat kalır (TTL güvenlik ağı) |
-| **Yazınca güncelle** (write-through) | Yazarken cache'i de güncelle | Okuma hep sıcak; yarış koşulu ve çift yazma karmaşıklığı |
-| **Versiyonlu anahtar** | `product:42:v7` (versiyon sayacı artar) | Silme gerekmez; eski anahtarlar TTL ile kendiliğinden ölür |
-| **Olay tabanlı** | Değişiklik olayı (change feed/Event Grid/mesaj) → ilgili anahtarı sil | Çok servisli sistemlerde; ek altyapı (→ C2.5, C2.9) |
+- **TTL ile yaşlanma**
+  - Nasıl?: Sadece süre
+  - Artı / eksi: En basit; süre boyunca bayat veri kabul edilmeli
+- **Yazınca sil** (write-invalidate)
+  - Nasıl?: DB yazısından sonra `DEL key`
+  - Artı / eksi: Bayatlığı azaltır; DB yazısı başarılı + `DEL` başarısız olursa bayat kalır (TTL güvenlik ağı)
+- **Yazınca güncelle** (write-through)
+  - Nasıl?: Yazarken cache'i de güncelle
+  - Artı / eksi: Okuma hep sıcak; yarış koşulu ve çift yazma karmaşıklığı
+- **Versiyonlu anahtar**
+  - Nasıl?: `product:42:v7` (versiyon sayacı artar)
+  - Artı / eksi: Silme gerekmez; eski anahtarlar TTL ile kendiliğinden ölür
+- **Olay tabanlı**
+  - Nasıl?: Değişiklik olayı (change feed/Event Grid/mesaj) → ilgili anahtarı sil
+  - Artı / eksi: Çok servisli sistemlerde; ek altyapı (→ C2.5, C2.9)
 
 **Stampede (thundering herd):** popüler anahtar süresi dolunca yüzlerce istek aynı anda DB'ye gider. Önlemler: **tek uçuş (single-flight)** kilidi (`SET lock:key token NX PX 5000`), **TTL jitter** (süre ± rastgele), erken yenileme, **HybridCache** (yerleşik stampede koruması) (→ M8.4).
 
@@ -307,15 +331,23 @@ az group delete --name $RG --yes --no-wait
 
 Bir e-ticaret sitesi ürün API'si ve müşteri destek botu işletiyor:
 
-| İhtiyaç | Karar | Neden |
-|---|---|---|
-| Ürün detay sayfası DB'yi eziyor | **Cache-aside**, TTL 10 dk (+ jitter) | Okuma ağırlıklı, nadiren değişen veri |
-| Fiyat güncellenince hemen yansımalı | DB yaz → **`DEL product:{id}`** (TTL güvenlik ağı) | Bayatlığı saniyelere indirir |
-| Kampanya anahtarı her 10 dk'da bir aynı anda düşüyor | Jitter + HybridCache/kilit | Stampede önleme |
-| Bot LLM maliyeti yüksek, sorular tekrarlıyor | **Semantic cache** (RediSearch, eşik 0.1, TTL 24 saat) | Benzer soruya LLM'siz cevap |
-| Bilgi tabanı vector'leri (kalıcı) | **Cosmos/PostgreSQL**'de; Redis yalnızca sıcak alt küme/semantic cache | Redis kaynak veri deposu değil |
-| Bellek dolarsa semantic cache yazamıyor | Tüm anahtarlara TTL + boyut izleme (`NoEviction` zorunlu) | RediSearch eviction'ı desteklemez |
-| Eski Azure Cache for Redis Premium emeklilik | **AMR'ye geçiş** planı | Duyurulan emeklilik tarihleri |
+- **Ürün detay sayfası DB'yi eziyor**
+  - Karar: **Cache-aside**, TTL 10 dk (+ jitter)
+  - Neden: Okuma ağırlıklı, nadiren değişen veri
+- **Fiyat güncellenince hemen yansımalı**
+  - Karar: DB yaz → **`DEL product:{id}`** (TTL güvenlik ağı)
+  - Neden: Bayatlığı saniyelere indirir
+- **Kampanya anahtarı her 10 dk'da bir aynı anda düşüyor** — Karar: Jitter + HybridCache/kilit · Neden: Stampede önleme
+- **Bot LLM maliyeti yüksek, sorular tekrarlıyor**
+  - Karar: **Semantic cache** (RediSearch, eşik 0.1, TTL 24 saat)
+  - Neden: Benzer soruya LLM'siz cevap
+- **Bilgi tabanı vector'leri (kalıcı)**
+  - Karar: **Cosmos/PostgreSQL**'de; Redis yalnızca sıcak alt küme/semantic cache
+  - Neden: Redis kaynak veri deposu değil
+- **Bellek dolarsa semantic cache yazamıyor**
+  - Karar: Tüm anahtarlara TTL + boyut izleme (`NoEviction` zorunlu)
+  - Neden: RediSearch eviction'ı desteklemez
+- **Eski Azure Cache for Redis Premium emeklilik** — Karar: **AMR'ye geçiş** planı · Neden: Duyurulan emeklilik tarihleri
 
 ---
 
@@ -366,19 +398,29 @@ Bir e-ticaret sitesi ürün API'si ve müşteri destek botu işletiyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Uzun TTL | Yüksek hit oranı, düşük DB yükü | Bayat veri penceresi büyür |
-| Kısa TTL | Taze veri | Düşük hit oranı, sık miss |
-| Yazınca sil | Hızlı tazelik | Ek `DEL` yolu; hata durumunda bayat kalma riski |
-| Versiyonlu anahtar | Silme/yarış yok | Eski anahtarlar bellekte TTL'e kadar kalır |
-| HybridCache (L1+L2) | Redis'e gidiş sayısı azalır, stampede koruması | Çoklu örnekte L1 kısa süre bayat kalabilir (`LocalCacheExpiration` kısa tut) |
-| HNSW | Hızlı ANN, büyük veri | Bellek-yoğun; yaklaşık sonuç |
-| FLAT | Tam doğruluk, basit | Büyük veride yavaş |
-| Redis'te vector | Çok düşük gecikme | **Bellek maliyeti**; kalıcı kaynak değil; RediSearch → Enterprise policy + NoEviction + modül kararı geri alınamaz |
-| Semantic cache eşiği gevşek | Yüksek hit, düşük LLM maliyeti | Yanlış cevap riski |
-| Memory Optimized / Balanced / Compute Optimized | Bellek:CPU dengesini iş yüküne göre seç | Yanlış seçim ya boş bellek ya CPU darboğazı; ölçerek ölçekle |
-| Flash Optimized | Çok büyük veri seti ucuz | Soğuk veri NVMe'de daha yavaş; vector modülü desteği yok *(doğrula)* |
+- **Uzun TTL** — Kazanç: Yüksek hit oranı, düşük DB yükü · Bedel: Bayat veri penceresi büyür
+- **Kısa TTL** — Kazanç: Taze veri · Bedel: Düşük hit oranı, sık miss
+- **Yazınca sil**
+  - Kazanç: Hızlı tazelik
+  - Bedel: Ek `DEL` yolu; hata durumunda bayat kalma riski
+- **Versiyonlu anahtar**
+  - Kazanç: Silme/yarış yok
+  - Bedel: Eski anahtarlar bellekte TTL'e kadar kalır
+- **HybridCache (L1+L2)**
+  - Kazanç: Redis'e gidiş sayısı azalır, stampede koruması
+  - Bedel: Çoklu örnekte L1 kısa süre bayat kalabilir (`LocalCacheExpiration` kısa tut)
+- **HNSW** — Kazanç: Hızlı ANN, büyük veri · Bedel: Bellek-yoğun; yaklaşık sonuç
+- **FLAT** — Kazanç: Tam doğruluk, basit · Bedel: Büyük veride yavaş
+- **Redis'te vector**
+  - Kazanç: Çok düşük gecikme
+  - Bedel: **Bellek maliyeti**; kalıcı kaynak değil; RediSearch → Enterprise policy + NoEviction + modül kararı geri alınamaz
+- **Semantic cache eşiği gevşek** — Kazanç: Yüksek hit, düşük LLM maliyeti · Bedel: Yanlış cevap riski
+- **Memory Optimized / Balanced / Compute Optimized**
+  - Kazanç: Bellek:CPU dengesini iş yüküne göre seç
+  - Bedel: Yanlış seçim ya boş bellek ya CPU darboğazı; ölçerek ölçekle
+- **Flash Optimized**
+  - Kazanç: Çok büyük veri seti ucuz
+  - Bedel: Soğuk veri NVMe'de daha yavaş; vector modülü desteği yok *(doğrula)*
 
 ---
 

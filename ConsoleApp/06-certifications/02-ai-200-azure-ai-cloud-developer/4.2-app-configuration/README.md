@@ -36,14 +36,24 @@
 
 #### 3.1 App Configuration vs Key Vault vs diğerleri
 
-| Soru | **App Configuration** | **Key Vault** | `appsettings.json` / env var |
-|---|---|---|---|
-| Ne saklar? | Gizli olmayan ayar, feature flag | **Secret**, key, certificate | Paketle gelen varsayılanlar / platform ayarı |
-| Değişince | Canlı yenileme (restart yok) | Yeni **sürüm** (rotation) | Yeniden dağıtım/restart |
-| Sürüm/geçmiş | Revision geçmişi, snapshot | Secret/key sürümleri | Git |
-| Erişim | RBAC: *App Configuration Data Reader/Owner* | RBAC: *Key Vault Secrets User…* | — |
-| Ortam ayrımı | **Label** (veya ayrı store) | Ayrı vault/secret adı | Dosya/ortam başına |
-| Throttling | Tier başına istek kotası | İşlem başına istek sınırı | — |
+- **Ne saklar?**
+  - App Configuration: Gizli olmayan ayar, feature flag
+  - Key Vault: **Secret**, key, certificate
+  - `appsettings.json` / env var: Paketle gelen varsayılanlar / platform ayarı
+- **Değişince**
+  - App Configuration: Canlı yenileme (restart yok)
+  - Key Vault: Yeni **sürüm** (rotation)
+  - `appsettings.json` / env var: Yeniden dağıtım/restart
+- **Sürüm/geçmiş** — App Configuration: Revision geçmişi, snapshot · Key Vault: Secret/key sürümleri · `appsettings.json` / env var: Git
+- **Erişim**
+  - App Configuration: RBAC: *App Configuration Data Reader/Owner*
+  - Key Vault: RBAC: *Key Vault Secrets User…*
+  - `appsettings.json` / env var: —
+- **Ortam ayrımı**
+  - App Configuration: **Label** (veya ayrı store)
+  - Key Vault: Ayrı vault/secret adı
+  - `appsettings.json` / env var: Dosya/ortam başına
+- **Throttling** — App Configuration: Tier başına istek kotası · Key Vault: İşlem başına istek sınırı · `appsettings.json` / env var: —
 
 Birlikte kullanım: **Key Vault referansı** — App Configuration'daki anahtar, vault'taki secret URI'sine işaret eder; uygulama tek yerden (App Configuration) okur, secret değeri sağlayıcı tarafından vault'tan, uygulamanın kimliğiyle çözülür. Dolayısıyla uygulamanın MI'ı **hem** App Configuration Data Reader **hem** (referans verilen vault'ta) Key Vault Secrets User olmalıdır.
 
@@ -131,12 +141,22 @@ Yenileme mantığı (sınavın kalbi):
 
 Feature flag, App Configuration'da `.appconfig.featureflag/<ad>` anahtarında özel content type ile saklanan JSON'dur (`enabled` + `conditions.client_filters`). Kod tarafı `Microsoft.FeatureManagement` kütüphanesidir.
 
-| Filtre | Alias | Ne zaman? | Not |
-|---|---|---|---|
-| **Percentage** | `Microsoft.Percentage` | Yüzde N'i **rastgele** aç (kademeli açma, canary) | **Kullanıcı başına sabit değil**: aynı kullanıcı her istekte farklı sonuç alabilir |
-| **TimeWindow** | `Microsoft.TimeWindow` | Başlangıç–bitiş penceresi (kampanya, bakım) | UTC; yalnızca Start / yalnızca End olabilir |
-| **Targeting** | `Microsoft.Targeting` | **Kullanıcı/grup** hedefleme + varsayılan yüzde (ring deployment) | Kullanıcıya göre **tutarlı** karar; `ITargetingContextAccessor`/HTTP kullanıcı; `AddFeatureManagement().WithTargeting()` ile kayıt |
-| Özel filtre | `IFeatureFilter` | Kendi koşulun (bölge, abonelik planı) | `[FilterAlias("...")]` |
+- **Percentage**
+  - Alias: `Microsoft.Percentage`
+  - Ne zaman?: Yüzde N'i **rastgele** aç (kademeli açma, canary)
+  - Not: **Kullanıcı başına sabit değil**: aynı kullanıcı her istekte farklı sonuç alabilir
+- **TimeWindow**
+  - Alias: `Microsoft.TimeWindow`
+  - Ne zaman?: Başlangıç–bitiş penceresi (kampanya, bakım)
+  - Not: UTC; yalnızca Start / yalnızca End olabilir
+- **Targeting**
+  - Alias: `Microsoft.Targeting`
+  - Ne zaman?: **Kullanıcı/grup** hedefleme + varsayılan yüzde (ring deployment)
+  - Not: Kullanıcıya göre **tutarlı** karar; `ITargetingContextAccessor`/HTTP kullanıcı; `AddFeatureManagement().WithTargeting()` ile kayıt
+- **Özel filtre**
+  - Alias: `IFeatureFilter`
+  - Ne zaman?: Kendi koşulun (bölge, abonelik planı)
+  - Not: `[FilterAlias("...")]`
 
 - **Kademeli açma (canary):** Targeting ile önce `Group: Beta` (%100), sonra herkes için varsayılan yüzde %5 → %20 → %100. **Yüzde, kullanıcı tutarlılığı gerekmiyorsa Percentage; "aynı kullanıcı hep aynı deneyimi görsün" → Targeting.**
 - Flag'i kodda kullanma: `IFeatureManager.IsEnabledAsync`, `[FeatureGate("NewCheckout")]` (controller/endpoint), `<feature name="…">` (Razor tag helper).
@@ -271,16 +291,30 @@ az eventgrid event-subscription create --name sub-appconfig --source-resource-id
 
 Bir e-ticaret şirketinin 12 servisi Container Apps'te çalışıyor; ayarlar imajların içinde `appsettings.Production.json`'da:
 
-| İhtiyaç | Karar | Neden |
-|---|---|---|
-| Servislerin ortak ve ortama özel ayarları | App Configuration, **label** `Dev/Test/Prod`, servis önekli anahtarlar | Tek kaynak; yeniden build yok |
-| Prod yetkisi ayrı olmalı (denetim) | Prod için **ayrı store** + ayrı RBAC | Label ile aynı store'da yetki ayrımı yapılamaz |
-| DB bağlantı dizesi | Anahtar **Key Vault referansı**; secret vault'ta | Secret App Configuration'da durmaz |
-| Ayar değişince restart istenmiyor | **Sentinel** + 30–60 sn aralık + `IOptionsMonitor` | Tutarlı ve ucuz yenileme |
-| 200 instance'ın polling'i kotayı yiyor | **Event Grid push** + uzun poll aralığı | İstek sayısı düşer |
-| Yeni ödeme akışı | Feature flag, **Targeting**: önce iç çalışanlar, sonra %5→%20→%100 | Kademeli, kullanıcı başına tutarlı |
-| Kötü ayar yayına çıktı | **Revision** geçmişinden geri al / **snapshot**'a dön | Hızlı geri dönüş |
-| Release öncesi ayarları dondur | Release başına **snapshot** | Değiştirilemez, yeniden üretilebilir |
+- **Servislerin ortak ve ortama özel ayarları**
+  - Karar: App Configuration, **label** `Dev/Test/Prod`, servis önekli anahtarlar
+  - Neden: Tek kaynak; yeniden build yok
+- **Prod yetkisi ayrı olmalı (denetim)**
+  - Karar: Prod için **ayrı store** + ayrı RBAC
+  - Neden: Label ile aynı store'da yetki ayrımı yapılamaz
+- **DB bağlantı dizesi**
+  - Karar: Anahtar **Key Vault referansı**; secret vault'ta
+  - Neden: Secret App Configuration'da durmaz
+- **Ayar değişince restart istenmiyor**
+  - Karar: **Sentinel** + 30–60 sn aralık + `IOptionsMonitor`
+  - Neden: Tutarlı ve ucuz yenileme
+- **200 instance'ın polling'i kotayı yiyor**
+  - Karar: **Event Grid push** + uzun poll aralığı
+  - Neden: İstek sayısı düşer
+- **Yeni ödeme akışı**
+  - Karar: Feature flag, **Targeting**: önce iç çalışanlar, sonra %5→%20→%100
+  - Neden: Kademeli, kullanıcı başına tutarlı
+- **Kötü ayar yayına çıktı**
+  - Karar: **Revision** geçmişinden geri al / **snapshot**'a dön
+  - Neden: Hızlı geri dönüş
+- **Release öncesi ayarları dondur**
+  - Karar: Release başına **snapshot**
+  - Neden: Değiştirilemez, yeniden üretilebilir
 
 ---
 
@@ -335,17 +369,27 @@ Bir e-ticaret şirketinin 12 servisi Container Apps'te çalışıyor; ayarlar im
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Kısa yenileme aralığı | Değişiklik hızlı yansır | İstek kotası/maliyet, 429 |
-| **Event Grid push** + uzun poll | Anında ve ucuz yenileme | Endpoint/abonelik, altyapı karmaşıklığı |
-| Sentinel (tek anahtar) | Ucuz, tutarlı | Operasyonel disiplin (sentinel'i unutma) |
-| Label ile tek store | Basit, ucuz | Zayıf yetki izolasyonu |
-| Ortam başına store | Güçlü izolasyon | Daha çok kaynak/maliyet |
-| Key Vault referansı | Secret vault'ta kalır | İkinci bağımlılık (vault kesintisi/yetki), ek gecikme |
-| Başlangıçta tümünü yükle (`Select("App:*")`) | Tek seferde okuma | Büyük store'da gereksiz anahtarlar; önek/label ile daralt |
-| Feature flag'ler | Deploy ≠ release, hızlı kapatma | Flag borcu: eski flag'leri temizle; test kombinasyonları |
-| Snapshot | Değiştirilemez, hızlı yükleme | Saklama süresi ve sayısı yönetimi |
+- **Kısa yenileme aralığı** — Kazanç: Değişiklik hızlı yansır · Bedel: İstek kotası/maliyet, 429
+- **Event Grid push** + uzun poll
+  - Kazanç: Anında ve ucuz yenileme
+  - Bedel: Endpoint/abonelik, altyapı karmaşıklığı
+- **Sentinel (tek anahtar)**
+  - Kazanç: Ucuz, tutarlı
+  - Bedel: Operasyonel disiplin (sentinel'i unutma)
+- **Label ile tek store** — Kazanç: Basit, ucuz · Bedel: Zayıf yetki izolasyonu
+- **Ortam başına store** — Kazanç: Güçlü izolasyon · Bedel: Daha çok kaynak/maliyet
+- **Key Vault referansı**
+  - Kazanç: Secret vault'ta kalır
+  - Bedel: İkinci bağımlılık (vault kesintisi/yetki), ek gecikme
+- **Başlangıçta tümünü yükle (`Select("App:*")`)**
+  - Kazanç: Tek seferde okuma
+  - Bedel: Büyük store'da gereksiz anahtarlar; önek/label ile daralt
+- **Feature flag'ler**
+  - Kazanç: Deploy ≠ release, hızlı kapatma
+  - Bedel: Flag borcu: eski flag'leri temizle; test kombinasyonları
+- **Snapshot**
+  - Kazanç: Değiştirilemez, hızlı yükleme
+  - Bedel: Saklama süresi ve sayısı yönetimi
 
 ---
 

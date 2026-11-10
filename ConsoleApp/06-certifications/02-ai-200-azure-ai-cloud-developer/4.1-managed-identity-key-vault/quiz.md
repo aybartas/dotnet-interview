@@ -197,11 +197,9 @@ Bir ASP.NET Core API `AddAzureKeyVault(...)` ile yapılandırılmış ve `Reload
 
 #### Soru 13: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) System-assigned MI, ait olduğu kaynak silinince otomatik silinir. | ☐ | ☐ |
-| b) Bir kaynağa birden çok user-assigned MI atanabilir. | ☐ | ☐ |
-| c) Key Vault, secret'lar için yerleşik otomatik rotation politikası sunar (key'lerdeki gibi). | ☐ | ☐ |
+- **a) System-assigned MI, ait olduğu kaynak silinince otomatik silinir.** — Evet: ☐ · Hayır: ☐
+- **b) Bir kaynağa birden çok user-assigned MI atanabilir.** — Evet: ☐ · Hayır: ☐
+- c) Key Vault, secret'lar için yerleşik otomatik rotation politikası sunar (key'lerdeki gibi). — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

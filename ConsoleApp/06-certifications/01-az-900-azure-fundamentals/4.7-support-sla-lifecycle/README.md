@@ -12,12 +12,18 @@
 
 Bu konu "servisi kullanmaya başladım, **taahhüt ve destek** ne?" sorusunun cevabıdır. Dört ayrı konu bir arada anlatılır:
 
-| Konu | Soru | Anahtar kavram |
-|---|---|---|
-| **Destek planları** | "Sorun çıkarsa **kim, ne kadar hızlı** yardım eder?" | Basic (ücretsiz) → Developer → Standard → Professional Direct → Unified |
-| **SLA** | "Microsoft ne kadar **çalışma süresi** taahhüt ediyor, tutturamazsa ne olur?" | Aylık %, **servis kredisi**, composite SLA |
-| **Servis yaşam döngüsü** | "Bu servis **olgun mu**, SLA'sı var mı, yarın kaldırılır mı?" | Private preview → Public preview → **GA**; retirement |
-| **Benimseme çerçeveleri** | "Buluta **nasıl geçer ve nasıl iyi tasarlarım**?" | **Cloud Adoption Framework (CAF)**, **Well-Architected Framework (WAF)** |
+- **Destek planları**
+  - Soru: "Sorun çıkarsa **kim, ne kadar hızlı** yardım eder?"
+  - Anahtar kavram: Basic (ücretsiz) → Developer → Standard → Professional Direct → Unified
+- **SLA**
+  - Soru: "Microsoft ne kadar **çalışma süresi** taahhüt ediyor, tutturamazsa ne olur?"
+  - Anahtar kavram: Aylık %, **servis kredisi**, composite SLA
+- **Servis yaşam döngüsü**
+  - Soru: "Bu servis **olgun mu**, SLA'sı var mı, yarın kaldırılır mı?"
+  - Anahtar kavram: Private preview → Public preview → **GA**; retirement
+- **Benimseme çerçeveleri**
+  - Soru: "Buluta **nasıl geçer ve nasıl iyi tasarlarım**?"
+  - Anahtar kavram: **Cloud Adoption Framework (CAF)**, **Well-Architected Framework (WAF)**
 
 Bu konunun C# kodu yoktur. Pratik: karar tablosu alıştırması, Service Health olayı arama ve composite SLA hesabı (3.6).
 
@@ -40,14 +46,36 @@ Bu konunun C# kodu yoktur. Pratik: karar tablosu alıştırması, Service Health
 
 > **Doğrulama notu:** Planların **adları, fiyatları ve yanıt süreleri** sık değişir (ör. Premier'in yerini Unified aldı; EA/MCA-E müşterilerine yönelik bazı ücretsiz destek kapsamları Temmuz 2024'te sona erdi). Aşağıdaki değerler Microsoft'un yayımladığı sayfalara dayanır ama **sınavdan/satın almadan önce [güncel planlar sayfasını](https://azure.microsoft.com/support/plans/) kontrol et**. AZ-900 genelde **sayı değil, kavram** sorar: *hangi plan ücretsiz, hangisi 7/24 teknik destek verir, hangisi üretim için*.
 
-| Plan | Kim için | Teknik destek | Yanıt süresi (özet, **doğrula**) | Ücret |
-|---|---|---|---|---|
-| **Basic** | Herkes | **Yok** (faturalama ve abonelik yönetimi desteği 7/24; self-help) | — | **Ücretsiz** (her Azure aboneliğinde) |
-| **Developer** | Deneme / **üretim dışı** | İş saatlerinde e-posta | Sev A için garanti yok; B/C için iş saati yanıtı | Düşük aylık ücret (yayımlanan liste ≈ aylık 29 $) |
-| **Standard** | **Üretim** iş yükleri | **7/24** telefon + e-posta | **Sev A < 1 saat** | Orta aylık ücret (≈ aylık 100 $) |
-| **Professional Direct** | İş-kritik, orta ölçek | 7/24 + **hızlı yanıt**, mimari/operasyon rehberliği, daha kapsamlı kaynaklar | **Sev A < 1 saat**, öncelikli işleme | Yüksek aylık ücret (≈ aylık 1.000 $) |
-| **Unified** (eski Premier'in yerini aldı) | Büyük kurum; **Azure + M365 + Dynamics** vb. tüm Microsoft ürünleri | 7/24, atanmış hesap/müşteri başarı yönetimi, proaktif hizmetler | Sözleşmeye göre; Sev A için en hızlı | Kuruma özel; kullanım yüzdesine dayalı sözleşme |
-| *Azure Rapid Response* (ek) | Kritik üretim iş yükü | Hızlı müdahale için ek | Sev A için daha kısa yanıt *(yayımlanan: < 15 dk)* | Ek ücret |
+- **Basic**
+  - Kim için: Herkes
+  - Teknik destek: **Yok** (faturalama ve abonelik yönetimi desteği 7/24; self-help)
+  - Yanıt süresi (özet, doğrula): —
+  - Ücret: **Ücretsiz** (her Azure aboneliğinde)
+- **Developer**
+  - Kim için: Deneme / **üretim dışı**
+  - Teknik destek: İş saatlerinde e-posta
+  - Yanıt süresi (özet, doğrula): Sev A için garanti yok; B/C için iş saati yanıtı
+  - Ücret: Düşük aylık ücret (yayımlanan liste ≈ aylık 29 $)
+- **Standard**
+  - Kim için: **Üretim** iş yükleri
+  - Teknik destek: **7/24** telefon + e-posta
+  - Yanıt süresi (özet, doğrula): **Sev A < 1 saat**
+  - Ücret: Orta aylık ücret (≈ aylık 100 $)
+- **Professional Direct**
+  - Kim için: İş-kritik, orta ölçek
+  - Teknik destek: 7/24 + **hızlı yanıt**, mimari/operasyon rehberliği, daha kapsamlı kaynaklar
+  - Yanıt süresi (özet, doğrula): **Sev A < 1 saat**, öncelikli işleme
+  - Ücret: Yüksek aylık ücret (≈ aylık 1.000 $)
+- **Unified** (eski Premier'in yerini aldı)
+  - Kim için: Büyük kurum; **Azure + M365 + Dynamics** vb. tüm Microsoft ürünleri
+  - Teknik destek: 7/24, atanmış hesap/müşteri başarı yönetimi, proaktif hizmetler
+  - Yanıt süresi (özet, doğrula): Sözleşmeye göre; Sev A için en hızlı
+  - Ücret: Kuruma özel; kullanım yüzdesine dayalı sözleşme
+- ***Azure Rapid Response* (ek)**
+  - Kim için: Kritik üretim iş yükü
+  - Teknik destek: Hızlı müdahale için ek
+  - Yanıt süresi (özet, doğrula): Sev A için daha kısa yanıt *(yayımlanan: < 15 dk)*
+  - Ücret: Ek ücret
 
 **Severity (önem) seviyeleri:** **Sev A (Critical)** — üretim tamamen durdu, iş etkisi kritik · **Sev B (Moderate)** — iş yükü etkilendi/kısıtlı · **Sev C (Minimal)** — genel soru/küçük etki. Yanıt süresi = talebi açtığın andan bir Microsoft mühendisinin **ilk dönüşüne** kadar geçen süre; **çözüm süresi değildir**.
 
@@ -117,11 +145,19 @@ Teknik destek gerekiyor mu?
 
 #### 3.3 Servis yaşam döngüsü ⭐
 
-| Aşama | Kim kullanabilir | SLA | Destek | Notlar |
-|---|---|---|---|---|
-| **Private preview** | **Davetle**, sınırlı müşteri/kuruluş | Yok | Çoğunlukla ürün ekibiyle doğrudan / sınırlı | Erken geri bildirim; sözleşme/NDA olabilir |
-| **Public preview** | **Herkes** (genellikle opt-in) | **Yok** | Standart destek kapsamı **dışında/sınırlı** olabilir *(servise göre değişir)* | Özellik/API **değişebilir**, kaldırılabilir; kota/bölge sınırlı olabilir; **üretim için önerilmez** |
-| **General Availability (GA)** | Herkes | **Evet** (servise özgü) | **Tam destek** (planına göre) | Üretim için hedeflenen aşama |
+- **Private preview**
+  - Kim kullanabilir: **Davetle**, sınırlı müşteri/kuruluş
+  - SLA: Yok
+  - Destek: Çoğunlukla ürün ekibiyle doğrudan / sınırlı
+  - Notlar: Erken geri bildirim; sözleşme/NDA olabilir
+- **Public preview**
+  - Kim kullanabilir: **Herkes** (genellikle opt-in) · SLA: **Yok**
+  - Destek: Standart destek kapsamı **dışında/sınırlı** olabilir *(servise göre değişir)*
+  - Notlar: Özellik/API **değişebilir**, kaldırılabilir; kota/bölge sınırlı olabilir; **üretim için önerilmez**
+- **General Availability (GA)**
+  - Kim kullanabilir: Herkes · SLA: **Evet** (servise özgü)
+  - Destek: **Tam destek** (planına göre)
+  - Notlar: Üretim için hedeflenen aşama
 
 > Kural: **Preview = deneme.** Preview'lar, Microsoft'un ayrı yayımladığı *Supplemental Terms of Use for Microsoft Azure Previews* şartlarına tabidir; özet: "SLA yok, destek garantisi yok, özellik ve fiyat değişebilir". Üretimde preview bağımlılığı bir **risk kaydı** konusu olmalıdır.
 
@@ -147,15 +183,27 @@ az feature register --namespace Microsoft.Compute --name <FeatureName>  # opt in
 
 **Microsoft Cloud Adoption Framework (CAF)** — buluta **geçiş yolculuğunun** (strateji → işletme) rehberi: süreç, roller, kontrol listeleri.
 
-| Aşama (metodoloji) | Soru | Örnek çıktı |
-|---|---|---|
-| **Strategy** | *Neden* bulut? İş hedefleri, iş gerekçesi | Gerekçe belgesi, hedef sonuçlar |
-| **Plan** | *Ne*yi, hangi sırayla? Dijital varlık envanteri, beceri planı | Taşıma planı, ön değerlendirme (→ C1.19 Migrate) |
-| **Ready** | Azure ortamını **hazırla**: hesap yapısı, ağ, kimlik | **Landing zone** |
-| **Adopt** | **Taşı** (migrate) ve/veya **yenilikçi/yeni geliştir** (innovate/modernize) | Taşınan ve yeni uygulamalar |
-| **Govern** | Kural ve risk yönetimi | Azure Policy, maliyet ve uyumluluk (→ C1.11, C1.12) |
-| **Manage** | Operasyon: izleme, yedek, DR, olay yönetimi | Monitor, Backup, Site Recovery (→ C1.14, C1.19) |
-| **Secure** | Sürekli güvenlik iyileştirme | Defender for Cloud, Zero Trust (→ C1.10) |
+- **Strategy**
+  - Soru: *Neden* bulut? İş hedefleri, iş gerekçesi
+  - Örnek çıktı: Gerekçe belgesi, hedef sonuçlar
+- **Plan**
+  - Soru: *Ne*yi, hangi sırayla? Dijital varlık envanteri, beceri planı
+  - Örnek çıktı: Taşıma planı, ön değerlendirme (→ C1.19 Migrate)
+- **Ready**
+  - Soru: Azure ortamını **hazırla**: hesap yapısı, ağ, kimlik
+  - Örnek çıktı: **Landing zone**
+- **Adopt**
+  - Soru: **Taşı** (migrate) ve/veya **yenilikçi/yeni geliştir** (innovate/modernize)
+  - Örnek çıktı: Taşınan ve yeni uygulamalar
+- **Govern**
+  - Soru: Kural ve risk yönetimi
+  - Örnek çıktı: Azure Policy, maliyet ve uyumluluk (→ C1.11, C1.12)
+- **Manage**
+  - Soru: Operasyon: izleme, yedek, DR, olay yönetimi
+  - Örnek çıktı: Monitor, Backup, Site Recovery (→ C1.14, C1.19)
+- **Secure**
+  - Soru: Sürekli güvenlik iyileştirme
+  - Örnek çıktı: Defender for Cloud, Zero Trust (→ C1.10)
 
 > Aşama adları ve sayısı CAF belgesinin sürümüne göre kısmen değişir (bazı anlatımlar *Organize* ekler, bazıları *Secure*'u ayırmaz); sınav için **Strategy–Plan–Ready–Adopt–Govern–Manage** akışı yeterlidir. Strategy/Plan/Ready/Adopt temel sıra, Govern/Manage/(Secure) **sürekli** yürüyen aşamalardır.
 
@@ -163,13 +211,25 @@ az feature register --namespace Microsoft.Compute --name <FeatureName>  # opt in
 
 **Azure Well-Architected Framework (WAF)** — **bir iş yükünün kalitesini** değerlendirmek için **beş sütun**:
 
-| Sütun | Soru | Örnek | Advisor kategorisi (→ C1.14) |
-|---|---|---|---|
-| **Reliability** | Arızada çalışmaya devam eder/toparlanır mı? | Zone/region yedekliliği, backup, DR | **Reliability** |
-| **Security** | Veriyi ve sistemi koruyor mu? | Zero Trust, şifreleme, en az yetki | **Security** |
-| **Cost Optimization** | Gereksiz harcama yok mu? | Doğru boyut, reservation, kapatma | **Cost** |
-| **Operational Excellence** | Operasyon/dağıtım sağlıklı mı? | IaC, CI/CD, izleme | **Operational Excellence** |
-| **Performance Efficiency** | Talebe göre ölçekleniyor mu? | Autoscale, cache, doğru SKU | **Performance** |
+- **Reliability**
+  - Soru: Arızada çalışmaya devam eder/toparlanır mı?
+  - Örnek: Zone/region yedekliliği, backup, DR
+  - Advisor kategorisi (→ C1.14): **Reliability**
+- **Security**
+  - Soru: Veriyi ve sistemi koruyor mu?
+  - Örnek: Zero Trust, şifreleme, en az yetki
+  - Advisor kategorisi (→ C1.14): **Security**
+- **Cost Optimization**
+  - Soru: Gereksiz harcama yok mu?
+  - Örnek: Doğru boyut, reservation, kapatma
+  - Advisor kategorisi (→ C1.14): **Cost**
+- **Operational Excellence**
+  - Soru: Operasyon/dağıtım sağlıklı mı? · Örnek: IaC, CI/CD, izleme
+  - Advisor kategorisi (→ C1.14): **Operational Excellence**
+- **Performance Efficiency**
+  - Soru: Talebe göre ölçekleniyor mu?
+  - Örnek: Autoscale, cache, doğru SKU
+  - Advisor kategorisi (→ C1.14): **Performance**
 
 > Advisor'ın beş kategorisi, Well-Architected Framework'ün beş sütunuyla **bire bir örtüşür**. Well-Architected Review aracı iş yükünü bu sütunlara göre değerlendirir.
 
@@ -179,14 +239,24 @@ az feature register --namespace Microsoft.Compute --name <FeatureName>  # opt in
 
 #### 3.5 Karar tablosu alıştırması — destek planı ve yaşam döngüsü
 
-| # | Senaryo | Senin cevabın |
-|---|---|---|
-| 1 | Öğrenci, ücretsiz aboneliğinde sadece öğreniyor; yalnızca fatura sorusu olabilir | |
-| 2 | Küçük ekip, geliştirme/test ortamı, iş saatlerinde e-posta yeter | |
-| 3 | E-ticaret üretimi, gece 03:00'te de telefonla teknik destek gerekli | |
-| 4 | Bankanın tüm Microsoft ürünleri için atanmış TAM ve proaktif destek | |
-| 5 | Yeni bir veri servisi *public preview*'da; ekip müşteriye bunun üzerine "%99,99 SLA" taahhüt etmek istiyor | |
-| 6 | İş yükünün bir sütununda (güvenlik) zayıflık çıktı; hangi çerçeve bunu sistematik değerlendirir? | |
+- **1**
+  - Senaryo: Öğrenci, ücretsiz aboneliğinde sadece öğreniyor; yalnızca fatura sorusu olabilir
+  - Senin cevabın: ___
+- **2**
+  - Senaryo: Küçük ekip, geliştirme/test ortamı, iş saatlerinde e-posta yeter
+  - Senin cevabın: ___
+- **3**
+  - Senaryo: E-ticaret üretimi, gece 03:00'te de telefonla teknik destek gerekli
+  - Senin cevabın: ___
+- **4**
+  - Senaryo: Bankanın tüm Microsoft ürünleri için atanmış TAM ve proaktif destek
+  - Senin cevabın: ___
+- **5**
+  - Senaryo: Yeni bir veri servisi *public preview*'da; ekip müşteriye bunun üzerine "%99,99 SLA" taahhüt etmek istiyor
+  - Senin cevabın: ___
+- **6**
+  - Senaryo: İş yükünün bir sütununda (güvenlik) zayıflık çıktı; hangi çerçeve bunu sistematik değerlendirir?
+  - Senin cevabın: ___
 
 <details><summary>Çözüm</summary>
 
@@ -250,26 +320,28 @@ Bir fintech, ödeme API'sini Azure'a taşıyor ve yönetim kuruluna "%99,95 çal
 
 **Sınav neyi, nasıl sorar?** Destek planı seçimi (senaryo → plan), preview/GA farkı, SLA yorumlama/yüzde → kesinti, composite SLA mantığı ve CAF/WAF eşleştirme.
 
-| Soru kalıbı | Doğru cevap | Tuzak |
-|---|---|---|
-| "**Ücretsiz** destek planı" | **Basic** | Developer |
-| "Her Azure aboneliğinde varsayılan plan" | **Basic** | Standard |
-| "Üretim dışı, iş saatinde e-posta" | **Developer** | Standard |
-| "Üretim iş yükü, **7/24** teknik destek" | **Standard** (veya üstü) | Developer |
-| "İş-kritik, hızlı yanıt, mimari rehberlik" | **Professional Direct** | Standard |
-| "Kurum geneli, **atanmış TAM**, tüm Microsoft ürünleri" | **Unified** (eski Premier) | Professional Direct |
-| "Preview servisin SLA'sı" | **Yok** | %99,9 |
-| "Hangi aşamada **SLA ve tam destek** vardır?" | **General Availability (GA)** | Public preview |
-| "Davetle sınırlı kullanıcı, erken aşama" | **Private preview** | Public preview |
-| "Herkesin deneyebildiği, SLA'sız önizleme" | **Public preview** | GA |
-| "SLA tutturulamazsa ne olur?" | **Servis kredisi** (müşteri talep eder) | Otomatik para iadesi |
-| "İki servisin SLA'sı seri bağlıysa toplam" | **Çarpım** (daha düşük) | Ortalama / yüksek olan |
-| "SLA'yı yükseltmek için" | **Zone/region yedekliliği**, üst SLA'lı SKU | Daha büyük VM |
-| "Buluta geçiş yolculuğu rehberi: strateji, plan, ready, adopt, govern, manage" | **Cloud Adoption Framework** | Well-Architected Framework |
-| "Beş sütun: reliability, security, cost, operational excellence, performance" | **Well-Architected Framework** | Cloud Adoption Framework |
-| "Referans mimariler ve tasarım desenleri" | **Azure Architecture Center** | Learn |
-| "Hazır, standartlara uygun başlangıç ortamı (management group, policy, ağ)" | **Azure landing zone** | Resource group |
-| "WAF" (mimari bağlamda) | **Well-Architected Framework** | Web Application Firewall |
+- "**Ücretsiz** destek planı" — Doğru cevap: **Basic** · Tuzak: Developer
+- **"Her Azure aboneliğinde varsayılan plan"** — Doğru cevap: **Basic** · Tuzak: Standard
+- **"Üretim dışı, iş saatinde e-posta"** — Doğru cevap: **Developer** · Tuzak: Standard
+- "Üretim iş yükü, **7/24** teknik destek" — Doğru cevap: **Standard** (veya üstü) · Tuzak: Developer
+- **"İş-kritik, hızlı yanıt, mimari rehberlik"** — Doğru cevap: **Professional Direct** · Tuzak: Standard
+- "Kurum geneli, **atanmış TAM**, tüm Microsoft ürünleri" — Doğru cevap: **Unified** (eski Premier) · Tuzak: Professional Direct
+- **"Preview servisin SLA'sı"** — Doğru cevap: **Yok** · Tuzak: %99,9
+- "Hangi aşamada **SLA ve tam destek** vardır?" — Doğru cevap: **General Availability (GA)** · Tuzak: Public preview
+- **"Davetle sınırlı kullanıcı, erken aşama"** — Doğru cevap: **Private preview** · Tuzak: Public preview
+- **"Herkesin deneyebildiği, SLA'sız önizleme"** — Doğru cevap: **Public preview** · Tuzak: GA
+- **"SLA tutturulamazsa ne olur?"**
+  - Doğru cevap: **Servis kredisi** (müşteri talep eder)
+  - Tuzak: Otomatik para iadesi
+- **"İki servisin SLA'sı seri bağlıysa toplam"** — Doğru cevap: **Çarpım** (daha düşük) · Tuzak: Ortalama / yüksek olan
+- **"SLA'yı yükseltmek için"**
+  - Doğru cevap: **Zone/region yedekliliği**, üst SLA'lı SKU
+  - Tuzak: Daha büyük VM
+- "Buluta geçiş yolculuğu rehberi: strateji, plan, ready, adopt, govern, manage" — Doğru cevap: **Cloud Adoption Framework** · Tuzak: Well-Architected Framework
+- "Beş sütun: reliability, security, cost, operational excellence, performance" — Doğru cevap: **Well-Architected Framework** · Tuzak: Cloud Adoption Framework
+- **"Referans mimariler ve tasarım desenleri"** — Doğru cevap: **Azure Architecture Center** · Tuzak: Learn
+- "Hazır, standartlara uygun başlangıç ortamı (management group, policy, ağ)" — Doğru cevap: **Azure landing zone** · Tuzak: Resource group
+- **"WAF" (mimari bağlamda)** — Doğru cevap: **Well-Architected Framework** · Tuzak: Web Application Firewall
 
 **Anahtar kelimeler:** *free, billing support only* → Basic · *production, 24/7* → Standard · *business-critical* → Professional Direct · *Technical Account Manager* → Unified · *no SLA, subject to change, not recommended for production* → preview · *monthly uptime percentage, service credit* → SLA · *five pillars* → WAF · *landing zone, strategy–plan–ready–adopt* → CAF.
 
@@ -304,17 +376,31 @@ Bir fintech, ödeme API'sini Azure'a taşıyor ve yönetim kuruluna "%99,95 çal
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Basic plan | Ücretsiz; self-service yeterliyse sıfır maliyet | Teknik destek yok; kesintide kendi başına |
-| Standard/Professional Direct | 7/24 teknik destek, hızlı yanıt | Aylık sabit ücret (abonelik/hesap başına); küçük iş yüklerinde pahalı olabilir |
-| Unified | TAM, proaktif hizmet, kurum geneli kapsam | Pahalı sözleşme; yalnızca büyük kuruma uygun |
-| Preview servis kullanmak | Yeni yeteneğe erken erişim, rekabet avantajı | SLA/destek yok, API değişebilir, geri çekilebilir |
-| GA'yı beklemek | SLA, destek, kararlılık | Özelliğe geç erişim |
-| Daha yüksek SLA (zone/region) | Daha az kesinti, **mali** koruma değil **gerçek** kesinti azalır | Maliyet ve karmaşıklık; bağımsız arıza varsayımı |
-| SLA'yı yalnızca belgeden okumak | Hızlı | Composite hesabı yapılmaz; hedefin altında kalınabilir |
-| Landing zone'a yatırım (CAF Ready) | Tutarlı yönetişim, hızlı ve güvenli onboarding | Başlangıç eforu |
-| Well-Architected Review | Sistematik iyileştirme, Advisor ile doğrulama | Zaman ve çabası; sütunlar arası çelişki (güvenlik ↔ maliyet) yönetilmelidir |
+- **Basic plan**
+  - Kazanç: Ücretsiz; self-service yeterliyse sıfır maliyet
+  - Bedel: Teknik destek yok; kesintide kendi başına
+- **Standard/Professional Direct**
+  - Kazanç: 7/24 teknik destek, hızlı yanıt
+  - Bedel: Aylık sabit ücret (abonelik/hesap başına); küçük iş yüklerinde pahalı olabilir
+- **Unified**
+  - Kazanç: TAM, proaktif hizmet, kurum geneli kapsam
+  - Bedel: Pahalı sözleşme; yalnızca büyük kuruma uygun
+- **Preview servis kullanmak**
+  - Kazanç: Yeni yeteneğe erken erişim, rekabet avantajı
+  - Bedel: SLA/destek yok, API değişebilir, geri çekilebilir
+- **GA'yı beklemek** — Kazanç: SLA, destek, kararlılık · Bedel: Özelliğe geç erişim
+- **Daha yüksek SLA (zone/region)**
+  - Kazanç: Daha az kesinti, **mali** koruma değil **gerçek** kesinti azalır
+  - Bedel: Maliyet ve karmaşıklık; bağımsız arıza varsayımı
+- **SLA'yı yalnızca belgeden okumak**
+  - Kazanç: Hızlı
+  - Bedel: Composite hesabı yapılmaz; hedefin altında kalınabilir
+- **Landing zone'a yatırım (CAF Ready)**
+  - Kazanç: Tutarlı yönetişim, hızlı ve güvenli onboarding
+  - Bedel: Başlangıç eforu
+- **Well-Architected Review**
+  - Kazanç: Sistematik iyileştirme, Advisor ile doğrulama
+  - Bedel: Zaman ve çabası; sütunlar arası çelişki (güvenlik ↔ maliyet) yönetilmelidir
 
 ---
 

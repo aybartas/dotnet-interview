@@ -38,11 +38,9 @@ Her uygulamayı Zero Trust ilkesiyle eşleştirin: **Verify explicitly · Use le
 
 #### Soru 3: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Zero Trust modelinde, şirket ağından gelen isteklere otomatik olarak güvenilir. | ☐ | ☐ |
-| b) Zero Trust, satın alınıp kurulan tek bir Microsoft ürünüdür. | ☐ | ☐ |
-| c) Conditional Access, Zero Trust'ın "verify explicitly" ilkesini uygulamaya yardımcı olur. | ☐ | ☐ |
+- a) Zero Trust modelinde, şirket ağından gelen isteklere otomatik olarak güvenilir. — Evet: ☐ · Hayır: ☐
+- **b) Zero Trust, satın alınıp kurulan tek bir Microsoft ürünüdür.** — Evet: ☐ · Hayır: ☐
+- c) Conditional Access, Zero Trust'ın "verify explicitly" ilkesini uygulamaya yardımcı olur. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -125,11 +123,9 @@ Microsoft Defender for Cloud'un amacını **en iyi** hangisi tanımlar?
 
 #### Soru 10: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Defender for Cloud yalnızca Azure'da çalışan kaynakları izleyebilir. | ☐ | ☐ |
-| b) Kurum içi sunucular Azure Arc aracılığıyla Defender for Cloud'a bağlanabilir. | ☐ | ☐ |
-| c) Defender for Cloud, AWS ve Google Cloud kaynaklarının güvenlik duruşunu da değerlendirebilir. | ☐ | ☐ |
+- a) Defender for Cloud yalnızca Azure'da çalışan kaynakları izleyebilir. — Evet: ☐ · Hayır: ☐
+- b) Kurum içi sunucular Azure Arc aracılığıyla Defender for Cloud'a bağlanabilir. — Evet: ☐ · Hayır: ☐
+- c) Defender for Cloud, AWS ve Google Cloud kaynaklarının güvenlik duruşunu da değerlendirebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

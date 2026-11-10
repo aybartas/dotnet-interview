@@ -71,11 +71,9 @@ Vector alanı içeren bir container için aşağıdakilerden hangileri **doğrud
 
 #### Soru 5: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) `quantizedFlat` ve `diskANN` indeksleri için çok az vector varsa (kabaca < 1000) sistem tam tarama yapabilir. | ☐ | ☐ |
-| b) `flat` index %100 recall (tam doğruluk) sağlar. | ☐ | ☐ |
-| c) `distanceFunction` seçenekleri arasında `cosine`, `dotproduct` ve `euclidean` vardır. | ☐ | ☐ |
+- a) `quantizedFlat` ve `diskANN` indeksleri için çok az vector varsa (kabaca < 1000) sistem tam tarama yapabilir. — Evet: ☐ · Hayır: ☐
+- **b) `flat` index %100 recall (tam doğruluk) sağlar.** — Evet: ☐ · Hayır: ☐
+- c) `distanceFunction` seçenekleri arasında `cosine`, `dotproduct` ve `euclidean` vardır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -172,11 +170,9 @@ Bir worker, ürün güncellendiğinde yeni embedding'i hesaplayıp **aynı item'
 
 #### Soru 12: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Change feed, aynı logical partition içindeki değişikliklerin sırasını korur. | ☐ | ☐ |
-| b) Change feed processor, her değişikliği tam olarak bir kez (exactly-once) teslim etmeyi garanti eder. | ☐ | ☐ |
-| c) Aynı monitored container'ı iki farklı iş için okumak istiyorsan farklı processor adları kullanabilirsin. | ☐ | ☐ |
+- a) Change feed, aynı logical partition içindeki değişikliklerin sırasını korur. — Evet: ☐ · Hayır: ☐
+- b) Change feed processor, her değişikliği tam olarak bir kez (exactly-once) teslim etmeyi garanti eder. — Evet: ☐ · Hayır: ☐
+- c) Aynı monitored container'ı iki farklı iş için okumak istiyorsan farklı processor adları kullanabilirsin. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

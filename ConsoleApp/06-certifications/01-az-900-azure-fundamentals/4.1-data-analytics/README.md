@@ -12,19 +12,27 @@
 
 Azure'daki veri servisleri üç aileye ayrılır. Bu konunun işi, **"bu iş için hangi servis?"** sorusunu hızlı cevaplamaktır.
 
-| Aile | Soru | Servisler |
-|---|---|---|
-| **Operasyonel (OLTP) veritabanları** | Uygulamanın günlük okuma/yazması | **Azure SQL** ailesi, **PostgreSQL/MySQL**, **Cosmos DB**, **Managed Redis** |
-| **Analitik (OLAP) ve büyük veri** | Geçmiş veriyi toplayıp analiz etmek, raporlamak | **Microsoft Fabric**, **Synapse**, **Databricks**, **HDInsight**, **Data Lake Storage Gen2**, **Power BI** |
-| **Taşıma ve akış** | Veriyi bir yerden bir yere taşımak/dönüştürmek | **Data Factory**, **Event Hubs**, **Stream Analytics**, **Database Migration Service** |
+- **Operasyonel (OLTP) veritabanları**
+  - Soru: Uygulamanın günlük okuma/yazması
+  - Servisler: **Azure SQL** ailesi, **PostgreSQL/MySQL**, **Cosmos DB**, **Managed Redis**
+- **Analitik (OLAP) ve büyük veri**
+  - Soru: Geçmiş veriyi toplayıp analiz etmek, raporlamak
+  - Servisler: **Microsoft Fabric**, **Synapse**, **Databricks**, **HDInsight**, **Data Lake Storage Gen2**, **Power BI**
+- **Taşıma ve akış**
+  - Soru: Veriyi bir yerden bir yere taşımak/dönüştürmek
+  - Servisler: **Data Factory**, **Event Hubs**, **Stream Analytics**, **Database Migration Service**
 
 Çekirdek ayrım: veritabanı **yönetimi** kimde? (→ C1.3: IaaS ↔ PaaS)
 
-| Seçenek | Model | Sen neyi yönetirsin? |
-|---|---|---|
-| **SQL Server on Azure VM** | IaaS | OS, SQL Server yaması, yedek, HA — her şey |
-| **Azure SQL Managed Instance** | PaaS | Veritabanları ve ayarları; platform, yama, yedek, HA Microsoft'ta |
-| **Azure SQL Database** | PaaS | Yalnızca veritabanı ve şema; en az yönetim yükü |
+- **SQL Server on Azure VM**
+  - Model: IaaS
+  - Sen neyi yönetirsin?: OS, SQL Server yaması, yedek, HA — her şey
+- **Azure SQL Managed Instance**
+  - Model: PaaS
+  - Sen neyi yönetirsin?: Veritabanları ve ayarları; platform, yama, yedek, HA Microsoft'ta
+- **Azure SQL Database**
+  - Model: PaaS
+  - Sen neyi yönetirsin?: Yalnızca veritabanı ve şema; en az yönetim yükü
 
 Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.6).
 
@@ -44,14 +52,24 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.6).
 
 Üç ürün, aynı SQL Server motorunun farklı yönetim düzeyleri:
 
-| | **SQL Database** | **SQL Managed Instance** | **SQL Server on Azure VM** |
-|---|---|---|---|
-| Model | PaaS (veritabanı başına) | PaaS (instance başına) | **IaaS** |
-| SQL Server uyumu | Yüksek, ama instance düzeyi özellikler sınırlı | **Neredeyse tam** (SQL Agent, cross-database sorgu, linked server, CLR…) | **Tam** (sürüm/özellik seçimi sende) |
-| OS erişimi | Yok | Yok | **Var** |
-| Ağ | Public endpoint + private endpoint | **VNet'e** yerleştirilir | VNet içinde VM |
-| Yönetim yükü | En düşük | Düşük | **En yüksek** |
-| Tipik senaryo | **Yeni** bulut uygulaması, SaaS çok kiracılı | **Lift-and-shift** — mevcut SQL Server'ı az değişiklikle taşıma | OS erişimi/özel ürün gereksinimi, eski sürüm |
+- **Model**
+  - SQL Database: PaaS (veritabanı başına)
+  - SQL Managed Instance: PaaS (instance başına)
+  - SQL Server on Azure VM: **IaaS**
+- **SQL Server uyumu**
+  - SQL Database: Yüksek, ama instance düzeyi özellikler sınırlı
+  - SQL Managed Instance: **Neredeyse tam** (SQL Agent, cross-database sorgu, linked server, CLR…)
+  - SQL Server on Azure VM: **Tam** (sürüm/özellik seçimi sende)
+- **OS erişimi** — SQL Database: Yok · SQL Managed Instance: Yok · SQL Server on Azure VM: **Var**
+- **Ağ**
+  - SQL Database: Public endpoint + private endpoint
+  - SQL Managed Instance: **VNet'e** yerleştirilir
+  - SQL Server on Azure VM: VNet içinde VM
+- **Yönetim yükü** — SQL Database: En düşük · SQL Managed Instance: Düşük · SQL Server on Azure VM: **En yüksek**
+- **Tipik senaryo**
+  - SQL Database: **Yeni** bulut uygulaması, SaaS çok kiracılı
+  - SQL Managed Instance: **Lift-and-shift** — mevcut SQL Server'ı az değişiklikle taşıma
+  - SQL Server on Azure VM: OS erişimi/özel ürün gereksinimi, eski sürüm
 
 **SQL Database dağıtım seçenekleri:**
 - **Single database** — tek veritabanı, kendi kaynak ayarı.
@@ -59,10 +77,12 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.6).
 
 **Satın alma modelleri:**
 
-| Model | Birim | Ne zaman? |
-|---|---|---|
-| **DTU** | Hazır paket (CPU+bellek+IO karışımı) | Basit, öngörülebilir, küçük iş yükü |
-| **vCore** | Ayrı seçilen vCore, bellek, depolama | Kontrol, Azure Hybrid Benefit (→ C1.11), reserved capacity |
+- **DTU**
+  - Birim: Hazır paket (CPU+bellek+IO karışımı)
+  - Ne zaman?: Basit, öngörülebilir, küçük iş yükü
+- **vCore**
+  - Birim: Ayrı seçilen vCore, bellek, depolama
+  - Ne zaman?: Kontrol, Azure Hybrid Benefit (→ C1.11), reserved capacity
 
 - vCore modelinde **servis katmanları:** General Purpose, Business Critical (düşük gecikme, yerel SSD, yerleşik okuma replikası), Hyperscale (çok büyük veritabanları, hızlı ölçekleme) — *(bağlam: sınav katman adlarını sormaz)*.
 - **Serverless compute tier** (vCore, General Purpose): yük değiştikçe otomatik ölçeklenir, **boşta kalınca otomatik duraklar** (auto-pause); duraklamışken **depolama** ücretlenir, compute ücretlenmez. Seyrek kullanılan geliştirme/test veritabanları için idealdir. İlk istek duraklamadan uyanırken **gecikme** (cold start) yaşar.
@@ -88,13 +108,21 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.6).
 
 **Beş tutarlılık düzeyi** (güçlüden zayıfa) — SQL'de olmayan Cosmos'a özgü kavram:
 
-| Düzey | Anlamı | Trade-off |
-|---|---|---|
-| **Strong** | Her okuma en son yazılanı görür | En yüksek gecikme; çok region'da yazma ile birlikte kullanılamaz |
-| **Bounded staleness** | Okuma en fazla *K* sürüm/*T* süre geride kalır | Öngörülebilir gecikme farkı |
-| **Session** *(varsayılan)* | Aynı oturumda kendi yazdığını okursun | Çoğu uygulama için en iyi denge |
-| **Consistent prefix** | Sıralama bozulmaz, ama geride kalabilir | Daha düşük maliyet |
-| **Eventual** | Sıra/yenilik garantisi yok, sonunda tutarlı | En düşük gecikme ve maliyet |
+- **Strong**
+  - Anlamı: Her okuma en son yazılanı görür
+  - Trade-off: En yüksek gecikme; çok region'da yazma ile birlikte kullanılamaz
+- **Bounded staleness**
+  - Anlamı: Okuma en fazla *K* sürüm/*T* süre geride kalır
+  - Trade-off: Öngörülebilir gecikme farkı
+- **Session** *(varsayılan)*
+  - Anlamı: Aynı oturumda kendi yazdığını okursun
+  - Trade-off: Çoğu uygulama için en iyi denge
+- **Consistent prefix**
+  - Anlamı: Sıralama bozulmaz, ama geride kalabilir
+  - Trade-off: Daha düşük maliyet
+- **Eventual**
+  - Anlamı: Sıra/yenilik garantisi yok, sonunda tutarlı
+  - Trade-off: En düşük gecikme ve maliyet
 
 > Kural: **güçlü tutarlılık ↔ düşük gecikme/yüksek erişilebilirlik** arasında takas vardır (CAP/PACELC sezgisi → M8).
 
@@ -102,23 +130,37 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.6).
 
 #### 3.3 Önbellek ve Storage'ın NoSQL benzeri servisleri
 
-| Servis | Ne? | Not |
-|---|---|---|
-| **Azure Managed Redis** | Yönetilen **in-memory** önbellek/veri yapıları (Redis) | Oturum, sık okunan veri, rate limiting. **Güncel durum:** eski *Azure Cache for Redis* (Basic/Standard/Premium) emekliye ayrılıyor — yeni oluşturma kısıtlandı, **30 Eylül 2028**'de tamamen emekli; Enterprise katmanları **Mart 2027** civarı. Önerilen hedef **Azure Managed Redis**. Tarihleri resmî duyurudan doğrula |
-| **Table storage** | Storage account içinde basit anahtar/değer-özellik deposu | Ucuz, basit; zengin sorgu/global dağıtım yok (premium ihtiyaç → Cosmos DB Table API) |
-| **Blob storage** | Yapılandırılmamış nesne verisi (→ C1.8) | Veritabanı değildir; ama **Data Lake**'in temelidir |
+- **Azure Managed Redis**
+  - Ne?: Yönetilen **in-memory** önbellek/veri yapıları (Redis)
+  - Not: Oturum, sık okunan veri, rate limiting. **Güncel durum:** eski *Azure Cache for Redis* (Basic/Standard/Premium) emekliye ayrılıyor — yeni oluşturma kısıtlandı, **30 Eylül 2028**'de tamamen emekli; Enterprise katmanları **Mart 2027** civarı. Önerilen hedef **Azure Managed Redis**. Tarihleri resmî duyurudan doğrula
+- **Table storage**
+  - Ne?: Storage account içinde basit anahtar/değer-özellik deposu
+  - Not: Ucuz, basit; zengin sorgu/global dağıtım yok (premium ihtiyaç → Cosmos DB Table API)
+- **Blob storage**
+  - Ne?: Yapılandırılmamış nesne verisi (→ C1.8)
+  - Not: Veritabanı değildir; ama **Data Lake**'in temelidir
 
 #### 3.4 İlişkisel ↔ NoSQL karar tablosu ⭐
 
-| Soru | İlişkisel (Azure SQL, PostgreSQL) | NoSQL (Cosmos DB) |
-|---|---|---|
-| Veri modeli | Tablolar, sabit şema, ilişkiler/JOIN | Belge/anahtar-değer/graf, esnek şema |
-| İşlem bütünlüğü | Güçlü ACID, karmaşık çok-tablo işlemler | Partition içinde işlemler; çapraz-partition sınırlı |
-| Ölçekleme | Dikey ağırlıklı (Hyperscale hariç), okuma replikaları | **Yatay**, neredeyse sınırsız |
-| Küresel dağıtım | Geo-replication (okuma replikaları, failover group) | **Yerleşik, çok region'da yazma** |
-| Gecikme | İyi | Tek haneli ms (SLA) |
-| Sorgu | Güçlü SQL, raporlama | Partition key'e göre verimli sorgu |
-| Ne zaman? | Finansal kayıt, ERP, karmaşık raporlama | Katalog, IoT telemetri, oturum/profil, küresel oyun/e-ticaret |
+- **Veri modeli**
+  - İlişkisel (Azure SQL, PostgreSQL): Tablolar, sabit şema, ilişkiler/JOIN
+  - NoSQL (Cosmos DB): Belge/anahtar-değer/graf, esnek şema
+- **İşlem bütünlüğü**
+  - İlişkisel (Azure SQL, PostgreSQL): Güçlü ACID, karmaşık çok-tablo işlemler
+  - NoSQL (Cosmos DB): Partition içinde işlemler; çapraz-partition sınırlı
+- **Ölçekleme**
+  - İlişkisel (Azure SQL, PostgreSQL): Dikey ağırlıklı (Hyperscale hariç), okuma replikaları
+  - NoSQL (Cosmos DB): **Yatay**, neredeyse sınırsız
+- **Küresel dağıtım**
+  - İlişkisel (Azure SQL, PostgreSQL): Geo-replication (okuma replikaları, failover group)
+  - NoSQL (Cosmos DB): **Yerleşik, çok region'da yazma**
+- **Gecikme** — İlişkisel (Azure SQL, PostgreSQL): İyi · NoSQL (Cosmos DB): Tek haneli ms (SLA)
+- **Sorgu**
+  - İlişkisel (Azure SQL, PostgreSQL): Güçlü SQL, raporlama
+  - NoSQL (Cosmos DB): Partition key'e göre verimli sorgu
+- **Ne zaman?**
+  - İlişkisel (Azure SQL, PostgreSQL): Finansal kayıt, ERP, karmaşık raporlama
+  - NoSQL (Cosmos DB): Katalog, IoT telemetri, oturum/profil, küresel oyun/e-ticaret
 
 Karar ağacı:
 
@@ -137,17 +179,33 @@ Sık okunan veriyi hızlandır / oturum?             → Azure Managed Redis (ö
 
 **Batch ↔ streaming:** *batch* belirli aralıklarla toplu işler (gecelik); *streaming* gelen veriyi **gerçek zamanlı** işler (IoT, log akışı).
 
-| Servis | Tek cümle | İş türü |
-|---|---|---|
-| **Microsoft Fabric** | **Birleşik analitik SaaS platformu**: veri mühendisliği, depo (warehouse), gerçek zamanlı analiz, Power BI — tek OneLake deposu üzerinde | Uçtan uca analitik, yeni projeler için Microsoft'un yönlendirdiği platform |
-| **Azure Synapse Analytics** | Veri ambarı (SQL pool'lar) + Spark + pipeline'ları bir arada PaaS | Kurumsal veri ambarı (OLAP). Hâlâ destekli; ama Microsoft yeni işler için **Fabric**'e yönlendiriyor *(durumu resmî duyurudan doğrula)* |
-| **Azure Databricks** | **Apache Spark** tabanlı, ortak çalışmaya dönük analitik/ML platformu (notebook'lar) | Büyük veri işleme, veri bilimi, ML |
-| **Azure HDInsight** | Yönetilen **açık kaynak** büyük veri küme servisi (Hadoop, Spark, Kafka, HBase…) | Mevcut Hadoop/Spark iş yüklerini taşımak |
-| **Azure Data Factory** | Bulutta **ETL/ELT orkestrasyonu**: kaynaklardan veri çek, dönüştür, hedefe yaz; zamanlanmış pipeline'lar, 90+ konnektör | **Veri taşıma ve dönüştürme** |
-| **Azure Data Lake Storage Gen2** | **Blob Storage + hiyerarşik namespace**: analitik için optimize, ham/yapısız/yarı yapılı veri gölü | **Depolama** (veri gölü) |
-| **Event Hubs** | Yüksek hacimli olay/telemetri **alım** servisi (milyonlarca olay/sn; Kafka uyumlu) | Akan veriyi toplama |
-| **Stream Analytics** | Akan veri üzerinde **gerçek zamanlı SQL benzeri sorgu** | Akış **analizi** (Event Hubs → Stream Analytics → Power BI) |
-| **Power BI** | İş zekâsı: görselleştirme, dashboard, rapor (SaaS) | **Raporlama** |
+- **Microsoft Fabric**
+  - Tek cümle: **Birleşik analitik SaaS platformu**: veri mühendisliği, depo (warehouse), gerçek zamanlı analiz, Power BI — tek OneLake deposu üzerinde
+  - İş türü: Uçtan uca analitik, yeni projeler için Microsoft'un yönlendirdiği platform
+- **Azure Synapse Analytics**
+  - Tek cümle: Veri ambarı (SQL pool'lar) + Spark + pipeline'ları bir arada PaaS
+  - İş türü: Kurumsal veri ambarı (OLAP). Hâlâ destekli; ama Microsoft yeni işler için **Fabric**'e yönlendiriyor *(durumu resmî duyurudan doğrula)*
+- **Azure Databricks**
+  - Tek cümle: **Apache Spark** tabanlı, ortak çalışmaya dönük analitik/ML platformu (notebook'lar)
+  - İş türü: Büyük veri işleme, veri bilimi, ML
+- **Azure HDInsight**
+  - Tek cümle: Yönetilen **açık kaynak** büyük veri küme servisi (Hadoop, Spark, Kafka, HBase…)
+  - İş türü: Mevcut Hadoop/Spark iş yüklerini taşımak
+- **Azure Data Factory**
+  - Tek cümle: Bulutta **ETL/ELT orkestrasyonu**: kaynaklardan veri çek, dönüştür, hedefe yaz; zamanlanmış pipeline'lar, 90+ konnektör
+  - İş türü: **Veri taşıma ve dönüştürme**
+- **Azure Data Lake Storage Gen2**
+  - Tek cümle: **Blob Storage + hiyerarşik namespace**: analitik için optimize, ham/yapısız/yarı yapılı veri gölü
+  - İş türü: **Depolama** (veri gölü)
+- **Event Hubs**
+  - Tek cümle: Yüksek hacimli olay/telemetri **alım** servisi (milyonlarca olay/sn; Kafka uyumlu)
+  - İş türü: Akan veriyi toplama
+- **Stream Analytics**
+  - Tek cümle: Akan veri üzerinde **gerçek zamanlı SQL benzeri sorgu**
+  - İş türü: Akış **analizi** (Event Hubs → Stream Analytics → Power BI)
+- **Power BI**
+  - Tek cümle: İş zekâsı: görselleştirme, dashboard, rapor (SaaS)
+  - İş türü: **Raporlama**
 
 **Tek cümlelik eşleme:** veri **taşı/dönüştür** → Data Factory · **depola** → Data Lake Storage Gen2 · **işle/analiz et** → Synapse / Databricks / Fabric · **akışı al** → Event Hubs · **akışı işle** → Stream Analytics · **raporla** → Power BI.
 
@@ -217,14 +275,24 @@ az group delete --name $RG --yes --no-wait
 
 <details><summary>Beklenen gözlemler ve açıklamaları</summary>
 
-| Adım | Gözlem | Kavram |
-|---|---|---|
-| 2–3 | `compute-model Serverless`, `autoPauseDelay: 60` (dakika cinsinden boşta kalma süresi) | Serverless: boşta duraklar, compute ücreti kesilir |
-| 2 | `--use-free-limit` reddedilirse: abonelikte zaten 10 ücretsiz veritabanı vardır veya bölge/teklif kısıtı var | Ücretsiz teklif limitleri |
-| 4 | Yedek politikası kendiliğinden vardır | PaaS: otomatik yedek |
-| 5 | `--enable-free-tier` ikinci hesapta hata verir | Aboneliğe bir free tier hesabı |
-| 6 | `Session` → `Eventual`'a değiştirmek anında yapılır, uygulama kodu değişmez | Tutarlılık hesap düzeyinde ayarlanır |
-| (düşünce deneyi) | Aynı hesabı `--locations` ile ikinci bir region'a eklesen ne değişir? | Küresel dağıtım + `--enable-multiple-write-locations` ile çok region'da yazma; maliyet **region sayısıyla** artar |
+- **2–3**
+  - Gözlem: `compute-model Serverless`, `autoPauseDelay: 60` (dakika cinsinden boşta kalma süresi)
+  - Kavram: Serverless: boşta duraklar, compute ücreti kesilir
+- **2**
+  - Gözlem: `--use-free-limit` reddedilirse: abonelikte zaten 10 ücretsiz veritabanı vardır veya bölge/teklif kısıtı var
+  - Kavram: Ücretsiz teklif limitleri
+- **4**
+  - Gözlem: Yedek politikası kendiliğinden vardır
+  - Kavram: PaaS: otomatik yedek
+- **5**
+  - Gözlem: `--enable-free-tier` ikinci hesapta hata verir
+  - Kavram: Aboneliğe bir free tier hesabı
+- **6**
+  - Gözlem: `Session` → `Eventual`'a değiştirmek anında yapılır, uygulama kodu değişmez
+  - Kavram: Tutarlılık hesap düzeyinde ayarlanır
+- **(düşünce deneyi)**
+  - Gözlem: Aynı hesabı `--locations` ile ikinci bir region'a eklesen ne değişir?
+  - Kavram: Küresel dağıtım + `--enable-multiple-write-locations` ile çok region'da yazma; maliyet **region sayısıyla** artar
 
 **Portal demosu yok:** Query editor ve Data Explorer'ı portalda denemek için `$SRV` firewall kuralı eklemek gerekir; bu laboratuvarın kapsamı dışında. **Emulator** (Docker imajı) yerel geliştirme için *(bağlam)*.
 </details>
@@ -307,17 +375,33 @@ Bir perakende şirketi e-ticaret platformunu modernleştiriyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| SQL Database (PaaS) vs VM'de SQL | Yama/yedek/HA devri, düşük yönetim | Instance düzeyi özellik ve OS erişimi sınırı |
-| Managed Instance | Yüksek uyumluluk, kolay taşıma | Dağıtım süresi ve minimum maliyet daha yüksek; VNet gereksinimi |
-| Serverless compute tier | Boşta sıfır compute maliyeti, otomatik ölçek | Duraklamadan uyanışta ilk istek gecikmesi; sürekli yükte provisioned daha ucuz olabilir |
-| Elastic pool | Çok kiracılı uygulamada paylaşılan kaynak = düşük maliyet | Gürültülü komşu; havuz limitleri |
-| Cosmos DB | Küresel dağıtım, ms gecikme, yatay ölçek | RU/s planlaması; region sayısı = maliyet; partition tasarımı zorunlu |
-| Cosmos autoscale vs provisioned vs serverless | Autoscale: dalgalı yük; serverless: seyrek yük | Autoscale birim fiyatı daha yüksek; serverless'ta throughput ve ölçek limiti |
-| Redis önbellek | Çok düşük okuma gecikmesi, DB yükü azalır | Ek servis maliyeti, **cache invalidation** karmaşıklığı |
-| Fabric (SaaS) | Tek platform, az yönetim, Power BI entegre | Kapasite tabanlı maliyet modeli; platforma bağlılık |
-| Synapse/Databricks/HDInsight | Daha fazla kontrol ve mevcut yatırım | Daha çok yönetim; Synapse'te yol haritası riski |
+- **SQL Database (PaaS) vs VM'de SQL**
+  - Kazanç: Yama/yedek/HA devri, düşük yönetim
+  - Bedel: Instance düzeyi özellik ve OS erişimi sınırı
+- **Managed Instance**
+  - Kazanç: Yüksek uyumluluk, kolay taşıma
+  - Bedel: Dağıtım süresi ve minimum maliyet daha yüksek; VNet gereksinimi
+- **Serverless compute tier**
+  - Kazanç: Boşta sıfır compute maliyeti, otomatik ölçek
+  - Bedel: Duraklamadan uyanışta ilk istek gecikmesi; sürekli yükte provisioned daha ucuz olabilir
+- **Elastic pool**
+  - Kazanç: Çok kiracılı uygulamada paylaşılan kaynak = düşük maliyet
+  - Bedel: Gürültülü komşu; havuz limitleri
+- **Cosmos DB**
+  - Kazanç: Küresel dağıtım, ms gecikme, yatay ölçek
+  - Bedel: RU/s planlaması; region sayısı = maliyet; partition tasarımı zorunlu
+- **Cosmos autoscale vs provisioned vs serverless**
+  - Kazanç: Autoscale: dalgalı yük; serverless: seyrek yük
+  - Bedel: Autoscale birim fiyatı daha yüksek; serverless'ta throughput ve ölçek limiti
+- **Redis önbellek**
+  - Kazanç: Çok düşük okuma gecikmesi, DB yükü azalır
+  - Bedel: Ek servis maliyeti, **cache invalidation** karmaşıklığı
+- **Fabric (SaaS)**
+  - Kazanç: Tek platform, az yönetim, Power BI entegre
+  - Bedel: Kapasite tabanlı maliyet modeli; platforma bağlılık
+- **Synapse/Databricks/HDInsight**
+  - Kazanç: Daha fazla kontrol ve mevcut yatırım
+  - Bedel: Daha çok yönetim; Synapse'te yol haritası riski
 
 ---
 

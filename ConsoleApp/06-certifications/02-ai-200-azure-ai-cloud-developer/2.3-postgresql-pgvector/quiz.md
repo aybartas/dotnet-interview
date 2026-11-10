@@ -100,11 +100,9 @@ IVFFlat index'i hakkında hangi iki ifade doğrudur?
 
 #### Soru 7: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) HNSW index boş bir tabloda oluşturulabilir ve sonradan eklenen satırlarla kendini günceller. | ☐ | ☐ |
-| b) `hnsw.ef_search` değerini artırmak recall'ı genelde artırır, gecikmeyi de artırır. | ☐ | ☐ |
-| c) ANN index'ler (HNSW/IVFFlat) her zaman %100 doğru (exact) sonuç döner. | ☐ | ☐ |
+- a) HNSW index boş bir tabloda oluşturulabilir ve sonradan eklenen satırlarla kendini günceller. — Evet: ☐ · Hayır: ☐
+- b) `hnsw.ef_search` değerini artırmak recall'ı genelde artırır, gecikmeyi de artırır. — Evet: ☐ · Hayır: ☐
+- c) ANN index'ler (HNSW/IVFFlat) her zaman %100 doğru (exact) sonuç döner. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -205,11 +203,9 @@ az postgres flexible-server parameter set --resource-group $RG --server-name $PG
 
 #### Soru 14: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) PgBouncer transaction pooling modunda oturum düzeyi `SET` yerine transaction içinde `SET LOCAL` kullanmak daha güvenlidir. | ☐ | ☐ |
-| b) Uygulama örnek sayısı × `MaxPoolSize`, sunucu `max_connections` sınırını aşmamalıdır. | ☐ | ☐ |
-| c) Microsoft Entra ile bağlanıldığında token süresi dolsa bile açık havuz bağlantıları otomatik olarak yeni kimlikle yenilenir; istemci kodu bir şey yapmaz. | ☐ | ☐ |
+- a) PgBouncer transaction pooling modunda oturum düzeyi `SET` yerine transaction içinde `SET LOCAL` kullanmak daha güvenlidir. — Evet: ☐ · Hayır: ☐
+- b) Uygulama örnek sayısı × `MaxPoolSize`, sunucu `max_connections` sınırını aşmamalıdır. — Evet: ☐ · Hayır: ☐
+- c) Microsoft Entra ile bağlanıldığında token süresi dolsa bile açık havuz bağlantıları otomatik olarak yeni kimlikle yenilenir; istemci kodu bir şey yapmaz. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

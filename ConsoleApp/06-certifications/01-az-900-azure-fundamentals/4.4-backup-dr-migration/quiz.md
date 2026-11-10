@@ -51,11 +51,9 @@ Her ifadeyi **RPO** veya **RTO** ile eşleştirin.
 
 #### Soru 4: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Bir storage account GRS ile yapılandırıldıysa, bir blob'un yanlışlıkla silinmesi ikincil bölgedeki kopyadan geri alınabilir. | ☐ | ☐ |
-| b) Site Recovery replikasyonu, bozulmuş verinin hedef bölgeye de kopyalanmasına yol açabilir. | ☐ | ☐ |
-| c) Azure Backup yedekleri, kaynağından ayrı bir vault'ta saklanır. | ☐ | ☐ |
+- a) Bir storage account GRS ile yapılandırıldıysa, bir blob'un yanlışlıkla silinmesi ikincil bölgedeki kopyadan geri alınabilir. — Evet: ☐ · Hayır: ☐
+- b) Site Recovery replikasyonu, bozulmuş verinin hedef bölgeye de kopyalanmasına yol açabilir. — Evet: ☐ · Hayır: ☐
+- **c) Azure Backup yedekleri, kaynağından ayrı bir vault'ta saklanır.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -164,12 +162,10 @@ Bir ekip, Site Recovery için **DR tatbikatı** yapmak istiyor ama üretim iş y
 
 #### Soru 13: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure Arc, kurum içi sunucuları Azure'a taşımadan Azure'dan yönetmeyi sağlar. | ☐ | ☐ |
-| b) RTO, felaket sonrası kaybedilmesine izin verilen veri miktarını belirtir. | ☐ | ☐ |
-| c) Site Recovery, kurum içi Hyper-V VM'lerini Azure'a replike edebilir. | ☐ | ☐ |
-| d) Bir Recovery Services vault'ta korunan VM'in yedek verileri silinmeden vault silinebilir. | ☐ | ☐ |
+- a) Azure Arc, kurum içi sunucuları Azure'a taşımadan Azure'dan yönetmeyi sağlar. — Evet: ☐ · Hayır: ☐
+- b) RTO, felaket sonrası kaybedilmesine izin verilen veri miktarını belirtir. — Evet: ☐ · Hayır: ☐
+- c) Site Recovery, kurum içi Hyper-V VM'lerini Azure'a replike edebilir. — Evet: ☐ · Hayır: ☐
+- d) Bir Recovery Services vault'ta korunan VM'in yedek verileri silinmeden vault silinebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

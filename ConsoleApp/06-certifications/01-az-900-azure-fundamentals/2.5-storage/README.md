@@ -37,22 +37,42 @@ Bu konu sınavın beş sorusunu cevaplar:
 
 **Storage account:** Azure genelinde **benzersiz** bir ad alanı (3-24 karakter, küçük harf + rakam); her servis bu adla bir endpoint alır:
 
-| Servis | Ne saklar? | Endpoint | Tipik kullanım |
-|---|---|---|---|
-| **Blob** | Nesne — yapılandırılmamış veri | `https://<ad>.blob.core.windows.net` | Görsel, video, yedek, log, statik web sitesi, veri gölü |
-| **Azure Files** | Tam yönetilen **SMB/NFS dosya paylaşımı** | `https://<ad>.file.core.windows.net` | Paylaşılan klasör, lift-and-shift uygulamalar |
-| **Queue** | Basit mesaj kuyruğu (mesaj ≤ 64 KB) | `https://<ad>.queue.core.windows.net` | Bileşenler arası asenkron iş listesi |
-| **Table** | NoSQL anahtar-değer (şemasız) | `https://<ad>.table.core.windows.net` | Basit yapılandırılmış veri, meta veri |
-| **Disks** (managed disks) | VM'e bağlanan **blok** depolama | — (VM'e bağlı kaynak) | VM işletim sistemi ve veri diskleri (→ C1.5) |
+- **Blob**
+  - Ne saklar?: Nesne — yapılandırılmamış veri
+  - Endpoint: `https://<ad>.blob.core.windows.net`
+  - Tipik kullanım: Görsel, video, yedek, log, statik web sitesi, veri gölü
+- **Azure Files**
+  - Ne saklar?: Tam yönetilen **SMB/NFS dosya paylaşımı**
+  - Endpoint: `https://<ad>.file.core.windows.net`
+  - Tipik kullanım: Paylaşılan klasör, lift-and-shift uygulamalar
+- **Queue**
+  - Ne saklar?: Basit mesaj kuyruğu (mesaj ≤ 64 KB)
+  - Endpoint: `https://<ad>.queue.core.windows.net`
+  - Tipik kullanım: Bileşenler arası asenkron iş listesi
+- **Table**
+  - Ne saklar?: NoSQL anahtar-değer (şemasız)
+  - Endpoint: `https://<ad>.table.core.windows.net`
+  - Tipik kullanım: Basit yapılandırılmış veri, meta veri
+- **Disks** (managed disks)
+  - Ne saklar?: VM'e bağlanan **blok** depolama
+  - Endpoint: — (VM'e bağlı kaynak)
+  - Tipik kullanım: VM işletim sistemi ve veri diskleri (→ C1.5)
 
 **Storage account türleri:**
 
-| Tür | Desteklediği servisler | Redundancy | Ne zaman? |
-|---|---|---|---|
-| **Standard general-purpose v2** | Blob, Files, Queue, Table | LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS | **Çoğu senaryo** — varsayılan seçim |
-| **Premium block blobs** | Block ve append blob | LRS, ZRS | Düşük gecikme, yüksek işlem hızı, küçük nesneler |
-| **Premium file shares** | Azure Files | LRS, ZRS | Kurumsal/yüksek performanslı dosya paylaşımı |
-| **Premium page blobs** | Page blob | LRS, ZRS | Yüksek performanslı page blob senaryoları |
+- **Standard general-purpose v2**
+  - Desteklediği servisler: Blob, Files, Queue, Table
+  - Redundancy: LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS
+  - Ne zaman?: **Çoğu senaryo** — varsayılan seçim
+- **Premium block blobs**
+  - Desteklediği servisler: Block ve append blob · Redundancy: LRS, ZRS
+  - Ne zaman?: Düşük gecikme, yüksek işlem hızı, küçük nesneler
+- **Premium file shares**
+  - Desteklediği servisler: Azure Files · Redundancy: LRS, ZRS
+  - Ne zaman?: Kurumsal/yüksek performanslı dosya paylaşımı
+- **Premium page blobs**
+  - Desteklediği servisler: Page blob · Redundancy: LRS, ZRS
+  - Ne zaman?: Yüksek performanslı page blob senaryoları
 
 > Premium türler SSD tabanlıdır ve **coğrafi** (GRS/GZRS) redundancy sunmaz.
 
@@ -62,14 +82,30 @@ Bu konu sınavın beş sorusunu cevaplar:
 
 Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kopyaların **nereye** konduğunu belirler:
 
-| Seçenek | Kopyalar | Disk/raf arızası | Datacenter/zone arızası | Bölgesel felaket | Felakette okuma |
-|---|---|---|---|---|---|
-| **LRS** (locally redundant) | Birincil bölgede **tek datacenter** içinde 3 kopya | ✔ | ✘ | ✘ | ✘ |
-| **ZRS** (zone-redundant) | Birincil bölgede **3 availability zone**'a | ✔ | ✔ | ✘ | ✘ |
-| **GRS** (geo-redundant) | LRS + **eşleşik bölgede** LRS (6 kopya) | ✔ | — (failover gerekir) | ✔ (failover ile) | Failover sonrası |
-| **GZRS** (geo-zone-redundant) | ZRS + eşleşik bölgede LRS | ✔ | ✔ | ✔ (failover ile) | Failover sonrası |
-| **RA-GRS** | GRS + ikincilden **her zaman okuma** | ✔ | — | ✔ | ✔ ikincilden |
-| **RA-GZRS** | GZRS + ikincilden **her zaman okuma** | ✔ | ✔ | ✔ | ✔ ikincilden |
+- **LRS** (locally redundant)
+  - Kopyalar: Birincil bölgede **tek datacenter** içinde 3 kopya
+  - Disk/raf arızası: ✔ · Datacenter/zone arızası: ✘ · Bölgesel felaket: ✘
+  - Felakette okuma: ✘
+- **ZRS** (zone-redundant)
+  - Kopyalar: Birincil bölgede **3 availability zone**'a
+  - Disk/raf arızası: ✔ · Datacenter/zone arızası: ✔ · Bölgesel felaket: ✘
+  - Felakette okuma: ✘
+- **GRS** (geo-redundant)
+  - Kopyalar: LRS + **eşleşik bölgede** LRS (6 kopya)
+  - Disk/raf arızası: ✔ · Datacenter/zone arızası: — (failover gerekir)
+  - Bölgesel felaket: ✔ (failover ile) · Felakette okuma: Failover sonrası
+- **GZRS** (geo-zone-redundant)
+  - Kopyalar: ZRS + eşleşik bölgede LRS · Disk/raf arızası: ✔
+  - Datacenter/zone arızası: ✔ · Bölgesel felaket: ✔ (failover ile)
+  - Felakette okuma: Failover sonrası
+- **RA-GRS**
+  - Kopyalar: GRS + ikincilden **her zaman okuma**
+  - Disk/raf arızası: ✔ · Datacenter/zone arızası: — · Bölgesel felaket: ✔
+  - Felakette okuma: ✔ ikincilden
+- **RA-GZRS**
+  - Kopyalar: GZRS + ikincilden **her zaman okuma**
+  - Disk/raf arızası: ✔ · Datacenter/zone arızası: ✔ · Bölgesel felaket: ✔
+  - Felakette okuma: ✔ ikincilden
 
 - İkincil bölge her zaman birincilin **region pair**'idir (→ C1.4); ikincile replikasyon **asenkrondur** (felakette son birkaç saniyenin/dakikanın verisi kaybolabilir).
 - GRS/GZRS'te ikincil bölge **normalde okunamaz**; ancak **failover** (müşteri başlatır veya Microsoft) sonrası yeni birincil olur. Sürekli okuma istiyorsan **RA-** (read-access) seçeneği gerekir.
@@ -77,12 +113,23 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
 
 #### 3.3 Blob Storage ve access tier'ları ⭐
 
-| Tier | Kullanım | Önerilen en az süre | Erişim | Maliyet dengesi |
-|---|---|---|---|---|
-| **Hot** | Sık erişilen veri (aktif içerik) | — | Anında | Depolama en pahalı, erişim en ucuz |
-| **Cool** | Seyrek erişim (kısa vadeli yedek, eski içerik) | **30 gün** | Anında | Depolama ucuz, erişim daha pahalı |
-| **Cold** | Nadir erişim ama hızlı okunmalı | **90 gün** | Anında | Depolama daha ucuz, erişim daha pahalı |
-| **Archive** | Çok nadir (uzun dönem arşiv, uyumluluk kayıtları) | **180 gün** | **Çevrimdışı** — önce **rehydrate** (saatler sürebilir) | Depolama en ucuz, erişim en pahalı |
+- **Hot**
+  - Kullanım: Sık erişilen veri (aktif içerik) · Önerilen en az süre: —
+  - Erişim: Anında
+  - Maliyet dengesi: Depolama en pahalı, erişim en ucuz
+- **Cool**
+  - Kullanım: Seyrek erişim (kısa vadeli yedek, eski içerik)
+  - Önerilen en az süre: **30 gün** · Erişim: Anında
+  - Maliyet dengesi: Depolama ucuz, erişim daha pahalı
+- **Cold**
+  - Kullanım: Nadir erişim ama hızlı okunmalı
+  - Önerilen en az süre: **90 gün** · Erişim: Anında
+  - Maliyet dengesi: Depolama daha ucuz, erişim daha pahalı
+- **Archive**
+  - Kullanım: Çok nadir (uzun dönem arşiv, uyumluluk kayıtları)
+  - Önerilen en az süre: **180 gün**
+  - Erişim: **Çevrimdışı** — önce **rehydrate** (saatler sürebilir)
+  - Maliyet dengesi: Depolama en ucuz, erişim en pahalı
 
 - **Archive'daki blob okunamaz:** önce Hot/Cool/Cold'a taşınması (rehydrate) gerekir; standart öncelikte **saatler** (en çok ~15 saat), yüksek öncelikte daha kısa sürer ve daha pahalıdır.
 - En az süre dolmadan silmek veya tier değiştirmek **erken silme ücreti** doğurur.
@@ -101,11 +148,15 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
 
 #### 3.5 Dosya taşıma araçları
 
-| Araç | Ne? | Ne zaman? |
-|---|---|---|
-| **AzCopy** | Blob ve dosya kopyalamak için **komut satırı** aracı | Betikli/toplu kopyalama, `sync`, storage account'lar ve bulutlar (ör. S3) arası kopya |
-| **Azure Storage Explorer** | Blob, Files, Queue, Table, disk yönetimi için **grafik** masaüstü uygulaması (Windows/macOS/Linux; arka planda AzCopy) | Elle dosya yükleme/indirme, göz atma, erişim yönetimi |
-| **Azure File Sync** | Windows Server ↔ Azure Files **sürekli, iki yönlü senkron** | Şube dosya sunucuları, hybrid dosya paylaşımı |
+- **AzCopy**
+  - Ne?: Blob ve dosya kopyalamak için **komut satırı** aracı
+  - Ne zaman?: Betikli/toplu kopyalama, `sync`, storage account'lar ve bulutlar (ör. S3) arası kopya
+- **Azure Storage Explorer**
+  - Ne?: Blob, Files, Queue, Table, disk yönetimi için **grafik** masaüstü uygulaması (Windows/macOS/Linux; arka planda AzCopy)
+  - Ne zaman?: Elle dosya yükleme/indirme, göz atma, erişim yönetimi
+- **Azure File Sync**
+  - Ne?: Windows Server ↔ Azure Files **sürekli, iki yönlü senkron**
+  - Ne zaman?: Şube dosya sunucuları, hybrid dosya paylaşımı
 
 #### 3.6 Migration seçenekleri
 
@@ -170,15 +221,25 @@ az group delete --name $RG --yes --no-wait
 
 Bir sigorta şirketi on yıllık dosya arşivini ve dosya sunucularını buluta taşıyor:
 
-| İhtiyaç | Karar | Neden |
-|---|---|---|
-| 300 TB taranmış poliçe arşivi, ofisin hattı 200 Mbps | **Azure Data Box** (birden çok cihaz) | Ağdan aylar sürer; cihazla birkaç hafta |
-| Arşiv yalnızca denetimde okunuyor, 10 yıl saklanmalı | Blob **Archive** tier + lifecycle kuralı | En ucuz depolama; denetimden önce rehydrate için saatler yeterli |
-| Son 1 yılın poliçeleri müşteri portalında gösteriliyor | Blob **Hot** (eski olanlar lifecycle ile **Cool**'a) | Sık okunan veri pahalı erişim ücretine girmemeli |
-| Müşteri belgeleri hem zone arızasında erişilebilir hem bölgesel felakette korunmalı; felakette okunabilmeli | **RA-GZRS** | Zone + bölge koruması + ikincilden okuma |
-| 12 şubedeki Windows dosya sunucuları | **Azure Files** + **Azure File Sync** (cloud tiering) | Şubelerde hızlı yerel erişim, tek kaynak bulutta, yer tasarrufu |
-| Sunucuların hangisi nasıl taşınacak, maliyeti ne? | **Azure Migrate** keşif + değerlendirme | Boyutlandırma ve maliyet tahmini taşımadan önce |
-| Gece raporlarının blob'a betikle yüklenmesi | **AzCopy** (`azcopy sync`) | Komut satırı, zamanlanmış iş |
+- **300 TB taranmış poliçe arşivi, ofisin hattı 200 Mbps**
+  - Karar: **Azure Data Box** (birden çok cihaz)
+  - Neden: Ağdan aylar sürer; cihazla birkaç hafta
+- **Arşiv yalnızca denetimde okunuyor, 10 yıl saklanmalı**
+  - Karar: Blob **Archive** tier + lifecycle kuralı
+  - Neden: En ucuz depolama; denetimden önce rehydrate için saatler yeterli
+- **Son 1 yılın poliçeleri müşteri portalında gösteriliyor**
+  - Karar: Blob **Hot** (eski olanlar lifecycle ile **Cool**'a)
+  - Neden: Sık okunan veri pahalı erişim ücretine girmemeli
+- Müşteri belgeleri hem zone arızasında erişilebilir hem bölgesel felakette korunmalı; felakette okunabilmeli
+  - Karar: **RA-GZRS**
+  - Neden: Zone + bölge koruması + ikincilden okuma
+- **12 şubedeki Windows dosya sunucuları**
+  - Karar: **Azure Files** + **Azure File Sync** (cloud tiering)
+  - Neden: Şubelerde hızlı yerel erişim, tek kaynak bulutta, yer tasarrufu
+- **Sunucuların hangisi nasıl taşınacak, maliyeti ne?**
+  - Karar: **Azure Migrate** keşif + değerlendirme
+  - Neden: Boyutlandırma ve maliyet tahmini taşımadan önce
+- **Gece raporlarının blob'a betikle yüklenmesi** — Karar: **AzCopy** (`azcopy sync`) · Neden: Komut satırı, zamanlanmış iş
 
 ---
 
@@ -230,14 +291,24 @@ Bir sigorta şirketi on yıllık dosya arşivini ve dosya sunucularını buluta 
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| LRS → ZRS | Zone arızasında kesintisiz erişim | Daha yüksek fiyat; tüm bölgelerde/türlerde yok |
-| ZRS → GZRS / RA-GZRS | Bölgesel felakete dayanıklılık (+ ikincilden okuma) | ~2× depolama, coğrafi replikasyon trafiği, asenkron replikasyon (RPO > 0) |
-| Hot → Cool/Cold | Düşük depolama maliyeti | Daha pahalı okuma/işlem, erken silme ücreti |
-| Cool → Archive | En düşük depolama maliyeti | Çevrimdışı; saatlerce rehydrate, pahalı erişim |
-| Standard → Premium | Düşük gecikme, yüksek IOPS | Daha yüksek GB fiyatı, coğrafi redundancy yok |
-| Ağdan taşıma (AzCopy) → Data Box | Büyük veride çok daha hızlı, ağ yükü yok | Kargo ve kopyalama süresi, cihaz ücreti; sürekli senkron değil |
+- **LRS → ZRS**
+  - Kazanç: Zone arızasında kesintisiz erişim
+  - Bedel: Daha yüksek fiyat; tüm bölgelerde/türlerde yok
+- **ZRS → GZRS / RA-GZRS**
+  - Kazanç: Bölgesel felakete dayanıklılık (+ ikincilden okuma)
+  - Bedel: ~2× depolama, coğrafi replikasyon trafiği, asenkron replikasyon (RPO > 0)
+- **Hot → Cool/Cold**
+  - Kazanç: Düşük depolama maliyeti
+  - Bedel: Daha pahalı okuma/işlem, erken silme ücreti
+- **Cool → Archive**
+  - Kazanç: En düşük depolama maliyeti
+  - Bedel: Çevrimdışı; saatlerce rehydrate, pahalı erişim
+- **Standard → Premium**
+  - Kazanç: Düşük gecikme, yüksek IOPS
+  - Bedel: Daha yüksek GB fiyatı, coğrafi redundancy yok
+- **Ağdan taşıma (AzCopy) → Data Box**
+  - Kazanç: Büyük veride çok daha hızlı, ağ yükü yok
+  - Bedel: Kargo ve kopyalama süresi, cihaz ücreti; sürekli senkron değil
 
 ---
 

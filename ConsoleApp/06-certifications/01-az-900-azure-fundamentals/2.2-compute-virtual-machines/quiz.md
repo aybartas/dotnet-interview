@@ -207,11 +207,9 @@ Bir yönetici bir VM'i siliyor ama ay sonunda faturada hâlâ o VM'le ilgili dis
 
 #### Soru 16: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) VM Scale Set, ölçekleme kurallarına göre instance sayısını otomatik değiştirebilir. | ☐ | ☐ |
-| b) Proximity placement group, VM'leri farklı region'lara dağıtarak dayanıklılığı artırır. | ☐ | ☐ |
-| c) Var olan, çalışan bir VM sonradan bir availability set'e eklenebilir. | ☐ | ☐ |
+- a) VM Scale Set, ölçekleme kurallarına göre instance sayısını otomatik değiştirebilir. — Evet: ☐ · Hayır: ☐
+- b) Proximity placement group, VM'leri farklı region'lara dağıtarak dayanıklılığı artırır. — Evet: ☐ · Hayır: ☐
+- c) Var olan, çalışan bir VM sonradan bir availability set'e eklenebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

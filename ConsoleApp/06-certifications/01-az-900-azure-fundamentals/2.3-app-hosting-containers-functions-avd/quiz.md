@@ -129,11 +129,9 @@ Aşağıdakilerden **hangi ikisi** Azure Functions'ı tetikleyebilir?
 
 #### Soru 10: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure Functions yalnızca HTTP istekleriyle tetiklenebilir. | ☐ | ☐ |
-| b) Durable Functions, durum tutan (stateful) uzun süreli iş akışları yazmaya olanak tanır. | ☐ | ☐ |
-| c) Serverless planlarda Functions, çalışmadığı sürede de compute ücreti doğurur. | ☐ | ☐ |
+- **a) Azure Functions yalnızca HTTP istekleriyle tetiklenebilir.** — Evet: ☐ · Hayır: ☐
+- b) Durable Functions, durum tutan (stateful) uzun süreli iş akışları yazmaya olanak tanır. — Evet: ☐ · Hayır: ☐
+- c) Serverless planlarda Functions, çalışmadığı sürede de compute ücreti doğurur. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

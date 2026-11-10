@@ -12,11 +12,17 @@
 
 **OpenTelemetry (OTel)** satıcıdan bağımsız, CNCF'in gözlemlenebilirlik standardıdır: API + SDK + exporter + wire protokolü (OTLP). Üç sinyal:
 
-| Sinyal | Ne? | .NET karşılığı | Python karşılığı |
-|---|---|---|---|
-| **Trace** | Bir isteğin servisler arası yolu; **span** ağacı | `ActivitySource` / `Activity` | `tracer.start_as_current_span` |
-| **Metric** | Zamanla ölçülen sayısal değer (counter, histogram, gauge) | `System.Diagnostics.Metrics.Meter` | `meter.create_counter` |
-| **Log** | Zaman damgalı olay kaydı; trace'e bağlanır (`TraceId`/`SpanId`) | `ILogger` | `logging` |
+- **Trace**
+  - Ne?: Bir isteğin servisler arası yolu; **span** ağacı
+  - .NET karşılığı: `ActivitySource` / `Activity`
+  - Python karşılığı: `tracer.start_as_current_span`
+- **Metric**
+  - Ne?: Zamanla ölçülen sayısal değer (counter, histogram, gauge)
+  - .NET karşılığı: `System.Diagnostics.Metrics.Meter`
+  - Python karşılığı: `meter.create_counter`
+- **Log**
+  - Ne?: Zaman damgalı olay kaydı; trace'e bağlanır (`TraceId`/`SpanId`)
+  - .NET karşılığı: `ILogger` · Python karşılığı: `logging`
 
 | Kavram | Tek cümle |
 |---|---|
@@ -56,15 +62,19 @@
 
 > **Connection string** kullan (`InstrumentationKey=…;IngestionEndpoint=…`); yalnızca instrumentation key ile veri alımı **sonlandırıldı** (2025). Ortam değişkeni: `APPLICATIONINSIGHTS_CONNECTION_STRING`.
 
-| Klasik (App Insights **Logs**) | Workspace tablosu (Log Analytics) | Ne? |
-|---|---|---|
-| `requests` | `AppRequests` | Gelen istek / iş (Server, Consumer span) |
-| `dependencies` | `AppDependencies` | Giden çağrı: HTTP, SQL, Service Bus, Cosmos (Client/Producer span) |
-| `exceptions` | `AppExceptions` | İstisnalar |
-| `traces` | `AppTraces` | `ILogger` / log kayıtları |
-| `customMetrics` | `AppMetrics` | Özel metrikler (`Meter`) |
-| `customEvents` | `AppEvents` | Özel olaylar |
-| `pageViews`, `availabilityResults` | `AppPageViews`, `AppAvailabilityResults` | Tarayıcı / availability test |
+- **`requests`**
+  - Workspace tablosu (Log Analytics): `AppRequests`
+  - Ne?: Gelen istek / iş (Server, Consumer span)
+- **`dependencies`**
+  - Workspace tablosu (Log Analytics): `AppDependencies`
+  - Ne?: Giden çağrı: HTTP, SQL, Service Bus, Cosmos (Client/Producer span)
+- **`exceptions`** — Workspace tablosu (Log Analytics): `AppExceptions` · Ne?: İstisnalar
+- **`traces`** — Workspace tablosu (Log Analytics): `AppTraces` · Ne?: `ILogger` / log kayıtları
+- **`customMetrics`** — Workspace tablosu (Log Analytics): `AppMetrics` · Ne?: Özel metrikler (`Meter`)
+- **`customEvents`** — Workspace tablosu (Log Analytics): `AppEvents` · Ne?: Özel olaylar
+- **`pageViews`, `availabilityResults`**
+  - Workspace tablosu (Log Analytics): `AppPageViews`, `AppAvailabilityResults`
+  - Ne?: Tarayıcı / availability test
 
 Sütun eşlemesi (en sık kullanılanlar):
 
@@ -174,19 +184,29 @@ def create_order(order):
 
 KQL bir **boru hattı**dır: tablo `|` operatör `|` operatör. Her adım bir önceki adımın çıktısını işler.
 
-| Operatör | Ne yapar? | Not |
-|---|---|---|
-| `where` | Satırları süzer | Zaman filtresini **en başa** koy (`where timestamp > ago(1h)`) → hızlı |
-| `project` | Sütun seç / yeniden adlandır | `project-away` çıkarır, `project-rename` adlandırır |
-| `extend` | **Hesaplanan** sütun ekler | Satırı değiştirmez, sütun ekler |
-| `summarize … by` | Gruplayıp **topla** (`count()`, `sum()`, `avg()`, `percentile()`, `dcount()`, `countif`, `sumif`, `arg_max`) | Zaman kovası: `by bin(timestamp, 5m)` |
-| `top N by x` | Sırala + ilk N | `take N` = **rastgele** N satır (sıralamaz) |
-| `order by` / `sort by` | Sırala | Varsayılan **desc** |
-| `join kind=… ` | İki tabloyu anahtarla birleştir | **Varsayılan `innerunique`** (sol anahtarı tekilleştirir!) — beklenmedik satır kaybı; `kind=inner` açıkça yaz |
-| `union` | Tabloları alt alta ekler | Sütunlar birleşir |
-| `let` | Değişken/alt sorgu | `let window = 5m;` |
-| `render timechart` | Grafik | Zaman ekseni gerekir (`bin` ile) |
-| `parse_json`, `tostring`, `todynamic` | `dynamic` (customDimensions) alanları | `tostring(customDimensions.orderId)` |
+- **`where`**
+  - Ne yapar?: Satırları süzer
+  - Not: Zaman filtresini **en başa** koy (`where timestamp > ago(1h)`) → hızlı
+- **`project`**
+  - Ne yapar?: Sütun seç / yeniden adlandır
+  - Not: `project-away` çıkarır, `project-rename` adlandırır
+- **`extend`** — Ne yapar?: **Hesaplanan** sütun ekler · Not: Satırı değiştirmez, sütun ekler
+- **`summarize … by`**
+  - Ne yapar?: Gruplayıp **topla** (`count()`, `sum()`, `avg()`, `percentile()`, `dcount()`, `countif`, `sumif`, `arg_max`)
+  - Not: Zaman kovası: `by bin(timestamp, 5m)`
+- **`top N by x`**
+  - Ne yapar?: Sırala + ilk N
+  - Not: `take N` = **rastgele** N satır (sıralamaz)
+- **`order by` / `sort by`** — Ne yapar?: Sırala · Not: Varsayılan **desc**
+- **`join kind=… `**
+  - Ne yapar?: İki tabloyu anahtarla birleştir
+  - Not: **Varsayılan `innerunique`** (sol anahtarı tekilleştirir!) — beklenmedik satır kaybı; `kind=inner` açıkça yaz
+- **`union`** — Ne yapar?: Tabloları alt alta ekler · Not: Sütunlar birleşir
+- **`let`** — Ne yapar?: Değişken/alt sorgu · Not: `let window = 5m;`
+- **`render timechart`** — Ne yapar?: Grafik · Not: Zaman ekseni gerekir (`bin` ile)
+- **`parse_json`, `tostring`, `todynamic`**
+  - Ne yapar?: `dynamic` (customDimensions) alanları
+  - Not: `tostring(customDimensions.orderId)`
 
 String ve karşılaştırma tuzakları: `==` **büyük/küçük harfe duyarlı**, `=~` duyarsız; `has` (tam terim, **indeksli, hızlı**) ↔ `contains` (alt dize, yavaş); `in`, `!in`, `between (a .. b)`. Zaman: `ago(1h)`, `now()`, `startofday()`, **her zaman UTC**.
 
@@ -243,21 +263,30 @@ Aynı sorgular Log Analytics'te workspace adlarıyla: `AppRequests | where TimeG
 
 **Platform logları (workspace tabloları):**
 
-| Kaynak | Tablo (2026 başı itibarıyla — doğrula) | Örnek |
-|---|---|---|
-| Container Apps | `ContainerAppConsoleLogs_CL` / kaynağa özgü `ContainerAppConsoleLogs`; `ContainerAppSystemLogs` | `ContainerAppConsoleLogs_CL \| where ContainerAppName_s == "orders-api" and Log_s has "error"` |
-| AKS (Container Insights) | `ContainerLogV2`, `KubePodInventory`, `KubeEvents` | `ContainerLogV2 \| where PodName startswith "orders" and LogMessage has "Exception"` |
-| Azure kaynak logları/metrikleri | `AzureDiagnostics`, kaynağa özgü tablolar, `AzureMetrics`, `AzureActivity` | `AzureActivity \| where OperationNameValue has "delete"` |
-| Key Vault denetim | `AZKVAuditLogs` / `AzureDiagnostics` | kim hangi secret'ı okudu (→ [C2.11](../4.1-managed-identity-key-vault/README.md)) |
+- **Container Apps**
+  - Tablo (2026 başı itibarıyla — doğrula): `ContainerAppConsoleLogs_CL` / kaynağa özgü `ContainerAppConsoleLogs`; `ContainerAppSystemLogs`
+  - Örnek: `ContainerAppConsoleLogs_CL | where ContainerAppName_s == "orders-api" and Log_s has "error"`
+- **AKS (Container Insights)**
+  - Tablo (2026 başı itibarıyla — doğrula): `ContainerLogV2`, `KubePodInventory`, `KubeEvents`
+  - Örnek: `ContainerLogV2 | where PodName startswith "orders" and LogMessage has "Exception"`
+- **Azure kaynak logları/metrikleri**
+  - Tablo (2026 başı itibarıyla — doğrula): `AzureDiagnostics`, kaynağa özgü tablolar, `AzureMetrics`, `AzureActivity`
+  - Örnek: `AzureActivity | where OperationNameValue has "delete"`
+- **Key Vault denetim**
+  - Tablo (2026 başı itibarıyla — doğrula): `AZKVAuditLogs` / `AzureDiagnostics`
+  - Örnek: kim hangi secret'ı okudu (→ [C2.11](../4.1-managed-identity-key-vault/README.md))
 
 #### 3.4 Uyarılar (alerts) ve sorun giderme akışı
 
-| Alert türü | Veri | Gecikme/maliyet | Ne zaman? |
-|---|---|---|---|
-| **Metric alert** | Platform/özel **metrik** | Dakika düzeyi, ucuz | Eşik: CPU, istek sayısı, kuyruk uzunluğu |
-| **Log search alert** (scheduled query rule) | **KQL** sonucu | Ingestion gecikmesi + değerlendirme aralığı; her değerlendirme ücretli | "Hata oranı > %5", karmaşık koşul |
-| **Activity log alert** | Control plane olayı | — | "Kaynak silindi" |
-| Smart detection | Application Insights anormallik | — | Otomatik, ayar gerektirmez |
+- **Metric alert**
+  - Veri: Platform/özel **metrik** · Gecikme/maliyet: Dakika düzeyi, ucuz
+  - Ne zaman?: Eşik: CPU, istek sayısı, kuyruk uzunluğu
+- **Log search alert** (scheduled query rule)
+  - Veri: **KQL** sonucu
+  - Gecikme/maliyet: Ingestion gecikmesi + değerlendirme aralığı; her değerlendirme ücretli
+  - Ne zaman?: "Hata oranı > %5", karmaşık koşul
+- **Activity log alert** — Veri: Control plane olayı · Gecikme/maliyet: — · Ne zaman?: "Kaynak silindi"
+- **Smart detection** — Veri: Application Insights anormallik · Gecikme/maliyet: — · Ne zaman?: Otomatik, ayar gerektirmez
 
 **Action group:** bildirim/eylem listesi — e-posta, SMS, push, sesli arama, **webhook, Azure Function, Logic App**, ITSM, Automation runbook. Alert kuralı bir veya birden çok action group'a bağlanır; **alert processing rule** bakım penceresinde bastırır.
 
@@ -338,15 +367,27 @@ Sonra portalda **Application Insights → Application map** (API → Service Bus
 
 Bir sipariş sisteminde `orders-api` (Container Apps) siparişi Service Bus'a atar, `orders-worker` işler ve PostgreSQL'e yazar. Gece yarısı kampanya sırasında müşteriler "sipariş onayı gelmiyor" diyor:
 
-| Adım | Eylem | Bulgu |
-|---|---|---|
-| 1. Alert | "Hata oranı > %5" log alert'i action group ile e-posta + Teams webhook'u yolladı | 00:12'de başladı |
-| 2. Belirti | Sorgu 2 (5 dk hata oranı) | Yalnızca **worker**'da `AppRoleName == "orders-worker"` hataları var; API 202 dönüyor |
-| 3. Daralt | Sorgu 4 (`dependencies` → p95/failure by `target`) | PostgreSQL `target` p95 8 sn, timeout'lar |
-| 4. Örnek trace | Başarısız bir `operation_Id` → sorgu 3 | API span → Service Bus producer → worker consumer → SQL span (süre 30 sn, hata) **tek trace**'te |
-| 5. Neden | `exceptions` + `AppTraces` | Connection pool tükenmiş; kampanyada worker ölçeği 20 replikaya çıkmış |
-| 6. Çözüm | Pool boyutu/`MaxConcurrentCalls` ayarı (→ C2.12 ile canlı yenileme), KEDA `maxReplicas` sınırı (→ C2.2) | Hata oranı normale döndü |
-| 7. Önlem | Metrik tabanlı alert (kuyruk uzunluğu), sampling oranı gözden geçirildi (`sum(itemCount)`) | — |
+- **1. Alert**
+  - Eylem: "Hata oranı > %5" log alert'i action group ile e-posta + Teams webhook'u yolladı
+  - Bulgu: 00:12'de başladı
+- **2. Belirti**
+  - Eylem: Sorgu 2 (5 dk hata oranı)
+  - Bulgu: Yalnızca **worker**'da `AppRoleName == "orders-worker"` hataları var; API 202 dönüyor
+- **3. Daralt**
+  - Eylem: Sorgu 4 (`dependencies` → p95/failure by `target`)
+  - Bulgu: PostgreSQL `target` p95 8 sn, timeout'lar
+- **4. Örnek trace**
+  - Eylem: Başarısız bir `operation_Id` → sorgu 3
+  - Bulgu: API span → Service Bus producer → worker consumer → SQL span (süre 30 sn, hata) **tek trace**'te
+- **5. Neden**
+  - Eylem: `exceptions` + `AppTraces`
+  - Bulgu: Connection pool tükenmiş; kampanyada worker ölçeği 20 replikaya çıkmış
+- **6. Çözüm**
+  - Eylem: Pool boyutu/`MaxConcurrentCalls` ayarı (→ C2.12 ile canlı yenileme), KEDA `maxReplicas` sınırı (→ C2.2)
+  - Bulgu: Hata oranı normale döndü
+- **7. Önlem**
+  - Eylem: Metrik tabanlı alert (kuyruk uzunluğu), sampling oranı gözden geçirildi (`sum(itemCount)`)
+  - Bulgu: —
 
 Mesaj kuyruğu olmasaydı bu zinciri bağlayan **context propagation** olmadan API'de başarı, worker'da hata iki ayrı, ilişkisiz kayıt olarak kalırdı.
 
@@ -407,16 +448,28 @@ Mesaj kuyruğu olmasaydı bu zinciri bağlayan **context propagation** olmadan A
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Sampling oranını düşürmek | Ingestion maliyeti ↓ | Nadir hata ve kuyruk istatistiği kaybı; `count()` yanıltır |
-| %100 sampling | Tam görünürlük | Maliyet ve depolama |
-| Otomatik enstrümantasyon | Sıfıra yakın kod | Kontrolsüz hacim (gürültülü bağımlılıklar); filtre gerekebilir |
-| Elle span'ler | İş anlamı (sipariş no, tutar) | Kod yükü; yüksek kardinalite öznitelikleri maliyeti artırır |
-| Log alert ↔ metric alert | Log: esnek KQL koşulu · Metric: hızlı ve ucuz | Log: gecikme + değerlendirme ücreti · Metric: yalnızca metrik |
-| Doğrudan Azure Monitor exporter ↔ **OTel Collector** | Collector: yönlendirme, tail sampling, çoklu backend | Ek bileşen işletimi |
-| Uzun retention | Geçmiş analiz | Depolama ücreti; arşiv/Basic logs katmanları |
-| `summarize` ile ön hesap | Hızlı panolar | Ayrıntıdan vazgeçme; ham veri gerekirse kaynak tabloya dön |
+- **Sampling oranını düşürmek**
+  - Kazanç: Ingestion maliyeti ↓
+  - Bedel: Nadir hata ve kuyruk istatistiği kaybı; `count()` yanıltır
+- **%100 sampling** — Kazanç: Tam görünürlük · Bedel: Maliyet ve depolama
+- **Otomatik enstrümantasyon**
+  - Kazanç: Sıfıra yakın kod
+  - Bedel: Kontrolsüz hacim (gürültülü bağımlılıklar); filtre gerekebilir
+- **Elle span'ler**
+  - Kazanç: İş anlamı (sipariş no, tutar)
+  - Bedel: Kod yükü; yüksek kardinalite öznitelikleri maliyeti artırır
+- **Log alert ↔ metric alert**
+  - Kazanç: Log: esnek KQL koşulu · Metric: hızlı ve ucuz
+  - Bedel: Log: gecikme + değerlendirme ücreti · Metric: yalnızca metrik
+- Doğrudan Azure Monitor exporter ↔ **OTel Collector**
+  - Kazanç: Collector: yönlendirme, tail sampling, çoklu backend
+  - Bedel: Ek bileşen işletimi
+- **Uzun retention**
+  - Kazanç: Geçmiş analiz
+  - Bedel: Depolama ücreti; arşiv/Basic logs katmanları
+- **`summarize` ile ön hesap**
+  - Kazanç: Hızlı panolar
+  - Bedel: Ayrıntıdan vazgeçme; ham veri gerekirse kaynak tabloya dön
 
 ---
 

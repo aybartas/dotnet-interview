@@ -22,12 +22,18 @@
         Traffic Manager = DNS tabanlı (trafiğin içinden geçmez): katman 4/7 ayrımına girmez, "global" ekseninde
 ```
 
-| Servis | Katman | Kapsam | Tek cümle |
-|---|---|---|---|
-| **Azure Load Balancer** | L4 (TCP/UDP) | Bölgesel | Hızlı, düşük gecikmeli paket düzeyi dağıtım; HTTP'yi anlamaz |
-| **Application Gateway** | L7 (HTTP/HTTPS) | Bölgesel | URL/host tabanlı yönlendirme, SSL termination, **WAF** |
-| **Azure Front Door** | L7 (HTTP/HTTPS) | **Global** | Edge'de (POP) karşılayan global giriş: hızlandırma, CDN, WAF, failover |
-| **Traffic Manager** | DNS | **Global** | DNS yanıtını değiştirerek istemciyi bir endpoint'e yönlendirir |
+- **Azure Load Balancer**
+  - Katman: L4 (TCP/UDP) · Kapsam: Bölgesel
+  - Tek cümle: Hızlı, düşük gecikmeli paket düzeyi dağıtım; HTTP'yi anlamaz
+- **Application Gateway**
+  - Katman: L7 (HTTP/HTTPS) · Kapsam: Bölgesel
+  - Tek cümle: URL/host tabanlı yönlendirme, SSL termination, **WAF**
+- **Azure Front Door**
+  - Katman: L7 (HTTP/HTTPS) · Kapsam: **Global**
+  - Tek cümle: Edge'de (POP) karşılayan global giriş: hızlandırma, CDN, WAF, failover
+- **Traffic Manager**
+  - Katman: DNS · Kapsam: **Global**
+  - Tek cümle: DNS yanıtını değiştirerek istemciyi bir endpoint'e yönlendirir
 
 > *(bağlam)* Azure Load Balancer'ın **cross-region (global) tier**'ı da vardır (L4, anycast). Sınav temelinde "Load Balancer = bölgesel, L4" cevabı doğrudur; global L4 ihtiyacı çok nadirdir.
 
@@ -62,13 +68,17 @@ Gelen **TCP/UDP** akışlarını 5-tuple hash'ine (kaynak IP, kaynak port, hedef
 
 **Standard ↔ Basic:**
 
-| | **Standard** | **Basic** |
-|---|---|---|
-| Durum | Güncel, önerilen | **Emekliye ayrıldı** (30 Eylül 2025); yeni dağıtım yapılamaz *(durum notları sayfalarda farklı ifade edilebilir — doğrula)* |
-| Availability zone | Zone-redundant / zonal | Yok |
-| SLA | Var (%99,99 — backend'de ≥ 2 sağlıklı instance şartıyla) | Yok |
-| Güvenlik | Varsayılan **kapalı** (inbound için **NSG ile izin** gerekir) | Varsayılan açık |
-| Probe | TCP, HTTP, HTTPS | TCP, HTTP |
+- **Durum**
+  - Standard: Güncel, önerilen
+  - Basic: **Emekliye ayrıldı** (30 Eylül 2025); yeni dağıtım yapılamaz *(durum notları sayfalarda farklı ifade edilebilir — doğrula)*
+- **Availability zone** — Standard: Zone-redundant / zonal · Basic: Yok
+- **SLA**
+  - Standard: Var (%99,99 — backend'de ≥ 2 sağlıklı instance şartıyla)
+  - Basic: Yok
+- **Güvenlik**
+  - Standard: Varsayılan **kapalı** (inbound için **NSG ile izin** gerekir)
+  - Basic: Varsayılan açık
+- **Probe** — Standard: TCP, HTTP, HTTPS · Basic: TCP, HTTP
 
 > Sınav tuzağı: Standard Load Balancer **secure by default**'tur — NSG ile açıkça izin vermezsen inbound trafik geçmez.
 
@@ -114,14 +124,24 @@ Dünya çapındaki **edge location'larda (POP)** (Microsoft'un global ağında, 
 
 Traffic Manager **trafiğin içinden geçmez**. İstemci `app.contoso.com` adını çözmek istediğinde Traffic Manager, **yönlendirme yöntemine** ve endpoint sağlığına göre uygun endpoint'in adresini **DNS cevabı** olarak döndürür; istemci sonra o endpoint'e **doğrudan** bağlanır. Her protokolle çalışır (DNS seviyesinde olduğu için HTTP olmak zorunda değil).
 
-| Yöntem | Davranış | Tipik kullanım |
-|---|---|---|
-| **Priority** | Her zaman 1. öncelikli endpoint; sağlıksızsa 2.'ye | **Aktif/pasif failover** |
-| **Weighted** | Ağırlıklara göre dağıt (ör. %90 / %10) | Canary, kademeli geçiş |
-| **Performance** | İstemciye **gecikme olarak en yakın** endpoint | Çok region'lı kullanıcı deneyimi |
-| **Geographic** | Kullanıcının **coğrafi konumuna** göre sabit endpoint | Veri egemenliği, bölgeye özel içerik |
-| **Multivalue** | Birden çok sağlıklı IP'yi **tek cevapta** döndür | İstemci tarafı yeniden deneme |
-| **Subnet** | İstemci **IP aralığına** göre endpoint | Kurumsal ağ / ISP'ye özel yönlendirme |
+- **Priority**
+  - Davranış: Her zaman 1. öncelikli endpoint; sağlıksızsa 2.'ye
+  - Tipik kullanım: **Aktif/pasif failover**
+- **Weighted**
+  - Davranış: Ağırlıklara göre dağıt (ör. %90 / %10)
+  - Tipik kullanım: Canary, kademeli geçiş
+- **Performance**
+  - Davranış: İstemciye **gecikme olarak en yakın** endpoint
+  - Tipik kullanım: Çok region'lı kullanıcı deneyimi
+- **Geographic**
+  - Davranış: Kullanıcının **coğrafi konumuna** göre sabit endpoint
+  - Tipik kullanım: Veri egemenliği, bölgeye özel içerik
+- **Multivalue**
+  - Davranış: Birden çok sağlıklı IP'yi **tek cevapta** döndür
+  - Tipik kullanım: İstemci tarafı yeniden deneme
+- **Subnet**
+  - Davranış: İstemci **IP aralığına** göre endpoint
+  - Tipik kullanım: Kurumsal ağ / ISP'ye özel yönlendirme
 
 - **Endpoint türleri:** Azure endpoint'leri, **external** endpoint'ler (Azure dışı), **nested** (profil içinde profil).
 - **Sağlık izleme:** HTTP/HTTPS/TCP probe'ları; sağlıksız endpoint cevaptan çıkar.
@@ -129,15 +149,17 @@ Traffic Manager **trafiğin içinden geçmez**. İstemci `app.contoso.com` adın
 
 **Traffic Manager ↔ Front Door** ⭐
 
-| | Traffic Manager | Front Door |
-|---|---|---|
-| Mekanizma | **DNS** cevabı (yönlendirir, geçmez) | **Reverse proxy** — trafik içinden geçer |
-| Protokol | Herhangi (DNS üzerinden) | HTTP/HTTPS |
-| Failover hızı | DNS TTL'ye bağlı (dakikalar) | Anında (bağlantı Front Door'da) |
-| WAF / CDN / TLS offload | **Yok** | **Var** |
-| İstemci neyi görür? | Endpoint'in kendi IP'si | Front Door'un edge adresi |
-| Maliyet | Çok düşük | Daha yüksek (özellikler) |
-| Ne zaman? | HTTP-dışı protokol, basit DNS failover, ucuz çözüm | Global web uygulaması, hızlandırma, WAF |
+- **Mekanizma**
+  - Traffic Manager: **DNS** cevabı (yönlendirir, geçmez)
+  - Front Door: **Reverse proxy** — trafik içinden geçer
+- **Protokol** — Traffic Manager: Herhangi (DNS üzerinden) · Front Door: HTTP/HTTPS
+- **Failover hızı** — Traffic Manager: DNS TTL'ye bağlı (dakikalar) · Front Door: Anında (bağlantı Front Door'da)
+- **WAF / CDN / TLS offload** — Traffic Manager: **Yok** · Front Door: **Var**
+- **İstemci neyi görür?** — Traffic Manager: Endpoint'in kendi IP'si · Front Door: Front Door'un edge adresi
+- **Maliyet** — Traffic Manager: Çok düşük · Front Door: Daha yüksek (özellikler)
+- **Ne zaman?**
+  - Traffic Manager: HTTP-dışı protokol, basit DNS failover, ucuz çözüm
+  - Front Door: Global web uygulaması, hızlandırma, WAF
 
 #### 3.5 Karar ağacı ve kombinasyon örüntüleri ⭐
 
@@ -155,12 +177,18 @@ Yalnızca iç (internal) trafik mi?            → Internal Load Balancer / öze
 
 **Kombinasyon örüntüleri** (çoğu gerçek mimari birden çok katmanı birleştirir):
 
-| Örüntü | Akış | Neden? |
-|---|---|---|
-| **Front Door + Application Gateway + Load Balancer** | İnternet → **Front Door** (global, WAF, CDN) → **Application Gateway** (bölgesel L7) → **Load Balancer** (VM katmanı) | Global giriş + bölgesel L7 yönlendirme + VM katmanı dağıtımı |
-| **Traffic Manager + Application Gateway** | DNS → Traffic Manager (performance/priority) → bölgesel Application Gateway'ler | HTTP-dışı veya mevcut DNS tabanlı çok region'lı mimari |
-| **Application Gateway + Internal LB** | Web katmanı (L7) → uygulama katmanı (L4 internal) | 3 katmanlı uygulamada her katmanın kendi dağıtıcısı |
-| **Front Door + App Service (çok region)** | Aynı uygulama iki region'da; origin'ler Front Door'da | Region arızasında otomatik geçiş |
+- **Front Door + Application Gateway + Load Balancer**
+  - Akış: İnternet → **Front Door** (global, WAF, CDN) → **Application Gateway** (bölgesel L7) → **Load Balancer** (VM katmanı)
+  - Neden?: Global giriş + bölgesel L7 yönlendirme + VM katmanı dağıtımı
+- **Traffic Manager + Application Gateway**
+  - Akış: DNS → Traffic Manager (performance/priority) → bölgesel Application Gateway'ler
+  - Neden?: HTTP-dışı veya mevcut DNS tabanlı çok region'lı mimari
+- **Application Gateway + Internal LB**
+  - Akış: Web katmanı (L7) → uygulama katmanı (L4 internal)
+  - Neden?: 3 katmanlı uygulamada her katmanın kendi dağıtıcısı
+- **Front Door + App Service (çok region)**
+  - Akış: Aynı uygulama iki region'da; origin'ler Front Door'da
+  - Neden?: Region arızasında otomatik geçiş
 
 - **Health probe mantığı:** her servis backend'e düzenli probe gönderir; **belirli sayıda ardışık başarısızlıkta** instance havuzdan çıkar, başarılı olunca geri girer. Uygulamada `/health` gibi **gerçek bağımlılıkları** (DB) kontrol eden bir endpoint, "port açık" kontrolünden daha doğru sinyaldir. Probe'u **WAF/NSG kuralları engellememeli** (`AzureLoadBalancer` service tag'i → C1.18).
 - **Availability zone ile birlikte (→ C1.4):** bölgesel L4/L7 servisleri **zone-redundant** yapılandırılır; backend instance'ları farklı zone'lara yayılır — yük dengeleyici *zone* arızasına, Front Door/Traffic Manager *region* arızasına karşı korur.
@@ -235,13 +263,21 @@ az group delete --name $RG --yes --no-wait
 
 <details><summary>Beklenen gözlemler ve açıklamaları</summary>
 
-| Adım | Gözlem | Kavram |
-|---|---|---|
-| 3 | `nslookup` çıktısında `$DNSNAME.trafficmanager.net` bir **CNAME** ile `www.microsoft.com` (edge adresi zinciri) gösterir | Traffic Manager yalnızca **DNS cevabı** döndürür; trafiğin içinden geçmez |
-| 4 | Primary devre dışı → CNAME `learn.microsoft.com`'a döner (TTL ~30 sn + birkaç sn) | Priority = failover; **DNS önbelleği** yüzünden anlık değil |
-| 5 | Weighted'ta çoğu sorgu primary'yi, bazıları secondary'yi verir | Ağırlıklı dağıtım; yöntem değişince istemci değişmez |
-| 6 | `sku: Standard`, kural/probe/havuz adları listelenir; backend yok | LB bileşenleri: frontend, backend pool, probe, kural |
-| 6 | Probe yolu `/health` | Probe uygulama sağlığını yoklar (HTTP 200 bekler) |
+- **3**
+  - Gözlem: `nslookup` çıktısında `$DNSNAME.trafficmanager.net` bir **CNAME** ile `www.microsoft.com` (edge adresi zinciri) gösterir
+  - Kavram: Traffic Manager yalnızca **DNS cevabı** döndürür; trafiğin içinden geçmez
+- **4**
+  - Gözlem: Primary devre dışı → CNAME `learn.microsoft.com`'a döner (TTL ~30 sn + birkaç sn)
+  - Kavram: Priority = failover; **DNS önbelleği** yüzünden anlık değil
+- **5**
+  - Gözlem: Weighted'ta çoğu sorgu primary'yi, bazıları secondary'yi verir
+  - Kavram: Ağırlıklı dağıtım; yöntem değişince istemci değişmez
+- **6**
+  - Gözlem: `sku: Standard`, kural/probe/havuz adları listelenir; backend yok
+  - Kavram: LB bileşenleri: frontend, backend pool, probe, kural
+- **6**
+  - Gözlem: Probe yolu `/health`
+  - Kavram: Probe uygulama sağlığını yoklar (HTTP 200 bekler)
 
 `--status-code-ranges` parametresi eski CLI sürümlerinde farklı adlanabilir; hata alırsan `az network traffic-manager profile create --help` ile kontrol et. İlk sorguda yerel DNS önbelleği eski cevabı gösterebilir; birkaç saniye bekle. Hedef sitelere HTTPS probe gittiği için profilin `Online` görünmesi 1–2 dakika sürebilir.
 </details>
@@ -313,16 +349,30 @@ Avrupa ve ABD'de müşterisi olan bir online bilet satış şirketi:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Load Balancer (L4) | Çok düşük gecikme, yüksek throughput, ucuz | İçeriği görmez: WAF/URL routing/TLS offload yok |
-| Application Gateway (L7) | Zengin yönlendirme, WAF, TLS offload | Bölgesel; sabit saatlik maliyet (WAF_v2 daha yüksek); autoscale ısınma süresi |
-| Front Door | Global hızlandırma, edge WAF/CDN, anında failover | Daha yüksek maliyet; sadece HTTP/HTTPS; yapılandırma yayılması dakikalar alabilir |
-| Traffic Manager | Ucuz, her protokol, basit | DNS TTL ile yavaş failover; WAF/önbellek yok |
-| TLS offload (gateway'de) | Backend CPU'su rahatlar, sertifika tek yerde | Gateway–backend arası şifresiz kalabilir → hassas veri için end-to-end TLS |
-| Çok katmanlı kombinasyon | Derinlikli koruma, her katmanda uzmanlık | Karmaşıklık, gecikme, çoklu maliyet kalemi |
-| Zone-redundant frontend | Zone arızasına dayanıklılık | Bölgeler arası değil — region arızası için global katman şart |
-| Çok region'lı aktif/aktif | Region arızası + yakın kullanıcı deneyimi | Veri katmanı karmaşıklığı (çoğaltma/tutarlılık), 2× maliyet |
+- **Load Balancer (L4)**
+  - Kazanç: Çok düşük gecikme, yüksek throughput, ucuz
+  - Bedel: İçeriği görmez: WAF/URL routing/TLS offload yok
+- **Application Gateway (L7)**
+  - Kazanç: Zengin yönlendirme, WAF, TLS offload
+  - Bedel: Bölgesel; sabit saatlik maliyet (WAF_v2 daha yüksek); autoscale ısınma süresi
+- **Front Door**
+  - Kazanç: Global hızlandırma, edge WAF/CDN, anında failover
+  - Bedel: Daha yüksek maliyet; sadece HTTP/HTTPS; yapılandırma yayılması dakikalar alabilir
+- **Traffic Manager**
+  - Kazanç: Ucuz, her protokol, basit
+  - Bedel: DNS TTL ile yavaş failover; WAF/önbellek yok
+- **TLS offload (gateway'de)**
+  - Kazanç: Backend CPU'su rahatlar, sertifika tek yerde
+  - Bedel: Gateway–backend arası şifresiz kalabilir → hassas veri için end-to-end TLS
+- **Çok katmanlı kombinasyon**
+  - Kazanç: Derinlikli koruma, her katmanda uzmanlık
+  - Bedel: Karmaşıklık, gecikme, çoklu maliyet kalemi
+- **Zone-redundant frontend**
+  - Kazanç: Zone arızasına dayanıklılık
+  - Bedel: Bölgeler arası değil — region arızası için global katman şart
+- **Çok region'lı aktif/aktif**
+  - Kazanç: Region arızası + yakın kullanıcı deneyimi
+  - Bedel: Veri katmanı karmaşıklığı (çoğaltma/tutarlılık), 2× maliyet
 
 ---
 

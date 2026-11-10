@@ -95,11 +95,9 @@ ACR Task için **hangi iki** tetikleyici desteklenir?
 #### Soru 7: Evet / Hayır
 Bir task `FROM mcr.microsoft.com/dotnet/aspnet:10.0` kullanıyor ve base image trigger açık.
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Task en az bir kez çalıştırılmadan base image bağımlılıkları izlenmez. | ☐ | ☐ |
-| b) Base image sürümleri her seferinde yeni, benzersiz bir tag ile yayınlanırsa (ör. `10.0.1`, `10.0.2`) tetikleme güvenilir çalışır. | ☐ | ☐ |
-| c) Çok aşamalı Dockerfile'da varsayılan olarak yalnızca runtime image'ın güncellemesi izlenir. | ☐ | ☐ |
+- a) Task en az bir kez çalıştırılmadan base image bağımlılıkları izlenmez. — Evet: ☐ · Hayır: ☐
+- b) Base image sürümleri her seferinde yeni, benzersiz bir tag ile yayınlanırsa (ör. `10.0.1`, `10.0.2`) tetikleme güvenilir çalışır. — Evet: ☐ · Hayır: ☐
+- c) Çok aşamalı Dockerfile'da varsayılan olarak yalnızca runtime image'ın güncellemesi izlenir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

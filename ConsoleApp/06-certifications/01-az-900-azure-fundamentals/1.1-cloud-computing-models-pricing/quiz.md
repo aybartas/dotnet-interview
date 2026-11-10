@@ -39,11 +39,9 @@ NIST tanımına göre aşağıdakilerden **hangi ikisi** cloud computing'in teme
 #### Soru 3: Evet / Hayır
 Her ifade için Evet veya Hayır seçin.
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) SaaS modelinde kullanıcı hesaplarının ve erişim izinlerinin yönetimi müşterinin sorumluluğundadır. | ☐ | ☐ |
-| b) IaaS modelinde fiziksel sunucuların bakımı müşterinin sorumluluğundadır. | ☐ | ☐ |
-| c) PaaS modelinde işletim sistemi yamaları Microsoft'un sorumluluğundadır. | ☐ | ☐ |
+- a) SaaS modelinde kullanıcı hesaplarının ve erişim izinlerinin yönetimi müşterinin sorumluluğundadır. — Evet: ☐ · Hayır: ☐
+- b) IaaS modelinde fiziksel sunucuların bakımı müşterinin sorumluluğundadır. — Evet: ☐ · Hayır: ☐
+- c) PaaS modelinde işletim sistemi yamaları Microsoft'un sorumluluğundadır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -125,11 +123,9 @@ Bir şirket iş yüklerini hem Azure'da hem de başka bir public cloud sağlayı
 
 #### Soru 10: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Private cloud, tek bir kuruluşun kullanımına ayrılmış bulut altyapısıdır. | ☐ | ☐ |
-| b) Public cloud kullanmak için önce sunucu donanımı satın almak gerekir. | ☐ | ☐ |
-| c) Hybrid cloud, yerel kapasite yetmediğinde fazla yükün public cloud'a taşınmasına (cloud bursting) olanak tanır. | ☐ | ☐ |
+- a) Private cloud, tek bir kuruluşun kullanımına ayrılmış bulut altyapısıdır. — Evet: ☐ · Hayır: ☐
+- b) Public cloud kullanmak için önce sunucu donanımı satın almak gerekir. — Evet: ☐ · Hayır: ☐
+- c) Hybrid cloud, yerel kapasite yetmediğinde fazla yükün public cloud'a taşınmasına (cloud bursting) olanak tanır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

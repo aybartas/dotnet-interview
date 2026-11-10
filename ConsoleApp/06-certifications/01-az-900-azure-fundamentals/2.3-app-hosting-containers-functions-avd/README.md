@@ -10,15 +10,33 @@
 
 Bir uygulamayı Azure'da çalıştırmanın tek yolu VM değildir (VM'ler → C1.5). Yönetim yükü azaldıkça kontrol de azalır (→ C1.3):
 
-| Seçenek | Hizmet türü | Ne çalıştırırsın? | Tipik kullanım |
-|---|---|---|---|
-| **Virtual Machines** | IaaS | Tam bir işletim sistemi | OS kontrolü, lift-and-shift (→ C1.5) |
-| **Azure App Service** | PaaS | Web uygulaması, REST API, mobil backend, WebJobs | OS yönetmeden web/API barındırma |
-| **Azure Container Instances (ACI)** | PaaS | Tek container (veya küçük container grubu) | Hızlı, basit, orkestrasyonsuz çalıştırma |
-| **Azure Container Apps** | PaaS (serverless) | Container'lardan oluşan mikroservisler | Otomatik ölçek (sıfıra kadar), HTTP ingress |
-| **Azure Kubernetes Service (AKS)** | PaaS (yönetilen Kubernetes) | Çok sayıda container'ın orkestrasyonu | Büyük mikroservis platformu, en fazla kontrol |
-| **Azure Functions** | PaaS (serverless) | Olay tetiklemeli kısa kod | Zamanlayıcı, kuyruk, HTTP, dosya yükleme tetikleyicisi |
-| **Azure Virtual Desktop (AVD)** | Masaüstü sanallaştırma (VM'ler üzerinde) | Windows masaüstü ve uygulamaları | Uzaktan çalışan kullanıcılara bulut masaüstü |
+- **Virtual Machines**
+  - Hizmet türü: IaaS · Ne çalıştırırsın?: Tam bir işletim sistemi
+  - Tipik kullanım: OS kontrolü, lift-and-shift (→ C1.5)
+- **Azure App Service**
+  - Hizmet türü: PaaS
+  - Ne çalıştırırsın?: Web uygulaması, REST API, mobil backend, WebJobs
+  - Tipik kullanım: OS yönetmeden web/API barındırma
+- **Azure Container Instances (ACI)**
+  - Hizmet türü: PaaS
+  - Ne çalıştırırsın?: Tek container (veya küçük container grubu)
+  - Tipik kullanım: Hızlı, basit, orkestrasyonsuz çalıştırma
+- **Azure Container Apps**
+  - Hizmet türü: PaaS (serverless)
+  - Ne çalıştırırsın?: Container'lardan oluşan mikroservisler
+  - Tipik kullanım: Otomatik ölçek (sıfıra kadar), HTTP ingress
+- **Azure Kubernetes Service (AKS)**
+  - Hizmet türü: PaaS (yönetilen Kubernetes)
+  - Ne çalıştırırsın?: Çok sayıda container'ın orkestrasyonu
+  - Tipik kullanım: Büyük mikroservis platformu, en fazla kontrol
+- **Azure Functions**
+  - Hizmet türü: PaaS (serverless)
+  - Ne çalıştırırsın?: Olay tetiklemeli kısa kod
+  - Tipik kullanım: Zamanlayıcı, kuyruk, HTTP, dosya yükleme tetikleyicisi
+- **Azure Virtual Desktop (AVD)**
+  - Hizmet türü: Masaüstü sanallaştırma (VM'ler üzerinde)
+  - Ne çalıştırırsın?: Windows masaüstü ve uygulamaları
+  - Tipik kullanım: Uzaktan çalışan kullanıcılara bulut masaüstü
 
 Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI ve `dotnet`/Core Tools komutlarından oluşur (3.6).
 
@@ -54,21 +72,27 @@ Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI ve `dotnet`/Core 
 
 **Container vs VM:**
 
-| | Virtual machine | Container |
-|---|---|---|
-| Neyi sanallaştırır? | **Donanımı** — her VM'in kendi tam işletim sistemi var | **İşletim sistemini** — container'lar host'un çekirdeğini paylaşır |
-| Boyut | GB'lar | MB'lar |
-| Başlama süresi | Dakikalar | Saniyeler |
-| Taşınabilirlik | İmaj ağır, sağlayıcıya bağlı | Aynı image her yerde (laptop, test, bulut) aynı çalışır |
-| İzolasyon | Güçlü (ayrı çekirdek) | Daha hafif (çekirdek paylaşımı) |
+- **Neyi sanallaştırır?**
+  - Virtual machine: **Donanımı** — her VM'in kendi tam işletim sistemi var
+  - Container: **İşletim sistemini** — container'lar host'un çekirdeğini paylaşır
+- **Boyut** — Virtual machine: GB'lar · Container: MB'lar
+- **Başlama süresi** — Virtual machine: Dakikalar · Container: Saniyeler
+- **Taşınabilirlik**
+  - Virtual machine: İmaj ağır, sağlayıcıya bağlı
+  - Container: Aynı image her yerde (laptop, test, bulut) aynı çalışır
+- **İzolasyon** — Virtual machine: Güçlü (ayrı çekirdek) · Container: Daha hafif (çekirdek paylaşımı)
 
 Azure'daki container seçenekleri:
 
-| Servis | Ne zaman? | Öne çıkan nitelikler |
-|---|---|---|
-| **Azure Container Instances (ACI)** | **Tek bir container'ı** en hızlı ve en basit biçimde çalıştırmak; kısa işler, test, toplu görev | VM veya orkestratör yönetmek yok; **saniye bazında** ücret; public IP/DNS adı verilebilir; **orkestrasyon yok** (otomatik ölçek, servis keşfi, rolling update yok) |
-| **Azure Container Apps** | Container'lardan oluşan **mikroservis** ve API'ler; olay tetiklemeli container işleri | **Serverless**: altyapı yok, otomatik ölçek (**sıfıra kadar**), HTTP ingress, trafik bölme, revizyonlar; Kubernetes'in karmaşıklığını gizler |
-| **Azure Kubernetes Service (AKS)** | **Çok sayıda** container'ın orkestrasyonu; Kubernetes API'sine tam erişim gereken platformlar | Yönetilen Kubernetes: control plane Microsoft'ta, node'lar (VM'ler) senin aboneliğinde; en fazla kontrol, en fazla bilgi gerektirir |
+- **Azure Container Instances (ACI)**
+  - Ne zaman?: **Tek bir container'ı** en hızlı ve en basit biçimde çalıştırmak; kısa işler, test, toplu görev
+  - Öne çıkan nitelikler: VM veya orkestratör yönetmek yok; **saniye bazında** ücret; public IP/DNS adı verilebilir; **orkestrasyon yok** (otomatik ölçek, servis keşfi, rolling update yok)
+- **Azure Container Apps**
+  - Ne zaman?: Container'lardan oluşan **mikroservis** ve API'ler; olay tetiklemeli container işleri
+  - Öne çıkan nitelikler: **Serverless**: altyapı yok, otomatik ölçek (**sıfıra kadar**), HTTP ingress, trafik bölme, revizyonlar; Kubernetes'in karmaşıklığını gizler
+- **Azure Kubernetes Service (AKS)**
+  - Ne zaman?: **Çok sayıda** container'ın orkestrasyonu; Kubernetes API'sine tam erişim gereken platformlar
+  - Öne çıkan nitelikler: Yönetilen Kubernetes: control plane Microsoft'ta, node'lar (VM'ler) senin aboneliğinde; en fazla kontrol, en fazla bilgi gerektirir
 
 > Container image'ları genellikle **Azure Container Registry (ACR)**'de saklanır *(bağlam)*. App Service de container çalıştırabilir.
 
@@ -214,15 +238,25 @@ az group delete --name rg-az900-c16 --yes --no-wait
 
 Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağıtıyor:
 
-| İş yükü | Seçim | Gerekçe |
-|---|---|---|
-| Müşteri portalı ve mobil uygulamanın REST API'si | **App Service** (Standard, autoscale, `staging` slotu) | Ekip .NET kodu yazıyor; OS yönetmek istemiyor; slot swap ile kesintisiz yayın |
-| Poliçe PDF'lerini gece üreten iş | **Azure Functions** (zamanlayıcı tetikleyici) | Günde bir kez birkaç dakika çalışıyor; boşta ücret yok |
-| Yüklenen hasar fotoğraflarını işleme | **Functions** (blob tetikleyici) | Olay tetiklemeli, düzensiz yük |
-| Dört mikroservisten oluşan teklif motoru | **Container Apps** | Container'lar hazır; Kubernetes ekibi yok; yoğunlukta otomatik ölçek, gece sıfıra iner |
-| Aylık bir kez çalışan veri dönüştürme container'ı | **Container Instances** | Tek container, birkaç dakika; orkestrasyona gerek yok |
-| 400 acente çalışanının eski Windows masaüstü uygulaması | **Azure Virtual Desktop** (Windows 11 multi-session) | Uygulama ve müşteri verisi bulutta kalıyor; acentelerin cihazları önemsizleşiyor; MFA zorunlu |
-| Lisansı belirli bir OS sürümüne bağlı eski hesaplama motoru | **VM** (→ C1.5) | OS üzerinde tam kontrol gerekiyor |
+- **Müşteri portalı ve mobil uygulamanın REST API'si**
+  - Seçim: **App Service** (Standard, autoscale, `staging` slotu)
+  - Gerekçe: Ekip .NET kodu yazıyor; OS yönetmek istemiyor; slot swap ile kesintisiz yayın
+- **Poliçe PDF'lerini gece üreten iş**
+  - Seçim: **Azure Functions** (zamanlayıcı tetikleyici)
+  - Gerekçe: Günde bir kez birkaç dakika çalışıyor; boşta ücret yok
+- **Yüklenen hasar fotoğraflarını işleme** — Seçim: **Functions** (blob tetikleyici) · Gerekçe: Olay tetiklemeli, düzensiz yük
+- **Dört mikroservisten oluşan teklif motoru**
+  - Seçim: **Container Apps**
+  - Gerekçe: Container'lar hazır; Kubernetes ekibi yok; yoğunlukta otomatik ölçek, gece sıfıra iner
+- **Aylık bir kez çalışan veri dönüştürme container'ı**
+  - Seçim: **Container Instances**
+  - Gerekçe: Tek container, birkaç dakika; orkestrasyona gerek yok
+- **400 acente çalışanının eski Windows masaüstü uygulaması**
+  - Seçim: **Azure Virtual Desktop** (Windows 11 multi-session)
+  - Gerekçe: Uygulama ve müşteri verisi bulutta kalıyor; acentelerin cihazları önemsizleşiyor; MFA zorunlu
+- **Lisansı belirli bir OS sürümüne bağlı eski hesaplama motoru**
+  - Seçim: **VM** (→ C1.5)
+  - Gerekçe: OS üzerinde tam kontrol gerekiyor
 
 ---
 
@@ -269,15 +303,25 @@ Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağ�
 
 ### 7. Performans & trade-off
 
-| Seçenek | Kazanç | Bedel |
-|---|---|---|
-| VM | Tam kontrol, her yazılım çalışır | Tüm OS/yama/ölçek yükü sende |
-| App Service | Hızlı yayın, yama yok, slot, autoscale | Platform kısıtları; plan boşta da ücretlenir |
-| Container Instances | En basit container çalıştırma, saniye bazında ücret | Orkestrasyon, otomatik ölçek, rolling update yok |
-| Container Apps | Serverless container, sıfıra ölçek, mikroservis özellikleri | Kubernetes API'sine tam erişim yok; cold start |
-| AKS | Tam Kubernetes esnekliği, büyük ölçek | Öğrenme eğrisi ve operasyon yükü (node'lar, yükseltmeler) en yüksek |
-| Functions | Olay tetiklemeli, boşta 0 ücret, otomatik ölçek | Cold start, çalışma süresi sınırları, durum için Durable gerekir |
-| AVD | Veri bulutta, merkezi yönetim, her cihazdan erişim | Ağ gecikmesine duyarlı kullanıcı deneyimi; oturum host'larının maliyeti ve boyutlandırması |
+- **VM** — Kazanç: Tam kontrol, her yazılım çalışır · Bedel: Tüm OS/yama/ölçek yükü sende
+- **App Service**
+  - Kazanç: Hızlı yayın, yama yok, slot, autoscale
+  - Bedel: Platform kısıtları; plan boşta da ücretlenir
+- **Container Instances**
+  - Kazanç: En basit container çalıştırma, saniye bazında ücret
+  - Bedel: Orkestrasyon, otomatik ölçek, rolling update yok
+- **Container Apps**
+  - Kazanç: Serverless container, sıfıra ölçek, mikroservis özellikleri
+  - Bedel: Kubernetes API'sine tam erişim yok; cold start
+- **AKS**
+  - Kazanç: Tam Kubernetes esnekliği, büyük ölçek
+  - Bedel: Öğrenme eğrisi ve operasyon yükü (node'lar, yükseltmeler) en yüksek
+- **Functions**
+  - Kazanç: Olay tetiklemeli, boşta 0 ücret, otomatik ölçek
+  - Bedel: Cold start, çalışma süresi sınırları, durum için Durable gerekir
+- **AVD**
+  - Kazanç: Veri bulutta, merkezi yönetim, her cihazdan erişim
+  - Bedel: Ağ gecikmesine duyarlı kullanıcı deneyimi; oturum host'larının maliyeti ve boyutlandırması
 
 ---
 

@@ -51,11 +51,9 @@ Bir mesajın bir queue'nun **dead-letter queue**'suna düşmesine **hangi ikisi*
 
 #### Soru 4: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Basic tier'da topic ve subscription oluşturulabilir. | ☐ | ☐ |
-| b) Her subscription'ın kendi dead-letter queue'su vardır. | ☐ | ☐ |
-| c) DLQ'daki mesajlar `MaxDeliveryCount` sonrasında otomatik olarak orijinal kuyruğa geri taşınır. | ☐ | ☐ |
+- **a) Basic tier'da topic ve subscription oluşturulabilir.** — Evet: ☐ · Hayır: ☐
+- **b) Her subscription'ın kendi dead-letter queue'su vardır.** — Evet: ☐ · Hayır: ☐
+- c) DLQ'daki mesajlar `MaxDeliveryCount` sonrasında otomatik olarak orijinal kuyruğa geri taşınır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -147,11 +145,9 @@ Bir mesajın başarısız işlenip DLQ'dan kurtarılma akışını sıraya koyun
 
 #### Soru 11: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) `ServiceBusProcessor`'da `AutoCompleteMessages = true` iken handler exception fırlatırsa mesaj abandon edilir. | ☐ | ☐ |
-| b) `AutoCompleteMessages = true` iken handler'da exception'ı yutup sessizce dönersen mesaj Complete edilir. | ☐ | ☐ |
-| c) Lock süresi dolduktan sonra `CompleteMessageAsync` çağrısı başarılı olur ve mesaj silinir. | ☐ | ☐ |
+- a) `ServiceBusProcessor`'da `AutoCompleteMessages = true` iken handler exception fırlatırsa mesaj abandon edilir. — Evet: ☐ · Hayır: ☐
+- b) `AutoCompleteMessages = true` iken handler'da exception'ı yutup sessizce dönersen mesaj Complete edilir. — Evet: ☐ · Hayır: ☐
+- c) Lock süresi dolduktan sonra `CompleteMessageAsync` çağrısı başarılı olur ve mesaj silinir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

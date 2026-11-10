@@ -12,10 +12,12 @@
 
 Bu konu iki servis ailesini tanıtır; ikisi de "kendin kurmadan hazır kullan" mantığındadır:
 
-| Aile | Soru | Servisler (özet) |
-|---|---|---|
-| **AI ve makine öğrenmesi** | "Metni/görüntüyü/sesi anlamak ya da kendi modelimi eğitmek istiyorum" | **Microsoft Foundry** (platform), **Foundry Tools / Azure AI services** (hazır API'ler), **Azure OpenAI / Foundry Models**, **Azure Machine Learning**, **Azure AI Search**, bot/agent servisleri |
-| **IoT** | "Binlerce cihazı bağlayıp telemetri toplamak ve onlara komut göndermek istiyorum" | **IoT Hub**, **DPS**, **IoT Central**, **Digital Twins**, **IoT Edge** |
+- **AI ve makine öğrenmesi**
+  - Soru: "Metni/görüntüyü/sesi anlamak ya da kendi modelimi eğitmek istiyorum"
+  - Servisler (özet): **Microsoft Foundry** (platform), **Foundry Tools / Azure AI services** (hazır API'ler), **Azure OpenAI / Foundry Models**, **Azure Machine Learning**, **Azure AI Search**, bot/agent servisleri
+- **IoT**
+  - Soru: "Binlerce cihazı bağlayıp telemetri toplamak ve onlara komut göndermek istiyorum"
+  - Servisler (özet): **IoT Hub**, **DPS**, **IoT Central**, **Digital Twins**, **IoT Edge**
 
 Ek olarak "diğer popüler servisler" listesinde **Azure Batch** (HPC), **Azure Local / Azure Stack** (hibrit) ve **Azure Communication Services** vardır (3.5).
 
@@ -40,26 +42,43 @@ Bu konunun C# kodu yoktur. Pratik, ücretsiz katmanda bir Language kaynağı ve 
 
 Üç katmanı ayır; çoğu soru "hangi katman?" sorusudur:
 
-| Katman | Ne | Kimin işi | Örnek |
-|---|---|---|---|
-| **1. Hazır API'ler** (prebuilt) | Önceden eğitilmiş modeller, REST/SDK ile çağır | Model eğitmezsin; veri gönderir, sonuç alırsın | Vision, Speech, Language, Translator, Document Intelligence |
-| **2. Temel/üretken modeller** | LLM'ler ve diğer foundation model'ler; prompt, RAG, agent | Model seçer, prompt/veri bağlarsın | **Azure OpenAI / Foundry Models** |
-| **3. Özel ML** | Kendi verinle model **eğit**, dağıt, yönet (MLOps) | Veri bilimci/ML mühendisi | **Azure Machine Learning** |
+- **1. Hazır API'ler** (prebuilt)
+  - Ne: Önceden eğitilmiş modeller, REST/SDK ile çağır
+  - Kimin işi: Model eğitmezsin; veri gönderir, sonuç alırsın
+  - Örnek: Vision, Speech, Language, Translator, Document Intelligence
+- **2. Temel/üretken modeller**
+  - Ne: LLM'ler ve diğer foundation model'ler; prompt, RAG, agent
+  - Kimin işi: Model seçer, prompt/veri bağlarsın
+  - Örnek: **Azure OpenAI / Foundry Models**
+- **3. Özel ML**
+  - Ne: Kendi verinle model **eğit**, dağıt, yönet (MLOps)
+  - Kimin işi: Veri bilimci/ML mühendisi
+  - Örnek: **Azure Machine Learning**
 
 **Microsoft Foundry** — AI uygulama ve agent geliştirme **platformu**: model kataloğu (OpenAI ve diğer sağlayıcıların modelleri), dağıtım, değerlendirme, agent'lar, güvenlik/içerik filtreleri ve hazır AI servislerine tek yerden erişim. (Eski adlarıyla Azure AI Foundry / AI Studio.)
 
 **Hazır API'ler (Foundry Tools / Azure AI services):**
 
-| Servis | Ne yapar | Tipik iş |
-|---|---|---|
-| **Vision** (Image Analysis, OCR) | Görüntüde nesne/metin/etiket bulma | Ürün fotoğrafı etiketleme, OCR |
-| **Face** *(bağlam; erişim sınırlı)* | Yüz algılama | Kimlik doğrulama senaryoları — sorumlu AI kısıtları var |
-| **Speech** | Ses ↔ metin, konuşma sentezi, çeviri | Çağrı merkezi transkripsiyonu |
-| **Language** | Duygu analizi, dil tespiti, varlık çıkarma, özetleme, soru-cevap | Yorum analizi |
-| **Translator** | Metin çevirisi | Çok dilli içerik |
-| **Document Intelligence** (eski adı Form Recognizer) | Fatura/makbuz/form alanlarını çıkarma | Fatura işleme |
-| **Content Safety** | Zararlı içerik tespiti | Kullanıcı içeriği moderasyonu |
-| **Azure AI Search** (eski adı Cognitive Search) | Arama + vektör/semantik arama + enrichment; RAG'ın "R"si | Kurumsal doküman arama (→ M15.4) |
+- **Vision** (Image Analysis, OCR)
+  - Ne yapar: Görüntüde nesne/metin/etiket bulma
+  - Tipik iş: Ürün fotoğrafı etiketleme, OCR
+- **Face** *(bağlam; erişim sınırlı)*
+  - Ne yapar: Yüz algılama
+  - Tipik iş: Kimlik doğrulama senaryoları — sorumlu AI kısıtları var
+- **Speech**
+  - Ne yapar: Ses ↔ metin, konuşma sentezi, çeviri
+  - Tipik iş: Çağrı merkezi transkripsiyonu
+- **Language**
+  - Ne yapar: Duygu analizi, dil tespiti, varlık çıkarma, özetleme, soru-cevap
+  - Tipik iş: Yorum analizi
+- **Translator** — Ne yapar: Metin çevirisi · Tipik iş: Çok dilli içerik
+- **Document Intelligence** (eski adı Form Recognizer)
+  - Ne yapar: Fatura/makbuz/form alanlarını çıkarma
+  - Tipik iş: Fatura işleme
+- **Content Safety** — Ne yapar: Zararlı içerik tespiti · Tipik iş: Kullanıcı içeriği moderasyonu
+- **Azure AI Search** (eski adı Cognitive Search)
+  - Ne yapar: Arama + vektör/semantik arama + enrichment; RAG'ın "R"si
+  - Tipik iş: Kurumsal doküman arama (→ M15.4)
 
 **Azure OpenAI / Foundry Models:** OpenAI modellerini (ve katalogdaki diğer modelleri) Azure'ın güvenlik, ağ (private endpoint) ve uyumluluk sınırları içinde kullanma; GPT sohbet, embeddings, görüntü/ses modelleri. Model adları/sürümleri sık değiştiği için sınav sürüm değil **"ne işe yarar"** sorar.
 
@@ -69,14 +88,16 @@ Bu konunun C# kodu yoktur. Pratik, ücretsiz katmanda bir Language kaynağı ve 
 
 **Hazır API ↔ özel model karar tablosu:**
 
-| İhtiyaç | Seçim | Gerekçe |
-|---|---|---|
-| Fatura PDF'inden toplam ve tarihi çek | **Document Intelligence** | Hazır model var; eğitim gereksiz |
-| Müşteri yorumlarında duygu analizi | **Language** | Hazır |
-| Çağrı kayıtlarını yazıya dök | **Speech** | Hazır |
-| Kendi şirket verinle, sektörüne özgü bir tahmin modeli (ör. arıza tahmini) | **Azure Machine Learning** | Özel veri + özel hedef |
-| Şirket dokümanları üzerinde soru-cevap yapan sohbet asistanı | **Foundry Models/Azure OpenAI + AI Search** (RAG) | Üretken model + kendi verin |
-| Binlerce görüntüde şirkete özgü kusur tespiti (hazır etiketler yetmiyor) | **Azure ML** veya özel görüntü modeli eğitimi | Özel sınıflar |
+- **Fatura PDF'inden toplam ve tarihi çek** — Seçim: **Document Intelligence** · Gerekçe: Hazır model var; eğitim gereksiz
+- **Müşteri yorumlarında duygu analizi** — Seçim: **Language** · Gerekçe: Hazır
+- **Çağrı kayıtlarını yazıya dök** — Seçim: **Speech** · Gerekçe: Hazır
+- Kendi şirket verinle, sektörüne özgü bir tahmin modeli (ör. arıza tahmini) — Seçim: **Azure Machine Learning** · Gerekçe: Özel veri + özel hedef
+- **Şirket dokümanları üzerinde soru-cevap yapan sohbet asistanı**
+  - Seçim: **Foundry Models/Azure OpenAI + AI Search** (RAG)
+  - Gerekçe: Üretken model + kendi verin
+- Binlerce görüntüde şirkete özgü kusur tespiti (hazır etiketler yetmiyor)
+  - Seçim: **Azure ML** veya özel görüntü modeli eğitimi
+  - Gerekçe: Özel sınıflar
 
 > Kural: **Hazır bir API sorunu çözüyorsa model eğitme.** Eğitim; veri, zaman, MLOps ve maliyet demektir. Özel model yalnızca hazır API'nin kapsamadığı yerde.
 
@@ -84,14 +105,24 @@ Bu konunun C# kodu yoktur. Pratik, ücretsiz katmanda bir Language kaynağı ve 
 
 Microsoft'un altı ilkesi:
 
-| İlke | Soru | Örnek |
-|---|---|---|
-| **Fairness** (adalet) | Sistem herkese eşit davranıyor mu? | Kredi modeli cinsiyete göre sapmıyor |
-| **Reliability & safety** (güvenilirlik ve güvenlik) | Beklenen koşullarda ve uç durumlarda güvenle çalışıyor mu? | Otonom sistemde test, güvenli hata modu |
-| **Privacy & security** (gizlilik ve güvenlik) | Kişisel veriyi koruyor mu? | Eğitim verisinde anonimleştirme, şifreleme |
-| **Inclusiveness** (kapsayıcılık) | Engelli dahil herkesi dikkate alıyor mu? | Konuşma/altyazı, erişilebilirlik |
-| **Transparency** (şeffaflık) | Sistemin nasıl karar verdiği anlaşılabilir mi? | "Bu karar şu faktörlere dayandı" açıklaması |
-| **Accountability** (hesap verebilirlik) | Kim sorumlu? İnsan denetimi var mı? | Karar sürecinde insan onayı |
+- **Fairness** (adalet)
+  - Soru: Sistem herkese eşit davranıyor mu?
+  - Örnek: Kredi modeli cinsiyete göre sapmıyor
+- **Reliability & safety** (güvenilirlik ve güvenlik)
+  - Soru: Beklenen koşullarda ve uç durumlarda güvenle çalışıyor mu?
+  - Örnek: Otonom sistemde test, güvenli hata modu
+- **Privacy & security** (gizlilik ve güvenlik)
+  - Soru: Kişisel veriyi koruyor mu?
+  - Örnek: Eğitim verisinde anonimleştirme, şifreleme
+- **Inclusiveness** (kapsayıcılık)
+  - Soru: Engelli dahil herkesi dikkate alıyor mu?
+  - Örnek: Konuşma/altyazı, erişilebilirlik
+- **Transparency** (şeffaflık)
+  - Soru: Sistemin nasıl karar verdiği anlaşılabilir mi?
+  - Örnek: "Bu karar şu faktörlere dayandı" açıklaması
+- **Accountability** (hesap verebilirlik)
+  - Soru: Kim sorumlu? İnsan denetimi var mı?
+  - Örnek: Karar sürecinde insan onayı
 
 #### 3.3 Azure IoT servisleri ⭐
 
@@ -108,13 +139,21 @@ Microsoft'un altı ilkesi:
 
 **Diğer IoT servisleri:**
 
-| Servis | Konum | Tek cümle |
-|---|---|---|
-| **IoT Central** | **SaaS** | Kod azıyla cihaz yönetimi + panolar + kurallar; IoT Hub'ın üstünde hazır uygulama. *(Şubat 2024'te yanlışlıkla "emekli oluyor" bildirimi çıktı; Microsoft bunu hatalı sistem mesajı olarak düzeltti. Güncel durumu Azure Updates'ten doğrula.)* |
-| **Azure Digital Twins** | PaaS | Fiziksel ortamın (bina, fabrika) **dijital ikizini** grafik modelle (DTDL) kurma |
-| **Azure IoT Edge** | Cihaz üstü çalışma zamanı | Bulut mantığını (container'lar) **cihazda/uçta** çalıştırma; çevrimdışı çalışma, gecikme azaltma |
-| **Azure Sphere** *(bağlam)* | Güvenli MCU platformu | Duyuruya göre **31 Temmuz 2031'de** tüm güncelleme desteği biter (Azure Updates AZ557123 — doğrula); yeni tasarım için önerilmez |
-| **Stream Analytics / Event Hubs** | Akan veri | Telemetriyi gerçek zamanlı işleme/alım (→ C1.16, 3.4) |
+- **IoT Central**
+  - Konum: **SaaS**
+  - Tek cümle: Kod azıyla cihaz yönetimi + panolar + kurallar; IoT Hub'ın üstünde hazır uygulama. *(Şubat 2024'te yanlışlıkla "emekli oluyor" bildirimi çıktı; Microsoft bunu hatalı sistem mesajı olarak düzeltti. Güncel durumu Azure Updates'ten doğrula.)*
+- **Azure Digital Twins**
+  - Konum: PaaS
+  - Tek cümle: Fiziksel ortamın (bina, fabrika) **dijital ikizini** grafik modelle (DTDL) kurma
+- **Azure IoT Edge**
+  - Konum: Cihaz üstü çalışma zamanı
+  - Tek cümle: Bulut mantığını (container'lar) **cihazda/uçta** çalıştırma; çevrimdışı çalışma, gecikme azaltma
+- **Azure Sphere** *(bağlam)*
+  - Konum: Güvenli MCU platformu
+  - Tek cümle: Duyuruya göre **31 Temmuz 2031'de** tüm güncelleme desteği biter (Azure Updates AZ557123 — doğrula); yeni tasarım için önerilmez
+- **Stream Analytics / Event Hubs**
+  - Konum: Akan veri
+  - Tek cümle: Telemetriyi gerçek zamanlı işleme/alım (→ C1.16, 3.4)
 
 **Uçtan uca akış:**
 
@@ -128,12 +167,16 @@ Microsoft'un altı ilkesi:
 
 **IoT Hub ↔ Event Hubs** ⭐ (sık tuzak):
 
-| | **IoT Hub** | **Event Hubs** |
-|---|---|---|
-| Yön | **Çift yönlü** (D2C + C2D) | Tek yönlü: yüksek hacimli **alım** (ingest) |
-| Cihaz kimliği | **Cihaz başına** kimlik, iptal | Yok (paylaşımlı erişim anahtarları/SAS) |
-| Cihaz yönetimi | Twin, direct methods, config | Yok |
-| Kullanım | IoT cihaz filosu | Uygulama log'u/telemetrisi, clickstream, Kafka uyumlu alım (→ C1.21) |
+- **Yön**
+  - IoT Hub: **Çift yönlü** (D2C + C2D)
+  - Event Hubs: Tek yönlü: yüksek hacimli **alım** (ingest)
+- **Cihaz kimliği**
+  - IoT Hub: **Cihaz başına** kimlik, iptal
+  - Event Hubs: Yok (paylaşımlı erişim anahtarları/SAS)
+- **Cihaz yönetimi** — IoT Hub: Twin, direct methods, config · Event Hubs: Yok
+- **Kullanım**
+  - IoT Hub: IoT cihaz filosu
+  - Event Hubs: Uygulama log'u/telemetrisi, clickstream, Kafka uyumlu alım (→ C1.21)
 
 > Pratik karar: cihazlara **komut gönderiyor / cihazları yönetiyor / cihaz kimliği** gerekiyorsa **IoT Hub**; yalnızca çok yüksek hacimli olay akışı alıyorsan **Event Hubs**. Gerçekte ikisi birlikte de kullanılır (IoT Hub'ın yerleşik uç noktası Event Hubs uyumludur).
 
@@ -143,13 +186,21 @@ IoT/uygulama telemetrisi **hot path** (anlık: Stream Analytics → alarm) ve **
 
 #### 3.5 Diğer popüler servisler *(bağlam)*
 
-| Servis | Ne | Tek cümle |
-|---|---|---|
-| **Azure Batch** | HPC / büyük ölçekli paralel iş | VM havuzlarını otomatik oluşturup işleri dağıtır; **Batch servisinin kendisi için ücret yok, kullanılan compute/depolama ücretli** *(doğrula)*; render, simülasyon, Monte Carlo |
-| **Azure Local** (eski adı Azure Stack HCI) | Hibrit | Kurum içi donanımda Azure destekli altyapı (→ C1.1) |
-| **Azure Stack Hub / Edge** | Hibrit/uç | Kurum içinde Azure benzeri hizmetler / uçta (edge) donanım cihazı. *Azure Stack ailesinin adları ve ürün durumu değişti; güncel kataloğu kontrol et* |
-| **Azure Communication Services** | CPaaS | Uygulamaya **SMS, sesli/görüntülü arama, sohbet, e-posta** ekleme |
-| **Azure Arc** | Hibrit yönetim | Kurum içi/başka bulut kaynaklarını Azure'dan yönetme (→ [C1.13](../3.3-management-deployment-tools/README.md)) |
+- **Azure Batch**
+  - Ne: HPC / büyük ölçekli paralel iş
+  - Tek cümle: VM havuzlarını otomatik oluşturup işleri dağıtır; **Batch servisinin kendisi için ücret yok, kullanılan compute/depolama ücretli** *(doğrula)*; render, simülasyon, Monte Carlo
+- **Azure Local** (eski adı Azure Stack HCI)
+  - Ne: Hibrit
+  - Tek cümle: Kurum içi donanımda Azure destekli altyapı (→ C1.1)
+- **Azure Stack Hub / Edge**
+  - Ne: Hibrit/uç
+  - Tek cümle: Kurum içinde Azure benzeri hizmetler / uçta (edge) donanım cihazı. *Azure Stack ailesinin adları ve ürün durumu değişti; güncel kataloğu kontrol et*
+- **Azure Communication Services**
+  - Ne: CPaaS
+  - Tek cümle: Uygulamaya **SMS, sesli/görüntülü arama, sohbet, e-posta** ekleme
+- **Azure Arc**
+  - Ne: Hibrit yönetim
+  - Tek cümle: Kurum içi/başka bulut kaynaklarını Azure'dan yönetme (→ [C1.13](../3.3-management-deployment-tools/README.md))
 
 #### 3.6 Pratik — Language kaynağı (F0) ve tek REST çağrısı (`az` CLI)
 
@@ -225,26 +276,30 @@ Bir gıda üreticisi, üç fabrikadaki 4.000 soğutucu ve konveyör sensörüyle
 
 **Sınav neyi, nasıl sorar?** Senaryo → servis eşleştirmesi (hazır API ↔ Azure ML; IoT Hub ↔ Event Hubs ↔ IoT Central) ve sorumlu AI ilkelerini tanımla eşleştirme.
 
-| Soru kalıbı | Doğru cevap | Tuzak |
-|---|---|---|
-| "Önceden eğitilmiş görüntü/metin/konuşma API'si" | **Azure AI services (Foundry Tools)** | Azure Machine Learning |
-| "**Kendi verinle** özel model eğit, dağıt, MLOps" | **Azure Machine Learning** | Language, Vision |
-| "Fatura/formdan alan çıkar" | **Document Intelligence** | Vision (genel OCR) |
-| "Konuşmayı yazıya çevir / sesi sentezle" | **Speech** | Language |
-| "Metni başka dile çevir" | **Translator** | Language |
-| "Dokümanlarda arama + vektör arama" | **Azure AI Search** | Cosmos DB |
-| "Üretken AI modelleri (GPT), güvenli kurumsal kullanım" | **Azure OpenAI / Foundry Models** | Azure ML |
-| "Cihaz-bulut **çift yönlü** iletişim, cihaz kimliği, device twin" | **IoT Hub** | Event Hubs |
-| "Yüksek hacimli olay **alımı**, Kafka uyumu, cihaz yönetimi yok" | **Event Hubs** | IoT Hub |
-| "Binlerce cihazı **otomatik** kaydet (zero-touch)" | **IoT Hub Device Provisioning Service** | IoT Central |
-| "Kodsuz/low-code IoT **SaaS** uygulaması" | **IoT Central** | IoT Hub (PaaS) |
-| "Fiziksel ortamın dijital ikizi/modeli" | **Azure Digital Twins** | IoT Hub |
-| "Bulut mantığını cihazda/uçta çalıştır" | **IoT Edge** | Azure Arc |
-| "Büyük ölçekli paralel/HPC iş" | **Azure Batch** | VM Scale Set |
-| "Uygulamaya SMS/arama/sohbet ekle" | **Azure Communication Services** | Logic Apps |
-| "Modelin kararlarını açıklayabilmek" | **Transparency** | Accountability |
-| "Verilerin korunması" | **Privacy & security** | Fairness |
-| "Herkes, engelliler dahil kullanabilsin" | **Inclusiveness** | Fairness |
+- **"Önceden eğitilmiş görüntü/metin/konuşma API'si"**
+  - Doğru cevap: **Azure AI services (Foundry Tools)**
+  - Tuzak: Azure Machine Learning
+- "**Kendi verinle** özel model eğit, dağıt, MLOps" — Doğru cevap: **Azure Machine Learning** · Tuzak: Language, Vision
+- **"Fatura/formdan alan çıkar"** — Doğru cevap: **Document Intelligence** · Tuzak: Vision (genel OCR)
+- **"Konuşmayı yazıya çevir / sesi sentezle"** — Doğru cevap: **Speech** · Tuzak: Language
+- **"Metni başka dile çevir"** — Doğru cevap: **Translator** · Tuzak: Language
+- **"Dokümanlarda arama + vektör arama"** — Doğru cevap: **Azure AI Search** · Tuzak: Cosmos DB
+- **"Üretken AI modelleri (GPT), güvenli kurumsal kullanım"**
+  - Doğru cevap: **Azure OpenAI / Foundry Models**
+  - Tuzak: Azure ML
+- "Cihaz-bulut **çift yönlü** iletişim, cihaz kimliği, device twin" — Doğru cevap: **IoT Hub** · Tuzak: Event Hubs
+- "Yüksek hacimli olay **alımı**, Kafka uyumu, cihaz yönetimi yok" — Doğru cevap: **Event Hubs** · Tuzak: IoT Hub
+- "Binlerce cihazı **otomatik** kaydet (zero-touch)"
+  - Doğru cevap: **IoT Hub Device Provisioning Service**
+  - Tuzak: IoT Central
+- "Kodsuz/low-code IoT **SaaS** uygulaması" — Doğru cevap: **IoT Central** · Tuzak: IoT Hub (PaaS)
+- **"Fiziksel ortamın dijital ikizi/modeli"** — Doğru cevap: **Azure Digital Twins** · Tuzak: IoT Hub
+- **"Bulut mantığını cihazda/uçta çalıştır"** — Doğru cevap: **IoT Edge** · Tuzak: Azure Arc
+- **"Büyük ölçekli paralel/HPC iş"** — Doğru cevap: **Azure Batch** · Tuzak: VM Scale Set
+- **"Uygulamaya SMS/arama/sohbet ekle"** — Doğru cevap: **Azure Communication Services** · Tuzak: Logic Apps
+- **"Modelin kararlarını açıklayabilmek"** — Doğru cevap: **Transparency** · Tuzak: Accountability
+- **"Verilerin korunması"** — Doğru cevap: **Privacy & security** · Tuzak: Fairness
+- **"Herkes, engelliler dahil kullanabilsin"** — Doğru cevap: **Inclusiveness** · Tuzak: Fairness
 
 **Anahtar kelimeler:** *prebuilt, pretrained, cognitive* → AI services · *train, custom model, MLOps, AutoML, designer* → Azure ML · *telemetry, bi-directional, device twin, provisioning* → IoT Hub/DPS · *ingest millions of events/s* → Event Hubs · *digital twin graph* → Digital Twins · *HPC* → Batch.
 
@@ -276,17 +331,31 @@ Bir gıda üreticisi, üç fabrikadaki 4.000 soğutucu ve konveyör sensörüyle
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Hazır API (AI services) | Dakikalar içinde sonuç, eğitim yok, sürekli iyileşen model | Genel amaçlı; alana özgü doğruluk sınırlı; çağrı başına ücret, veri bölgesi/gizlilik değerlendirmesi |
-| Özel model (Azure ML) | Alana özgü doğruluk, tam kontrol | Veri toplama/etiketleme, MLOps, eğitim/çıkarım maliyeti, uzman gerekir |
-| Foundation model + RAG | Yeniden eğitim olmadan şirket verisine dayalı yanıt | Token maliyeti, gecikme, halüsinasyon riski; içerik filtresi ve değerlendirme gerekir |
-| IoT Hub (PaaS) | Güvenlik, ölçek, cihaz yönetimi hazır | Kurulum/tasarım, birim ve mesaj sayısına göre ücret |
-| IoT Central (SaaS) | Hızlı başlangıç, kodsuz pano | Esneklik ve özelleştirme sınırlı; platform bağımlılığı |
-| Edge işleme | Düşük gecikme, çevrimdışı çalışma, bant genişliği tasarrufu | Cihaz yönetimi/güncelleme karmaşıklığı |
-| Hot path (Stream Analytics) | Saniyelik alarm | Sürekli çalışan işlem maliyeti |
-| Cold path (Data Lake) | Ucuz uzun süreli depolama, geriye dönük analiz | Anlık değil |
-| Ücretsiz katman | Maliyetsiz öğrenme | Kota, bölge/abonelik sınırı, üretime uygun değil |
+- **Hazır API (AI services)**
+  - Kazanç: Dakikalar içinde sonuç, eğitim yok, sürekli iyileşen model
+  - Bedel: Genel amaçlı; alana özgü doğruluk sınırlı; çağrı başına ücret, veri bölgesi/gizlilik değerlendirmesi
+- **Özel model (Azure ML)**
+  - Kazanç: Alana özgü doğruluk, tam kontrol
+  - Bedel: Veri toplama/etiketleme, MLOps, eğitim/çıkarım maliyeti, uzman gerekir
+- **Foundation model + RAG**
+  - Kazanç: Yeniden eğitim olmadan şirket verisine dayalı yanıt
+  - Bedel: Token maliyeti, gecikme, halüsinasyon riski; içerik filtresi ve değerlendirme gerekir
+- **IoT Hub (PaaS)**
+  - Kazanç: Güvenlik, ölçek, cihaz yönetimi hazır
+  - Bedel: Kurulum/tasarım, birim ve mesaj sayısına göre ücret
+- **IoT Central (SaaS)**
+  - Kazanç: Hızlı başlangıç, kodsuz pano
+  - Bedel: Esneklik ve özelleştirme sınırlı; platform bağımlılığı
+- **Edge işleme**
+  - Kazanç: Düşük gecikme, çevrimdışı çalışma, bant genişliği tasarrufu
+  - Bedel: Cihaz yönetimi/güncelleme karmaşıklığı
+- **Hot path (Stream Analytics)** — Kazanç: Saniyelik alarm · Bedel: Sürekli çalışan işlem maliyeti
+- **Cold path (Data Lake)**
+  - Kazanç: Ucuz uzun süreli depolama, geriye dönük analiz
+  - Bedel: Anlık değil
+- **Ücretsiz katman**
+  - Kazanç: Maliyetsiz öğrenme
+  - Bedel: Kota, bölge/abonelik sınırı, üretime uygun değil
 
 ---
 

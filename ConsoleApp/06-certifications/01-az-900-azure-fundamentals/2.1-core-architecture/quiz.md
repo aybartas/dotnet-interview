@@ -163,11 +163,9 @@ Bir kuruluşun **birden çok subscription** kullanmasının **hangi ikisi** geç
 
 #### Soru 13: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Her Entra tenant'ında tek bir root management group bulunur. | ☐ | ☐ |
-| b) Bir subscription aynı anda iki management group'un altında olabilir. | ☐ | ☐ |
-| c) Management group hiyerarşisi (root ve subscription seviyesi hariç) 6 seviyeye kadar derinleşebilir. | ☐ | ☐ |
+- **a) Her Entra tenant'ında tek bir root management group bulunur.** — Evet: ☐ · Hayır: ☐
+- b) Bir subscription aynı anda iki management group'un altında olabilir. — Evet: ☐ · Hayır: ☐
+- c) Management group hiyerarşisi (root ve subscription seviyesi hariç) 6 seviyeye kadar derinleşebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

@@ -77,11 +77,9 @@ Bir şirket, aylık Azure harcaması belirlediği limitin **%80'ine ulaştığı
 
 #### Soru 6: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Cost Management'ta bir budget aşıldığında Azure kaynakları otomatik olarak durdurulur. | ☐ | ☐ |
-| b) Budget uyarısı bir action group'a bağlanarak otomasyon tetiklenebilir. | ☐ | ☐ |
-| c) Cost analysis ile maliyetler resource group veya tag'e göre gruplanabilir. | ☐ | ☐ |
+- a) Cost Management'ta bir budget aşıldığında Azure kaynakları otomatik olarak durdurulur. — Evet: ☐ · Hayır: ☐
+- b) Budget uyarısı bir action group'a bağlanarak otomasyon tetiklenebilir. — Evet: ☐ · Hayır: ☐
+- c) Cost analysis ile maliyetler resource group veya tag'e göre gruplanabilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -103,11 +101,9 @@ Bir şirket, maliyetleri **departmanlara göre** raporlamak istiyor. Kaynaklara 
 
 #### Soru 8: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Bir resource group'a eklenen tag'ler, gruptaki kaynaklara varsayılan olarak otomatik uygulanır. | ☐ | ☐ |
-| b) Azure Policy, eksik tag'lerin resource group'tan kaynaklara kopyalanması için kullanılabilir. | ☐ | ☐ |
-| c) Tag'ler anahtar-değer çiftlerinden oluşur. | ☐ | ☐ |
+- a) Bir resource group'a eklenen tag'ler, gruptaki kaynaklara varsayılan olarak otomatik uygulanır. — Evet: ☐ · Hayır: ☐
+- b) Azure Policy, eksik tag'lerin resource group'tan kaynaklara kopyalanması için kullanılabilir. — Evet: ☐ · Hayır: ☐
+- **c) Tag'ler anahtar-değer çiftlerinden oluşur.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -194,11 +190,9 @@ Bir şirketin geliştirme ortamındaki VM'ler yalnızca hafta içi mesai saatler
 
 #### Soru 15: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Pricing Calculator'ın sonucu bir tahmindir; gerçek fatura kullanıma göre farklı olabilir. | ☐ | ☐ |
-| b) Pricing Calculator'ı kullanmak için bir Azure aboneliği gerekir. | ☐ | ☐ |
-| c) Pricing Calculator'da reservation ve Azure Hybrid Benefit gibi seçeneklerin etkisi görülebilir. | ☐ | ☐ |
+- a) Pricing Calculator'ın sonucu bir tahmindir; gerçek fatura kullanıma göre farklı olabilir. — Evet: ☐ · Hayır: ☐
+- **b) Pricing Calculator'ı kullanmak için bir Azure aboneliği gerekir.** — Evet: ☐ · Hayır: ☐
+- c) Pricing Calculator'da reservation ve Azure Hybrid Benefit gibi seçeneklerin etkisi görülebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

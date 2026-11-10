@@ -10,10 +10,12 @@
 
 Azure'un mimarisi iki eksende anlatılır:
 
-| Eksen | Bileşenler | Soruyu cevaplar |
-|---|---|---|
-| **Fiziksel altyapı** | Datacenter → **availability zone** → **region** → **region pair** · **sovereign region** | Kaynağım fiziksel olarak **nerede** çalışıyor, hangi arızaya dayanıyor? |
-| **Mantıksal (yönetim) yapı** | **Resource** → **resource group** → **subscription** → **management group** (→ Entra tenant) | Kaynaklarımı **nasıl düzenler**, faturalar ve yetkilendiririm? |
+- **Fiziksel altyapı**
+  - Bileşenler: Datacenter → **availability zone** → **region** → **region pair** · **sovereign region**
+  - Soruyu cevaplar: Kaynağım fiziksel olarak **nerede** çalışıyor, hangi arızaya dayanıyor?
+- **Mantıksal (yönetim) yapı**
+  - Bileşenler: **Resource** → **resource group** → **subscription** → **management group** (→ Entra tenant)
+  - Soruyu cevaplar: Kaynaklarımı **nasıl düzenler**, faturalar ve yetkilendiririm?
 
 ```
 Physical                                   Logical (management hierarchy)
@@ -66,11 +68,13 @@ Bu konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.7).
 - Koruduğu arıza: **bir datacenter'ın (zone'un) tamamen çökmesi** — elektrik, soğutma veya ağ kesintisi. Bir kaynağın kopyalarını farklı zone'lara koyarsan biri düşse de diğerleri çalışır (→ C1.2: iki zone'a yayılmış VM'ler %99,99 SLA).
 - Zone'ları kullanan servisler iki gruptadır:
 
-| Tür | Anlamı | Örnek |
-|---|---|---|
-| **Zonal** | Kaynağı **sen** belirli bir zone'a sabitlersin (ör. zone 1) | Virtual Machines, managed disk, public IP |
-| **Zone-redundant** | Platform kaynağı zone'lar arasında **otomatik** çoğaltır | ZRS storage (→ C1.8), Azure SQL Database (zone-redundant yapılandırma) |
-| *(bağlam)* Zone desteği olmayan / global | Zone kavramı uygulanmaz | Entra ID, Front Door |
+- **Zonal**
+  - Anlamı: Kaynağı **sen** belirli bir zone'a sabitlersin (ör. zone 1)
+  - Örnek: Virtual Machines, managed disk, public IP
+- **Zone-redundant**
+  - Anlamı: Platform kaynağı zone'lar arasında **otomatik** çoğaltır
+  - Örnek: ZRS storage (→ C1.8), Azure SQL Database (zone-redundant yapılandırma)
+- ***(bağlam)* Zone desteği olmayan / global** — Anlamı: Zone kavramı uygulanmaz · Örnek: Entra ID, Front Door
 
 > Zone yedekliliği ek maliyet getirir: daha çok kaynak ve zone'lar arası veri aktarımı (→ C1.11).
 
@@ -96,10 +100,12 @@ Dikkat edilecek ayrıntılar:
 
 Ana (public) Azure'dan **yasal ve işletimsel olarak ayrılmış** Azure örnekleri:
 
-| Sovereign cloud | Kim için | Özellik |
-|---|---|---|
-| **Azure Government** | ABD kamu kurumları ve iş ortakları | Fiziksel ve ağ olarak ayrı; yalnızca taranmış (screened) ABD personeli işletir; FedRAMP, DoD gibi uyumluluk gereksinimleri |
-| **Azure China** (Azure operated by 21Vianet) | Çin'de hizmet | Microsoft değil **21Vianet** işletir; Çin regülasyonlarına uyum; global Azure'dan fiziksel olarak ayrı |
+- **Azure Government**
+  - Kim için: ABD kamu kurumları ve iş ortakları
+  - Özellik: Fiziksel ve ağ olarak ayrı; yalnızca taranmış (screened) ABD personeli işletir; FedRAMP, DoD gibi uyumluluk gereksinimleri
+- **Azure China** (Azure operated by 21Vianet)
+  - Kim için: Çin'de hizmet
+  - Özellik: Microsoft değil **21Vianet** işletir; Çin regülasyonlarına uyum; global Azure'dan fiziksel olarak ayrı
 
 Sovereign bulutlarda portal adresi, servis listesi ve fiyatlar global Azure'dan farklı olabilir.
 
@@ -236,21 +242,25 @@ Bir Avrupa e-ticaret şirketi Azure'a geçerken mimarisini kuruyor:
 
 **Sınav neyi, nasıl sorar?** Senaryo + "hangisini kullanmalısın?", evet/hayır tabloları (özellikle resource group kuralları) ve hiyerarşi/kapsam soruları.
 
-| Soru kalıbı | Cevap | Tuzak |
-|---|---|---|
-| "Bir **datacenter** arızasına karşı koru, aynı region'da kal" | **Availability zone** | Region pair |
-| "Bütün bir **region**'ın felaketine karşı koru" | **Region pair** / ikinci region | Availability zone |
-| "Planlı güncellemeler iki bölgeye aynı anda uygulanmasın" | **Region pair** | |
-| "ABD kamu kurumu, ayrı ve uyumlu bulut" | **Azure Government** (sovereign) | |
-| "Bir politikayı **birden çok subscription**'a tek seferde uygula" | **Management group** | Resource group |
-| "Kaynakları yaşam döngüsüne göre gruplayıp birlikte sil" | **Resource group** | Subscription |
-| "Departman başına **ayrı fatura**" | **Subscription** | Resource group (maliyet tag'le de ayrılır → C1.11) |
-| "Bir kaynak iki resource group'a ait olabilir mi?" | **Hayır** | |
-| "Resource group'lar iç içe olabilir mi?" | **Hayır** | |
-| "RG'deki kaynaklar farklı region'larda olabilir mi?" | **Evet** | |
-| "RG silinirse içindeki kaynaklar?" | **Hepsi silinir** | "Kaynaklar başka RG'ye taşınır" |
-| "Hiyerarşiyi sırala" | Management group → subscription → resource group → resource | |
-| "Region seçmeden kullanılan servis" | Global servisler (Entra ID, Front Door, DNS) | |
+- "Bir **datacenter** arızasına karşı koru, aynı region'da kal" — Cevap: **Availability zone** · Tuzak: Region pair
+- "Bütün bir **region**'ın felaketine karşı koru" — Cevap: **Region pair** / ikinci region · Tuzak: Availability zone
+- **"Planlı güncellemeler iki bölgeye aynı anda uygulanmasın"** — Cevap: **Region pair** · Tuzak: —
+- **"ABD kamu kurumu, ayrı ve uyumlu bulut"** — Cevap: **Azure Government** (sovereign) · Tuzak: —
+- "Bir politikayı **birden çok subscription**'a tek seferde uygula" — Cevap: **Management group** · Tuzak: Resource group
+- **"Kaynakları yaşam döngüsüne göre gruplayıp birlikte sil"** — Cevap: **Resource group** · Tuzak: Subscription
+- "Departman başına **ayrı fatura**"
+  - Cevap: **Subscription**
+  - Tuzak: Resource group (maliyet tag'le de ayrılır → C1.11)
+- **"Bir kaynak iki resource group'a ait olabilir mi?"** — Cevap: **Hayır** · Tuzak: —
+- **"Resource group'lar iç içe olabilir mi?"** — Cevap: **Hayır** · Tuzak: —
+- **"RG'deki kaynaklar farklı region'larda olabilir mi?"** — Cevap: **Evet** · Tuzak: —
+- **"RG silinirse içindeki kaynaklar?"** — Cevap: **Hepsi silinir** · Tuzak: "Kaynaklar başka RG'ye taşınır"
+- **"Hiyerarşiyi sırala"**
+  - Cevap: Management group → subscription → resource group → resource
+  - Tuzak: —
+- **"Region seçmeden kullanılan servis"**
+  - Cevap: Global servisler (Entra ID, Front Door, DNS)
+  - Tuzak: —
 
 **Anahtar kelimeler:** *physically separate locations within a region* (zone) · *at least three zones* · *300 miles* (pair) · *sequential updates* · *logical container* (RG) · *billing boundary / access control boundary* (subscription) · *inherit* (management group).
 
@@ -274,14 +284,22 @@ Bir Avrupa e-ticaret şirketi Azure'a geçerken mimarisini kuruyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Tek zone (zonal) yerleşim | En düşük gecikme ve maliyet | Datacenter arızasında kesinti |
-| Zone'lara yayılmak | Datacenter arızasına dayanıklılık, daha yüksek SLA | Ek kaynak, zone'lar arası trafik ücreti ve küçük gecikme |
-| İkinci region (pair) | Bölgesel felakete dayanıklılık | ~2× maliyet, veri replikasyonu, tutarlılık ve failover karmaşıklığı |
-| Kullanıcıya yakın region | Düşük gecikme | O region'da servis/boyut olmayabilir; fiyat farklı olabilir |
-| Çok sayıda küçük RG | Net yaşam döngüsü ve erişim sınırları | Yönetilecek daha çok kapsam |
-| Ortam başına subscription | Faturalama ve erişim izolasyonu, kota ayrımı | Ağ bağlantısı ve yönetişim için management group/hub tasarımı gerekir |
+- **Tek zone (zonal) yerleşim** — Kazanç: En düşük gecikme ve maliyet · Bedel: Datacenter arızasında kesinti
+- **Zone'lara yayılmak**
+  - Kazanç: Datacenter arızasına dayanıklılık, daha yüksek SLA
+  - Bedel: Ek kaynak, zone'lar arası trafik ücreti ve küçük gecikme
+- **İkinci region (pair)**
+  - Kazanç: Bölgesel felakete dayanıklılık
+  - Bedel: ~2× maliyet, veri replikasyonu, tutarlılık ve failover karmaşıklığı
+- **Kullanıcıya yakın region**
+  - Kazanç: Düşük gecikme
+  - Bedel: O region'da servis/boyut olmayabilir; fiyat farklı olabilir
+- **Çok sayıda küçük RG**
+  - Kazanç: Net yaşam döngüsü ve erişim sınırları
+  - Bedel: Yönetilecek daha çok kapsam
+- **Ortam başına subscription**
+  - Kazanç: Faturalama ve erişim izolasyonu, kota ayrımı
+  - Bedel: Ağ bağlantısı ve yönetişim için management group/hub tasarımı gerekir
 
 ---
 

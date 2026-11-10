@@ -91,11 +91,9 @@ Bir şirket, birincil Azure bölgesi tamamen kullanılamaz hale gelse bile, **fa
 
 #### Soru 7: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) GRS ile ikincil bölgedeki veri, failover yapılmadan her zaman okunabilir. | ☐ | ☐ |
-| b) GZRS, birincil bölgede veriyi availability zone'lara yayar ve ikincil bölgeye de kopyalar. | ☐ | ☐ |
-| c) ZRS, bölgesel bir felakete karşı koruma sağlar. | ☐ | ☐ |
+- a) GRS ile ikincil bölgedeki veri, failover yapılmadan her zaman okunabilir. — Evet: ☐ · Hayır: ☐
+- b) GZRS, birincil bölgede veriyi availability zone'lara yayar ve ikincil bölgeye de kopyalar. — Evet: ☐ · Hayır: ☐
+- **c) ZRS, bölgesel bir felakete karşı koruma sağlar.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -130,11 +128,9 @@ Yıllarca saklanması gereken ve **yılda bir kez bile okunmayabilecek** uyumlul
 
 #### Soru 10: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Archive tier'daki bir blob, Hot tier'daki gibi anında indirilebilir. | ☐ | ☐ |
-| b) Archive'daki bir blob'u okumak için önce Hot, Cool veya Cold tier'a rehydrate etmek gerekir ve bu saatler sürebilir. | ☐ | ☐ |
-| c) Cool tier'daki bir blob'u 30 günden önce silmek ek ücret doğurabilir. | ☐ | ☐ |
+- a) Archive tier'daki bir blob, Hot tier'daki gibi anında indirilebilir. — Evet: ☐ · Hayır: ☐
+- b) Archive'daki bir blob'u okumak için önce Hot, Cool veya Cold tier'a rehydrate etmek gerekir ve bu saatler sürebilir. — Evet: ☐ · Hayır: ☐
+- c) Cool tier'daki bir blob'u 30 günden önce silmek ek ücret doğurabilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

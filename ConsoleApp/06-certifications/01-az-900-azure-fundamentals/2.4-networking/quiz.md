@@ -51,11 +51,9 @@ Bir geliştirici, evdeki dizüstü bilgisayarından bir Azure VNet'indeki test V
 
 #### Soru 4: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) VNet peering ile bağlanan VNet'ler arasındaki trafik Microsoft omurga ağında kalır. | ☐ | ☐ |
-| b) VNet-A, VNet-B ile; VNet-B de VNet-C ile peering yaptıysa, VNet-A ile VNet-C doğrudan iletişim kurabilir. | ☐ | ☐ |
-| c) Farklı region'lardaki iki VNet peering ile bağlanabilir. | ☐ | ☐ |
+- a) VNet peering ile bağlanan VNet'ler arasındaki trafik Microsoft omurga ağında kalır. — Evet: ☐ · Hayır: ☐
+- b) VNet-A, VNet-B ile; VNet-B de VNet-C ile peering yaptıysa, VNet-A ile VNet-C doğrudan iletişim kurabilir. — Evet: ☐ · Hayır: ☐
+- **c) Farklı region'lardaki iki VNet peering ile bağlanabilir.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -77,11 +75,9 @@ Aynı subscription'daki iki Azure VNet'ini, **gateway kurmadan**, düşük gecik
 
 #### Soru 6: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Bir Azure VNet birden çok region'a yayılabilir. | ☐ | ☐ |
-| b) Bir VNet, adres alanını subnet'lere bölerek kaynakları segmentlere ayırmaya olanak tanır. | ☐ | ☐ |
-| c) Peering yapılacak iki VNet'in adres alanları çakışabilir. | ☐ | ☐ |
+- **a) Bir Azure VNet birden çok region'a yayılabilir.** — Evet: ☐ · Hayır: ☐
+- b) Bir VNet, adres alanını subnet'lere bölerek kaynakları segmentlere ayırmaya olanak tanır. — Evet: ☐ · Hayır: ☐
+- **c) Peering yapılacak iki VNet'in adres alanları çakışabilir.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

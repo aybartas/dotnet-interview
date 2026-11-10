@@ -10,11 +10,15 @@
 
 AZ-900 üç izleme aracını sorar; her biri **farklı bir soruya** cevap verir:
 
-| Araç | Cevapladığı soru | Kısaca |
-|---|---|---|
-| **Azure Advisor** | "Kaynaklarımı **nasıl daha iyi** yapılandırabilirim?" | Kişiselleştirilmiş **öneri** servisi (5 kategori) |
-| **Azure Service Health** | "**Azure'da** benim kaynaklarımı etkileyen bir sorun/bakım var mı?" | Azure Status + Service Health + Resource Health |
-| **Azure Monitor** | "Uygulamam ve kaynaklarım **şu anda nasıl** çalışıyor, ne oldu?" | Metrik + log toplama, analiz (Log Analytics), uyarı (alerts), uygulama izleme (Application Insights), dashboard ve Workbooks |
+- **Azure Advisor**
+  - Cevapladığı soru: "Kaynaklarımı **nasıl daha iyi** yapılandırabilirim?"
+  - Kısaca: Kişiselleştirilmiş **öneri** servisi (5 kategori)
+- **Azure Service Health**
+  - Cevapladığı soru: "**Azure'da** benim kaynaklarımı etkileyen bir sorun/bakım var mı?"
+  - Kısaca: Azure Status + Service Health + Resource Health
+- **Azure Monitor**
+  - Cevapladığı soru: "Uygulamam ve kaynaklarım **şu anda nasıl** çalışıyor, ne oldu?"
+  - Kısaca: Metrik + log toplama, analiz (Log Analytics), uyarı (alerts), uygulama izleme (Application Insights), dashboard ve Workbooks
 
 Bu konuda kod yok; pratik, `az` CLI komutlarıyla (Advisor önerileri, action group, metrik ve Service Health uyarısı, Log Analytics sorgusu) yapılır. Portal ekranları (Monitor sayfası, dashboard, Workbooks galerisi) teoride anlatılır.
 
@@ -34,13 +38,21 @@ Bu konuda kod yok; pratik, `az` CLI komutlarıyla (Advisor önerileri, action gr
 
 Kaynak yapılandırmanı ve kullanım (telemetri) verini analiz edip **kişiselleştirilmiş, uygulanabilir öneriler** veren ücretsiz servis. Öneriler beş kategoridedir ⭐:
 
-| Kategori | Amaç | Örnek öneri |
-|---|---|---|
-| **Reliability** (eski adı *High Availability*) | İş açısından kritik uygulamaların sürekliliği | Tek instance VM'i availability set/zone'a taşı, storage için soft delete aç |
-| **Security** | Güvenlik açığına yol açabilecek tehdit ve zafiyetleri tespit | Defender for Cloud önerileri (Advisor'da da görünür), MFA |
-| **Performance** | Uygulamaların hızını ve yanıt süresini iyileştirme | Veritabanı için önerilen index, daha uygun disk türü |
-| **Cost** | Genel Azure harcamasını optimize etme | Az kullanılan VM'i küçült veya kapat, **reservation** al |
-| **Operational Excellence** | Süreç/iş akışı verimliliği, yönetilebilirlik, dağıtım iyi uygulamaları | Service Health uyarısı kur, kaynakları tag'le |
+- **Reliability** (eski adı *High Availability*)
+  - Amaç: İş açısından kritik uygulamaların sürekliliği
+  - Örnek öneri: Tek instance VM'i availability set/zone'a taşı, storage için soft delete aç
+- **Security**
+  - Amaç: Güvenlik açığına yol açabilecek tehdit ve zafiyetleri tespit
+  - Örnek öneri: Defender for Cloud önerileri (Advisor'da da görünür), MFA
+- **Performance**
+  - Amaç: Uygulamaların hızını ve yanıt süresini iyileştirme
+  - Örnek öneri: Veritabanı için önerilen index, daha uygun disk türü
+- **Cost**
+  - Amaç: Genel Azure harcamasını optimize etme
+  - Örnek öneri: Az kullanılan VM'i küçült veya kapat, **reservation** al
+- **Operational Excellence**
+  - Amaç: Süreç/iş akışı verimliliği, yönetilebilirlik, dağıtım iyi uygulamaları
+  - Örnek öneri: Service Health uyarısı kur, kaynakları tag'le
 
 - **Advisor score:** kategori puanlarından hesaplanan, önerilere ne kadar uyduğunu gösteren yüzde; günlük yenilenir.
 - Öneriler üzerinde yapılabilenler: **uygula** (çoğu zaman tek tıkla veya ilgili kaynağa yönlendirme), **ertele** (belirli süre), **kapat** (dismiss), öneriler için **uyarı** kur, PDF/CSV olarak **dışa aktar**.
@@ -50,11 +62,15 @@ Kaynak yapılandırmanı ve kullanım (telemetri) verini analiz edip **kişisell
 
 Azure platformunun sağlık durumunu **üç kapsamda** gösterir ⭐:
 
-| Bileşen | Kapsam | Ne gösterir? |
-|---|---|---|
-| **Azure Status** | **Tüm Azure**, herkese açık (`azure.status.microsoft`) | Geniş çaplı (birçok müşteriyi etkileyen) olayların genel durum sayfası; giriş gerektirmez |
-| **Service Health** | **Senin** subscription'ların, kullandığın servisler ve region'lar | **Service issues** (hizmet sorunları), **planned maintenance** (planlı bakım), **health advisories** (aksiyon gerektiren değişiklikler, ör. bir özelliğin emekliliği), **security advisories**; olay geçmişi ve **kök neden analizi (RCA)** raporları; **Service Health alert**'leri |
-| **Resource Health** | **Tek bir kaynak** (ör. bir VM, bir SQL veritabanı) | Kaynağın mevcut ve geçmiş sağlık durumu (Available / Unavailable / Degraded / Unknown) ve sorun Azure platformundan mı, kullanıcı eyleminden mi kaynaklanıyor |
+- **Azure Status**
+  - Kapsam: **Tüm Azure**, herkese açık (`azure.status.microsoft`)
+  - Ne gösterir?: Geniş çaplı (birçok müşteriyi etkileyen) olayların genel durum sayfası; giriş gerektirmez
+- **Service Health**
+  - Kapsam: **Senin** subscription'ların, kullandığın servisler ve region'lar
+  - Ne gösterir?: **Service issues** (hizmet sorunları), **planned maintenance** (planlı bakım), **health advisories** (aksiyon gerektiren değişiklikler, ör. bir özelliğin emekliliği), **security advisories**; olay geçmişi ve **kök neden analizi (RCA)** raporları; **Service Health alert**'leri
+- **Resource Health**
+  - Kapsam: **Tek bir kaynak** (ör. bir VM, bir SQL veritabanı)
+  - Ne gösterir?: Kaynağın mevcut ve geçmiş sağlık durumu (Available / Unavailable / Degraded / Unknown) ve sorun Azure platformundan mı, kullanıcı eyleminden mi kaynaklanıyor
 
 > Kural: **genel Azure** → Azure Status · **benim aboneliğim/bölgem** → Service Health · **tek bir kaynağım** → Resource Health.
 
@@ -66,11 +82,13 @@ Azure, on-prem ve diğer bulutlardaki kaynaklardan **telemetri toplayan, analiz 
 
 **İki temel veri türü:**
 
-| | **Metrics** (metrikler) | **Logs** (log'lar) |
-|---|---|---|
-| Ne? | Belirli aralıklarla toplanan **sayısal** değerler (CPU %, istek sayısı, gecikme) | Zaman damgalı **olay kayıtları** (metin, yapılandırılmış alanlar) |
-| Güçlü yanı | Hafif, **neredeyse gerçek zamanlı**, grafik ve eşik uyarısı | Zengin bağlam, çok kaynaklı **sorgulama** (KQL), kök neden analizi |
-| Araç | **Metrics explorer** | **Log Analytics** (workspace) |
+- **Ne?**
+  - Metrics (metrikler): Belirli aralıklarla toplanan **sayısal** değerler (CPU %, istek sayısı, gecikme)
+  - Logs (log'lar): Zaman damgalı **olay kayıtları** (metin, yapılandırılmış alanlar)
+- **Güçlü yanı**
+  - Metrics (metrikler): Hafif, **neredeyse gerçek zamanlı**, grafik ve eşik uyarısı
+  - Logs (log'lar): Zengin bağlam, çok kaynaklı **sorgulama** (KQL), kök neden analizi
+- **Araç** — Metrics (metrikler): **Metrics explorer** · Logs (log'lar): **Log Analytics** (workspace)
 
 **Veri kaynakları (katmanlar):** uygulama (Application Insights), işletim sistemi (Azure Monitor Agent), Azure kaynakları (platform metrikleri, resource log'ları), subscription (**Activity Log** — "kim, ne zaman, hangi kaynağı değiştirdi?"), tenant (Entra ID log'ları).
 
@@ -212,14 +230,24 @@ Bir e-ticaret şirketinde pazartesi sabahı ödeme sayfası yavaşlıyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Yalnızca platform metrikleri | Ücretsiz, otomatik, hafif | Bağlam yok: "neden" sorusunu cevaplamaz |
-| Log'ları Log Analytics'e toplamak | Çok kaynaklı sorgu, kök neden analizi | Veri alma (GB) ve saklama maliyeti; örnekleme/filtre planı gerekir |
-| Application Insights | Uygulama düzeyinde görünürlük, bağımlılık haritası, availability test | Telemetri hacmi maliyeti; örnekleme ayarı; az da olsa uygulama yükü |
-| Çok sayıda hassas uyarı | Sorunu erken yakalama | **Alert yorgunluğu**: ekip uyarıları görmezden gelmeye başlar |
-| Metrik alert vs log search alert | Metrik: hızlı ve ucuz · Log: karmaşık koşul | Log alert daha gecikmeli ve sorgu başına maliyetli |
-| Dashboard vs Workbook | Dashboard: anlık bakış · Workbook: derin, etkileşimli rapor | İkisini birden sürdürmek bakım ister |
+- **Yalnızca platform metrikleri**
+  - Kazanç: Ücretsiz, otomatik, hafif
+  - Bedel: Bağlam yok: "neden" sorusunu cevaplamaz
+- **Log'ları Log Analytics'e toplamak**
+  - Kazanç: Çok kaynaklı sorgu, kök neden analizi
+  - Bedel: Veri alma (GB) ve saklama maliyeti; örnekleme/filtre planı gerekir
+- **Application Insights**
+  - Kazanç: Uygulama düzeyinde görünürlük, bağımlılık haritası, availability test
+  - Bedel: Telemetri hacmi maliyeti; örnekleme ayarı; az da olsa uygulama yükü
+- **Çok sayıda hassas uyarı**
+  - Kazanç: Sorunu erken yakalama
+  - Bedel: **Alert yorgunluğu**: ekip uyarıları görmezden gelmeye başlar
+- **Metrik alert vs log search alert**
+  - Kazanç: Metrik: hızlı ve ucuz · Log: karmaşık koşul
+  - Bedel: Log alert daha gecikmeli ve sorgu başına maliyetli
+- **Dashboard vs Workbook**
+  - Kazanç: Dashboard: anlık bakış · Workbook: derin, etkileşimli rapor
+  - Bedel: İkisini birden sürdürmek bakım ister
 
 ---
 

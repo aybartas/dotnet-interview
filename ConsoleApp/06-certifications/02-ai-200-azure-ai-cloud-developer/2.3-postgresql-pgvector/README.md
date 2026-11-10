@@ -70,12 +70,16 @@ CREATE TABLE documents (
 );
 ```
 
-| Operatör | Mesafe | Operator class (index için) | Not |
-|---|---|---|---|
-| `<->` | **L2 (euclidean)** | `vector_l2_ops` | |
-| `<=>` | **Cosine distance** (1 − cosine similarity) | `vector_cosine_ops` | Metin embedding'lerinde en yaygın |
-| `<#>` | **Negatif inner product** | `vector_ip_ops` | **Negatiftir** — benzerlik = `-(a <#> b)`; normalize vector'lerde cosine ile aynı sıralama |
-| `<+>` | L1 (taxicab) | `vector_l1_ops` | Sürüme bağlı |
+- **`<->`** — Mesafe: **L2 (euclidean)** · Operator class (index için): `vector_l2_ops` · Not: —
+- **`<=>`**
+  - Mesafe: **Cosine distance** (1 − cosine similarity)
+  - Operator class (index için): `vector_cosine_ops`
+  - Not: Metin embedding'lerinde en yaygın
+- **`<#>`**
+  - Mesafe: **Negatif inner product**
+  - Operator class (index için): `vector_ip_ops`
+  - Not: **Negatiftir** — benzerlik = `-(a <#> b)`; normalize vector'lerde cosine ile aynı sıralama
+- **`<+>`** — Mesafe: L1 (taxicab) · Operator class (index için): `vector_l1_ops` · Not: Sürüme bağlı
 
 - **Kritik kural:** Sorgudaki operatör, index'in **operator class**'ı ile eşleşmezse planlayıcı index'i **kullanmaz** (sessizce sequential scan). `vector_cosine_ops` ile kurulan index `<->` sorgusuna yardım etmez.
 - Cosine similarity istersen: `1 - (embedding <=> $1)`. `ORDER BY` içinde **ham operatörü** bırak (ifade sarmalarsan index kullanılmaz).
@@ -98,16 +102,26 @@ SET hnsw.ef_search = 100;     -- default 40; higher = better recall, slower
 SET ivfflat.probes = 32;      -- default 1; start around sqrt(lists); higher = better recall, slower
 ```
 
-| Özellik | **HNSW** | **IVFFlat** |
-|---|---|---|
-| Yapı | Çok katmanlı proximity graph | `lists` adet küme + her kümede düz liste |
-| Build parametreleri | `m` (bağlantı sayısı, varsayılan 16), `ef_construction` (varsayılan 64) | `lists` |
-| Sorgu parametresi | `hnsw.ef_search` (varsayılan 40) | `ivfflat.probes` (varsayılan 1) |
-| Recall/hız | **Genelde daha iyi** | Orta; `probes` düşükse recall düşük |
-| Build süresi / bellek | Yavaş, **çok bellek** | **Hızlı, az bellek** |
-| Boş tabloda kurulur mu? | **Evet**; veri eklendikçe güncellenir | Kurulur ama **anlamsız** (kümeler veriden öğrenilir) → **veri yükledikten sonra** kur |
-| Veri değişince | Index kendini günceller | Veri dağılımı çok değişirse **yeniden kur** (REINDEX) |
-| Tipik seçim | **Varsayılan öneri**, çoğu RAG | Çok büyük veri + build süresi/bellek kısıtı |
+- **Yapı**
+  - HNSW: Çok katmanlı proximity graph
+  - IVFFlat: `lists` adet küme + her kümede düz liste
+- **Build parametreleri**
+  - HNSW: `m` (bağlantı sayısı, varsayılan 16), `ef_construction` (varsayılan 64)
+  - IVFFlat: `lists`
+- **Sorgu parametresi** — HNSW: `hnsw.ef_search` (varsayılan 40) · IVFFlat: `ivfflat.probes` (varsayılan 1)
+- **Recall/hız**
+  - HNSW: **Genelde daha iyi**
+  - IVFFlat: Orta; `probes` düşükse recall düşük
+- **Build süresi / bellek** — HNSW: Yavaş, **çok bellek** · IVFFlat: **Hızlı, az bellek**
+- **Boş tabloda kurulur mu?**
+  - HNSW: **Evet**; veri eklendikçe güncellenir
+  - IVFFlat: Kurulur ama **anlamsız** (kümeler veriden öğrenilir) → **veri yükledikten sonra** kur
+- **Veri değişince**
+  - HNSW: Index kendini günceller
+  - IVFFlat: Veri dağılımı çok değişirse **yeniden kur** (REINDEX)
+- **Tipik seçim**
+  - HNSW: **Varsayılan öneri**, çoğu RAG
+  - IVFFlat: Çok büyük veri + build süresi/bellek kısıtı
 
 - Build hızlandırma: `SET maintenance_work_mem = '2GB';` (index bellekte kurulabilirse çok hızlanır; sunucu RAM'ini aşma), `max_parallel_maintenance_workers`.
 - **Index yok = tam doğru sonuç (exact, sequential scan)**; ANN index'ler **yaklaşıktır** (recall < %100). Küçük tablolarda (birkaç bin satır) index gerekmez.
@@ -309,15 +323,27 @@ az group delete --name $RG --yes --no-wait
 
 Bir SaaS firması çok kiracılı bilgi tabanı asistanı yapıyor (500 kiracı, toplam 4 milyon parça, 1536 boyut):
 
-| İhtiyaç | Karar | Neden |
-|---|---|---|
-| Vektörler faturalama verisiyle aynı transaction'da güncellenmeli | **PostgreSQL + pgvector** | ACID + JOIN; ayrı vector DB senkronu yok |
-| 4M × 6 KB ≈ 24 GB ham vector, index belleğe sığmıyor | `halfvec` index veya boyut 1024'e indirgeme + daha fazla RAM | Index'in sıcak kalması gecikmeyi belirler |
-| Kiracı başına sonuç | `WHERE tenant_id = $1` + `hnsw.iterative_scan = relaxed_order` | Over-filtering'i önler |
-| Çok büyük 3 kiracı | `PARTITION BY LIST (tenant_id)` + partition başına HNSW | Kiracı filtresi tek index'e iner |
-| Gece batch yeniden embedding | IVFFlat değil **HNSW** (yazma sırasında self-maintaining); build için `maintenance_work_mem` artır | Veri dağılımı sürekli değişiyor |
-| 200 pod, her biri pool açıyor | **PgBouncer 6432** + pod başına küçük `MaxPoolSize` | `max_connections` tükenmesin |
-| Parola yönetimi istemiyoruz | Entra + managed identity, token yenileme | Gizli bilgi yok |
+- **Vektörler faturalama verisiyle aynı transaction'da güncellenmeli**
+  - Karar: **PostgreSQL + pgvector**
+  - Neden: ACID + JOIN; ayrı vector DB senkronu yok
+- **4M × 6 KB ≈ 24 GB ham vector, index belleğe sığmıyor**
+  - Karar: `halfvec` index veya boyut 1024'e indirgeme + daha fazla RAM
+  - Neden: Index'in sıcak kalması gecikmeyi belirler
+- **Kiracı başına sonuç**
+  - Karar: `WHERE tenant_id = $1` + `hnsw.iterative_scan = relaxed_order`
+  - Neden: Over-filtering'i önler
+- **Çok büyük 3 kiracı**
+  - Karar: `PARTITION BY LIST (tenant_id)` + partition başına HNSW
+  - Neden: Kiracı filtresi tek index'e iner
+- **Gece batch yeniden embedding**
+  - Karar: IVFFlat değil **HNSW** (yazma sırasında self-maintaining); build için `maintenance_work_mem` artır
+  - Neden: Veri dağılımı sürekli değişiyor
+- **200 pod, her biri pool açıyor**
+  - Karar: **PgBouncer 6432** + pod başına küçük `MaxPoolSize`
+  - Neden: `max_connections` tükenmesin
+- **Parola yönetimi istemiyoruz**
+  - Karar: Entra + managed identity, token yenileme
+  - Neden: Gizli bilgi yok
 
 ---
 
@@ -339,13 +365,16 @@ Bir SaaS firması çok kiracılı bilgi tabanı asistanı yapıyor (500 kiracı,
 
 **Depo seçimi (üç konu):**
 
-| Gereksinim | PostgreSQL pgvector | Cosmos DB (→ C2.5) | Managed Redis (→ C2.7) |
-|---|---|---|---|
-| İlişkisel veri + JOIN + transaction | **En iyi** | Sınırlı (tek partition) | Yok |
-| Çok bölgeli yazma, otomatik ölçek, esnek şema | Sınırlı | **En iyi** | Active geo-replication (farklı model) |
-| En düşük gecikme, önbellek/geçici index | Orta | Orta | **En iyi** |
-| Kalıcı kaynak veri (system of record) | Evet | Evet | **Hayır** (önbellek) |
-| Vector index türleri | HNSW, IVFFlat (+pg_diskann) | flat, quantizedFlat, diskANN | HNSW, FLAT |
+- **İlişkisel veri + JOIN + transaction** — PostgreSQL pgvector: **En iyi** · Cosmos DB (→ C2.5): Sınırlı (tek partition) · Managed Redis (→ C2.7): Yok
+- **Çok bölgeli yazma, otomatik ölçek, esnek şema**
+  - PostgreSQL pgvector: Sınırlı · Cosmos DB (→ C2.5): **En iyi**
+  - Managed Redis (→ C2.7): Active geo-replication (farklı model)
+- **En düşük gecikme, önbellek/geçici index** — PostgreSQL pgvector: Orta · Cosmos DB (→ C2.5): Orta · Managed Redis (→ C2.7): **En iyi**
+- **Kalıcı kaynak veri (system of record)** — PostgreSQL pgvector: Evet · Cosmos DB (→ C2.5): Evet · Managed Redis (→ C2.7): **Hayır** (önbellek)
+- **Vector index türleri**
+  - PostgreSQL pgvector: HNSW, IVFFlat (+pg_diskann)
+  - Cosmos DB (→ C2.5): flat, quantizedFlat, diskANN
+  - Managed Redis (→ C2.7): HNSW, FLAT
 
 **Tuzaklar:**
 - IVFFlat'i **boş tabloda** kurmak; HNSW'nin böyle bir kısıtı yoktur.
@@ -375,17 +404,25 @@ Bir SaaS firması çok kiracılı bilgi tabanı asistanı yapıyor (500 kiracı,
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| HNSW yerine IVFFlat | Hızlı build, az bellek | Daha düşük recall, veri sonrası kurulum, yeniden kurulum |
-| `ef_search` ↑ | Recall ↑ | Gecikme ↑ |
-| `m` / `ef_construction` ↑ | Daha iyi graf kalitesi | Build süresi, index boyutu ↑ |
-| `halfvec` / daha az boyut | Depolama + bellek yarıya | Küçük doğruluk kaybı |
-| Iterative scan | Filtreli aramada eksik sonuç yok | Daha çok tarama → gecikme; `relaxed_order` sırası bozabilir |
-| Tek tablo + `tenant_id` filtresi | Basit | Büyük kiracıda over-filtering |
-| Partition per tenant | Kiracı izolasyonu, küçük index'ler | Operasyonel karmaşıklık, çok partition planlama maliyeti |
-| PgBouncer | Binlerce istemci, az sunucu bağlantısı | Ek hop; transaction pooling'de session durumu kısıtı |
-| Vector'ü PostgreSQL'de tutmak | Tek sistem, ACID | Çok büyük/ham ANN iş yüklerinde özel vector DB kadar ölçeklenmeyebilir |
+- **HNSW yerine IVFFlat**
+  - Kazanç: Hızlı build, az bellek
+  - Bedel: Daha düşük recall, veri sonrası kurulum, yeniden kurulum
+- **`ef_search` ↑** — Kazanç: Recall ↑ · Bedel: Gecikme ↑
+- **`m` / `ef_construction` ↑** — Kazanç: Daha iyi graf kalitesi · Bedel: Build süresi, index boyutu ↑
+- **`halfvec` / daha az boyut** — Kazanç: Depolama + bellek yarıya · Bedel: Küçük doğruluk kaybı
+- **Iterative scan**
+  - Kazanç: Filtreli aramada eksik sonuç yok
+  - Bedel: Daha çok tarama → gecikme; `relaxed_order` sırası bozabilir
+- **Tek tablo + `tenant_id` filtresi** — Kazanç: Basit · Bedel: Büyük kiracıda over-filtering
+- **Partition per tenant**
+  - Kazanç: Kiracı izolasyonu, küçük index'ler
+  - Bedel: Operasyonel karmaşıklık, çok partition planlama maliyeti
+- **PgBouncer**
+  - Kazanç: Binlerce istemci, az sunucu bağlantısı
+  - Bedel: Ek hop; transaction pooling'de session durumu kısıtı
+- **Vector'ü PostgreSQL'de tutmak**
+  - Kazanç: Tek sistem, ACID
+  - Bedel: Çok büyük/ham ANN iş yüklerinde özel vector DB kadar ölçeklenmeyebilir
 
 ---
 

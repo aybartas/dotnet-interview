@@ -64,11 +64,9 @@ Bir uygulamanın instance sayısı, CPU kullanımı %70'i geçtiğinde **otomati
 
 #### Soru 5: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Scale out, mevcut sunucuya daha fazla bellek eklemek demektir. | ☐ | ☐ |
-| b) Horizontal scaling, kaynak sayısını artırmak veya azaltmaktır. | ☐ | ☐ |
-| c) Vertical scaling'in, kullanılabilecek en büyük makine boyutuyla sınırlı bir üst limiti vardır. | ☐ | ☐ |
+- **a) Scale out, mevcut sunucuya daha fazla bellek eklemek demektir.** — Evet: ☐ · Hayır: ☐
+- **b) Horizontal scaling, kaynak sayısını artırmak veya azaltmaktır.** — Evet: ☐ · Hayır: ☐
+- c) Vertical scaling'in, kullanılabilecek en büyük makine boyutuyla sınırlı bir üst limiti vardır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -155,11 +153,9 @@ Aşağıdakilerden **hangi ikisi** *management of the cloud* (bulutun yönetimi)
 
 #### Soru 12: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure'daki her servis, preview aşamasında da bir SLA ile sunulur. | ☐ | ☐ |
-| b) SLA tutturulamadığında müşteri servis kredisi talep edebilir. | ☐ | ☐ |
-| c) Bir servisin SLA'sı, nasıl yapılandırıldığına (ör. tek VM mi, birden çok zone'a yayılmış VM'ler mi) göre değişebilir. | ☐ | ☐ |
+- **a) Azure'daki her servis, preview aşamasında da bir SLA ile sunulur.** — Evet: ☐ · Hayır: ☐
+- **b) SLA tutturulamadığında müşteri servis kredisi talep edebilir.** — Evet: ☐ · Hayır: ☐
+- c) Bir servisin SLA'sı, nasıl yapılandırıldığına (ör. tek VM mi, birden çok zone'a yayılmış VM'ler mi) göre değişebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -233,11 +229,9 @@ Her senaryoyu doğru faydayla eşleştirin: **High availability · Scalability �
 
 #### Soru 18: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Elasticity, kaynakların iş yüküne göre otomatik olarak artırılıp azaltılmasıdır. | ☐ | ☐ |
-| b) High availability, bir felaketten sonra verilerin yedekten geri yüklenmesi anlamına gelir. | ☐ | ☐ |
-| c) Governance, kuruluşun kurallarına ve regülasyonlara uyumu sağlamaya yardımcı olur. | ☐ | ☐ |
+- a) Elasticity, kaynakların iş yüküne göre otomatik olarak artırılıp azaltılmasıdır. — Evet: ☐ · Hayır: ☐
+- b) High availability, bir felaketten sonra verilerin yedekten geri yüklenmesi anlamına gelir. — Evet: ☐ · Hayır: ☐
+- c) Governance, kuruluşun kurallarına ve regülasyonlara uyumu sağlamaya yardımcı olur. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

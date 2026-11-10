@@ -51,11 +51,9 @@ Bir function app'in **hem sanal ağdaki özel endpoint'lere erişmesi hem de tra
 
 #### Soru 4: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) `local.settings.json` dosyası `func azure functionapp publish` ile Azure'a dağıtılan ayarların kaynağıdır ve repoya konması önerilir. | ☐ | ☐ |
-| b) Azure'daki karşılığı **Application settings**'tir. | ☐ | ☐ |
-| c) `host.json` host düzeyindeki davranışı (ör. Service Bus `maxConcurrentCalls`) yapılandırır ve uygulamayla birlikte dağıtılır. | ☐ | ☐ |
+- a) `local.settings.json` dosyası `func azure functionapp publish` ile Azure'a dağıtılan ayarların kaynağıdır ve repoya konması önerilir. — Evet: ☐ · Hayır: ☐
+- b) Azure'daki karşılığı **Application settings**'tir. — Evet: ☐ · Hayır: ☐
+- c) `host.json` host düzeyindeki davranışı (ör. Service Bus `maxConcurrentCalls`) yapılandırır ve uygulamayla birlikte dağıtılır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

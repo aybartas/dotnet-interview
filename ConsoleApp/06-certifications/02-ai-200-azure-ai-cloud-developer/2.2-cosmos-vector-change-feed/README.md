@@ -10,10 +10,12 @@
 
 İki ayrı yetenek, tek bir kanonik desende buluşur:
 
-| Yetenek | Ne yapar? | Anahtar kavramlar |
-|---|---|---|
-| **Vector search** | Embedding (kayan noktalı sayı dizisi) saklar ve **anlamsal benzerliğe** göre top-k sonuç döner | vector embedding policy, vector index (`flat` / `quantizedFlat` / `diskANN`), `VectorDistance` |
-| **Change feed** | Container'daki item değişikliklerini **sırayla** okunabilir bir akış olarak sunar | change feed processor, lease container, checkpoint |
+- **Vector search**
+  - Ne yapar?: Embedding (kayan noktalı sayı dizisi) saklar ve **anlamsal benzerliğe** göre top-k sonuç döner
+  - Anahtar kavramlar: vector embedding policy, vector index (`flat` / `quantizedFlat` / `diskANN`), `VectorDistance`
+- **Change feed**
+  - Ne yapar?: Container'daki item değişikliklerini **sırayla** okunabilir bir akış olarak sunar
+  - Anahtar kavramlar: change feed processor, lease container, checkpoint
 
 Kanonik desen (RAG verisini taze tutmak):
 
@@ -48,10 +50,12 @@ Vector fikrinin kendisi (embedding nedir, cosine/dot/L2, chunking, RAG) → M15.
 
 İki ayrı politika vardır ve **ikisi de container oluşturulurken verilir**; vector policy sonradan değiştirilemez (özellik 2026 başı itibarıyla yeni container'lar içindir — güncel kısıtları doğrula). Ayrıca hesapta vector search capability'si gerekebilir (`EnableNoSQLVectorSearch`; portal Features sayfası veya CLI — yeni hesaplarda varsayılan olup olmadığını doğrula).
 
-| Politika | Ne tanımlar? | Alanlar |
-|---|---|---|
-| **Vector embedding policy** | Vector alanının *anlamı* | `path`, `dataType` (`float32`, …), `dimensions`, `distanceFunction` (`cosine`, `dotproduct`, `euclidean`) |
-| **Vector indexing policy** (indexing policy içinde `vectorIndexes`) | Vector alanının *nasıl aranacağı* | `path` (embedding policy'deki ile **aynı**), `type` (`flat` / `quantizedFlat` / `diskANN`) |
+- **Vector embedding policy**
+  - Ne tanımlar?: Vector alanının *anlamı*
+  - Alanlar: `path`, `dataType` (`float32`, …), `dimensions`, `distanceFunction` (`cosine`, `dotproduct`, `euclidean`)
+- **Vector indexing policy** (indexing policy içinde `vectorIndexes`)
+  - Ne tanımlar?: Vector alanının *nasıl aranacağı*
+  - Alanlar: `path` (embedding policy'deki ile **aynı**), `type` (`flat` / `quantizedFlat` / `diskANN`)
 
 ```json
 {
@@ -73,11 +77,21 @@ Vector yolu `excludedPaths`'e **eklenir**: vector'ü normal (range) index'e sokm
 
 **Index türleri:**
 
-| Tür | Algoritma | Doğruluk | Ölçek / maliyet | Boyut sınırı* | Ne zaman? |
-|---|---|---|---|---|---|
-| `flat` | Brute-force, tam vector | %100 recall | Küçük veri; yüksek RU/gecikme büyüyünce | ~505 boyuta kadar | Prototip, birkaç bin vector, tam doğruluk şart |
-| `quantizedFlat` | Brute-force, **sıkıştırılmış (quantized)** vector | ~%100'e yakın (hafif kayıp) | Orta ölçek (on binlerce vector) | 4096'ya kadar | Orta veri, düşük RU |
-| **`diskANN`** | Yaklaşık en yakın komşu (ANN), disk-optimize | Yüksek ama yaklaşık (recall < %100) | **Milyonlarca vector**, düşük gecikme/RU | 4096'ya kadar | Üretim ölçeği |
+- **`flat`**
+  - Algoritma: Brute-force, tam vector · Doğruluk: %100 recall
+  - Ölçek / maliyet: Küçük veri; yüksek RU/gecikme büyüyünce
+  - Boyut sınırı*: ~505 boyuta kadar
+  - Ne zaman?: Prototip, birkaç bin vector, tam doğruluk şart
+- **`quantizedFlat`**
+  - Algoritma: Brute-force, **sıkıştırılmış (quantized)** vector
+  - Doğruluk: ~%100'e yakın (hafif kayıp)
+  - Ölçek / maliyet: Orta ölçek (on binlerce vector)
+  - Boyut sınırı*: 4096'ya kadar · Ne zaman?: Orta veri, düşük RU
+- **`diskANN`**
+  - Algoritma: Yaklaşık en yakın komşu (ANN), disk-optimize
+  - Doğruluk: Yüksek ama yaklaşık (recall < %100)
+  - Ölçek / maliyet: **Milyonlarca vector**, düşük gecikme/RU
+  - Boyut sınırı*: 4096'ya kadar · Ne zaman?: Üretim ölçeği
 
 \* Sınırlar sürümle değişebilir; sayıları ezberleme, **"flat'in boyut sınırı daha düşüktür"** bilgisini hatırla.
 - `quantizedFlat` ve `diskANN` için doğru nicemleme adına kabaca **en az ~1000 vector** gerekir; daha azında sistem tam tarama (full scan) yapar — küçük test verisinde "indeks işe yaramıyor" izlenimi buradan gelir.
@@ -181,10 +195,13 @@ rows = products.query_items(
 
 **Change feed**, container'daki **eklenen ve güncellenen** item'ların kalıcı, sıralı kaydıdır (yalnızca okuma; ayrı bir "kuyruk" kaynağı kurmazsın, maliyeti okuma RU'sudur).
 
-| Mod | Ne görür? | Silmeler | Not |
-|---|---|---|---|
-| **Latest version** (varsayılan) | Her item'ın **son hâli** (insert ve update ayırt edilmez) | **Görünmez** | Ara değişiklikler birleşebilir |
-| **All versions and deletes** | Her değişiklik + **silme/TTL** olayları, işlem türü metadata'sı | Görünür | Hesapta **continuous backup** şart; retention backup penceresine bağlı; 2026 ortasında GA (SDK/trigger desteğini doğrula) |
+- **Latest version** (varsayılan)
+  - Ne görür?: Her item'ın **son hâli** (insert ve update ayırt edilmez)
+  - Silmeler: **Görünmez** · Not: Ara değişiklikler birleşebilir
+- **All versions and deletes**
+  - Ne görür?: Her değişiklik + **silme/TTL** olayları, işlem türü metadata'sı
+  - Silmeler: Görünür
+  - Not: Hesapta **continuous backup** şart; retention backup penceresine bağlı; 2026 ortasında GA (SDK/trigger desteğini doğrula)
 
 - **Sıra garantisi:** *bir logical partition (aynı partition key) içinde* değişiklik sırası korunur; partition'lar arası global sıra yoktur.
 - **At-least-once:** Aynı değişiklik tekrar teslim edilebilir → işleyici **idempotent** olmalı.
@@ -192,11 +209,15 @@ rows = products.query_items(
 
 **Tüketim yolları:**
 
-| Yol | Ne? | Ne zaman |
-|---|---|---|
-| **Change feed processor** (.NET/Java SDK) | Dağıtık, otomatik checkpoint'li, ölçeklenir | Arka plan worker/servis — **bu konunun odağı** |
-| **Azure Functions Cosmos DB trigger** | Processor'ı saran serverless trigger (→ C2.8) | Olay güdümlü, ölçek yönetimi platformda |
-| **Pull model** (`GetChangeFeedIterator` / Python `query_items_change_feed`) | Tüketim hızını/partition'ı kendin yönetirsin | Özel kontrol, tek seferlik tarama |
+- **Change feed processor** (.NET/Java SDK)
+  - Ne?: Dağıtık, otomatik checkpoint'li, ölçeklenir
+  - Ne zaman: Arka plan worker/servis — **bu konunun odağı**
+- **Azure Functions Cosmos DB trigger**
+  - Ne?: Processor'ı saran serverless trigger (→ C2.8)
+  - Ne zaman: Olay güdümlü, ölçek yönetimi platformda
+- **Pull model** (`GetChangeFeedIterator` / Python `query_items_change_feed`)
+  - Ne?: Tüketim hızını/partition'ı kendin yönetirsin
+  - Ne zaman: Özel kontrol, tek seferlik tarama
 
 **Change feed processor** bileşenleri:
 1. **Monitored container** — değişikliklerin okunduğu container.
@@ -296,15 +317,27 @@ az group delete --name $RG --yes --no-wait
 
 Bir outdoor mağazası ürün arama ve sohbet asistanı (RAG) kuruyor:
 
-| İhtiyaç | Karar | Neden |
-|---|---|---|
-| 2 milyon ürün, "su geçirmez yürüyüş botu" gibi anlamsal arama | `diskANN` + cosine | Ölçekte düşük RU/gecikme; `flat` bu ölçekte pahalı |
-| "Yalnızca stokta olan, 2000 TL altı" | `WHERE c.inStock = true AND c.price < @max` + `VectorDistance` | Tek sorguda filtre + benzerlik |
-| Kategori başına sorgu | Partition key `/category` | Filtreli arama tek partition'a gider |
-| Editörler açıklamayı güncelliyor | Change feed processor → embedding'i yenile | Vector her zaman güncel içeriği yansıtır |
-| Worker 3 örnek çalışıyor, biri çöküyor | Lease container | İş otomatik paylaşılır/devralınır |
-| Ürün silindiğinde arama sonucundan çıkmalı | `deleted: true` soft delete (veya all-versions-and-deletes) | Latest version feed silmeyi göstermez |
-| Embedding modeli değişiyor (1536 → 3072) | Yeni container + yeni policy, toplu yeniden embedding | Vector policy sonradan değişmez; farklı modellerin vector'leri karşılaştırılamaz |
+- **2 milyon ürün, "su geçirmez yürüyüş botu" gibi anlamsal arama**
+  - Karar: `diskANN` + cosine
+  - Neden: Ölçekte düşük RU/gecikme; `flat` bu ölçekte pahalı
+- **"Yalnızca stokta olan, 2000 TL altı"**
+  - Karar: `WHERE c.inStock = true AND c.price < @max` + `VectorDistance`
+  - Neden: Tek sorguda filtre + benzerlik
+- **Kategori başına sorgu**
+  - Karar: Partition key `/category`
+  - Neden: Filtreli arama tek partition'a gider
+- **Editörler açıklamayı güncelliyor**
+  - Karar: Change feed processor → embedding'i yenile
+  - Neden: Vector her zaman güncel içeriği yansıtır
+- **Worker 3 örnek çalışıyor, biri çöküyor**
+  - Karar: Lease container
+  - Neden: İş otomatik paylaşılır/devralınır
+- **Ürün silindiğinde arama sonucundan çıkmalı**
+  - Karar: `deleted: true` soft delete (veya all-versions-and-deletes)
+  - Neden: Latest version feed silmeyi göstermez
+- **Embedding modeli değişiyor (1536 → 3072)**
+  - Karar: Yeni container + yeni policy, toplu yeniden embedding
+  - Neden: Vector policy sonradan değişmez; farklı modellerin vector'leri karşılaştırılamaz
 
 ---
 
@@ -354,15 +387,25 @@ Bir outdoor mağazası ürün arama ve sohbet asistanı (RAG) kuruyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| `flat` → `quantizedFlat` → `diskANN` | Ölçek, düşük RU/gecikme | Recall < %100 (ANN), index oluşturma/RU ayarı, ≥~1000 vector |
-| Yüksek boyutlu embedding (3072) | Daha zengin anlam | Depolama, RU, gecikme ↑; boyut kısaltma çoğu zaman yeterli |
-| Vector + metadata filtresi aynı container'da | Tek sistem, filtreli arama | Container RU'su iş yükü ile paylaşılır; ayrı container düşünülebilir |
-| Partition key = filtre alanı | Filtreli arama tek partition | Filtresiz arama fan-out |
-| Change feed processor | Ölçeklenebilir, dayanıklı | Lease container + kendi worker'ını işletmek; Functions trigger bunu platforma bırakır |
-| All versions and deletes | Silme/ara versiyon görünür | Continuous backup maliyeti ve retention bağımlılığı |
-| Embedding'i yazma anında (senkron) üretmek | Anlık tutarlılık | Yazma gecikmesi + model hatası yazmayı bozar; change feed ile **asenkron** + eventual tazelik genelde daha sağlam |
+- **`flat` → `quantizedFlat` → `diskANN`**
+  - Kazanç: Ölçek, düşük RU/gecikme
+  - Bedel: Recall < %100 (ANN), index oluşturma/RU ayarı, ≥~1000 vector
+- **Yüksek boyutlu embedding (3072)**
+  - Kazanç: Daha zengin anlam
+  - Bedel: Depolama, RU, gecikme ↑; boyut kısaltma çoğu zaman yeterli
+- **Vector + metadata filtresi aynı container'da**
+  - Kazanç: Tek sistem, filtreli arama
+  - Bedel: Container RU'su iş yükü ile paylaşılır; ayrı container düşünülebilir
+- **Partition key = filtre alanı** — Kazanç: Filtreli arama tek partition · Bedel: Filtresiz arama fan-out
+- **Change feed processor**
+  - Kazanç: Ölçeklenebilir, dayanıklı
+  - Bedel: Lease container + kendi worker'ını işletmek; Functions trigger bunu platforma bırakır
+- **All versions and deletes**
+  - Kazanç: Silme/ara versiyon görünür
+  - Bedel: Continuous backup maliyeti ve retention bağımlılığı
+- **Embedding'i yazma anında (senkron) üretmek**
+  - Kazanç: Anlık tutarlılık
+  - Bedel: Yazma gecikmesi + model hatası yazmayı bozar; change feed ile **asenkron** + eventual tazelik genelde daha sağlam
 
 ---
 

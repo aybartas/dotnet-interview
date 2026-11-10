@@ -10,10 +10,12 @@
 
 Bulutta kaynaklar herhangi bir yerden, herhangi bir cihazdan erişilebilir olduğu için güvenliğin sınırı artık şirket ağının duvarı değil, **kimliktir** ("identity is the new perimeter"). Bu konu iki soruyu cevaplar:
 
-| Soru | Kavram | Azure aracı |
-|---|---|---|
-| **Sen kimsin?** (authentication, AuthN) | Kimlik doğrulama: şifre, **MFA**, **passwordless**, **SSO** | **Microsoft Entra ID**, Conditional Access |
-| **Ne yapabilirsin?** (authorization, AuthZ) | Yetkilendirme: hangi kaynakta hangi işlem | **Azure RBAC** (rol atamaları) |
+- **Sen kimsin?** (authentication, AuthN)
+  - Kavram: Kimlik doğrulama: şifre, **MFA**, **passwordless**, **SSO**
+  - Azure aracı: **Microsoft Entra ID**, Conditional Access
+- **Ne yapabilirsin?** (authorization, AuthZ)
+  - Kavram: Yetkilendirme: hangi kaynakta hangi işlem
+  - Azure aracı: **Azure RBAC** (rol atamaları)
 
 Çevresindeki parçalar:
 
@@ -48,12 +50,18 @@ Bu konunun C# kodu yoktur; pratik, `az` CLI laboratuvarıdır (3.11).
 
 **On-prem Active Directory (AD DS) ile farkı:**
 
-| | Active Directory Domain Services (on-prem) | Microsoft Entra ID |
-|---|---|---|
-| Nerede | Kendi domain controller sunucuların | Microsoft'un yönettiği küresel bulut servisi |
-| Protokoller | **Kerberos, NTLM, LDAP**, Group Policy (GPO) | **HTTP tabanlı modern protokoller:** OAuth 2.0, OpenID Connect, SAML, WS-Federation |
-| Yapı | Forest, domain, OU, domain join | Düz yapı: tenant, kullanıcı, grup, administrative unit |
-| Tipik kullanım | Kurum içi Windows sunucu/istemci yönetimi | Bulut ve SaaS uygulamalarına giriş, internet üzerinden erişim |
+- **Nerede**
+  - Active Directory Domain Services (on-prem): Kendi domain controller sunucuların
+  - Microsoft Entra ID: Microsoft'un yönettiği küresel bulut servisi
+- **Protokoller**
+  - Active Directory Domain Services (on-prem): **Kerberos, NTLM, LDAP**, Group Policy (GPO)
+  - Microsoft Entra ID: **HTTP tabanlı modern protokoller:** OAuth 2.0, OpenID Connect, SAML, WS-Federation
+- **Yapı**
+  - Active Directory Domain Services (on-prem): Forest, domain, OU, domain join
+  - Microsoft Entra ID: Düz yapı: tenant, kullanıcı, grup, administrative unit
+- **Tipik kullanım**
+  - Active Directory Domain Services (on-prem): Kurum içi Windows sunucu/istemci yönetimi
+  - Microsoft Entra ID: Bulut ve SaaS uygulamalarına giriş, internet üzerinden erişim
 
 **Hibrit kimlik:** Kurum içi AD kullanıcılarını Entra ID'ye senkronize etmek için **Microsoft Entra Connect** (Sync) veya daha hafif ajan tabanlı **Microsoft Entra Cloud Sync** kullanılır. Böylece kullanıcı aynı kimlikle hem kurum içi kaynaklara hem bulut uygulamalarına girer. Senkronizasyon seçenekleri (password hash sync, pass-through authentication, federation) *(bağlam)* sınavda ad olarak geçebilir.
 
@@ -83,12 +91,18 @@ Bazı eski (legacy) uygulamalar modern protokolleri konuşamaz; **domain join**,
 
 #### 3.4 Authentication vs authorization ⭐
 
-| | **Authentication (AuthN)** | **Authorization (AuthZ)** |
-|---|---|---|
-| Soru | "**Sen kimsin?**" — iddia ettiğin kişi misin? | "**Ne yapabilirsin?**" — hangi kaynağa hangi erişimin var? |
-| Benzetme | Havalimanında **pasaport** kontrolü | **Biniş kartı**: hangi uçağa, hangi koltuğa |
-| Araç | Şifre, MFA, passwordless, sertifika | Azure RBAC rolleri, Entra rolleri, uygulama izinleri |
-| Sıra | **Önce** | **Sonra** (kimliği doğrulanmış kişinin yetkisi) |
+- **Soru**
+  - Authentication (AuthN): "**Sen kimsin?**" — iddia ettiğin kişi misin?
+  - Authorization (AuthZ): "**Ne yapabilirsin?**" — hangi kaynağa hangi erişimin var?
+- **Benzetme**
+  - Authentication (AuthN): Havalimanında **pasaport** kontrolü
+  - Authorization (AuthZ): **Biniş kartı**: hangi uçağa, hangi koltuğa
+- **Araç**
+  - Authentication (AuthN): Şifre, MFA, passwordless, sertifika
+  - Authorization (AuthZ): Azure RBAC rolleri, Entra rolleri, uygulama izinleri
+- **Sıra**
+  - Authentication (AuthN): **Önce**
+  - Authorization (AuthZ): **Sonra** (kimliği doğrulanmış kişinin yetkisi)
 
 AuthN başarılı olsa bile AuthZ reddedebilir: kullanıcı portala girer (AuthN ✓) ama başka bir resource group'u göremez (AuthZ ✗).
 
@@ -122,11 +136,15 @@ AuthN başarılı olsa bile AuthZ reddedebilir: kullanıcı portala girer (AuthN
 
 Şifre hem en zayıf halkadır (tahmin, tekrar kullanım, phishing) hem de kullanıcı için zahmetlidir. **Passwordless** yöntemler şifreyi tamamen kaldırır ve "**sahip olduğun** cihaz + **olduğun** (biyometri) veya cihaza bağlı **bildiğin** (yerel PIN)" ile giriş yapar. Bu yöntemler zaten çok faktörlüdür. Microsoft'un üç ana seçeneği:
 
-| Yöntem | Nasıl çalışır | Tipik kullanım |
-|---|---|---|
-| **Windows Hello for Business** | Kullanıcının **kendi Windows cihazına** bağlı biyometri veya PIN; kimlik bilgisi cihazdan çıkmaz | Atanmış bir Windows bilgisayarı kullanan bilgi çalışanları |
-| **Microsoft Authenticator** | Telefon, kimlik doğrulayıcı olur: phone sign-in (eşleşen numara + biyometri/PIN) veya Authenticator'da saklanan **passkey** | Mobil çalışanlar, her cihazdan giriş |
-| **FIDO2 güvenlik anahtarı / passkey** | Açık standart (FIDO2/WebAuthn) donanım anahtarı (USB, NFC) veya cihazdaki passkey; **phishing'e dayanıklı** | Paylaşılan cihazlar, yüksek ayrıcalıklı hesaplar, telefon kullanılamayan ortamlar |
+- **Windows Hello for Business**
+  - Nasıl çalışır: Kullanıcının **kendi Windows cihazına** bağlı biyometri veya PIN; kimlik bilgisi cihazdan çıkmaz
+  - Tipik kullanım: Atanmış bir Windows bilgisayarı kullanan bilgi çalışanları
+- **Microsoft Authenticator**
+  - Nasıl çalışır: Telefon, kimlik doğrulayıcı olur: phone sign-in (eşleşen numara + biyometri/PIN) veya Authenticator'da saklanan **passkey**
+  - Tipik kullanım: Mobil çalışanlar, her cihazdan giriş
+- **FIDO2 güvenlik anahtarı / passkey**
+  - Nasıl çalışır: Açık standart (FIDO2/WebAuthn) donanım anahtarı (USB, NFC) veya cihazdaki passkey; **phishing'e dayanıklı**
+  - Tipik kullanım: Paylaşılan cihazlar, yüksek ayrıcalıklı hesaplar, telefon kullanılamayan ortamlar
 
 > Passwordless hem **daha güvenli** (phishing'e dayanıklı, çalınacak şifre yok) hem **daha kolaydır**. Sınav bu iki faydayı birlikte sorar.
 
@@ -134,12 +152,18 @@ AuthN başarılı olsa bile AuthZ reddedebilir: kullanıcı portala girer (AuthN
 
 Kuruluş dışındaki kişilerin (iş ortakları, tedarikçiler, müşteriler) **kendi kimlikleriyle** uygulamalarına güvenli erişimi:
 
-| | **B2B collaboration** | **B2C** / **Microsoft Entra External ID** (müşteri) |
-|---|---|---|
-| Kim | **İş ortakları**, tedarikçiler, danışmanlar | Uygulamanı kullanan **müşteriler** (tüketiciler) |
-| Nasıl | Kendi kimlikleriyle (kendi Entra ID'leri, Microsoft hesabı, Google, e-posta tek kullanımlık kod) **misafir (guest)** olarak senin tenant'ına davet edilirler | Uygulamana **kayıt olur/giriş yaparlar**: e-posta/şifre, sosyal hesaplar (Google, Facebook…), özelleştirilebilir marka sayfaları |
-| Nerede yönetilir | Kendi (workforce) tenant'ında, diğer kullanıcılar gibi gruplara ve rollere atanır | Ayrı bir müşteri (external) tenant'ında, milyonlarca kullanıcıya ölçeklenir |
-| Örnek | Ajans çalışanına SharePoint sitesi ve Azure resource group'unda Reader yetkisi | E-ticaret sitesinde "Google ile giriş yap" |
+- **Kim**
+  - B2B collaboration: **İş ortakları**, tedarikçiler, danışmanlar
+  - B2C / Microsoft Entra External ID (müşteri): Uygulamanı kullanan **müşteriler** (tüketiciler)
+- **Nasıl**
+  - B2B collaboration: Kendi kimlikleriyle (kendi Entra ID'leri, Microsoft hesabı, Google, e-posta tek kullanımlık kod) **misafir (guest)** olarak senin tenant'ına davet edilirler
+  - B2C / Microsoft Entra External ID (müşteri): Uygulamana **kayıt olur/giriş yaparlar**: e-posta/şifre, sosyal hesaplar (Google, Facebook…), özelleştirilebilir marka sayfaları
+- **Nerede yönetilir**
+  - B2B collaboration: Kendi (workforce) tenant'ında, diğer kullanıcılar gibi gruplara ve rollere atanır
+  - B2C / Microsoft Entra External ID (müşteri): Ayrı bir müşteri (external) tenant'ında, milyonlarca kullanıcıya ölçeklenir
+- **Örnek**
+  - B2B collaboration: Ajans çalışanına SharePoint sitesi ve Azure resource group'unda Reader yetkisi
+  - B2C / Microsoft Entra External ID (müşteri): E-ticaret sitesinde "Google ile giriş yap"
 
 - **B2B direct connect** *(bağlam)*: iki kuruluş arasında karşılıklı güven; ör. Teams **paylaşılan kanallar**, misafir hesabı oluşturmadan.
 - **Azure AD B2C** 1 Mayıs 2025'ten itibaren **yeni müşterilere satılmıyor**; mevcut müşteriler kullanmaya devam ediyor ve Microsoft en az 2030'a kadar desteği taahhüt ediyor. Yeni müşteri kimliği (CIAM) projeleri için önerilen ürün **Microsoft Entra External ID**'dir. Sınavda "B2C" terimi kavram olarak geçmeye devam edebilir: **müşteriye dönük kimlik**.
@@ -181,12 +205,13 @@ Role assignment = Security principal (WHO)  +  Role definition (WHAT)  +  Scope 
 
 **Built-in roller (sınavın sorduğu dört temel rol):**
 
-| Rol | Kaynakları görüntüleme | Kaynak oluşturma/değiştirme/silme | Erişim (rol atamalarını) yönetme |
-|---|---|---|---|
-| **Owner** | ✓ | ✓ | ✓ |
-| **Contributor** | ✓ | ✓ | ✗ |
-| **Reader** | ✓ | ✗ | ✗ |
-| **User Access Administrator** | ✓ (yalnızca erişimle ilgili okuma) | ✗ | ✓ |
+- **Owner** — Kaynakları görüntüleme: ✓ · Kaynak oluşturma/değiştirme/silme: ✓ · Erişim (rol atamalarını) yönetme: ✓
+- **Contributor** — Kaynakları görüntüleme: ✓ · Kaynak oluşturma/değiştirme/silme: ✓ · Erişim (rol atamalarını) yönetme: ✗
+- **Reader** — Kaynakları görüntüleme: ✓ · Kaynak oluşturma/değiştirme/silme: ✗ · Erişim (rol atamalarını) yönetme: ✗
+- **User Access Administrator**
+  - Kaynakları görüntüleme: ✓ (yalnızca erişimle ilgili okuma)
+  - Kaynak oluşturma/değiştirme/silme: ✗
+  - Erişim (rol atamalarını) yönetme: ✓
 
 - Ayrıca **servise özel** built-in roller vardır (Virtual Machine Contributor, Storage Blob Data Reader…) ve ihtiyaca göre **custom roller** tanımlanabilir.
 - **Kapsam ve miras:** Bir kapsamda verilen rol, **altındaki tüm kapsamlara miras** kalır. Subscription'da Reader olan kullanıcı, o subscription'daki tüm resource group'ları ve kaynakları okuyabilir (→ C1.4 hiyerarşisi).
@@ -196,12 +221,22 @@ Role assignment = Security principal (WHO)  +  Role definition (WHAT)  +  Scope 
 
 **Karıştırılan üç kavram:**
 
-| | **Azure RBAC** | **Microsoft Entra rolleri** | **Azure Policy** (→ C1.12) |
-|---|---|---|---|
-| Neyi kontrol eder | **Azure kaynakları** üzerindeki işlemler (VM oluştur, storage sil) | **Directory** üzerindeki işlemler (kullanıcı oluştur, şifre sıfırla, lisans ata) | **Kaynağın özellikleri** (hangi bölge, hangi SKU, zorunlu tag) |
-| Örnek rol/kural | Owner, Contributor, Reader | Global Administrator, User Administrator | "Yalnızca West Europe", "tag zorunlu" |
-| Kapsam | Management group → subscription → RG → kaynak | Tenant (veya administrative unit) | Management group → subscription → RG |
-| Soru | "**Kullanıcı** ne yapabilir?" | "**Directory'de** kim ne yapabilir?" | "**Kaynak** nasıl olmalı?" |
+- **Neyi kontrol eder**
+  - Azure RBAC: **Azure kaynakları** üzerindeki işlemler (VM oluştur, storage sil)
+  - Microsoft Entra rolleri: **Directory** üzerindeki işlemler (kullanıcı oluştur, şifre sıfırla, lisans ata)
+  - Azure Policy (→ C1.12): **Kaynağın özellikleri** (hangi bölge, hangi SKU, zorunlu tag)
+- **Örnek rol/kural**
+  - Azure RBAC: Owner, Contributor, Reader
+  - Microsoft Entra rolleri: Global Administrator, User Administrator
+  - Azure Policy (→ C1.12): "Yalnızca West Europe", "tag zorunlu"
+- **Kapsam**
+  - Azure RBAC: Management group → subscription → RG → kaynak
+  - Microsoft Entra rolleri: Tenant (veya administrative unit)
+  - Azure Policy (→ C1.12): Management group → subscription → RG
+- **Soru**
+  - Azure RBAC: "**Kullanıcı** ne yapabilir?"
+  - Microsoft Entra rolleri: "**Directory'de** kim ne yapabilir?"
+  - Azure Policy (→ C1.12): "**Kaynak** nasıl olmalı?"
 
 #### 3.11 Pratik — kullanıcı, grup ve kapsamlı rol ataması (`az` CLI)
 
@@ -272,11 +307,16 @@ az group delete --name rg-az900-c19-b --yes --no-wait
 >
 > <details><summary>Çözüm</summary>
 >
-> | Ekip | Rol | Kapsam | Neden |
-> |---|---|---|---|
-> | Platform | **Owner** | Management group (veya her subscription) | Kaynak yönetimi + rol atama; management group'tan tüm subscription'lara miras |
-> | Geliştiriciler | **Contributor** | `rg-app-dev` resource group | Kaynak oluştur/sil, ama yetki dağıtamazlar; kapsam yalnızca o RG |
-> | Denetçiler | **Reader** | Management group | Yalnızca görüntüleme, tüm subscription'lara miras |
+> - **Platform**
+>   - Rol: **Owner**
+>   - Kapsam: Management group (veya her subscription)
+>   - Neden: Kaynak yönetimi + rol atama; management group'tan tüm subscription'lara miras
+> - **Geliştiriciler**
+>   - Rol: **Contributor** · Kapsam: `rg-app-dev` resource group
+>   - Neden: Kaynak oluştur/sil, ama yetki dağıtamazlar; kapsam yalnızca o RG
+> - **Denetçiler**
+>   - Rol: **Reader** · Kapsam: Management group
+>   - Neden: Yalnızca görüntüleme, tüm subscription'lara miras
 >
 > Hepsi **gruplara** atanır (kişiye değil); ekip değişince yalnızca grup üyeliği değişir.
 > </details>
@@ -300,24 +340,34 @@ Bir sigorta şirketi kimlik altyapısını modernize ediyor:
 
 **Sınav neyi, nasıl sorar?** Bu konu çoğunlukla **senaryo → servis/yöntem** eşleştirmesi ve **evet/hayır** tablolarıyla sorulur. RBAC'ta rol ve kapsam seçimi, Conditional Access'te sinyal/karar mantığı beklenir.
 
-| Soru kalıbı | Doğru cevap | Tuzak |
-|---|---|---|
-| "Bulut tabanlı kimlik ve erişim yönetimi servisi" | **Microsoft Entra ID** | Entra Domain Services |
-| "Eski uygulama domain join / LDAP / Kerberos / Group Policy istiyor, DC yönetmek istemiyoruz" | **Entra Domain Services** | Entra ID (bu protokolleri sunmaz) |
-| "Kurum içi AD kullanıcılarını Entra ID'ye senkronize et" | **Entra Connect** (veya Cloud Sync) | Domain Services |
-| "Kimliği doğrulama" / "kimliğini kanıtla" | **Authentication** | Authorization |
-| "Hangi kaynağa erişebileceğini belirleme" | **Authorization** (RBAC) | Authentication |
-| "Tek girişle birçok uygulama" | **SSO** | MFA |
-| "Şifre + telefona gelen bildirim" | **MFA** | SSO |
-| "Şifre olmadan, biyometri/güvenlik anahtarıyla giriş" | **Passwordless** (Windows Hello, Authenticator, FIDO2) | MFA (passwordless zaten çok faktörlüdür) |
-| "İş ortağını kendi hesabıyla misafir olarak davet et" | **B2B** | B2C |
-| "Müşterilerin sosyal hesapla uygulamaya kaydolması" | **B2C / Entra External ID** | B2B |
-| "Konuma/cihaza/riske göre MFA iste veya engelle" | **Conditional Access** | Security defaults (koşulsuz), RBAC |
-| "Kaynakları yalnızca görüntüleme" | **Reader** | Contributor |
-| "Her şeyi yönet ama başkasına erişim veremesin" | **Contributor** | Owner |
-| "Kaynakları ve erişimi tam yönet" | **Owner** | User Access Administrator (kaynakları yönetemez) |
-| "Yalnızca erişim (rol atamaları) yönetsin" | **User Access Administrator** | Owner |
-| "Rolü birçok subscription'a birden uygula" | **Management group** kapsamında rol ataması | Her subscription'a tek tek |
+- **"Bulut tabanlı kimlik ve erişim yönetimi servisi"** — Doğru cevap: **Microsoft Entra ID** · Tuzak: Entra Domain Services
+- "Eski uygulama domain join / LDAP / Kerberos / Group Policy istiyor, DC yönetmek istemiyoruz"
+  - Doğru cevap: **Entra Domain Services**
+  - Tuzak: Entra ID (bu protokolleri sunmaz)
+- **"Kurum içi AD kullanıcılarını Entra ID'ye senkronize et"**
+  - Doğru cevap: **Entra Connect** (veya Cloud Sync)
+  - Tuzak: Domain Services
+- **"Kimliği doğrulama" / "kimliğini kanıtla"** — Doğru cevap: **Authentication** · Tuzak: Authorization
+- **"Hangi kaynağa erişebileceğini belirleme"** — Doğru cevap: **Authorization** (RBAC) · Tuzak: Authentication
+- **"Tek girişle birçok uygulama"** — Doğru cevap: **SSO** · Tuzak: MFA
+- **"Şifre + telefona gelen bildirim"** — Doğru cevap: **MFA** · Tuzak: SSO
+- **"Şifre olmadan, biyometri/güvenlik anahtarıyla giriş"**
+  - Doğru cevap: **Passwordless** (Windows Hello, Authenticator, FIDO2)
+  - Tuzak: MFA (passwordless zaten çok faktörlüdür)
+- **"İş ortağını kendi hesabıyla misafir olarak davet et"** — Doğru cevap: **B2B** · Tuzak: B2C
+- **"Müşterilerin sosyal hesapla uygulamaya kaydolması"** — Doğru cevap: **B2C / Entra External ID** · Tuzak: B2B
+- **"Konuma/cihaza/riske göre MFA iste veya engelle"**
+  - Doğru cevap: **Conditional Access**
+  - Tuzak: Security defaults (koşulsuz), RBAC
+- **"Kaynakları yalnızca görüntüleme"** — Doğru cevap: **Reader** · Tuzak: Contributor
+- **"Her şeyi yönet ama başkasına erişim veremesin"** — Doğru cevap: **Contributor** · Tuzak: Owner
+- **"Kaynakları ve erişimi tam yönet"**
+  - Doğru cevap: **Owner**
+  - Tuzak: User Access Administrator (kaynakları yönetemez)
+- **"Yalnızca erişim (rol atamaları) yönetsin"** — Doğru cevap: **User Access Administrator** · Tuzak: Owner
+- **"Rolü birçok subscription'a birden uygula"**
+  - Doğru cevap: **Management group** kapsamında rol ataması
+  - Tuzak: Her subscription'a tek tek
 
 **Anahtar kelimeler:** *identity as the primary security perimeter*, *tenant*, *managed domain*, *guest user*, *social identities*, *signals → decisions → enforcement*, *security principal + role definition + scope*, *inherited*, *least privilege*.
 
@@ -348,16 +398,28 @@ Bir sigorta şirketi kimlik altyapısını modernize ediyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Security defaults | Ücretsiz, tek tıkla temel MFA ve eski protokol engeli | Esneklik yok: istisna, konum/cihaz koşulu tanımlanamaz |
-| Conditional Access | Riske göre ayarlı güvenlik; güvenilir durumda kullanıcı rahat | P1/P2 lisansı; yanlış politika herkesi (yöneticiler dahil) dışarıda bırakabilir. Bu yüzden **break-glass** acil durum hesabı tutulur ve politika önce "report-only" modda denenir *(bağlam)* |
-| MFA zorunluluğu | Hesap ele geçirmeye karşı çok güçlü koruma | Kullanıcı sürtünmesi, kayıt süreci, yardım masası yükü |
-| Passwordless | Daha güvenli ve daha hızlı giriş, şifre sıfırlama talepleri azalır | Cihaz/anahtar dağıtımı ve kayıp anahtar süreci |
-| Entra Domain Services | Eski uygulamalar DC yönetmeden buluta | Ücretli servis; tam AD DS esnekliği yok (ör. şema genişletme kısıtlı) |
-| Kendi DC'lerin (IaaS VM) | Tam AD kontrolü | Yama, yedek, replikasyon ve güvenlik yükü sende |
-| Geniş kapsamlı, yüksek roller | Az sayıda atama, kolay yönetim | Büyük saldırı yüzeyi; tek hesap ele geçirilince tüm ortam risk altında |
-| Dar kapsamlı, en az yetkili roller | Etki alanı küçük | Daha çok atama ve gözden geçirme |
+- **Security defaults**
+  - Kazanç: Ücretsiz, tek tıkla temel MFA ve eski protokol engeli
+  - Bedel: Esneklik yok: istisna, konum/cihaz koşulu tanımlanamaz
+- **Conditional Access**
+  - Kazanç: Riske göre ayarlı güvenlik; güvenilir durumda kullanıcı rahat
+  - Bedel: P1/P2 lisansı; yanlış politika herkesi (yöneticiler dahil) dışarıda bırakabilir. Bu yüzden **break-glass** acil durum hesabı tutulur ve politika önce "report-only" modda denenir *(bağlam)*
+- **MFA zorunluluğu**
+  - Kazanç: Hesap ele geçirmeye karşı çok güçlü koruma
+  - Bedel: Kullanıcı sürtünmesi, kayıt süreci, yardım masası yükü
+- **Passwordless**
+  - Kazanç: Daha güvenli ve daha hızlı giriş, şifre sıfırlama talepleri azalır
+  - Bedel: Cihaz/anahtar dağıtımı ve kayıp anahtar süreci
+- **Entra Domain Services**
+  - Kazanç: Eski uygulamalar DC yönetmeden buluta
+  - Bedel: Ücretli servis; tam AD DS esnekliği yok (ör. şema genişletme kısıtlı)
+- **Kendi DC'lerin (IaaS VM)**
+  - Kazanç: Tam AD kontrolü
+  - Bedel: Yama, yedek, replikasyon ve güvenlik yükü sende
+- **Geniş kapsamlı, yüksek roller**
+  - Kazanç: Az sayıda atama, kolay yönetim
+  - Bedel: Büyük saldırı yüzeyi; tek hesap ele geçirilince tüm ortam risk altında
+- **Dar kapsamlı, en az yetkili roller** — Kazanç: Etki alanı küçük · Bedel: Daha çok atama ve gözden geçirme
 
 ---
 

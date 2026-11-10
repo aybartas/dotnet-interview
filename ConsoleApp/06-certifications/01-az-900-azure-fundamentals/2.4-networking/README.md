@@ -45,14 +45,24 @@ Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI laboratuvarıdır
 
 VNet'in sağladığı yetenekler (resmî içerikte sayılan başlıklar):
 
-| Yetenek | Açıklama | Örnek |
-|---|---|---|
-| **İzolasyon ve segmentasyon** | Ağı subnet'lere bölüp birbirinden ayırmak | Web / uygulama / veri subnet'leri |
-| **İnternet iletişimi** | Kaynağa public IP veya public load balancer ile internetten erişim; giden trafik varsayılan olarak mümkün | Public IP'li VM, load balancer |
-| **Azure kaynakları arası iletişim** | Aynı VNet'teki kaynaklar; **service endpoint**/private endpoint ile PaaS servisleri; peering ile diğer VNet'ler | VM → Azure SQL (private endpoint) |
-| **On-prem ile iletişim** | Point-to-site / site-to-site VPN, ExpressRoute | Ofis ağı ↔ Azure |
-| **Trafik yönlendirme** | Varsayılan sistem rotaları; **route table** (user-defined routes) ve BGP ile özel yönlendirme | Trafiği bir firewall'dan geçirmek |
-| **Trafik filtreleme** | **NSG** (IP/port/protokol kuralları) ve network virtual appliance (NVA — firewall gibi özel cihazlar) | "Yalnızca 443'e izin ver" |
+- **İzolasyon ve segmentasyon**
+  - Açıklama: Ağı subnet'lere bölüp birbirinden ayırmak
+  - Örnek: Web / uygulama / veri subnet'leri
+- **İnternet iletişimi**
+  - Açıklama: Kaynağa public IP veya public load balancer ile internetten erişim; giden trafik varsayılan olarak mümkün
+  - Örnek: Public IP'li VM, load balancer
+- **Azure kaynakları arası iletişim**
+  - Açıklama: Aynı VNet'teki kaynaklar; **service endpoint**/private endpoint ile PaaS servisleri; peering ile diğer VNet'ler
+  - Örnek: VM → Azure SQL (private endpoint)
+- **On-prem ile iletişim**
+  - Açıklama: Point-to-site / site-to-site VPN, ExpressRoute
+  - Örnek: Ofis ağı ↔ Azure
+- **Trafik yönlendirme**
+  - Açıklama: Varsayılan sistem rotaları; **route table** (user-defined routes) ve BGP ile özel yönlendirme
+  - Örnek: Trafiği bir firewall'dan geçirmek
+- **Trafik filtreleme**
+  - Açıklama: **NSG** (IP/port/protokol kuralları) ve network virtual appliance (NVA — firewall gibi özel cihazlar)
+  - Örnek: "Yalnızca 443'e izin ver"
 
 #### 3.2 VNet peering
 
@@ -99,13 +109,19 @@ Bir **VPN**, iki ağ arasında **şifreli tünel** kurar. **Azure VPN Gateway**,
 
 **VPN Gateway vs ExpressRoute** ⭐
 
-| | VPN Gateway | ExpressRoute |
-|---|---|---|
-| Trafik nereden geçer? | **Public internet** (şifreli tünel) | **Özel bağlantı** — internete çıkmaz |
-| Kurulum | Hızlı; VPN cihazı + gateway | Bağlantı sağlayıcısıyla sözleşme, devre tahsisi (haftalar) |
-| Bant genişliği / gecikme | Daha düşük, internete bağlı değişken | Yüksek, öngörülebilir |
-| Maliyet | Düşük | Yüksek |
-| Tipik kullanım | Küçük/orta ofis, geliştirici erişimi (P2S), ExpressRoute yedeği | Büyük veri hacmi, kritik hybrid iş yükleri, regülasyon |
+- **Trafik nereden geçer?**
+  - VPN Gateway: **Public internet** (şifreli tünel)
+  - ExpressRoute: **Özel bağlantı** — internete çıkmaz
+- **Kurulum**
+  - VPN Gateway: Hızlı; VPN cihazı + gateway
+  - ExpressRoute: Bağlantı sağlayıcısıyla sözleşme, devre tahsisi (haftalar)
+- **Bant genişliği / gecikme**
+  - VPN Gateway: Daha düşük, internete bağlı değişken
+  - ExpressRoute: Yüksek, öngörülebilir
+- **Maliyet** — VPN Gateway: Düşük · ExpressRoute: Yüksek
+- **Tipik kullanım**
+  - VPN Gateway: Küçük/orta ofis, geliştirici erişimi (P2S), ExpressRoute yedeği
+  - ExpressRoute: Büyük veri hacmi, kritik hybrid iş yükleri, regülasyon
 
 #### 3.6 Public ve private endpoint'ler
 
@@ -188,13 +204,21 @@ az group delete --name $RG --yes --no-wait
 
 <details><summary>Beklenen gözlemler ve açıklamaları</summary>
 
-| Adım | Gözlem | Kavram |
-|---|---|---|
-| 3 | Yalnızca `a-to-b` tanımlıyken durum `Initiated`; `b-to-a` eklenince `Connected` | Peering iki yönlü tanımlanır |
-| 4 | Storage adı public bir IP'ye çözülür | Public endpoint |
-| 6–8 | VM'den aynı ad `privatelink` üzerinden **10.1.2.x**'e çözülür | Private endpoint + private DNS zone |
-| 7–8 | Yerel makineden blob isteği reddedilir (HTTP 403 / erişim yok), VM'den ağ erişimi vardır | Public erişim kapatıldı; trafik VNet içinde |
-| (düşünce deneyi) | VNet-B'deki bir VM de private endpoint'e erişebilir mi? | Peering'li VNet'ten özel IP'ye erişim mümkündür, ama DNS zone'un VNet-B'ye de bağlanması gerekir |
+- **3**
+  - Gözlem: Yalnızca `a-to-b` tanımlıyken durum `Initiated`; `b-to-a` eklenince `Connected`
+  - Kavram: Peering iki yönlü tanımlanır
+- **4**
+  - Gözlem: Storage adı public bir IP'ye çözülür
+  - Kavram: Public endpoint
+- **6–8**
+  - Gözlem: VM'den aynı ad `privatelink` üzerinden **10.1.2.x**'e çözülür
+  - Kavram: Private endpoint + private DNS zone
+- **7–8**
+  - Gözlem: Yerel makineden blob isteği reddedilir (HTTP 403 / erişim yok), VM'den ağ erişimi vardır
+  - Kavram: Public erişim kapatıldı; trafik VNet içinde
+- **(düşünce deneyi)**
+  - Gözlem: VNet-B'deki bir VM de private endpoint'e erişebilir mi?
+  - Kavram: Peering'li VNet'ten özel IP'ye erişim mümkündür, ama DNS zone'un VNet-B'ye de bağlanması gerekir
 
 `curl` çıktısındaki HTTP kodu kimlik doğrulama olmadığı için 4xx olabilir; önemli olan isteğin **özel IP üzerinden ulaşmasıdır**.
 </details>
@@ -258,14 +282,24 @@ Türkiye'de üç fabrikası ve İstanbul'da bir genel merkezi olan bir üretim �
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| VPN Gateway (S2S) | Hızlı kurulum, düşük maliyet, şifreli | İnternete bağlı değişken gecikme/bant genişliği; gateway SKU'su verimi sınırlar |
-| ExpressRoute | Yüksek, öngörülebilir performans; internete çıkmama; M365 erişimi | Yüksek maliyet, operatör sözleşmesi, kurulum süresi; şifreleme ayrıca planlanmalı |
-| ExpressRoute + VPN yedeği | Yüksek erişilebilirlik | İki bağlantının maliyeti ve yönetimi |
-| VNet peering | Düşük gecikme, basit, gateway yok | Geçişli değil — çok VNet'te peering sayısı katlanır (hub-spoke tasarımı → S8.3); veri transferi ücreti |
-| Private endpoint | Public erişimi kapatma, veri sızıntısı riskini azaltma | Saatlik endpoint + işlenen veri ücreti; DNS yönetimi karmaşıklığı |
-| Public endpoint + firewall kuralları | Basit, ek maliyet yok | Adres internete açık; yanlış yapılandırma riski |
+- **VPN Gateway (S2S)**
+  - Kazanç: Hızlı kurulum, düşük maliyet, şifreli
+  - Bedel: İnternete bağlı değişken gecikme/bant genişliği; gateway SKU'su verimi sınırlar
+- **ExpressRoute**
+  - Kazanç: Yüksek, öngörülebilir performans; internete çıkmama; M365 erişimi
+  - Bedel: Yüksek maliyet, operatör sözleşmesi, kurulum süresi; şifreleme ayrıca planlanmalı
+- **ExpressRoute + VPN yedeği**
+  - Kazanç: Yüksek erişilebilirlik
+  - Bedel: İki bağlantının maliyeti ve yönetimi
+- **VNet peering**
+  - Kazanç: Düşük gecikme, basit, gateway yok
+  - Bedel: Geçişli değil — çok VNet'te peering sayısı katlanır (hub-spoke tasarımı → S8.3); veri transferi ücreti
+- **Private endpoint**
+  - Kazanç: Public erişimi kapatma, veri sızıntısı riskini azaltma
+  - Bedel: Saatlik endpoint + işlenen veri ücreti; DNS yönetimi karmaşıklığı
+- **Public endpoint + firewall kuralları**
+  - Kazanç: Basit, ek maliyet yok
+  - Bedel: Adres internete açık; yanlış yapılandırma riski
 
 ---
 

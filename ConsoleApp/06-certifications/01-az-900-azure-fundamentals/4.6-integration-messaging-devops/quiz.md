@@ -182,12 +182,10 @@ Bir CI/CD akışının mantıksal sırasını yazın: **Üretime yayınla · Kod
 
 #### Soru 14: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure DevOps ve GitHub, ikisi de Microsoft'un sahip olduğu ürünlerdir. | ☐ | ☐ |
-| b) Azure Storage Queue, topic/subscription (pub/sub) sunar. | ☐ | ☐ |
-| c) Logic Apps ve Azure Functions birlikte kullanılabilir (iş akışı bir Function'ı çağırabilir). | ☐ | ☐ |
-| d) Azure Deployment Environments, platform ekibinin onaylı IaC şablonlarını geliştiricilere self-service sunmasına yardım eder. | ☐ | ☐ |
+- a) Azure DevOps ve GitHub, ikisi de Microsoft'un sahip olduğu ürünlerdir. — Evet: ☐ · Hayır: ☐
+- **b) Azure Storage Queue, topic/subscription (pub/sub) sunar.** — Evet: ☐ · Hayır: ☐
+- c) Logic Apps ve Azure Functions birlikte kullanılabilir (iş akışı bir Function'ı çağırabilir). — Evet: ☐ · Hayır: ☐
+- d) Azure Deployment Environments, platform ekibinin onaylı IaC şablonlarını geliştiricilere self-service sunmasına yardım eder. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

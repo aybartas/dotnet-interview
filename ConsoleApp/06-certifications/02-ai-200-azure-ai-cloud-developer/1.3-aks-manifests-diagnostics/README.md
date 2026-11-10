@@ -40,16 +40,30 @@ kubectl apply -f ──▶ API server ──▶ Deployment ──▶ ReplicaSet 
 
 #### 3.1 AKS, ACR entegrasyonu ve temel kubectl ⭐
 
-| Adım | Komut | Not |
-|---|---|---|
-| Küme oluştur (ACR bağla) | `az aks create -g RG -n aks --attach-acr $ACR --node-count 2 --generate-ssh-keys` | Kubelet kimliğine registry'de **`AcrPull`** atar |
-| Var olan kümeye ACR bağla | `az aks update -g RG -n aks --attach-acr $ACR` | Komutu çalıştıran kullanıcının rol atama yetkisi (Owner/User Access Administrator) gerekir |
-| Kubeconfig al | `az aks get-credentials -g RG -n aks` | `~/.kube/config`'e context ekler (Entra entegre kümelerde `kubelogin` gerekebilir) |
-| Uygula | `kubectl apply -f k8s/` | Bildirimsel; tekrar çalıştırılabilir (idempotent) |
-| Rollout takibi | `kubectl rollout status deploy/todoapi` | Başarı/zaman aşımı |
-| Geçmiş / geri al | `kubectl rollout history deploy/todoapi` · `kubectl rollout undo deploy/todoapi [--to-revision=N]` | Önceki ReplicaSet'e döner |
-| Ölçekle | `kubectl scale deploy/todoapi --replicas=5` | Elle; otomatik için HPA (→ M14.4) |
-| Image güncelle | `kubectl set image deploy/todoapi todoapi=<image>` | Yeni rollout başlatır |
+- **Küme oluştur (ACR bağla)**
+  - Komut: `az aks create -g RG -n aks --attach-acr $ACR --node-count 2 --generate-ssh-keys`
+  - Not: Kubelet kimliğine registry'de **`AcrPull`** atar
+- **Var olan kümeye ACR bağla**
+  - Komut: `az aks update -g RG -n aks --attach-acr $ACR`
+  - Not: Komutu çalıştıran kullanıcının rol atama yetkisi (Owner/User Access Administrator) gerekir
+- **Kubeconfig al**
+  - Komut: `az aks get-credentials -g RG -n aks`
+  - Not: `~/.kube/config`'e context ekler (Entra entegre kümelerde `kubelogin` gerekebilir)
+- **Uygula**
+  - Komut: `kubectl apply -f k8s/`
+  - Not: Bildirimsel; tekrar çalıştırılabilir (idempotent)
+- **Rollout takibi**
+  - Komut: `kubectl rollout status deploy/todoapi`
+  - Not: Başarı/zaman aşımı
+- **Geçmiş / geri al**
+  - Komut: `kubectl rollout history deploy/todoapi` · `kubectl rollout undo deploy/todoapi [--to-revision=N]`
+  - Not: Önceki ReplicaSet'e döner
+- **Ölçekle**
+  - Komut: `kubectl scale deploy/todoapi --replicas=5`
+  - Not: Elle; otomatik için HPA (→ M14.4)
+- **Image güncelle**
+  - Komut: `kubectl set image deploy/todoapi todoapi=<image>`
+  - Not: Yeni rollout başlatır
 
 - **AKS ↔ ACR:** `--attach-acr` ile image çekme **kubelet managed identity** üzerinden olur; pod'a `imagePullSecrets` gerekmez. Hata durumunda ilk bakılacak yer: kubelet kimliğinde `AcrPull` var mı, ACR adı/tag doğru mu?
 - ABAC repository permissions modundaki registry'lerde `--attach-acr` desteklenmez; *Container Registry Repository Reader* rolünü elle ata (→ C2.1).
@@ -192,14 +206,30 @@ spec:
 
 **Hata kalıbı → kök neden:**
 
-| Gördüğün | Anlamı / olası kök neden | Kanıt | Çözüm |
-|---|---|---|---|
-| **`ErrImagePull` → `ImagePullBackOff`** | Image çekilemiyor: **yanlış repository/tag/digest**, **registry yetkisi yok** (kubelet kimliğinde `AcrPull` eksik), registry'ye ağ erişimi yok | `describe` → Events: `manifest unknown / not found` (tag yok) veya `unauthorized` / `401` (yetki) | Tag'i/digest'i düzelt; `az aks update --attach-acr`; ağ kuralları |
-| **`CrashLoopBackOff`** | Container başlıyor ve **çöküyor**; kubelet artan beklemeyle yeniden başlatıyor. Neden: uygulama hatası, **eksik env var / secret**, yanlış bağlantı dizesi, yanlış komut, liveness probe'un sürekli başarısız olması | `logs --previous` (çökme nedeni), `describe` → `Last State: Terminated`, `Exit Code` | Config/secret'ı düzelt; kodu düzelt; probe'u gevşet |
-| **`OOMKilled`** (Exit Code **137**) | Container **bellek limitini** aştı ve çekirdek tarafından öldürüldü | `describe` → `Reason: OOMKilled`; tekrar eden restart | Limit'i artır **veya** bellek sızıntısını düzelt; request/limit'i ölçülen kullanıma göre ayarla |
-| **Pod `Running` ama `READY 0/1`** | **Readiness** başarısız: yanlış probe yolu/portu, uygulama hazır değil | `describe` → `Readiness probe failed: … connection refused / 404`; `get endpoints` boş | Probe path/port'u düzelt; `initialDelaySeconds`/startup probe |
-| **`Pending`** | Zamanlanamıyor: yetersiz CPU/bellek (request çok yüksek), node selector/taint, PVC | `describe` → `FailedScheduling` (Insufficient cpu) | Request'i düşür, node ekle |
-| **Service'e bağlanılamıyor** | Selector–label uyuşmazlığı, `targetPort` yanlış, hazır pod yok | `get endpoints` boş; `describe svc` | Selector/port düzelt |
+- **`ErrImagePull` → `ImagePullBackOff`**
+  - Anlamı / olası kök neden: Image çekilemiyor: **yanlış repository/tag/digest**, **registry yetkisi yok** (kubelet kimliğinde `AcrPull` eksik), registry'ye ağ erişimi yok
+  - Kanıt: `describe` → Events: `manifest unknown / not found` (tag yok) veya `unauthorized` / `401` (yetki)
+  - Çözüm: Tag'i/digest'i düzelt; `az aks update --attach-acr`; ağ kuralları
+- **`CrashLoopBackOff`**
+  - Anlamı / olası kök neden: Container başlıyor ve **çöküyor**; kubelet artan beklemeyle yeniden başlatıyor. Neden: uygulama hatası, **eksik env var / secret**, yanlış bağlantı dizesi, yanlış komut, liveness probe'un sürekli başarısız olması
+  - Kanıt: `logs --previous` (çökme nedeni), `describe` → `Last State: Terminated`, `Exit Code`
+  - Çözüm: Config/secret'ı düzelt; kodu düzelt; probe'u gevşet
+- **`OOMKilled`** (Exit Code **137**)
+  - Anlamı / olası kök neden: Container **bellek limitini** aştı ve çekirdek tarafından öldürüldü
+  - Kanıt: `describe` → `Reason: OOMKilled`; tekrar eden restart
+  - Çözüm: Limit'i artır **veya** bellek sızıntısını düzelt; request/limit'i ölçülen kullanıma göre ayarla
+- **Pod `Running` ama `READY 0/1`**
+  - Anlamı / olası kök neden: **Readiness** başarısız: yanlış probe yolu/portu, uygulama hazır değil
+  - Kanıt: `describe` → `Readiness probe failed: … connection refused / 404`; `get endpoints` boş
+  - Çözüm: Probe path/port'u düzelt; `initialDelaySeconds`/startup probe
+- **`Pending`**
+  - Anlamı / olası kök neden: Zamanlanamıyor: yetersiz CPU/bellek (request çok yüksek), node selector/taint, PVC
+  - Kanıt: `describe` → `FailedScheduling` (Insufficient cpu)
+  - Çözüm: Request'i düşür, node ekle
+- **Service'e bağlanılamıyor**
+  - Anlamı / olası kök neden: Selector–label uyuşmazlığı, `targetPort` yanlış, hazır pod yok
+  - Kanıt: `get endpoints` boş; `describe svc`
+  - Çözüm: Selector/port düzelt
 
 > `CrashLoopBackOff` bir **belirti**dir, neden değil: asıl nedeni `logs --previous` ve `describe`'ın `Exit Code`'u söyler (1 = uygulama hatası, 137 = OOM/SIGKILL, 139 = segfault).
 
@@ -207,14 +237,27 @@ spec:
 
 #### 3.4 Container Apps mı, AKS mi, App Service mi? ⭐
 
-| Kriter | **Container Apps** | **AKS** | **App Service for Containers** |
-|---|---|---|---|
-| Soyutlama | Serverless container; Kubernetes gizli | **Tam Kubernetes** API'si | PaaS web uygulaması (tek/çoklu container) |
-| Operasyon yükü | **Düşük** | **Yüksek** (node, upgrade, ağ, güvenlik) | **Çok düşük** |
-| Ölçekleme | HTTP + **KEDA** (scale-to-zero), HPA yok | HPA/KEDA/Cluster Autoscaler (**sen** kurarsın) | Plan düzeyinde scale out; sıfıra inmez |
-| Özel Kubernetes (CRD, operator, DaemonSet, service mesh seçimi) | ✘ | ✔ | ✘ |
-| Kullanım | Mikroservis, event-driven worker, API | Karmaşık/çok takımlı platform, özel ağ/GPU/stateful | Klasik web/API; basit container dağıtımı |
-| Maliyet modeli | Kullanım bazlı (tüketim) | Node VM'leri (kullanılmasa da ödenir) | App Service planı (sabit) |
+- **Soyutlama**
+  - Container Apps: Serverless container; Kubernetes gizli
+  - AKS: **Tam Kubernetes** API'si
+  - App Service for Containers: PaaS web uygulaması (tek/çoklu container)
+- **Operasyon yükü**
+  - Container Apps: **Düşük**
+  - AKS: **Yüksek** (node, upgrade, ağ, güvenlik)
+  - App Service for Containers: **Çok düşük**
+- **Ölçekleme**
+  - Container Apps: HTTP + **KEDA** (scale-to-zero), HPA yok
+  - AKS: HPA/KEDA/Cluster Autoscaler (**sen** kurarsın)
+  - App Service for Containers: Plan düzeyinde scale out; sıfıra inmez
+- **Özel Kubernetes (CRD, operator, DaemonSet, service mesh seçimi)** — Container Apps: ✘ · AKS: ✔ · App Service for Containers: ✘
+- **Kullanım**
+  - Container Apps: Mikroservis, event-driven worker, API
+  - AKS: Karmaşık/çok takımlı platform, özel ağ/GPU/stateful
+  - App Service for Containers: Klasik web/API; basit container dağıtımı
+- **Maliyet modeli**
+  - Container Apps: Kullanım bazlı (tüketim)
+  - AKS: Node VM'leri (kullanılmasa da ödenir)
+  - App Service for Containers: App Service planı (sabit)
 
 Kural: **Kubernetes API'sine/ekosistemine ihtiyaç yoksa Container Apps; hiç orkestrasyon gerekmiyorsa App Service; tam kontrol gerekiyorsa AKS.** (Tek container, orkestrasyon yok → Container Instances; → C1.5.)
 
@@ -284,13 +327,26 @@ az group delete --name $RG --yes --no-wait
 
 Bir fintech, Todo/ödeme mikroservislerini AKS'te çalıştırıyor ve cuma akşamı yapılan dağıtımdan sonra alarm geliyor:
 
-| Belirti | Teşhis | Kök neden | Çözüm |
-|---|---|---|---|
-| `kubectl get pods`: yeni pod'lar `ImagePullBackOff` | `describe` → `manifest ... not found` | CI yanlış tag'i manifest'e yazdı | `rollout undo`; pipeline'da digest kullan (→ C2.1) |
-| Pod'lar `CrashLoopBackOff` | `logs --previous`: "Db connection string missing" | Yeni sürüm eklediği `Db__Password` secret'ta yok | Secret'ı ekle; eksik yapılandırmada hızlı fail; `rollout undo` |
-| Pod'lar `OOMKilled`, 137 | `describe` → `Reason: OOMKilled` | Limit 256Mi, yeni önbellek ~400Mi | Ölçerek limit'i artır; önbellek boyutunu sınırla |
-| Pod `Running` ama trafik gelmiyor | `describe` readiness 404; `get endpoints` boş | Probe `/health`, uygulama `/healthz` | Probe yolunu düzelt |
-| Eski sürüm çalışmaya devam ediyor | `maxUnavailable: 0` + bozuk yeni pod | Rolling update eski pod'ları korudu | `rollout undo` ile temizle; kesinti oluşmamıştı |
+- **`kubectl get pods`: yeni pod'lar `ImagePullBackOff`**
+  - Teşhis: `describe` → `manifest ... not found`
+  - Kök neden: CI yanlış tag'i manifest'e yazdı
+  - Çözüm: `rollout undo`; pipeline'da digest kullan (→ C2.1)
+- **Pod'lar `CrashLoopBackOff`**
+  - Teşhis: `logs --previous`: "Db connection string missing"
+  - Kök neden: Yeni sürüm eklediği `Db__Password` secret'ta yok
+  - Çözüm: Secret'ı ekle; eksik yapılandırmada hızlı fail; `rollout undo`
+- **Pod'lar `OOMKilled`, 137**
+  - Teşhis: `describe` → `Reason: OOMKilled`
+  - Kök neden: Limit 256Mi, yeni önbellek ~400Mi
+  - Çözüm: Ölçerek limit'i artır; önbellek boyutunu sınırla
+- **Pod `Running` ama trafik gelmiyor**
+  - Teşhis: `describe` readiness 404; `get endpoints` boş
+  - Kök neden: Probe `/health`, uygulama `/healthz`
+  - Çözüm: Probe yolunu düzelt
+- **Eski sürüm çalışmaya devam ediyor**
+  - Teşhis: `maxUnavailable: 0` + bozuk yeni pod
+  - Kök neden: Rolling update eski pod'ları korudu
+  - Çözüm: `rollout undo` ile temizle; kesinti oluşmamıştı
 
 Ek kararlar: yapılandırma ConfigMap, parola Key Vault + CSI driver; pod başına request/limit zorunlu; üretim image'ları digest ile; rollout `kubectl rollout status` ile pipeline'da doğrulanır, başarısızsa otomatik `rollout undo`.
 
@@ -344,15 +400,23 @@ Ek kararlar: yapılandırma ConfigMap, parola Key Vault + CSI driver; pod başı
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| AKS vs Container Apps | Tam Kubernetes kontrolü, ekosistem | Node/upgrade/güvenlik operasyonu, boşta node maliyeti |
-| Yüksek memory limit | OOM riski azalır | Node'da daha az pod; maliyet |
-| Düşük CPU limit | Komşu pod'ları korur | Throttle → gecikme artışı |
-| `maxUnavailable: 0, maxSurge: 1` | Kesintisiz güncelleme | Güncelleme sırasında geçici ek kaynak ve daha yavaş rollout |
-| Agresif liveness probe | Takılan pod'u hızlı yeniden başlatır | Yavaş açılan uygulamada gereksiz restart döngüsü → **startup probe** kullan |
-| `LoadBalancer` Service per app | Basitlik | Her biri ayrı public IP/maliyet; **Ingress/Gateway** ile birleştir |
-| Pod başına küçük request | Yoğun paketleme, ucuz | Aşırı taahhüt (overcommit) ve gürültülü komşu riski |
+- **AKS vs Container Apps**
+  - Kazanç: Tam Kubernetes kontrolü, ekosistem
+  - Bedel: Node/upgrade/güvenlik operasyonu, boşta node maliyeti
+- **Yüksek memory limit** — Kazanç: OOM riski azalır · Bedel: Node'da daha az pod; maliyet
+- **Düşük CPU limit** — Kazanç: Komşu pod'ları korur · Bedel: Throttle → gecikme artışı
+- **`maxUnavailable: 0, maxSurge: 1`**
+  - Kazanç: Kesintisiz güncelleme
+  - Bedel: Güncelleme sırasında geçici ek kaynak ve daha yavaş rollout
+- **Agresif liveness probe**
+  - Kazanç: Takılan pod'u hızlı yeniden başlatır
+  - Bedel: Yavaş açılan uygulamada gereksiz restart döngüsü → **startup probe** kullan
+- **`LoadBalancer` Service per app**
+  - Kazanç: Basitlik
+  - Bedel: Her biri ayrı public IP/maliyet; **Ingress/Gateway** ile birleştir
+- **Pod başına küçük request**
+  - Kazanç: Yoğun paketleme, ucuz
+  - Bedel: Aşırı taahhüt (overcommit) ve gürültülü komşu riski
 
 ---
 

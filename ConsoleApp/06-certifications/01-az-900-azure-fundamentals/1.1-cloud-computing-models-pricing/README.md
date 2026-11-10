@@ -36,13 +36,21 @@ Bu konu AZ-900'ün ilk alanının temelidir ve dört soruyu cevaplar:
 
 ABD standartlar enstitüsü NIST'in tanımı, bir hizmetin "bulut" sayılması için beş nitelik arar:
 
-| Nitelik | Anlamı | Azure'da örnek |
-|---------|--------|----------------|
-| **On-demand self-service** | Kimseye sormadan, kendin kaynak açarsın | Portal/CLI ile dakikalar içinde VM |
-| **Broad network access** | Ağ üzerinden, her cihazdan erişim | Portal, REST API, CLI, mobil uygulama |
-| **Resource pooling** | Fiziksel kaynaklar çok kiracılı (multi-tenant) havuzda paylaşılır | Aynı fiziksel host'ta farklı müşterilerin VM'leri, izole |
-| **Rapid elasticity** | Kapasite hızla (otomatik) büyür/küçülür | Autoscale, VM Scale Sets (→ C1.2) |
-| **Measured service** | Kullanım ölçülür, ona göre faturalanır | Saniye/saat/işlem/GB bazlı fatura |
+- **On-demand self-service**
+  - Anlamı: Kimseye sormadan, kendin kaynak açarsın
+  - Azure'da örnek: Portal/CLI ile dakikalar içinde VM
+- **Broad network access**
+  - Anlamı: Ağ üzerinden, her cihazdan erişim
+  - Azure'da örnek: Portal, REST API, CLI, mobil uygulama
+- **Resource pooling**
+  - Anlamı: Fiziksel kaynaklar çok kiracılı (multi-tenant) havuzda paylaşılır
+  - Azure'da örnek: Aynı fiziksel host'ta farklı müşterilerin VM'leri, izole
+- **Rapid elasticity**
+  - Anlamı: Kapasite hızla (otomatik) büyür/küçülür
+  - Azure'da örnek: Autoscale, VM Scale Sets (→ C1.2)
+- **Measured service**
+  - Anlamı: Kullanım ölçülür, ona göre faturalanır
+  - Azure'da örnek: Saniye/saat/işlem/GB bazlı fatura
 
 **Geleneksel datacenter ile farkı:**
 
@@ -58,18 +66,16 @@ ABD standartlar enstitüsü NIST'in tanımı, bir hizmetin "bulut" sayılması i
 
 Bulutta güvenlik ve işletim sorumluluğu **sağlayıcı ile müşteri arasında paylaşılır**; hangi katmanın kimde olduğunu **dağıtım modeli** belirler. Microsoft'un yayımladığı tablo:
 
-| Sorumluluk | On-prem | IaaS | PaaS | SaaS |
-|---|---|---|---|---|
-| Bilgi ve veri | Müşteri | **Müşteri** | **Müşteri** | **Müşteri** |
-| Cihazlar (mobil ve PC) | Müşteri | **Müşteri** | **Müşteri** | **Müşteri** |
-| Hesaplar ve kimlikler | Müşteri | **Müşteri** | **Müşteri** | **Müşteri** |
-| Kimlik ve directory altyapısı | Müşteri | Müşteri | Paylaşımlı | Paylaşımlı |
-| Uygulamalar | Müşteri | Müşteri | Paylaşımlı | Microsoft |
-| Ağ kontrolleri | Müşteri | Müşteri | Paylaşımlı | Microsoft |
-| İşletim sistemi | Müşteri | Müşteri | Microsoft | Microsoft |
-| Fiziksel host'lar | Müşteri | **Microsoft** | **Microsoft** | **Microsoft** |
-| Fiziksel ağ | Müşteri | **Microsoft** | **Microsoft** | **Microsoft** |
-| Fiziksel datacenter | Müşteri | **Microsoft** | **Microsoft** | **Microsoft** |
+- **Bilgi ve veri** — On-prem: Müşteri · IaaS: **Müşteri** · PaaS: **Müşteri** · SaaS: **Müşteri**
+- **Cihazlar (mobil ve PC)** — On-prem: Müşteri · IaaS: **Müşteri** · PaaS: **Müşteri** · SaaS: **Müşteri**
+- **Hesaplar ve kimlikler** — On-prem: Müşteri · IaaS: **Müşteri** · PaaS: **Müşteri** · SaaS: **Müşteri**
+- **Kimlik ve directory altyapısı** — On-prem: Müşteri · IaaS: Müşteri · PaaS: Paylaşımlı · SaaS: Paylaşımlı
+- **Uygulamalar** — On-prem: Müşteri · IaaS: Müşteri · PaaS: Paylaşımlı · SaaS: Microsoft
+- **Ağ kontrolleri** — On-prem: Müşteri · IaaS: Müşteri · PaaS: Paylaşımlı · SaaS: Microsoft
+- **İşletim sistemi** — On-prem: Müşteri · IaaS: Müşteri · PaaS: Microsoft · SaaS: Microsoft
+- **Fiziksel host'lar** — On-prem: Müşteri · IaaS: **Microsoft** · PaaS: **Microsoft** · SaaS: **Microsoft**
+- **Fiziksel ağ** — On-prem: Müşteri · IaaS: **Microsoft** · PaaS: **Microsoft** · SaaS: **Microsoft**
+- **Fiziksel datacenter** — On-prem: Müşteri · IaaS: **Microsoft** · PaaS: **Microsoft** · SaaS: **Microsoft**
 
 Tabloyu ezberlemek yerine **üç kural** yeterli:
 
@@ -81,39 +87,76 @@ Tabloyu ezberlemek yerine **üç kural** yeterli:
 
 > **Pratik — sorumluluk matrisi alıştırması.** Bir şirketin "web uygulaması + veritabanı" iş yükü dört farklı biçimde çalıştırılıyor. Her hücreye **M** (müşteri), **MS** (Microsoft) veya **P** (paylaşımlı) yaz:
 >
-> | Görev | On-prem (kendi sunucuları) | IaaS (VM + VM'de SQL Server) | PaaS (App Service + Azure SQL Database) | SaaS (hazır bir web ürünü) |
-> |---|---|---|---|---|
-> | Müşteri verisinin sınıflandırılması | | | | |
-> | Çalışanların MFA kullanması | | | | |
-> | İşletim sistemi güvenlik yamaları | | | | |
-> | Veritabanı motoru yamaları | | | | |
-> | Uygulamanın ağ erişim kuralları (hangi IP girebilir) | | | | |
-> | Sunucu donanımı arızası | | | | |
-> | Datacenter'a fiziksel giriş kontrolü | | | | |
+> - **Müşteri verisinin sınıflandırılması**
+>   - On-prem (kendi sunucuları): ___ · IaaS (VM + VM'de SQL Server): ___
+>   - PaaS (App Service + Azure SQL Database): ___
+>   - SaaS (hazır bir web ürünü): ___
+> - **Çalışanların MFA kullanması**
+>   - On-prem (kendi sunucuları): ___ · IaaS (VM + VM'de SQL Server): ___
+>   - PaaS (App Service + Azure SQL Database): ___
+>   - SaaS (hazır bir web ürünü): ___
+> - **İşletim sistemi güvenlik yamaları**
+>   - On-prem (kendi sunucuları): ___ · IaaS (VM + VM'de SQL Server): ___
+>   - PaaS (App Service + Azure SQL Database): ___
+>   - SaaS (hazır bir web ürünü): ___
+> - **Veritabanı motoru yamaları**
+>   - On-prem (kendi sunucuları): ___ · IaaS (VM + VM'de SQL Server): ___
+>   - PaaS (App Service + Azure SQL Database): ___
+>   - SaaS (hazır bir web ürünü): ___
+> - **Uygulamanın ağ erişim kuralları (hangi IP girebilir)**
+>   - On-prem (kendi sunucuları): ___ · IaaS (VM + VM'de SQL Server): ___
+>   - PaaS (App Service + Azure SQL Database): ___
+>   - SaaS (hazır bir web ürünü): ___
+> - **Sunucu donanımı arızası**
+>   - On-prem (kendi sunucuları): ___ · IaaS (VM + VM'de SQL Server): ___
+>   - PaaS (App Service + Azure SQL Database): ___
+>   - SaaS (hazır bir web ürünü): ___
+> - **Datacenter'a fiziksel giriş kontrolü**
+>   - On-prem (kendi sunucuları): ___ · IaaS (VM + VM'de SQL Server): ___
+>   - PaaS (App Service + Azure SQL Database): ___
+>   - SaaS (hazır bir web ürünü): ___
 >
 > <details><summary>Çözüm</summary>
 >
-> | Görev | On-prem | IaaS | PaaS | SaaS |
-> |---|---|---|---|---|
-> | Veri sınıflandırma | M | M | M | M |
-> | MFA | M | M | M | M |
-> | OS yamaları | M | M | MS | MS |
-> | Veritabanı motoru yamaları | M | M (SQL VM'de; otomatik yama özelliği yardımcı olur ama sorumluluk müşteride) | MS | MS |
-> | Uygulamanın ağ erişim kuralları | M | M | P (özellik Microsoft'ta, kuralları sen yazarsın) | MS (SaaS ürününün sunduğu ayarlar kadarı müşteride) |
-> | Donanım arızası | M | MS | MS | MS |
-> | Fiziksel giriş | M | MS | MS | MS |
+> - **Veri sınıflandırma** — On-prem: M · IaaS: M · PaaS: M · SaaS: M
+> - **MFA** — On-prem: M · IaaS: M · PaaS: M · SaaS: M
+> - **OS yamaları** — On-prem: M · IaaS: M · PaaS: MS · SaaS: MS
+> - **Veritabanı motoru yamaları**
+>   - On-prem: M
+>   - IaaS: M (SQL VM'de; otomatik yama özelliği yardımcı olur ama sorumluluk müşteride)
+>   - PaaS: MS · SaaS: MS
+> - **Uygulamanın ağ erişim kuralları**
+>   - On-prem: M · IaaS: M
+>   - PaaS: P (özellik Microsoft'ta, kuralları sen yazarsın)
+>   - SaaS: MS (SaaS ürününün sunduğu ayarlar kadarı müşteride)
+> - **Donanım arızası** — On-prem: M · IaaS: MS · PaaS: MS · SaaS: MS
+> - **Fiziksel giriş** — On-prem: M · IaaS: MS · PaaS: MS · SaaS: MS
 >
 > İlk iki satır **hiçbir modelde** devredilemez; son iki satır **bulutun her modelinde** Microsoft'tadır.
 > </details>
 
 #### 3.3 Public, private, hybrid cloud
 
-| Model | Kime ait / nerede | Artıları | Eksileri | Tipik senaryo |
-|---|---|---|---|---|
-| **Public cloud** | Sağlayıcının altyapısı; birçok kuruluş paylaşır (mantıksal izolasyonla) | CapEx yok, dakikalar içinde başla, neredeyse sınırsız ölçek, kullandıkça öde | Fiziksel altyapı üzerinde kontrol yok; bazı regülasyonlar için ek değerlendirme | Yeni web uygulaması, değişken yük, startup |
-| **Private cloud** | Tek kuruluşa ait (kendi datacenter'ı veya ayrılmış barındırma); bulut niteliklerini (self-service, otomasyon) kurum içinde sunar | Tam kontrol, sıkı uyumluluk, özel donanım | Donanım, bakım ve personel maliyeti/sorumluluğu kurumda; ölçek donanımla sınırlı | Sıkı regülasyonlu kurum, gizli veriler |
-| **Hybrid cloud** | Public + private birlikte, aralarında bağlantıyla | Hassas veri/eski sistem yerinde, esnek yük bulutta; **cloud bursting** (yerel kapasite dolunca taşan yük buluta); kademeli taşıma | İki ortamı birlikte yönetme karmaşıklığı | "Veri ülkede/kurumda kalmalı ama web katmanı ölçeklenmeli" |
-| *(bağlam)* **Multicloud** | Birden çok public cloud sağlayıcısı (ör. Azure + AWS) | Sağlayıcıya bağımlılığı azaltma, her sağlayıcının güçlü servisi | Farklı araçlar/beceriler, yönetim karmaşıklığı | Şirket birleşmesi, belirli bir servise ihtiyaç |
+- **Public cloud**
+  - Kime ait / nerede: Sağlayıcının altyapısı; birçok kuruluş paylaşır (mantıksal izolasyonla)
+  - Artıları: CapEx yok, dakikalar içinde başla, neredeyse sınırsız ölçek, kullandıkça öde
+  - Eksileri: Fiziksel altyapı üzerinde kontrol yok; bazı regülasyonlar için ek değerlendirme
+  - Tipik senaryo: Yeni web uygulaması, değişken yük, startup
+- **Private cloud**
+  - Kime ait / nerede: Tek kuruluşa ait (kendi datacenter'ı veya ayrılmış barındırma); bulut niteliklerini (self-service, otomasyon) kurum içinde sunar
+  - Artıları: Tam kontrol, sıkı uyumluluk, özel donanım
+  - Eksileri: Donanım, bakım ve personel maliyeti/sorumluluğu kurumda; ölçek donanımla sınırlı
+  - Tipik senaryo: Sıkı regülasyonlu kurum, gizli veriler
+- **Hybrid cloud**
+  - Kime ait / nerede: Public + private birlikte, aralarında bağlantıyla
+  - Artıları: Hassas veri/eski sistem yerinde, esnek yük bulutta; **cloud bursting** (yerel kapasite dolunca taşan yük buluta); kademeli taşıma
+  - Eksileri: İki ortamı birlikte yönetme karmaşıklığı
+  - Tipik senaryo: "Veri ülkede/kurumda kalmalı ama web katmanı ölçeklenmeli"
+- *(bağlam)* **Multicloud**
+  - Kime ait / nerede: Birden çok public cloud sağlayıcısı (ör. Azure + AWS)
+  - Artıları: Sağlayıcıya bağımlılığı azaltma, her sağlayıcının güçlü servisi
+  - Eksileri: Farklı araçlar/beceriler, yönetim karmaşıklığı
+  - Tipik senaryo: Şirket birleşmesi, belirli bir servise ihtiyaç
 
 - Hybrid ve multicloud ortamları tek yerden yönetmek için **Azure Arc** (Azure dışındaki sunucu, Kubernetes ve veritabanlarını Azure'dan yönetme) → C1.13.
 - Datacenter'ını buluta bağlamanın ağ tarafı (VPN Gateway, ExpressRoute) → C1.7.
@@ -127,12 +170,18 @@ Tabloyu ezberlemek yerine **üç kural** yeterli:
 - Kapasite **fazlası** (boşta bekleyen sunucu) veya **eksiği** (zirvede yetmeyen kapasite) riski yok — kapasite talebi izler.
 - Kullanmayı bıraktığında (kaynağı sildiğinde) ödeme durur.
 
-| | **CapEx** (capital expenditure) | **OpEx** (operational expenditure) |
-|---|---|---|
-| Ne? | Fiziksel altyapıya **baştan** yapılan büyük, sabit yatırım | Hizmet/ürün için **dönem dönem** yapılan, kullanıma göre değişen harcama |
-| Örnek | Sunucu, depolama ünitesi, bina, jeneratör satın almak | Bulut aboneliği, aylık hizmet bedeli, lisans kiralama |
-| Muhasebe | Varlık; değeri yıllara yayılarak **amortisman** düşülür | O dönemin **gideri** olarak düşülür |
-| Risk | Tahmin hatası: fazla alırsan para boşta, az alırsan kapasite yetmez | Kullanım kontrol edilmezse fatura sürprizi (→ bütçe alarmı) |
+- **Ne?**
+  - CapEx (capital expenditure): Fiziksel altyapıya **baştan** yapılan büyük, sabit yatırım
+  - OpEx (operational expenditure): Hizmet/ürün için **dönem dönem** yapılan, kullanıma göre değişen harcama
+- **Örnek**
+  - CapEx (capital expenditure): Sunucu, depolama ünitesi, bina, jeneratör satın almak
+  - OpEx (operational expenditure): Bulut aboneliği, aylık hizmet bedeli, lisans kiralama
+- **Muhasebe**
+  - CapEx (capital expenditure): Varlık; değeri yıllara yayılarak **amortisman** düşülür
+  - OpEx (operational expenditure): O dönemin **gideri** olarak düşülür
+- **Risk**
+  - CapEx (capital expenditure): Tahmin hatası: fazla alırsan para boşta, az alırsan kapasite yetmez
+  - OpEx (operational expenditure): Kullanım kontrol edilmezse fatura sürprizi (→ bütçe alarmı)
 
 **Bulut, harcamayı CapEx'ten OpEx'e kaydırır.** `Section04`, zirvesi dalgalı bir e-ticaret yükünde (aylık 4 → 20 sunucu) kendi donanımın zirveye göre boyutlanınca kapasitenin büyük kısmının yıl boyunca boşta kaldığını, tüketim bazlı modelde bu boşluk için ödeme yapılmadığını hesaplar (fiyatlar örnektir).
 
@@ -140,13 +189,21 @@ Tabloyu ezberlemek yerine **üç kural** yeterli:
 
 #### 3.5 Cloud fiyatlandırma modelleri
 
-| Model | Nasıl çalışır | Ne zaman? |
-|---|---|---|
-| **Pay-as-you-go** | Taahhüt yok; saniye/dakika/saat veya işlem/GB başına ödeme | Değişken veya öngörülemeyen yük, deneme, kısa süreli proje |
-| **Reserved instances** / **savings plan** | 1 veya 3 yıllık **taahhüt** karşılığı ciddi indirim (Microsoft'un ifadesiyle reservation'da "en fazla %72"); kaynak kullanılmasa da taahhüt ödenir | Yıllarca 7/24 çalışacak **sabit** iş yükü |
-| **Spot** | Azure'un boşta kalan kapasitesi, büyük indirimle ("en fazla %90"); Azure kapasiteye ihtiyaç duyunca VM **kesilir** (eviction) | Kesintiye dayanıklı toplu iş, render, CI, test |
-| **Free tier / ücretsiz hesap** | Yeni hesaba sınırlı süreli kredi + bazı servislerde ücretsiz kullanım miktarları; bazı servislerin kalıcı ücretsiz katmanı (ör. App Service F1) | Öğrenme, deneme |
-| **Dev/test fiyatlandırması** | Visual Studio aboneleri için geliştirme/test aboneliklerinde indirimli fiyatlar | Üretim dışı ortamlar |
+- **Pay-as-you-go**
+  - Nasıl çalışır: Taahhüt yok; saniye/dakika/saat veya işlem/GB başına ödeme
+  - Ne zaman?: Değişken veya öngörülemeyen yük, deneme, kısa süreli proje
+- **Reserved instances** / **savings plan**
+  - Nasıl çalışır: 1 veya 3 yıllık **taahhüt** karşılığı ciddi indirim (Microsoft'un ifadesiyle reservation'da "en fazla %72"); kaynak kullanılmasa da taahhüt ödenir
+  - Ne zaman?: Yıllarca 7/24 çalışacak **sabit** iş yükü
+- **Spot**
+  - Nasıl çalışır: Azure'un boşta kalan kapasitesi, büyük indirimle ("en fazla %90"); Azure kapasiteye ihtiyaç duyunca VM **kesilir** (eviction)
+  - Ne zaman?: Kesintiye dayanıklı toplu iş, render, CI, test
+- **Free tier / ücretsiz hesap**
+  - Nasıl çalışır: Yeni hesaba sınırlı süreli kredi + bazı servislerde ücretsiz kullanım miktarları; bazı servislerin kalıcı ücretsiz katmanı (ör. App Service F1)
+  - Ne zaman?: Öğrenme, deneme
+- **Dev/test fiyatlandırması**
+  - Nasıl çalışır: Visual Studio aboneleri için geliştirme/test aboneliklerinde indirimli fiyatlar
+  - Ne zaman?: Üretim dışı ortamlar
 
 > İndirim oranları pazarlama rakamlarıdır ve zamanla değişir; sınav oranı değil **hangi modelin hangi iş yüküne uyduğunu** sorar. Azure Hybrid Benefit (mevcut Windows Server/SQL Server lisansını bulutta kullanmak), maliyeti etkileyen faktörler, Pricing Calculator ve Cost Management → C1.11.
 
@@ -205,20 +262,24 @@ Orta ölçekli bir sigorta şirketi, kendi datacenter'ındaki sunucuların donan
 
 **Sınav neyi, nasıl sorar?** Bu konu çoğunlukla kısa senaryolar, **evet/hayır tabloları** ("Bu ifade doğru mu?") ve "boşluğu doldur" tarzı cümle tamamlama ile sorulur. Hesap istenmez; kavramın doğru eşleştirilmesi istenir.
 
-| Soru kalıbı | Doğru cevap | Tuzak |
-|---|---|---|
-| "MFA'yı / şifre politikasını / kullanıcı erişimini kim yönetir?" | **Her modelde müşteri** | SaaS'ta "Microsoft" şıkkı |
-| "Verinin doğruluğu ve sınıflandırılması kimin?" | **Her modelde müşteri** | |
-| "İşletim sistemi yamaları kimin?" | IaaS'ta **müşteri**, PaaS/SaaS'ta **Microsoft** | |
-| "Fiziksel güvenlik / donanım kimin?" | Bulutta **her zaman Microsoft** | IaaS'ta "müşteri" şıkkı |
-| "Hangi model en çok sorumluluğu müşteriye bırakır?" | On-prem; bulut modelleri içinde **IaaS** | |
-| "Veri kurum içinde kalmalı ama ölçek gerekiyor" | **Hybrid** | Private |
-| "Birden çok bulut sağlayıcısı" | **Multicloud** | Hybrid |
-| "Donanım satın almadan, ön yatırım olmadan" | **OpEx / consumption-based** | CapEx |
-| "Fiziksel sunucu satın almak" | **CapEx** | |
-| "Kullanılmayan kapasite için ödeme yapılmaz" | **Consumption-based model** | |
-| "7/24, yıllarca çalışacak sabit iş yükü için en ucuz" | **Reserved instance / savings plan** | Spot (kesilebilir) |
-| "Kesintiye dayanıklı toplu iş için en ucuz" | **Spot** | Reserved |
+- **"MFA'yı / şifre politikasını / kullanıcı erişimini kim yönetir?"** — Doğru cevap: **Her modelde müşteri** · Tuzak: SaaS'ta "Microsoft" şıkkı
+- **"Verinin doğruluğu ve sınıflandırılması kimin?"** — Doğru cevap: **Her modelde müşteri** · Tuzak: —
+- **"İşletim sistemi yamaları kimin?"**
+  - Doğru cevap: IaaS'ta **müşteri**, PaaS/SaaS'ta **Microsoft**
+  - Tuzak: —
+- **"Fiziksel güvenlik / donanım kimin?"** — Doğru cevap: Bulutta **her zaman Microsoft** · Tuzak: IaaS'ta "müşteri" şıkkı
+- **"Hangi model en çok sorumluluğu müşteriye bırakır?"**
+  - Doğru cevap: On-prem; bulut modelleri içinde **IaaS**
+  - Tuzak: —
+- **"Veri kurum içinde kalmalı ama ölçek gerekiyor"** — Doğru cevap: **Hybrid** · Tuzak: Private
+- **"Birden çok bulut sağlayıcısı"** — Doğru cevap: **Multicloud** · Tuzak: Hybrid
+- **"Donanım satın almadan, ön yatırım olmadan"** — Doğru cevap: **OpEx / consumption-based** · Tuzak: CapEx
+- **"Fiziksel sunucu satın almak"** — Doğru cevap: **CapEx** · Tuzak: —
+- **"Kullanılmayan kapasite için ödeme yapılmaz"** — Doğru cevap: **Consumption-based model** · Tuzak: —
+- **"7/24, yıllarca çalışacak sabit iş yükü için en ucuz"**
+  - Doğru cevap: **Reserved instance / savings plan**
+  - Tuzak: Spot (kesilebilir)
+- **"Kesintiye dayanıklı toplu iş için en ucuz"** — Doğru cevap: **Spot** · Tuzak: Reserved
 
 **Anahtar kelimeler:** *shared responsibility*, *always retained by the customer* (information and data, devices, accounts and identities), *CapEx/OpEx*, *upfront cost*, *pay-as-you-go*, *consumption-based*, *cloud bursting*, *private cloud = single organization*.
 
@@ -243,14 +304,24 @@ Orta ölçekli bir sigorta şirketi, kendi datacenter'ındaki sunucuların donan
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| On-prem → public cloud | CapEx yok, hızlı başlangıç, esnek ölçek, fiziksel işletme yükü yok | Fiziksel kontrol yok; maliyet disiplini (izleme, bütçe) gerekir; internet/ağ bağımlılığı |
-| Public yerine private | Tam kontrol, özel uyumluluk | Donanım/personel maliyeti, sınırlı ölçek, yavaş kapasite artışı |
-| Hybrid | Regülasyona uyum + bulut esnekliği, kademeli taşıma | İki ortamı birlikte işletme, bağlantı ve kimlik entegrasyonu karmaşıklığı |
-| IaaS → PaaS → SaaS | Daha az sorumluluk ve yönetim yükü | Daha az kontrol ve özelleştirme (→ C1.3) |
-| Pay-as-you-go → reservation | Sabit yükte büyük indirim | Taahhüt: kullanmasan da ödersin; esneklik azalır |
-| Pay-as-you-go → spot | Çok düşük fiyat | Her an kesilebilir; yalnızca kesintiye dayanıklı işler |
+- **On-prem → public cloud**
+  - Kazanç: CapEx yok, hızlı başlangıç, esnek ölçek, fiziksel işletme yükü yok
+  - Bedel: Fiziksel kontrol yok; maliyet disiplini (izleme, bütçe) gerekir; internet/ağ bağımlılığı
+- **Public yerine private**
+  - Kazanç: Tam kontrol, özel uyumluluk
+  - Bedel: Donanım/personel maliyeti, sınırlı ölçek, yavaş kapasite artışı
+- **Hybrid**
+  - Kazanç: Regülasyona uyum + bulut esnekliği, kademeli taşıma
+  - Bedel: İki ortamı birlikte işletme, bağlantı ve kimlik entegrasyonu karmaşıklığı
+- **IaaS → PaaS → SaaS**
+  - Kazanç: Daha az sorumluluk ve yönetim yükü
+  - Bedel: Daha az kontrol ve özelleştirme (→ C1.3)
+- **Pay-as-you-go → reservation**
+  - Kazanç: Sabit yükte büyük indirim
+  - Bedel: Taahhüt: kullanmasan da ödersin; esneklik azalır
+- **Pay-as-you-go → spot**
+  - Kazanç: Çok düşük fiyat
+  - Bedel: Her an kesilebilir; yalnızca kesintiye dayanıklı işler
 
 ---
 

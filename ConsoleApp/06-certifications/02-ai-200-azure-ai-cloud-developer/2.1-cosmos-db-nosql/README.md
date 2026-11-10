@@ -10,11 +10,15 @@
 
 **Azure Cosmos DB for NoSQL**, Microsoft'un tam yönetilen, çok bölgeli, JSON **document** veritabanıdır. Her işlemin bedeli **Request Unit (RU)** cinsinden ölçülür: CPU + bellek + IO'nun tek bir para biriminde soyutlanmış hâli. Bu konunun üç ana ekseni vardır:
 
-| Eksen | Soru | Karar anı |
-|---|---|---|
-| **Partitioning** | Veri ve yük fiziksel olarak nasıl bölünür? | Container oluşturulurken — **sonradan değiştirilemez** |
-| **Indexing** | Hangi yollar indekslenir? Yazma/okuma RU'su ne olur? | Her zaman ayarlanabilir (ama yeniden indeksleme maliyetlidir) |
-| **Consistency** | Okuyucu ne kadar "taze" veri görür? | Hesap varsayılanı + istek bazında **gevşetme** |
+- **Partitioning**
+  - Soru: Veri ve yük fiziksel olarak nasıl bölünür?
+  - Karar anı: Container oluşturulurken — **sonradan değiştirilemez**
+- **Indexing**
+  - Soru: Hangi yollar indekslenir? Yazma/okuma RU'su ne olur?
+  - Karar anı: Her zaman ayarlanabilir (ama yeniden indeksleme maliyetlidir)
+- **Consistency**
+  - Soru: Okuyucu ne kadar "taze" veri görür?
+  - Karar anı: Hesap varsayılanı + istek bazında **gevşetme**
 
 **Kaynak modeli:** `account → database → container → item`. Container, ölçek ve throughput birimidir; item en çok **2 MB** olabilir (limitler değişebilir — güncel dokümana bak). Her item'ın `id` alanı vardır; **kimlik = (partition key değeri + id)** çiftidir.
 
@@ -47,14 +51,27 @@ Vector arama ve change feed ayrı konudur (→ [C2.5](../2.2-cosmos-vector-chang
 
 İyi partition key üç şeyi sağlar: **yüksek cardinality** (çok sayıda farklı değer), **eşit dağılım** (hem depolama hem istek), **sorgu desenine uyum** (en sık sorgular tek partition'a gitsin).
 
-| Aday (sipariş verisi) | Cardinality | Dağılım | Sorgu uyumu | Karar |
-|---|---|---|---|---|
-| `/status` (`new/paid/shipped`) | 3 değer | Çok çarpık | "Müşterinin siparişleri" cross-partition | **Kötü** — hot partition |
-| `/orderDate` (gün) | Orta | Bugüne yazma yığılır (hot write) | Zaman aralığı sorguları cross-partition | Zayıf |
-| `/customerId` | Yüksek | İyi (büyük müşteri hariç) | "Müşterinin siparişleri" = tek partition | **İyi** |
-| `/id` | Çok yüksek | Mükemmel | Her sorgu cross-partition (yalnızca point read ucuz) | Yalnızca point-read ağırlıklı iş yükü |
-| **Hierarchical:** `/tenantId` → `/userId` → `/sessionId` | Çok yüksek | İyi | Önek (tenant) ile hedefli sorgu | Çok kiracılı büyük tenant'lar için |
-| **Synthetic:** `tenantId + "-" + month` | Yüksek | İyi | Hesaplanmış alan | Tek alan yetmiyorsa |
+- **`/status` (`new/paid/shipped`)**
+  - Cardinality: 3 değer · Dağılım: Çok çarpık
+  - Sorgu uyumu: "Müşterinin siparişleri" cross-partition
+  - Karar: **Kötü** — hot partition
+- **`/orderDate` (gün)**
+  - Cardinality: Orta · Dağılım: Bugüne yazma yığılır (hot write)
+  - Sorgu uyumu: Zaman aralığı sorguları cross-partition
+  - Karar: Zayıf
+- **`/customerId`**
+  - Cardinality: Yüksek · Dağılım: İyi (büyük müşteri hariç)
+  - Sorgu uyumu: "Müşterinin siparişleri" = tek partition
+  - Karar: **İyi**
+- **`/id`**
+  - Cardinality: Çok yüksek · Dağılım: Mükemmel
+  - Sorgu uyumu: Her sorgu cross-partition (yalnızca point read ucuz)
+  - Karar: Yalnızca point-read ağırlıklı iş yükü
+- **Hierarchical:** `/tenantId` → `/userId` → `/sessionId`
+  - Cardinality: Çok yüksek · Dağılım: İyi
+  - Sorgu uyumu: Önek (tenant) ile hedefli sorgu
+  - Karar: Çok kiracılı büyük tenant'lar için
+- **Synthetic:** `tenantId + "-" + month` — Cardinality: Yüksek · Dağılım: İyi · Sorgu uyumu: Hesaplanmış alan · Karar: Tek alan yetmiyorsa
 
 Kurallar (sınavda çıkar):
 - Partition key **path'i container oluşturulduktan sonra değiştirilemez**; değiştirmek için yeni container + veri taşıma (ör. change feed ile kopyalama) gerekir. İtem'daki *değer* ise (kural olarak) taşınamaz: item silinip yeniden yazılır.
@@ -161,12 +178,22 @@ az cosmosdb sql role assignment create --account-name $ACC --resource-group $RG 
 
 #### 3.3 Throughput modelleri
 
-| Model | Nasıl çalışır | Ne zaman | Dikkat |
-|---|---|---|---|
-| **Provisioned — manual** | Sabit RU/s (saatlik faturalanır) | Öngörülebilir, sürekli yük | Fazla ayırırsan boşa ödersin, azsa 429 |
-| **Provisioned — autoscale** | Tmax belirlenir; sistem Tmax'ın %10'u ile %100'ü arasında ölçekler | Değişken/zirveli yük | Birim fiyat manual'dan yüksektir; faturalama saatlik kullanılan **en yüksek** RU/s'ye göre |
-| **Serverless** | Rezerve throughput yok, **tüketilen RU** kadar öde | Dev/test, seyrek/küçük yük | Tek bölge, container başına throughput/depolama üst sınırları var; sürekli yüksek yük için pahalı |
-| **Free tier** | Hesap başına (abonelikte tek) ilk **1000 RU/s + 25 GB** ücretsiz | Öğrenme/laboratuvar | Aboneliğte yalnızca bir hesapta |
+- **Provisioned — manual**
+  - Nasıl çalışır: Sabit RU/s (saatlik faturalanır)
+  - Ne zaman: Öngörülebilir, sürekli yük
+  - Dikkat: Fazla ayırırsan boşa ödersin, azsa 429
+- **Provisioned — autoscale**
+  - Nasıl çalışır: Tmax belirlenir; sistem Tmax'ın %10'u ile %100'ü arasında ölçekler
+  - Ne zaman: Değişken/zirveli yük
+  - Dikkat: Birim fiyat manual'dan yüksektir; faturalama saatlik kullanılan **en yüksek** RU/s'ye göre
+- **Serverless**
+  - Nasıl çalışır: Rezerve throughput yok, **tüketilen RU** kadar öde
+  - Ne zaman: Dev/test, seyrek/küçük yük
+  - Dikkat: Tek bölge, container başına throughput/depolama üst sınırları var; sürekli yüksek yük için pahalı
+- **Free tier**
+  - Nasıl çalışır: Hesap başına (abonelikte tek) ilk **1000 RU/s + 25 GB** ücretsiz
+  - Ne zaman: Öğrenme/laboratuvar
+  - Dikkat: Aboneliğte yalnızca bir hesapta
 
 - **Database düzeyi (shared) vs container düzeyi (dedicated)** throughput: paylaşılan RU havuzu birçok küçük container için ucuzdur ama bir container havuzu tüketip diğerlerini aç bırakabilir.
 - Bir physical partition en çok yaklaşık **10.000 RU/s** ve **50 GB** taşır; toplam RU/s partition sayısına bölündüğü için **hot partition'da container'ın RU/s'si ne olursa olsun 429** alırsın.
@@ -207,13 +234,29 @@ Varsayılan: **tüm yolları indeksle** (`/*`), `_etag` hariç; mod `consistent`
 
 #### 3.5 Consistency level'lar ⭐
 
-| Seviye | Garanti | Okuma RU'su | Gecikme/kullanılabilirlik | Tipik kullanım |
-|---|---|---|---|---|
-| **Strong** | Linearizable: her zaman en son commit edilmiş yazma | **~2×** | En yüksek yazma gecikmesi; bölgeler arası mesafe sınırı; çok bölgeli yazma ile birlikte kullanılamaz | Finansal bakiye |
-| **Bounded Staleness** | Okuma en fazla *K versiyon* veya *T süre* geride | **~2×** | Strong'a yakın, "sınırlı" gecikme | Skor tabloları, bölgeler arası sıralı veri |
-| **Session** ⭐ (**varsayılan**) | Aynı **session** içinde *read-your-writes*, monotonic reads/writes | 1× | Düşük | Kullanıcı bağlamlı uygulamalar — çoğu uygulama |
-| **Consistent Prefix** | Yazmalar sırayla görülür, boşluk yok (ama geride olabilir) | 1× | Düşük | Sıralı akış, feed |
-| **Eventual** | Sıra garantisi yok, eninde sonunda tutarlı | 1× (en ucuz/en hızlı) | En düşük | Beğeni sayısı, telemetri |
+- **Strong**
+  - Garanti: Linearizable: her zaman en son commit edilmiş yazma
+  - Okuma RU'su: **~2×**
+  - Gecikme/kullanılabilirlik: En yüksek yazma gecikmesi; bölgeler arası mesafe sınırı; çok bölgeli yazma ile birlikte kullanılamaz
+  - Tipik kullanım: Finansal bakiye
+- **Bounded Staleness**
+  - Garanti: Okuma en fazla *K versiyon* veya *T süre* geride
+  - Okuma RU'su: **~2×**
+  - Gecikme/kullanılabilirlik: Strong'a yakın, "sınırlı" gecikme
+  - Tipik kullanım: Skor tabloları, bölgeler arası sıralı veri
+- **Session** ⭐ (**varsayılan**)
+  - Garanti: Aynı **session** içinde *read-your-writes*, monotonic reads/writes
+  - Okuma RU'su: 1× · Gecikme/kullanılabilirlik: Düşük
+  - Tipik kullanım: Kullanıcı bağlamlı uygulamalar — çoğu uygulama
+- **Consistent Prefix**
+  - Garanti: Yazmalar sırayla görülür, boşluk yok (ama geride olabilir)
+  - Okuma RU'su: 1× · Gecikme/kullanılabilirlik: Düşük
+  - Tipik kullanım: Sıralı akış, feed
+- **Eventual**
+  - Garanti: Sıra garantisi yok, eninde sonunda tutarlı
+  - Okuma RU'su: 1× (en ucuz/en hızlı)
+  - Gecikme/kullanılabilirlik: En düşük
+  - Tipik kullanım: Beğeni sayısı, telemetri
 
 - **Hesap düzeyinde varsayılan** belirlenir; **istek veya client bazında yalnızca gevşetilebilir** (ör. hesap Session iken bir sorgu Eventual; ancak daha güçlüsüne çıkılamaz):
 
@@ -297,16 +340,22 @@ az group delete --name $RG --yes --no-wait
 
 Bir e-ticaret ekibi sipariş API'sini Cosmos'a taşıyor:
 
-| Gereksinim | Karar | Gerekçe |
-|---|---|---|
-| Sorguların %90'ı "müşterinin siparişleri" | `/customerId` partition key | Tek partition sorgusu, ucuz |
-| Sipariş detay sayfası | `ReadItemAsync(id, customerId)` | Sorgu yerine point read: ~1 RU |
-| Kampanya günü 20× trafik | Autoscale (Tmax) | Zirveye göre sabit RU ödememek |
-| Müşterinin "son 20 siparişi" | Composite index `(customerId ASC, orderDate DESC)` | Sıralama RU'su düşer |
-| Sipariş + stok düşümü aynı anda atomik | Transactional batch (aynı `customerId` altında) | Partition sınırı içinde ACID |
-| "Siparişimi verdim, listede görünmüyor" şikayeti | Session consistency + istemci başına tek `CosmosClient` | Read-your-writes, ek RU yok |
-| Anahtar sızıntı riski | Entra ID + data-plane RBAC | Hesap anahtarı kodda yok |
-| Büyük kurumsal müşteri 20 GB'ı aşıyor | Hierarchical key `/tenantId` → `/orderMonth` | Logical partition sınırı |
+- **Sorguların %90'ı "müşterinin siparişleri"** — Karar: `/customerId` partition key · Gerekçe: Tek partition sorgusu, ucuz
+- **Sipariş detay sayfası** — Karar: `ReadItemAsync(id, customerId)` · Gerekçe: Sorgu yerine point read: ~1 RU
+- **Kampanya günü 20× trafik** — Karar: Autoscale (Tmax) · Gerekçe: Zirveye göre sabit RU ödememek
+- **Müşterinin "son 20 siparişi"**
+  - Karar: Composite index `(customerId ASC, orderDate DESC)`
+  - Gerekçe: Sıralama RU'su düşer
+- **Sipariş + stok düşümü aynı anda atomik**
+  - Karar: Transactional batch (aynı `customerId` altında)
+  - Gerekçe: Partition sınırı içinde ACID
+- **"Siparişimi verdim, listede görünmüyor" şikayeti**
+  - Karar: Session consistency + istemci başına tek `CosmosClient`
+  - Gerekçe: Read-your-writes, ek RU yok
+- **Anahtar sızıntı riski** — Karar: Entra ID + data-plane RBAC · Gerekçe: Hesap anahtarı kodda yok
+- **Büyük kurumsal müşteri 20 GB'ı aşıyor**
+  - Karar: Hierarchical key `/tenantId` → `/orderMonth`
+  - Gerekçe: Logical partition sınırı
 
 ---
 
@@ -356,17 +405,29 @@ Bir e-ticaret ekibi sipariş API'sini Cosmos'a taşıyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Geniş partition key (`/id`) | Mükemmel dağılım, ucuz point read | Her sorgu cross-partition |
-| Dar partition key (`/customerId`) | Ucuz tek partition sorgular, transactional batch | Çok büyük tenant → 20 GB / hot partition |
-| Manual → Autoscale | Zirveye otomatik uyum, 429 azalır | Birim fiyat yüksek; sürekli düz yükte pahalı |
-| Provisioned → Serverless | Boşta maliyet yok | Sürekli yüksekte pahalı; sınırlı ölçek/tek bölge |
-| Dar indeks | Yazma RU ↓, depolama ↓ | Yeni sorgu deseni → yeniden indeksleme/pahalı tarama |
-| Composite index | ORDER BY / çoklu filtre RU ↓ | Yazma RU ↑, depolama ↑ |
-| Strong / Bounded | Taze okuma | ~2× okuma RU'su, yüksek gecikme |
-| Session / Eventual | Ucuz, hızlı | Eventual'da sıra/tazelik garantisi yok |
-| Direct mod | Düşük gecikme | Geniş port aralığı/ağ gereksinimi; kısıtlı ağda Gateway |
+- **Geniş partition key (`/id`)**
+  - Kazanç: Mükemmel dağılım, ucuz point read
+  - Bedel: Her sorgu cross-partition
+- **Dar partition key (`/customerId`)**
+  - Kazanç: Ucuz tek partition sorgular, transactional batch
+  - Bedel: Çok büyük tenant → 20 GB / hot partition
+- **Manual → Autoscale**
+  - Kazanç: Zirveye otomatik uyum, 429 azalır
+  - Bedel: Birim fiyat yüksek; sürekli düz yükte pahalı
+- **Provisioned → Serverless**
+  - Kazanç: Boşta maliyet yok
+  - Bedel: Sürekli yüksekte pahalı; sınırlı ölçek/tek bölge
+- **Dar indeks**
+  - Kazanç: Yazma RU ↓, depolama ↓
+  - Bedel: Yeni sorgu deseni → yeniden indeksleme/pahalı tarama
+- **Composite index** — Kazanç: ORDER BY / çoklu filtre RU ↓ · Bedel: Yazma RU ↑, depolama ↑
+- **Strong / Bounded** — Kazanç: Taze okuma · Bedel: ~2× okuma RU'su, yüksek gecikme
+- **Session / Eventual**
+  - Kazanç: Ucuz, hızlı
+  - Bedel: Eventual'da sıra/tazelik garantisi yok
+- **Direct mod**
+  - Kazanç: Düşük gecikme
+  - Bedel: Geniş port aralığı/ağ gereksinimi; kısıtlı ağda Gateway
 
 ---
 

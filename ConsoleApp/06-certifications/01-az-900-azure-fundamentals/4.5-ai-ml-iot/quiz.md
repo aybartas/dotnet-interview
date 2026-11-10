@@ -65,11 +65,9 @@ Microsoft'un AI geliştirme platformu için doğru ad ve rebrand sırası hangis
 
 #### Soru 5: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Metin dilini tespit etmek için önce kendi eğitim verinle bir model eğitmen gerekir. | ☐ | ☐ |
-| b) Azure OpenAI/Foundry Models, kendi modelini sıfırdan eğitme platformu olan Azure Machine Learning ile aynı şeydir. | ☐ | ☐ |
-| c) AI servis anahtarı kaynak kodunda ve sürüm kontrolünde tutulmamalıdır. | ☐ | ☐ |
+- a) Metin dilini tespit etmek için önce kendi eğitim verinle bir model eğitmen gerekir. — Evet: ☐ · Hayır: ☐
+- b) Azure OpenAI/Foundry Models, kendi modelini sıfırdan eğitme platformu olan Azure Machine Learning ile aynı şeydir. — Evet: ☐ · Hayır: ☐
+- c) AI servis anahtarı kaynak kodunda ve sürüm kontrolünde tutulmamalıdır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

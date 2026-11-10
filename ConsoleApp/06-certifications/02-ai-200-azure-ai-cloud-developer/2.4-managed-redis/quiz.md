@@ -211,11 +211,9 @@ Hangi iki senaryoda vector verisini **Redis'te** tutmak, kalıcı kaynak depoya 
 
 #### Soru 15: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure Managed Redis, Azure Cache for Redis'in halefi olan Redis Enterprise tabanlı hizmettir. | ☐ | ☐ |
-| b) Redis modülleri (ör. RediSearch) cache oluşturulduktan sonra istenildiğinde eklenebilir. | ☐ | ☐ |
-| c) AMR için Microsoft Entra ID ile kimlik doğrulama desteklenir ve managed identity ile kullanılabilir. | ☐ | ☐ |
+- a) Azure Managed Redis, Azure Cache for Redis'in halefi olan Redis Enterprise tabanlı hizmettir. — Evet: ☐ · Hayır: ☐
+- b) Redis modülleri (ör. RediSearch) cache oluşturulduktan sonra istenildiğinde eklenebilir. — Evet: ☐ · Hayır: ☐
+- c) AMR için Microsoft Entra ID ile kimlik doğrulama desteklenir ve managed identity ile kullanılabilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

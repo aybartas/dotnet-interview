@@ -12,15 +12,23 @@
 
 Uygulamalar tek başına çalışmaz; birbirleriyle ve dış sistemlerle konuşur. Azure bunun için bir **entegrasyon** araç kutusu sunar; kodu üretime taşımak için de **DevOps** araçları vardır:
 
-| Alan | Soru | Servisler |
-|---|---|---|
-| **İş akışı / otomasyon** | "A olunca B'yi yap" — kodsuz/az kodlu | **Logic Apps** (Functions ↔ Logic Apps → C1.6) |
-| **Olay yönlendirme** | "Bir şey **oldu**, ilgilenenleri haberdar et" | **Event Grid** |
-| **Kurumsal mesajlaşma** | "Bu işi **güvenle** teslim et, kaybetme, sıraya koy" | **Service Bus** (kuyruk/topic) |
-| **Olay/telemetri akışı** | "Saniyede milyonlarca olayı al" | **Event Hubs** |
-| **Basit kuyruk** | "Ucuz, basit bir kuyruk yeter" | **Storage Queue** |
-| **API yönetimi** | "API'lerimi güvenli ve yönetilebilir yayınla" | **API Management** |
-| **DevOps** | "Kodu planla, derle, test et, yayınla" | **Azure DevOps** ↔ **GitHub**, **Pipelines/Actions**, **DevTest Labs**, **Deployment Environments**, **azd** |
+- **İş akışı / otomasyon**
+  - Soru: "A olunca B'yi yap" — kodsuz/az kodlu
+  - Servisler: **Logic Apps** (Functions ↔ Logic Apps → C1.6)
+- **Olay yönlendirme**
+  - Soru: "Bir şey **oldu**, ilgilenenleri haberdar et"
+  - Servisler: **Event Grid**
+- **Kurumsal mesajlaşma**
+  - Soru: "Bu işi **güvenle** teslim et, kaybetme, sıraya koy"
+  - Servisler: **Service Bus** (kuyruk/topic)
+- **Olay/telemetri akışı** — Soru: "Saniyede milyonlarca olayı al" · Servisler: **Event Hubs**
+- **Basit kuyruk** — Soru: "Ucuz, basit bir kuyruk yeter" · Servisler: **Storage Queue**
+- **API yönetimi**
+  - Soru: "API'lerimi güvenli ve yönetilebilir yayınla"
+  - Servisler: **API Management**
+- **DevOps**
+  - Soru: "Kodu planla, derle, test et, yayınla"
+  - Servisler: **Azure DevOps** ↔ **GitHub**, **Pipelines/Actions**, **DevTest Labs**, **Deployment Environments**, **azd**
 
 Bu konunun C# kodu yoktur. Pratik: `az` CLI ile bir Service Bus kuyruğu, REST ile mesaj gönder/al (3.6) ve bir GitHub Actions workflow'unu okuma alıştırması (3.5).
 
@@ -41,12 +49,18 @@ Bu konunun C# kodu yoktur. Pratik: `az` CLI ile bir Service Bus kuyruğu, REST i
 
 **Azure Logic Apps**, **kod yazmadan/az kodla** görsel tasarımcıda iş akışı kuran, **1000'den fazla connector** (Microsoft 365, Salesforce, SAP, SQL, Service Bus, HTTP…) bulunan bir PaaS entegrasyon servisidir. Yapı: **trigger** (iş akışını başlatan olay) + **action**'lar (adımlar) + koşul/döngü.
 
-| | Logic Apps | Azure Functions |
-|---|---|---|
-| Yaklaşım | Görsel tasarımcı, hazır connector'lar | Kod (C#, JS, Python…) |
-| Güçlü yanı | SaaS/sistemler arası entegrasyon, hızlı kurulum, onay akışları | Özel iş mantığı, algoritma, tam kontrol |
-| Faturalama (özet) | **Consumption:** çalışan eylem başına; **Standard:** ayrılmış kapasite | Consumption/Flex Consumption: yürütme + süre; Premium/Dedicated |
-| Tipik örnek | "Yeni e-posta eki gelince Blob'a kaydet, Teams'e haber ver" | "Gelen siparişin vergisini hesapla" |
+- **Yaklaşım**
+  - Logic Apps: Görsel tasarımcı, hazır connector'lar
+  - Azure Functions: Kod (C#, JS, Python…)
+- **Güçlü yanı**
+  - Logic Apps: SaaS/sistemler arası entegrasyon, hızlı kurulum, onay akışları
+  - Azure Functions: Özel iş mantığı, algoritma, tam kontrol
+- **Faturalama (özet)**
+  - Logic Apps: **Consumption:** çalışan eylem başına; **Standard:** ayrılmış kapasite
+  - Azure Functions: Consumption/Flex Consumption: yürütme + süre; Premium/Dedicated
+- **Tipik örnek**
+  - Logic Apps: "Yeni e-posta eki gelince Blob'a kaydet, Teams'e haber ver"
+  - Azure Functions: "Gelen siparişin vergisini hesapla"
 
 Birlikte kullanılırlar: Logic Apps iş akışı bir Function'ı eylem olarak çağırır.
 
@@ -54,13 +68,19 @@ Birlikte kullanılırlar: Logic Apps iş akışı bir Function'ı eylem olarak �
 
 Bu ayrım üç servisin seçimini belirler:
 
-| | **Olay (event)** | **Mesaj (message)** |
-|---|---|---|
-| Anlamı | "**Bir şey oldu**" bildirimi (durum değişikliği, **gerçek**) | Bir sisteme verilen **veri/komut/iş** (ör. "bu siparişi işle") |
-| Yayıncının beklentisi | Kim dinlerse dinlesin; sonucuyla ilgilenmez | Tüketicinin **işlemesini bekler** (teslim garantisi önemli) |
-| İçerik | Genelde küçük: ne oldu + nerede | Asıl iş verisi (sipariş, ödeme) |
-| Ana ihtiyaç | Reaktif yönlendirme, fan-out | Güvenilir teslim, sıra, tekrar deneme, dead-letter |
-| Servis | **Event Grid** (ayrık olaylar), **Event Hubs** (olay **akışı**) | **Service Bus**, Storage Queue |
+- **Anlamı**
+  - Olay (event): "**Bir şey oldu**" bildirimi (durum değişikliği, **gerçek**)
+  - Mesaj (message): Bir sisteme verilen **veri/komut/iş** (ör. "bu siparişi işle")
+- **Yayıncının beklentisi**
+  - Olay (event): Kim dinlerse dinlesin; sonucuyla ilgilenmez
+  - Mesaj (message): Tüketicinin **işlemesini bekler** (teslim garantisi önemli)
+- **İçerik** — Olay (event): Genelde küçük: ne oldu + nerede · Mesaj (message): Asıl iş verisi (sipariş, ödeme)
+- **Ana ihtiyaç**
+  - Olay (event): Reaktif yönlendirme, fan-out
+  - Mesaj (message): Güvenilir teslim, sıra, tekrar deneme, dead-letter
+- **Servis**
+  - Olay (event): **Event Grid** (ayrık olaylar), **Event Hubs** (olay **akışı**)
+  - Mesaj (message): **Service Bus**, Storage Queue
 
 Mnemonik: **Event Grid = "bir şey oldu, haber ver" · Service Bus = "bu işi güvenle işle" · Event Hubs = "milyonlarca olayı al, akışı sakla/oku".**
 
@@ -115,16 +135,28 @@ Mnemonik: **Event Grid = "bir şey oldu, haber ver" · Service Bus = "bu işi g�
 
 #### 3.4 Azure DevOps ↔ GitHub
 
-| | **Azure DevOps** | **GitHub** |
-|---|---|---|
-| Planlama | **Boards** (iş öğeleri, backlog, sprint) | Issues, Projects |
-| Kod deposu | **Repos** (Git) | Repositories (Git) — açık kaynak ekosistemin merkezi |
-| CI/CD | **Pipelines** (YAML veya klasik) | **Actions** (YAML workflow'lar, marketplace) |
-| Test | **Test Plans** (manuel/keşif testi) | Actions içinde otomatik test (ayrı manuel test aracı yok) |
-| Paket | **Artifacts** (NuGet, npm, Maven…) | **Packages** |
-| Geliştirici ortamı | — | **Codespaces** (bulutta geliştirme ortamı) |
-| AI yardımcı | — | **GitHub Copilot** |
-| Güvenlik | — | Advanced Security (kod tarama, secret scanning, Dependabot) |
+- **Planlama**
+  - Azure DevOps: **Boards** (iş öğeleri, backlog, sprint)
+  - GitHub: Issues, Projects
+- **Kod deposu**
+  - Azure DevOps: **Repos** (Git)
+  - GitHub: Repositories (Git) — açık kaynak ekosistemin merkezi
+- **CI/CD**
+  - Azure DevOps: **Pipelines** (YAML veya klasik)
+  - GitHub: **Actions** (YAML workflow'lar, marketplace)
+- **Test**
+  - Azure DevOps: **Test Plans** (manuel/keşif testi)
+  - GitHub: Actions içinde otomatik test (ayrı manuel test aracı yok)
+- **Paket**
+  - Azure DevOps: **Artifacts** (NuGet, npm, Maven…)
+  - GitHub: **Packages**
+- **Geliştirici ortamı**
+  - Azure DevOps: —
+  - GitHub: **Codespaces** (bulutta geliştirme ortamı)
+- **AI yardımcı** — Azure DevOps: — · GitHub: **GitHub Copilot**
+- **Güvenlik**
+  - Azure DevOps: —
+  - GitHub: Advanced Security (kod tarama, secret scanning, Dependabot)
 
 > Her ikisi de Microsoft'a aittir; çoğu kurum ikisini de kullanır (ör. kod GitHub'da, iş takibi Boards'ta). Yeni projelerde GitHub ağırlıkla öne çıkar; sınav ve kurslar ikisini de **"DevOps araç seti"** olarak sorar.
 
@@ -284,24 +316,26 @@ Bir perakende şirketi, mağaza ve web siparişlerini işleyen sistemini modernl
 
 **Sınav neyi, nasıl sorar?** Senaryo → servis eşleştirmesi (olay/mesaj/akış), servis → görev eşleştirmesi (APIM, Logic Apps), DevOps araç eşleştirmesi (Boards, Repos, Pipelines, Test Plans, Artifacts; Actions, Codespaces, Copilot).
 
-| Soru kalıbı | Doğru cevap | Tuzak |
-|---|---|---|
-| "Olay oldu, **abonelere ilet** (reaktif, hafif)" | **Event Grid** | Service Bus |
-| "**Kurumsal mesajlaşma**, kuyruk/topic, dead-letter, sıra, transaction" | **Service Bus** | Storage Queue |
-| "Saniyede **milyonlarca** olay/telemetri, **Kafka** uyumu" | **Event Hubs** | Service Bus |
-| "Basit ve **ucuz** kuyruk" | **Storage Queue** | Service Bus |
-| "Kodsuz iş akışı, **1000+ connector**" | **Logic Apps** | Functions |
-| "**Kod** ile olay tetiklemeli çalıştır" | **Azure Functions** | Logic Apps |
-| "API'lere kota, anahtar, dönüşüm, **geliştirici portalı**" | **API Management** | Application Gateway |
-| "Backlog, sprint, iş öğesi" | **Azure Boards** | Repos |
-| "Git deposu" | **Azure Repos / GitHub** | Artifacts |
-| "CI/CD YAML pipeline" | **Azure Pipelines / GitHub Actions** | Test Plans |
-| "Manuel/keşif test planı" | **Azure Test Plans** | Pipelines |
-| "NuGet/npm paket akışı" | **Azure Artifacts** | Repos |
-| "Bulutta geliştirme ortamı (tarayıcıdan VS Code)" | **GitHub Codespaces** | DevTest Labs |
-| "Dev/test VM'lerini otomatik kapatıp **maliyeti kontrol et**" | **Azure DevTest Labs** | Azure Policy |
-| "Kod önerisi / yapay zekâ eşlikçisi" | **GitHub Copilot** | Advisor |
-| "Pipeline'a **parolasız** Azure erişimi" | **OIDC / workload identity federation** | Service principal secret |
+- "Olay oldu, **abonelere ilet** (reaktif, hafif)" — Doğru cevap: **Event Grid** · Tuzak: Service Bus
+- "**Kurumsal mesajlaşma**, kuyruk/topic, dead-letter, sıra, transaction" — Doğru cevap: **Service Bus** · Tuzak: Storage Queue
+- "Saniyede **milyonlarca** olay/telemetri, **Kafka** uyumu" — Doğru cevap: **Event Hubs** · Tuzak: Service Bus
+- "Basit ve **ucuz** kuyruk" — Doğru cevap: **Storage Queue** · Tuzak: Service Bus
+- "Kodsuz iş akışı, **1000+ connector**" — Doğru cevap: **Logic Apps** · Tuzak: Functions
+- "**Kod** ile olay tetiklemeli çalıştır" — Doğru cevap: **Azure Functions** · Tuzak: Logic Apps
+- "API'lere kota, anahtar, dönüşüm, **geliştirici portalı**" — Doğru cevap: **API Management** · Tuzak: Application Gateway
+- **"Backlog, sprint, iş öğesi"** — Doğru cevap: **Azure Boards** · Tuzak: Repos
+- **"Git deposu"** — Doğru cevap: **Azure Repos / GitHub** · Tuzak: Artifacts
+- **"CI/CD YAML pipeline"**
+  - Doğru cevap: **Azure Pipelines / GitHub Actions**
+  - Tuzak: Test Plans
+- **"Manuel/keşif test planı"** — Doğru cevap: **Azure Test Plans** · Tuzak: Pipelines
+- **"NuGet/npm paket akışı"** — Doğru cevap: **Azure Artifacts** · Tuzak: Repos
+- **"Bulutta geliştirme ortamı (tarayıcıdan VS Code)"** — Doğru cevap: **GitHub Codespaces** · Tuzak: DevTest Labs
+- "Dev/test VM'lerini otomatik kapatıp **maliyeti kontrol et**" — Doğru cevap: **Azure DevTest Labs** · Tuzak: Azure Policy
+- **"Kod önerisi / yapay zekâ eşlikçisi"** — Doğru cevap: **GitHub Copilot** · Tuzak: Advisor
+- "Pipeline'a **parolasız** Azure erişimi"
+  - Doğru cevap: **OIDC / workload identity federation**
+  - Tuzak: Service principal secret
 
 **Anahtar kelimeler:** *react to events, publish-subscribe, push* → Event Grid · *enterprise messaging, dead letter, sessions, FIFO* → Service Bus · *big data streaming, partitions, capture, Kafka* → Event Hubs · *simple queue, lowest cost* → Storage Queue · *designer, connectors, workflow* → Logic Apps · *gateway, policies, developer portal* → API Management.
 
@@ -333,17 +367,33 @@ Bir perakende şirketi, mağaza ve web siparişlerini işleyen sistemini modernl
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Event Grid (olay) | Hafif, reaktif, çok sayıda aboneye fan-out; sunucusuz maliyet modeli | Sıra yok, kısıtlı retry penceresi, mesaj aracısı özellikleri yok |
-| Service Bus Standard/Premium | Güvenilir teslim, DLQ, session, transaction, topic | Basic/Storage Queue'dan pahalı; kavram yükü; Premium sabit kapasite ücreti |
-| Event Hubs | Çok yüksek throughput, yeniden okunabilir akış, Kafka uyumu | Mesaj broker'ı değildir; partition ve consumer yönetimi |
-| Storage Queue | En ucuz/basit, büyük kapasite | Gelişmiş özellik yok (FIFO garantisi, topic, DLQ) |
-| Logic Apps | Hızlı kurulum, bakım kolaylığı (kod yok) | Karmaşık mantıkta tasarımcı hantallaşır; tüketim başına eylem ücreti büyüyebilir |
-| API Management | Merkezî güvenlik, politika, gözlem | Ek ağ sıçraması (gecikme), katman maliyeti, yönetim yükü |
-| GitHub Actions / Azure Pipelines (hosted agent) | Altyapı yok, hızlı başlangıç | Dakika kotası/ücreti; özel ağ erişimi için self-hosted agent gerekir |
-| OIDC federasyonu | Kalıcı sır yok, rotasyon yok | Entra'da başlangıç yapılandırması; subject eşleşmesi hatalarına dikkat |
-| DevTest Labs / otomatik kapatma | Dev/test maliyeti düşer | Geliştiriciler için kapanma/başlama bekleme süresi |
+- **Event Grid (olay)**
+  - Kazanç: Hafif, reaktif, çok sayıda aboneye fan-out; sunucusuz maliyet modeli
+  - Bedel: Sıra yok, kısıtlı retry penceresi, mesaj aracısı özellikleri yok
+- **Service Bus Standard/Premium**
+  - Kazanç: Güvenilir teslim, DLQ, session, transaction, topic
+  - Bedel: Basic/Storage Queue'dan pahalı; kavram yükü; Premium sabit kapasite ücreti
+- **Event Hubs**
+  - Kazanç: Çok yüksek throughput, yeniden okunabilir akış, Kafka uyumu
+  - Bedel: Mesaj broker'ı değildir; partition ve consumer yönetimi
+- **Storage Queue**
+  - Kazanç: En ucuz/basit, büyük kapasite
+  - Bedel: Gelişmiş özellik yok (FIFO garantisi, topic, DLQ)
+- **Logic Apps**
+  - Kazanç: Hızlı kurulum, bakım kolaylığı (kod yok)
+  - Bedel: Karmaşık mantıkta tasarımcı hantallaşır; tüketim başına eylem ücreti büyüyebilir
+- **API Management**
+  - Kazanç: Merkezî güvenlik, politika, gözlem
+  - Bedel: Ek ağ sıçraması (gecikme), katman maliyeti, yönetim yükü
+- **GitHub Actions / Azure Pipelines (hosted agent)**
+  - Kazanç: Altyapı yok, hızlı başlangıç
+  - Bedel: Dakika kotası/ücreti; özel ağ erişimi için self-hosted agent gerekir
+- **OIDC federasyonu**
+  - Kazanç: Kalıcı sır yok, rotasyon yok
+  - Bedel: Entra'da başlangıç yapılandırması; subject eşleşmesi hatalarına dikkat
+- **DevTest Labs / otomatik kapatma**
+  - Kazanç: Dev/test maliyeti düşer
+  - Bedel: Geliştiriciler için kapanma/başlama bekleme süresi
 
 ---
 

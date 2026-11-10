@@ -12,20 +12,30 @@
 
 AI-200 bir **associate** sınavıdır: AZ-900 gibi kavramları eşleştirmekle yetinmez; senaryodan **doğru servisi, doğru yapılandırmayı ve doğru kod/CLI/KQL parçasını** seçmeni ister. Bu konu üç parçadan oluşur:
 
-| Parça | Dosya | Amaç |
-|---|---|---|
-| **Deneme sınavı** | [`quiz.md`](quiz.md) | Resmî ağırlıklara göre dağıtılmış **50 özgün soru**; her soru bir alana ve konuya (`[B · C2.5]`) bağlı. 2 vaka çalışması (13–16, 29–32), C#/Python/CLI/KQL/SQL/YAML/JSON tamamlama, sıralama, eşleştirme, evet/hayır |
-| **Puanlama ve tekrar planı** | `quiz.md` sonu | Alan bazlı puan tablosu; her yanlışı C2.x'e bağlayan tekrar tablosu |
-| **Sınav stratejisi** | Bu README | Soru türleri, vaka çalışması ve kod tamamlama teknikleri, anahtar kelime → servis tablosu, zaman yönetimi, sınav günü |
+- **Deneme sınavı**
+  - Dosya: [`quiz.md`](quiz.md)
+  - Amaç: Resmî ağırlıklara göre dağıtılmış **50 özgün soru**; her soru bir alana ve konuya (`[B · C2.5]`) bağlı. 2 vaka çalışması (13–16, 29–32), C#/Python/CLI/KQL/SQL/YAML/JSON tamamlama, sıralama, eşleştirme, evet/hayır
+- **Puanlama ve tekrar planı**
+  - Dosya: `quiz.md` sonu
+  - Amaç: Alan bazlı puan tablosu; her yanlışı C2.x'e bağlayan tekrar tablosu
+- **Sınav stratejisi**
+  - Dosya: Bu README
+  - Amaç: Soru türleri, vaka çalışması ve kod tamamlama teknikleri, anahtar kelime → servis tablosu, zaman yönetimi, sınav günü
 
 **Soru dağılımı** (resmî ağırlıklara göre):
 
-| Alan | Konular | Ağırlık | Bu denemede |
-|---|---|---|---|
-| **A** — Develop containerized solutions on Azure | C2.1 ACR · C2.2 Container Apps · C2.3 AKS | %20-25 | 11 soru (%22) |
-| **B** — Develop AI solutions by using Azure data management services | C2.4 Cosmos NoSQL · C2.5 Cosmos vector/change feed · C2.6 PostgreSQL/pgvector · C2.7 Managed Redis | **%30-35** | 17 soru (%34) |
-| **C** — Connect to and consume Azure services | C2.8 Functions · C2.9 Service Bus · C2.10 Event Grid | %20-25 | 11 soru (%22) |
-| **D** — Secure, monitor, and troubleshoot Azure solutions | C2.11 Identity/Key Vault · C2.12 App Configuration · C2.13 OpenTelemetry/KQL | %20-25 | 11 soru (%22) |
+- **A** — Develop containerized solutions on Azure
+  - Konular: C2.1 ACR · C2.2 Container Apps · C2.3 AKS
+  - Ağırlık: %20-25 · Bu denemede: 11 soru (%22)
+- **B** — Develop AI solutions by using Azure data management services
+  - Konular: C2.4 Cosmos NoSQL · C2.5 Cosmos vector/change feed · C2.6 PostgreSQL/pgvector · C2.7 Managed Redis
+  - Ağırlık: **%30-35** · Bu denemede: 17 soru (%34)
+- **C** — Connect to and consume Azure services
+  - Konular: C2.8 Functions · C2.9 Service Bus · C2.10 Event Grid
+  - Ağırlık: %20-25 · Bu denemede: 11 soru (%22)
+- **D** — Secure, monitor, and troubleshoot Azure solutions
+  - Konular: C2.11 Identity/Key Vault · C2.12 App Configuration · C2.13 OpenTelemetry/KQL
+  - Ağırlık: %20-25 · Bu denemede: 11 soru (%22)
 
 **Sınavın genel çerçevesi** (ayrıntılar değişebilir ve kaynaklarda tutarsızdır — resmî sayfadan doğrula):
 
@@ -63,11 +73,15 @@ AI-200 bir **associate** sınavıdır: AZ-900 gibi kavramları eşleştirmekle y
 
 #### 3.2 Alan bazlı puanlama
 
-| Toplam | Yorum | Eylem |
-|---|---|---|
-| ≥ 42 / 50 (%84+) ve her alan ≥ %70 | Hazır | Sınav tarihi al; son hafta anahtar kelime tablosunu (3.5) ve "Karışan çiftler" tablosunu (5) tekrar et |
-| 35–41 | Neredeyse | Zayıf alanın konularını README + lab ile tekrar et, bir hafta sonra yeniden çöz |
-| < 35 | Hazır değil | Konu döngüsüne dön (README → lab → konu quiz'i); deneme bir sonraki tur için sakla |
+- **≥ 42 / 50 (%84+) ve her alan ≥ %70**
+  - Yorum: Hazır
+  - Eylem: Sınav tarihi al; son hafta anahtar kelime tablosunu (3.5) ve "Karışan çiftler" tablosunu (5) tekrar et
+- **35–41**
+  - Yorum: Neredeyse
+  - Eylem: Zayıf alanın konularını README + lab ile tekrar et, bir hafta sonra yeniden çöz
+- **< 35**
+  - Yorum: Hazır değil
+  - Eylem: Konu döngüsüne dön (README → lab → konu quiz'i); deneme bir sonraki tur için sakla
 
 - **Toplam yüzde yetmez, alan dağılımına bak:** Alan B'de %50 alıp diğer alanlarda %95 alan biri %70 civarına düşer ve ağırlığı en yüksek alanda zayıf kalır. Gerçek sınav sonuç raporu da **alan bazında** performans gösterir; bu denemenin tablosu onun provasıdır.
 - **Alan içinde konu dağılımına bak:** Alan B'de 17 sorudan C2.4 (5), C2.5 (4), C2.6 (4), C2.7 (4). Tek bir konuda 3 yanlış varsa sorun alan değil o konudur.
@@ -114,74 +128,134 @@ Klasik App Insights adları (`requests`, `timestamp`, `duration`, `operation_Id`
 
 #### 3.4 Soru çözme teknikleri
 
-| Teknik | Nasıl? | Örnek |
-|---|---|---|
-| **Önce soru kökünü oku** | Son cümle asıl soruyu taşır: "en az yönetim yükü", "en düşük maliyet", "en az yetki" | "…**en az yönetim yükü** ile container'ları çalıştır" → Container Apps (AKS değil) |
-| **NOT / EXCEPT** | Soruyu olumluya çevir, her şıkkı "doğru mu?" diye işaretle | "Hangisi revision oluşturmaz?" → secret/ingress/traffic |
-| **Eleme** | Kategori dışı (başka servis), fazla yetkili, mutlak ifadeli, "yalnızca"/"her zaman" şıkları at | `Contributor` secret okutmaz; `Owner` fazla yetkilidir |
-| **Evet/hayır tablosu** | Her satır **bağımsızdır** | "Hepsi evet olamaz" kuralı yok |
-| **"En iyi" cevap** | Birden çok şık çalışabilir; senaryonun kısıtını en iyi karşılayanı seç | Storage Queue de kuyruk olur, ama DLQ/session isteniyorsa Service Bus |
-| **Çoklu seçim** | Kaç cevap istendiğini oku ("iki doğru cevap seç"); kısmi puan olabilir ama varsayma | — |
-| **Sıralama** | Önce ilk ve son adımı yerleştir, ortayı doldur | Rotation: olay → Event Grid → yeni credential → yeni sürüm → uygulama alır |
-| **Sayısal hesap** | Önce tavanı (`maxReplicas`) kontrol et | `ceil(300/25) = 12` → `maxReplicas 8` ile sınırlı |
-| **Bilmiyorsan işaretle** | 2 dakikayı aşan soruyu işaretle; boş bırakma (yanlış cevap için ek ceza olmadığı varsayımını sınav başında doğrula) | — |
+- **Önce soru kökünü oku**
+  - Nasıl?: Son cümle asıl soruyu taşır: "en az yönetim yükü", "en düşük maliyet", "en az yetki"
+  - Örnek: "…**en az yönetim yükü** ile container'ları çalıştır" → Container Apps (AKS değil)
+- **NOT / EXCEPT**
+  - Nasıl?: Soruyu olumluya çevir, her şıkkı "doğru mu?" diye işaretle
+  - Örnek: "Hangisi revision oluşturmaz?" → secret/ingress/traffic
+- **Eleme**
+  - Nasıl?: Kategori dışı (başka servis), fazla yetkili, mutlak ifadeli, "yalnızca"/"her zaman" şıkları at
+  - Örnek: `Contributor` secret okutmaz; `Owner` fazla yetkilidir
+- **Evet/hayır tablosu** — Nasıl?: Her satır **bağımsızdır** · Örnek: "Hepsi evet olamaz" kuralı yok
+- **"En iyi" cevap**
+  - Nasıl?: Birden çok şık çalışabilir; senaryonun kısıtını en iyi karşılayanı seç
+  - Örnek: Storage Queue de kuyruk olur, ama DLQ/session isteniyorsa Service Bus
+- **Çoklu seçim**
+  - Nasıl?: Kaç cevap istendiğini oku ("iki doğru cevap seç"); kısmi puan olabilir ama varsayma
+  - Örnek: —
+- **Sıralama**
+  - Nasıl?: Önce ilk ve son adımı yerleştir, ortayı doldur
+  - Örnek: Rotation: olay → Event Grid → yeni credential → yeni sürüm → uygulama alır
+- **Sayısal hesap**
+  - Nasıl?: Önce tavanı (`maxReplicas`) kontrol et
+  - Örnek: `ceil(300/25) = 12` → `maxReplicas 8` ile sınırlı
+- **Bilmiyorsan işaretle**
+  - Nasıl?: 2 dakikayı aşan soruyu işaretle; boş bırakma (yanlış cevap için ek ceza olmadığı varsayımını sınav başında doğrula)
+  - Örnek: —
 
 #### 3.5 Anahtar kelime → servis/çözüm tablosu
 
-| Senaryodaki ifade | Büyük olasılıkla | Konu |
-|---|---|---|
-| "yerel Docker olmadan image derle" | `az acr build` | C2.1 |
-| "base image güncellenince otomatik yeniden build" | ACR Task + base image update trigger | C2.1 |
-| "geo-replication / private endpoint" | ACR **Premium** | C2.1 |
-| "test edilen image'ı birebir çalıştır" | **Digest** ile deploy | C2.1 |
-| "image çekmek için en az yetki" | Managed identity + **`AcrPull`** | C2.1 |
-| "önce %10 trafik, sonra geri al" | **Multiple** revision mode + traffic weights | C2.2 |
-| "kuyruk uzunluğuna göre ölçek, boştayken sıfır" | KEDA `azure-servicebus` kuralı, `min-replicas 0` | C2.2 |
-| "secret değişti, yeni revision?" | Hayır (application-scope) | C2.2 |
-| "`ImagePullBackOff` + unauthorized / manifest unknown" | `AcrPull` eksik / yanlış tag | C2.3 |
-| "`OOMKilled`, Exit Code 137" | Bellek limiti | C2.3 |
-| "`READY 0/1`" / "endpoints boş" | Readiness probe / Service selector–label | C2.3 |
-| "Kubernetes API gerekmiyor, scale-to-zero" | **Container Apps** | C2.2/C2.3 |
-| "id + partition key ile oku" | `ReadItemAsync` (point read) | C2.4 |
-| "düşük cardinality'li partition key, 429" | Hot partition → `/customerId` vb. | C2.4 |
-| "kullanıcı kendi yazdığını görsün, en ucuz" | **Session** consistency | C2.4 |
-| "iki alanla ORDER BY hata veriyor" | **Composite index** | C2.4 |
-| "yazma RU'su yüksek, sorgular 3 alanda" | Dar indexing policy (allow-list) | C2.4 |
-| "milyonlarca vector, düşük gecikme" | **diskANN** | C2.5 |
-| "dimension mismatch" | Policy `dimensions` ≠ model çıktısı | C2.5 |
-| "worker yeniden başladı, kaldığı yerden" | **Lease container** | C2.5 |
-| "silinen item change feed'de yok" | Soft delete / all versions and deletes | C2.5 |
-| "boş tabloda kurulabilen, en iyi recall" | **HNSW** (IVFFlat veri sonrası) | C2.6 |
-| "index var ama Seq Scan" | Operatör ↔ operator class uyuşmazlığı | C2.6 |
-| "tenant filtresiyle eksik sonuç" | `hnsw.iterative_scan` / partitioning | C2.6 |
-| "too many connections" | Singleton pool + **PgBouncer (6432)** | C2.6 |
-| "vector araması için Redis" | **RediSearch** (oluştururken), Enterprise policy, NoEviction | C2.7 |
-| "bellek dolunca hangi anahtar silinsin" ↔ "süre dolunca sil" | Eviction ↔ **TTL** | C2.7 |
-| "benzer sorulara LLM'i tekrar çağırma" | **Semantic cache** | C2.7 |
-| "VNet + scale-to-zero" | Functions **Flex Consumption** | C2.8 |
-| "function'ı başlatan olay" | **Trigger** (function başına tam bir) | C2.8 |
-| "secret'sız Service Bus/Cosmos bağlantısı" | `<önek>__fullyQualifiedNamespace` / `__accountEndpoint` + doğru rol | C2.8 |
-| "her mesaj tek tüketici" ↔ "aynı mesaj birçok tüketici" | **Queue** ↔ **Topic + subscription** | C2.9 |
-| "sırayla işle" / "çift gönderimi yut" | **Session** / **Duplicate detection** | C2.9 |
-| "zehirli mesaj sistemi tıkamasın" | **DLQ** + `MaxDeliveryCount` | C2.9 |
-| "subscription filtresi çalışmıyor" | `$Default` kuralı silinmedi | C2.9 |
-| "Azure servisi olayına tepki" | Event Grid **system topic** | C2.10 |
-| "payload alanına göre yönlendir" | **Advanced filter** (`data.*`) | C2.10 |
-| "teslim edilemeyen olayları sakla" | **Dead-letter** (varsayılan kapalı) | C2.10 |
-| "sıralama, session, işleme garantisi" | Service Bus (Event Grid değil) | C2.10 |
-| "secret'sız bağlan" | **Managed identity** | C2.11 |
-| "yalnızca secret oku, en az yetki" | **Key Vault Secrets User** | C2.11 |
-| "Contributor var ama secret okunamıyor" | Control plane ≠ data plane | C2.11 |
-| "süre dolmadan rotation tetikle" | Event Grid `SecretNearExpiry` → Function | C2.11 |
-| "kimse kalıcı silemesin" | **Purge protection** | C2.11 |
-| "ortam başına farklı değer" | **Label** (yetki ayrımı için ayrı store) | C2.12 |
-| "restart etmeden yeniden yükle" | **Sentinel key** + `refreshAll: true` | C2.12 |
-| "gizli olmayan ayar ↔ secret" | App Configuration ↔ Key Vault (+ referans) | C2.12 |
-| "kullanıcıların %20'sine, tutarlı" | Feature flag **Targeting** (Percentage rastgele) | C2.12 |
-| "servisler arası istek korelasyonu" | W3C `traceparent` / context propagation | C2.13 |
-| "Azure Monitor'e az kodla telemetri" | OpenTelemetry **Distro** (`UseAzureMonitor`) | C2.13 |
-| "örneklemeli veride gerçek sayı" | `sum(itemCount)` | C2.13 |
-| "hata oranı eşiği aşınca e-posta" | Log alert (veya metric alert) + **action group** | C2.13 |
+- **"yerel Docker olmadan image derle"** — Büyük olasılıkla: `az acr build` · Konu: C2.1
+- **"base image güncellenince otomatik yeniden build"**
+  - Büyük olasılıkla: ACR Task + base image update trigger
+  - Konu: C2.1
+- **"geo-replication / private endpoint"** — Büyük olasılıkla: ACR **Premium** · Konu: C2.1
+- **"test edilen image'ı birebir çalıştır"** — Büyük olasılıkla: **Digest** ile deploy · Konu: C2.1
+- **"image çekmek için en az yetki"** — Büyük olasılıkla: Managed identity + **`AcrPull`** · Konu: C2.1
+- **"önce %10 trafik, sonra geri al"**
+  - Büyük olasılıkla: **Multiple** revision mode + traffic weights
+  - Konu: C2.2
+- **"kuyruk uzunluğuna göre ölçek, boştayken sıfır"**
+  - Büyük olasılıkla: KEDA `azure-servicebus` kuralı, `min-replicas 0`
+  - Konu: C2.2
+- **"secret değişti, yeni revision?"** — Büyük olasılıkla: Hayır (application-scope) · Konu: C2.2
+- **"`ImagePullBackOff` + unauthorized / manifest unknown"** — Büyük olasılıkla: `AcrPull` eksik / yanlış tag · Konu: C2.3
+- **"`OOMKilled`, Exit Code 137"** — Büyük olasılıkla: Bellek limiti · Konu: C2.3
+- **"`READY 0/1`" / "endpoints boş"**
+  - Büyük olasılıkla: Readiness probe / Service selector–label
+  - Konu: C2.3
+- **"Kubernetes API gerekmiyor, scale-to-zero"** — Büyük olasılıkla: **Container Apps** · Konu: C2.2/C2.3
+- **"id + partition key ile oku"** — Büyük olasılıkla: `ReadItemAsync` (point read) · Konu: C2.4
+- **"düşük cardinality'li partition key, 429"**
+  - Büyük olasılıkla: Hot partition → `/customerId` vb.
+  - Konu: C2.4
+- **"kullanıcı kendi yazdığını görsün, en ucuz"** — Büyük olasılıkla: **Session** consistency · Konu: C2.4
+- **"iki alanla ORDER BY hata veriyor"** — Büyük olasılıkla: **Composite index** · Konu: C2.4
+- **"yazma RU'su yüksek, sorgular 3 alanda"** — Büyük olasılıkla: Dar indexing policy (allow-list) · Konu: C2.4
+- **"milyonlarca vector, düşük gecikme"** — Büyük olasılıkla: **diskANN** · Konu: C2.5
+- **"dimension mismatch"**
+  - Büyük olasılıkla: Policy `dimensions` ≠ model çıktısı
+  - Konu: C2.5
+- **"worker yeniden başladı, kaldığı yerden"** — Büyük olasılıkla: **Lease container** · Konu: C2.5
+- **"silinen item change feed'de yok"**
+  - Büyük olasılıkla: Soft delete / all versions and deletes
+  - Konu: C2.5
+- **"boş tabloda kurulabilen, en iyi recall"** — Büyük olasılıkla: **HNSW** (IVFFlat veri sonrası) · Konu: C2.6
+- **"index var ama Seq Scan"**
+  - Büyük olasılıkla: Operatör ↔ operator class uyuşmazlığı
+  - Konu: C2.6
+- **"tenant filtresiyle eksik sonuç"**
+  - Büyük olasılıkla: `hnsw.iterative_scan` / partitioning
+  - Konu: C2.6
+- **"too many connections"**
+  - Büyük olasılıkla: Singleton pool + **PgBouncer (6432)**
+  - Konu: C2.6
+- **"vector araması için Redis"**
+  - Büyük olasılıkla: **RediSearch** (oluştururken), Enterprise policy, NoEviction
+  - Konu: C2.7
+- **"bellek dolunca hangi anahtar silinsin" ↔ "süre dolunca sil"** — Büyük olasılıkla: Eviction ↔ **TTL** · Konu: C2.7
+- **"benzer sorulara LLM'i tekrar çağırma"** — Büyük olasılıkla: **Semantic cache** · Konu: C2.7
+- **"VNet + scale-to-zero"** — Büyük olasılıkla: Functions **Flex Consumption** · Konu: C2.8
+- **"function'ı başlatan olay"**
+  - Büyük olasılıkla: **Trigger** (function başına tam bir)
+  - Konu: C2.8
+- **"secret'sız Service Bus/Cosmos bağlantısı"**
+  - Büyük olasılıkla: `<önek>__fullyQualifiedNamespace` / `__accountEndpoint` + doğru rol
+  - Konu: C2.8
+- **"her mesaj tek tüketici" ↔ "aynı mesaj birçok tüketici"**
+  - Büyük olasılıkla: **Queue** ↔ **Topic + subscription**
+  - Konu: C2.9
+- **"sırayla işle" / "çift gönderimi yut"**
+  - Büyük olasılıkla: **Session** / **Duplicate detection**
+  - Konu: C2.9
+- **"zehirli mesaj sistemi tıkamasın"** — Büyük olasılıkla: **DLQ** + `MaxDeliveryCount` · Konu: C2.9
+- **"subscription filtresi çalışmıyor"** — Büyük olasılıkla: `$Default` kuralı silinmedi · Konu: C2.9
+- **"Azure servisi olayına tepki"** — Büyük olasılıkla: Event Grid **system topic** · Konu: C2.10
+- **"payload alanına göre yönlendir"** — Büyük olasılıkla: **Advanced filter** (`data.*`) · Konu: C2.10
+- **"teslim edilemeyen olayları sakla"**
+  - Büyük olasılıkla: **Dead-letter** (varsayılan kapalı)
+  - Konu: C2.10
+- **"sıralama, session, işleme garantisi"** — Büyük olasılıkla: Service Bus (Event Grid değil) · Konu: C2.10
+- **"secret'sız bağlan"** — Büyük olasılıkla: **Managed identity** · Konu: C2.11
+- **"yalnızca secret oku, en az yetki"** — Büyük olasılıkla: **Key Vault Secrets User** · Konu: C2.11
+- **"Contributor var ama secret okunamıyor"** — Büyük olasılıkla: Control plane ≠ data plane · Konu: C2.11
+- **"süre dolmadan rotation tetikle"**
+  - Büyük olasılıkla: Event Grid `SecretNearExpiry` → Function
+  - Konu: C2.11
+- **"kimse kalıcı silemesin"** — Büyük olasılıkla: **Purge protection** · Konu: C2.11
+- **"ortam başına farklı değer"**
+  - Büyük olasılıkla: **Label** (yetki ayrımı için ayrı store)
+  - Konu: C2.12
+- **"restart etmeden yeniden yükle"**
+  - Büyük olasılıkla: **Sentinel key** + `refreshAll: true`
+  - Konu: C2.12
+- **"gizli olmayan ayar ↔ secret"**
+  - Büyük olasılıkla: App Configuration ↔ Key Vault (+ referans)
+  - Konu: C2.12
+- **"kullanıcıların %20'sine, tutarlı"**
+  - Büyük olasılıkla: Feature flag **Targeting** (Percentage rastgele)
+  - Konu: C2.12
+- **"servisler arası istek korelasyonu"**
+  - Büyük olasılıkla: W3C `traceparent` / context propagation
+  - Konu: C2.13
+- **"Azure Monitor'e az kodla telemetri"**
+  - Büyük olasılıkla: OpenTelemetry **Distro** (`UseAzureMonitor`)
+  - Konu: C2.13
+- **"örneklemeli veride gerçek sayı"** — Büyük olasılıkla: `sum(itemCount)` · Konu: C2.13
+- **"hata oranı eşiği aşınca e-posta"**
+  - Büyük olasılıkla: Log alert (veya metric alert) + **action group**
+  - Konu: C2.13
 
 #### 3.6 Zaman yönetimi
 
@@ -194,12 +268,18 @@ Klasik App Insights adları (`requests`, `timestamp`, `duration`, `operation_Id`
 
 #### 3.7 Sınav günü
 
-| | Test merkezi (Pearson VUE) | Çevrimiçi gözetimli (online proctored) |
-|---|---|---|
-| Ortam | Hazır bilgisayar, gözetmen yerinde | Kendi bilgisayarın; webcam ve mikrofon zorunlu |
-| Hazırlık | Kimlik belgesi, randevudan önce varış | **Sistem testi** (önceden), boş masa/oda, check-in fotoğrafları |
-| Risk | Ulaşım | İnternet kopması, ortam kuralları (birinin odaya girmesi, ekrandan uzaklaşmak) |
-| Öneri | İlk sınavında stres azaltır | Esnek saat; check-in için 15-30 dk erken başla |
+- **Ortam**
+  - Test merkezi (Pearson VUE): Hazır bilgisayar, gözetmen yerinde
+  - Çevrimiçi gözetimli (online proctored): Kendi bilgisayarın; webcam ve mikrofon zorunlu
+- **Hazırlık**
+  - Test merkezi (Pearson VUE): Kimlik belgesi, randevudan önce varış
+  - Çevrimiçi gözetimli (online proctored): **Sistem testi** (önceden), boş masa/oda, check-in fotoğrafları
+- **Risk**
+  - Test merkezi (Pearson VUE): Ulaşım
+  - Çevrimiçi gözetimli (online proctored): İnternet kopması, ortam kuralları (birinin odaya girmesi, ekrandan uzaklaşmak)
+- **Öneri**
+  - Test merkezi (Pearson VUE): İlk sınavında stres azaltır
+  - Çevrimiçi gözetimli (online proctored): Esnek saat; check-in için 15-30 dk erken başla
 
 - Sınav arayüzünü önceden görmek için Microsoft'un **exam sandbox** (sınav deneyimi demosu) sayfasını dene; soru türlerini (sürükle-bırak, açılır liste, vaka) orada tanı.
 - Kimlikteki ad, sınav profilindeki adla **aynı** olmalıdır.
@@ -279,16 +359,28 @@ Ders: toplam puan (%72) tek başına "hazırsın" demiyordu; **alan B'deki %53**
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Erken sınav tarihi almak | Motivasyon ve odak | Hazır değilsen tekrar ücreti ve bekleme süresi |
-| Test merkezi | Teknik risk yok, sakin ortam | Ulaşım, sınırlı saat |
-| Online proctored | Esnek saat ve yer | Bağlantı/ortam riski, sıkı kurallar |
-| Çok sayıda deneme sınavı | Format rahatlığı | Ezber riski: aynı soruları tanımaya başlarsın; gerekçeyi açıklayamıyorsan bilmiyorsundur |
-| Lab'ları atlamak | Zaman kazancı | Kod/CLI tamamlama ve "hangisi gerçekten böyle çalışır?" sezgisi zayıf kalır |
-| Tüm lab'ları gerçek Azure'da yapmak | Gerçekçi davranış (ör. RBAC yayılımı, KEDA ölçeği) | Maliyet ve temizlik yükü; emülatör/yerel karşılık (Cosmos emulator, Service Bus emulator, pgvector Docker, Redis Stack) çoğu kavram için yeter |
-| Üçüncü taraf practice test'ler | Soru sayısı fazla | Doğrulanmamış/eski içerik riski; gerekçe zayıf olabilir — resmî dokümanla çapraz kontrol et |
-| Microsoft Learn erişimine (varsa) güvenmek | Parametre adını doğrulama | Zaman kaybı; öğrenmeyi ikame etmez |
+- **Erken sınav tarihi almak**
+  - Kazanç: Motivasyon ve odak
+  - Bedel: Hazır değilsen tekrar ücreti ve bekleme süresi
+- **Test merkezi** — Kazanç: Teknik risk yok, sakin ortam · Bedel: Ulaşım, sınırlı saat
+- **Online proctored**
+  - Kazanç: Esnek saat ve yer
+  - Bedel: Bağlantı/ortam riski, sıkı kurallar
+- **Çok sayıda deneme sınavı**
+  - Kazanç: Format rahatlığı
+  - Bedel: Ezber riski: aynı soruları tanımaya başlarsın; gerekçeyi açıklayamıyorsan bilmiyorsundur
+- **Lab'ları atlamak**
+  - Kazanç: Zaman kazancı
+  - Bedel: Kod/CLI tamamlama ve "hangisi gerçekten böyle çalışır?" sezgisi zayıf kalır
+- **Tüm lab'ları gerçek Azure'da yapmak**
+  - Kazanç: Gerçekçi davranış (ör. RBAC yayılımı, KEDA ölçeği)
+  - Bedel: Maliyet ve temizlik yükü; emülatör/yerel karşılık (Cosmos emulator, Service Bus emulator, pgvector Docker, Redis Stack) çoğu kavram için yeter
+- **Üçüncü taraf practice test'ler**
+  - Kazanç: Soru sayısı fazla
+  - Bedel: Doğrulanmamış/eski içerik riski; gerekçe zayıf olabilir — resmî dokümanla çapraz kontrol et
+- **Microsoft Learn erişimine (varsa) güvenmek**
+  - Kazanç: Parametre adını doğrulama
+  - Bedel: Zaman kaybı; öğrenmeyi ikame etmez
 
 ---
 

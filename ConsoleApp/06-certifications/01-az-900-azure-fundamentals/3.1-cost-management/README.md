@@ -10,11 +10,15 @@
 
 Bulutta maliyet **tüketime bağlıdır** (→ C1.1): ne kadar, ne tür ve nerede kullandığına göre değişir. Maliyet yönetimi üç zamana ayrılır:
 
-| Zaman | Soru | Araç |
-|---|---|---|
-| **Önce** (tahmin) | "Bu mimari ayda kaça mal olur?" · "On-prem'e göre ne kazanırım?" | **Pricing Calculator** · on-prem kıyası (TCO / Azure Migrate business case) |
-| **Sırasında** (izleme) | "Şu an ne harcıyorum, nereye gidiyor, bütçeyi aşacak mıyım?" | **Microsoft Cost Management**: cost analysis, budgets, alerts |
-| **Sonra** (iyileştirme) | "Nerede tasarruf ederim?" | Advisor önerileri, reservation, Hybrid Benefit, kapatma/silme |
+- **Önce** (tahmin)
+  - Soru: "Bu mimari ayda kaça mal olur?" · "On-prem'e göre ne kazanırım?"
+  - Araç: **Pricing Calculator** · on-prem kıyası (TCO / Azure Migrate business case)
+- **Sırasında** (izleme)
+  - Soru: "Şu an ne harcıyorum, nereye gidiyor, bütçeyi aşacak mıyım?"
+  - Araç: **Microsoft Cost Management**: cost analysis, budgets, alerts
+- **Sonra** (iyileştirme)
+  - Soru: "Nerede tasarruf ederim?"
+  - Araç: Advisor önerileri, reservation, Hybrid Benefit, kapatma/silme
 
 Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, ortama göre raporlamanın yolu.
 
@@ -35,26 +39,48 @@ Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, or
 
 #### 3.1 Maliyeti etkileyen faktörler ⭐
 
-| Faktör | Açıklama | Örnek |
-|---|---|---|
-| **Kaynak türü ve ayarları** | Servis, SKU/boyut, tier, redundancy, performans seviyesi | 2 vCPU → 8 vCPU VM; LRS → GZRS depolama; Hot ↔ Archive |
-| **Tüketim** | Pay-as-you-go ↔ taahhütlü indirim (**reservations**, **savings plan**) | 7/24 VM'de 1-3 yıllık reservation ciddi indirim sağlar |
-| **Bakım** | Kullanılmayan/unutulan kaynaklar faturada kalır | VM silindi ama **disk, public IP, NIC** kaldı; test ortamı kapatılmadı |
-| **Coğrafya (bölge)** | Aynı servis bölgeye göre farklı fiyattadır (enerji, vergi, işçilik) | Aynı VM boyutu iki bölgede farklı fiyat |
-| **Ağ trafiği** | **Gelen** (ingress) veri genellikle **ücretsiz**; **giden** (egress) — internete, bölgeler arası, hatta zone'lar arası — **ücretli** | Büyük dosya indirme hizmeti; bölgeler arası replikasyon |
-| **Subscription türü** | Ücretsiz hesap kredisi ve ücretsiz kullanım miktarları; EA/CSP sözleşme fiyatları | Free account kotası bitince pay-as-you-go'ya geçiş |
-| **Azure Marketplace** | Üçüncü taraf ürünlerde Azure ücretine ek olarak **satıcının ücreti** | Ticari bir güvenlik duvarı imajı |
+- **Kaynak türü ve ayarları**
+  - Açıklama: Servis, SKU/boyut, tier, redundancy, performans seviyesi
+  - Örnek: 2 vCPU → 8 vCPU VM; LRS → GZRS depolama; Hot ↔ Archive
+- **Tüketim**
+  - Açıklama: Pay-as-you-go ↔ taahhütlü indirim (**reservations**, **savings plan**)
+  - Örnek: 7/24 VM'de 1-3 yıllık reservation ciddi indirim sağlar
+- **Bakım**
+  - Açıklama: Kullanılmayan/unutulan kaynaklar faturada kalır
+  - Örnek: VM silindi ama **disk, public IP, NIC** kaldı; test ortamı kapatılmadı
+- **Coğrafya (bölge)**
+  - Açıklama: Aynı servis bölgeye göre farklı fiyattadır (enerji, vergi, işçilik)
+  - Örnek: Aynı VM boyutu iki bölgede farklı fiyat
+- **Ağ trafiği**
+  - Açıklama: **Gelen** (ingress) veri genellikle **ücretsiz**; **giden** (egress) — internete, bölgeler arası, hatta zone'lar arası — **ücretli**
+  - Örnek: Büyük dosya indirme hizmeti; bölgeler arası replikasyon
+- **Subscription türü**
+  - Açıklama: Ücretsiz hesap kredisi ve ücretsiz kullanım miktarları; EA/CSP sözleşme fiyatları
+  - Örnek: Free account kotası bitince pay-as-you-go'ya geçiş
+- **Azure Marketplace**
+  - Açıklama: Üçüncü taraf ürünlerde Azure ücretine ek olarak **satıcının ücreti**
+  - Örnek: Ticari bir güvenlik duvarı imajı
 
 **Tasarruf yolları**:
 
-| Yöntem | Ne? | Ne zaman? |
-|---|---|---|
-| **Reservations** | Belirli kaynak (ör. VM boyutu + bölge) için 1/3 yıllık taahhüt | Sabit, uzun süreli yük |
-| **Savings plan for compute** | Saatlik compute harcama **tutarına** 1/3 yıllık taahhüt; boyut/bölge esnek | Sürekli ama değişen compute |
-| **Azure Hybrid Benefit** | Mevcut (Software Assurance'lı) **Windows Server / SQL Server** lisanslarını Azure'da kullanmak | Lisansı olan kuruluşlar |
-| **Spot VM** | Boşta kapasite, büyük indirim, kesilebilir | Kesintiye dayanıklı toplu işler |
-| **Dev/test fiyatlandırması** | Dev/test aboneliklerinde indirimli oranlar | Yalnızca üretim dışı |
-| **Doğru boyutlandırma ve kapatma** | Advisor önerileri, otomatik kapatma (auto-shutdown), deallocate, kullanılmayanı silme | Her zaman |
+- **Reservations**
+  - Ne?: Belirli kaynak (ör. VM boyutu + bölge) için 1/3 yıllık taahhüt
+  - Ne zaman?: Sabit, uzun süreli yük
+- **Savings plan for compute**
+  - Ne?: Saatlik compute harcama **tutarına** 1/3 yıllık taahhüt; boyut/bölge esnek
+  - Ne zaman?: Sürekli ama değişen compute
+- **Azure Hybrid Benefit**
+  - Ne?: Mevcut (Software Assurance'lı) **Windows Server / SQL Server** lisanslarını Azure'da kullanmak
+  - Ne zaman?: Lisansı olan kuruluşlar
+- **Spot VM**
+  - Ne?: Boşta kapasite, büyük indirim, kesilebilir
+  - Ne zaman?: Kesintiye dayanıklı toplu işler
+- **Dev/test fiyatlandırması**
+  - Ne?: Dev/test aboneliklerinde indirimli oranlar
+  - Ne zaman?: Yalnızca üretim dışı
+- **Doğru boyutlandırma ve kapatma**
+  - Ne?: Advisor önerileri, otomatik kapatma (auto-shutdown), deallocate, kullanılmayanı silme
+  - Ne zaman?: Her zaman
 
 #### 3.2 Pricing Calculator ve on-prem karşılaştırması (TCO)
 
@@ -213,15 +239,25 @@ Bir e-ticaret şirketinin bulut faturası üç ayda %60 artmış; FinOps ekibi �
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Pay-as-you-go | Tam esneklik, taahhüt yok | Sabit yükte en pahalı seçenek |
-| Reservation / savings plan | Sabit yükte büyük indirim | 1-3 yıl taahhüt; yanlış tahminde boşa ödeme |
-| Spot | En düşük fiyat | Her an kesilebilir; yalnızca dayanıklı işler |
-| Ucuz bölge seçmek | Daha düşük birim fiyat | Kullanıcıya gecikme, veri ikametgâhı, servis uygunluğu |
-| Yüksek redundancy / çok bölge | Dayanıklılık, yüksek SLA (→ C1.2, C1.8) | Daha çok kaynak + replikasyon trafiği (egress) |
-| Sıkı tag politikası (Deny) | Temiz maliyet raporu | Dağıtımlarda sürtünme; şablonların tag içermesi gerekir |
-| Agresif otomatik kapatma | Dev/test maliyetinde büyük düşüş | Sabah açılış gecikmesi, yanlış kaynağı kapatma riski (tag ile hedefle) |
+- **Pay-as-you-go** — Kazanç: Tam esneklik, taahhüt yok · Bedel: Sabit yükte en pahalı seçenek
+- **Reservation / savings plan**
+  - Kazanç: Sabit yükte büyük indirim
+  - Bedel: 1-3 yıl taahhüt; yanlış tahminde boşa ödeme
+- **Spot**
+  - Kazanç: En düşük fiyat
+  - Bedel: Her an kesilebilir; yalnızca dayanıklı işler
+- **Ucuz bölge seçmek**
+  - Kazanç: Daha düşük birim fiyat
+  - Bedel: Kullanıcıya gecikme, veri ikametgâhı, servis uygunluğu
+- **Yüksek redundancy / çok bölge**
+  - Kazanç: Dayanıklılık, yüksek SLA (→ C1.2, C1.8)
+  - Bedel: Daha çok kaynak + replikasyon trafiği (egress)
+- **Sıkı tag politikası (Deny)**
+  - Kazanç: Temiz maliyet raporu
+  - Bedel: Dağıtımlarda sürtünme; şablonların tag içermesi gerekir
+- **Agresif otomatik kapatma**
+  - Kazanç: Dev/test maliyetinde büyük düşüş
+  - Bedel: Sabah açılış gecikmesi, yanlış kaynağı kapatma riski (tag ile hedefle)
 
 ---
 

@@ -10,10 +10,12 @@
 
 **Azure Service Bus**, kurumsal sınıf, yönetilen bir **mesaj broker**'ıdır (AMQP 1.0): gönderen ile alıcıyı zaman ve hız açısından birbirinden ayırır, mesajı kalıcı saklar ve **teslim garantisi** (at-least-once) verir. İki temel desen:
 
-| Desen | Varlık | Yapı |
-|---|---|---|
-| **Point-to-point** (iş kuyruğu) | **Queue** | N gönderen → 1 kuyruk → **rakip tüketiciler** (her mesajı tek tüketici işler) |
-| **Publish/subscribe** | **Topic + Subscription** | N gönderen → 1 topic → her **subscription** mesajın kendi **kopyasını** alır (filtreyle) |
+- **Point-to-point** (iş kuyruğu)
+  - Varlık: **Queue**
+  - Yapı: N gönderen → 1 kuyruk → **rakip tüketiciler** (her mesajı tek tüketici işler)
+- **Publish/subscribe**
+  - Varlık: **Topic + Subscription**
+  - Yapı: N gönderen → 1 topic → her **subscription** mesajın kendi **kopyasını** alır (filtreyle)
 
 ```text
 Producer ─▶ [queue: order-processing] ─▶ Consumer A / B (competing)
@@ -46,11 +48,13 @@ Bu konu: namespace/queue/topic/subscription ve filtreler, mesaj özellikleri, **
 
 #### 3.2 Subscription filtreleri ve kurallar
 
-| Filtre | Ne? | Not |
-|---|---|---|
-| **SQL filter** | SQL-92 alt kümesi ifadesi: `amount > 1000 AND region = 'eu'` | Application properties ve system properties (`sys.Label`, `sys.To` …) üzerinde |
-| **Correlation filter** | Belirli özellikler için **eşitlik** eşleşmesi (`CorrelationId`, `Subject`, `To`, `ContentType`, `SessionId`, özel property'ler…) | SQL'e göre daha **hızlı/ucuz** değerlendirilir |
-| **Boolean (True/False)** | Hepsini al / hiçbirini alma | `1=1` ≡ TrueFilter |
+- **SQL filter**
+  - Ne?: SQL-92 alt kümesi ifadesi: `amount > 1000 AND region = 'eu'`
+  - Not: Application properties ve system properties (`sys.Label`, `sys.To` …) üzerinde
+- **Correlation filter**
+  - Ne?: Belirli özellikler için **eşitlik** eşleşmesi (`CorrelationId`, `Subject`, `To`, `ContentType`, `SessionId`, özel property'ler…)
+  - Not: SQL'e göre daha **hızlı/ucuz** değerlendirilir
+- **Boolean (True/False)** — Ne?: Hepsini al / hiçbirini alma · Not: `1=1` ≡ TrueFilter
 
 > **Tuzak ⭐:** Yeni bir subscription **`$Default` kuralıyla** (TrueFilter) gelir. Kendi filtreni eklerken `$Default`'u **silmezsen** subscription **her mesajı** almaya devam eder.
 
@@ -72,12 +76,14 @@ Mesaj boyutu: Basic/Standard'da en çok **256 KB**, **Premium**'da **100 MB**'a 
 
 #### 3.4 Alma modları ⭐: PeekLock vs ReceiveAndDelete
 
-| | **PeekLock** (varsayılan) | **ReceiveAndDelete** |
-|---|---|---|
-| Mesaj ne zaman silinir? | Tüketici **Complete** dediğinde | **Alınır alınmaz** |
-| Tüketici çökerse | Lock süresi dolar, mesaj **tekrar teslim edilir** | Mesaj **kaybolur** |
-| Teslim | **At-least-once** | **At-most-once** |
-| Ne zaman? | İş kaybı kabul edilemez (sipariş, ödeme) | Kayıp tolere edilir, en yüksek hız (telemetri) |
+- **Mesaj ne zaman silinir?** — PeekLock (varsayılan): Tüketici **Complete** dediğinde · ReceiveAndDelete: **Alınır alınmaz**
+- **Tüketici çökerse**
+  - PeekLock (varsayılan): Lock süresi dolar, mesaj **tekrar teslim edilir**
+  - ReceiveAndDelete: Mesaj **kaybolur**
+- **Teslim** — PeekLock (varsayılan): **At-least-once** · ReceiveAndDelete: **At-most-once**
+- **Ne zaman?**
+  - PeekLock (varsayılan): İş kaybı kabul edilemez (sipariş, ödeme)
+  - ReceiveAndDelete: Kayıp tolere edilir, en yüksek hız (telemetri)
 
 PeekLock **settlement** işlemleri:
 
@@ -96,13 +102,21 @@ PeekLock **settlement** işlemleri:
 
 Her queue ve **her subscription**'ın otomatik bir alt kuyruğu vardır: `<queue>/$deadletterqueue`, `<topic>/Subscriptions/<sub>/$deadletterqueue`. DLQ'ya düşme **nedenleri**:
 
-| Neden | `DeadLetterReason` | Ne zaman? |
-|---|---|---|
-| **MaxDeliveryCount aşıldı** | `MaxDeliveryCountExceeded` | Mesaj ardışık abandon/lock-expiry ile eşik kadar teslim edildi (varsayılan 10); **kapatılamaz** |
-| **TTL doldu** | `TTLExpiredException` | Varlıkta **dead-lettering on message expiration** açıksa (varsayılan **kapalı**; kapalıysa mesaj sessizce silinir) |
-| **Filtre değerlendirme hatası** | filtre istisnası | Subscription'da ilgili ayar açıksa |
-| **Uygulama kararı** | **sizin yazdığınız** reason | `DeadLetterMessageAsync(msg, reason, description)` — ör. doğrulama hatası, bozuk payload |
-| Diğer sistem sebepleri | `HeaderSizeExceeded`, `MaxTransferHopCountExceeded` (auto-forward zinciri > 4) | Nadir |
+- **MaxDeliveryCount aşıldı**
+  - `DeadLetterReason`: `MaxDeliveryCountExceeded`
+  - Ne zaman?: Mesaj ardışık abandon/lock-expiry ile eşik kadar teslim edildi (varsayılan 10); **kapatılamaz**
+- **TTL doldu**
+  - `DeadLetterReason`: `TTLExpiredException`
+  - Ne zaman?: Varlıkta **dead-lettering on message expiration** açıksa (varsayılan **kapalı**; kapalıysa mesaj sessizce silinir)
+- **Filtre değerlendirme hatası**
+  - `DeadLetterReason`: filtre istisnası
+  - Ne zaman?: Subscription'da ilgili ayar açıksa
+- **Uygulama kararı**
+  - `DeadLetterReason`: **sizin yazdığınız** reason
+  - Ne zaman?: `DeadLetterMessageAsync(msg, reason, description)` — ör. doğrulama hatası, bozuk payload
+- **Diğer sistem sebepleri**
+  - `DeadLetterReason`: `HeaderSizeExceeded`, `MaxTransferHopCountExceeded` (auto-forward zinciri > 4)
+  - Ne zaman?: Nadir
 
 Önemli noktalar:
 - **Deferred** mesajlar TTL'den dolayı DLQ'ya taşınmaz.
@@ -112,23 +126,30 @@ Her queue ve **her subscription**'ın otomatik bir alt kuyruğu vardır: `<queue
 
 #### 3.6 Session'lar, duplicate detection, scheduled message
 
-| Özellik | Amaç | Not |
-|---|---|---|
-| **Session** | Aynı `SessionId`'li mesajlar **sıralı (FIFO)** ve **aynı alıcıda** işlenir; session state saklanabilir | Varlık oluştururken `RequiresSession = true`; **sıra gereksinimi → session** |
-| **Duplicate detection** | Aynı `MessageId` zaman penceresinde (varsayılan 10 dk) ikinci kez gönderilirse yutulur | **Oluştururken** açılır, sonradan değişmez; gönderici tekrarlarına karşıdır (tüketici idempotency'sinin yerini tutmaz) |
-| **Scheduled message** | Belirli zamanda görünür: `ScheduleMessageAsync` / `ScheduledEnqueueTime` | Zamanlanan mesaj iptal edilebilir (`CancelScheduledMessageAsync`) |
-| **Transaction** | Birden çok işlemi (ör. complete + send) atomik yapar | Standard ve üstü |
+- **Session**
+  - Amaç: Aynı `SessionId`'li mesajlar **sıralı (FIFO)** ve **aynı alıcıda** işlenir; session state saklanabilir
+  - Not: Varlık oluştururken `RequiresSession = true`; **sıra gereksinimi → session**
+- **Duplicate detection**
+  - Amaç: Aynı `MessageId` zaman penceresinde (varsayılan 10 dk) ikinci kez gönderilirse yutulur
+  - Not: **Oluştururken** açılır, sonradan değişmez; gönderici tekrarlarına karşıdır (tüketici idempotency'sinin yerini tutmaz)
+- **Scheduled message**
+  - Amaç: Belirli zamanda görünür: `ScheduleMessageAsync` / `ScheduledEnqueueTime`
+  - Not: Zamanlanan mesaj iptal edilebilir (`CancelScheduledMessageAsync`)
+- **Transaction**
+  - Amaç: Birden çok işlemi (ör. complete + send) atomik yapar
+  - Not: Standard ve üstü
 
 #### 3.7 Tier'lar
 
-| | **Basic** | **Standard** | **Premium** |
-|---|---|---|---|
-| Queue | Evet | Evet | Evet |
-| **Topic / subscription** | **Hayır** | Evet | Evet |
-| Session, duplicate detection, transaction | **Hayır** | Evet | Evet |
-| Mesaj boyutu | 256 KB | 256 KB | **100 MB'a kadar** |
-| Kaynak modeli | Paylaşılan, işlem başı fiyat | Paylaşılan, işlem başı fiyat | **Ayrılmış messaging unit**, öngörülebilir gecikme |
-| VNet/Private Link, geo-replication | Hayır | Hayır/kısıtlı | **Evet** |
+- **Queue** — Basic: Evet · Standard: Evet · Premium: Evet
+- **Topic / subscription** — Basic: **Hayır** · Standard: Evet · Premium: Evet
+- **Session, duplicate detection, transaction** — Basic: **Hayır** · Standard: Evet · Premium: Evet
+- **Mesaj boyutu** — Basic: 256 KB · Standard: 256 KB · Premium: **100 MB'a kadar**
+- **Kaynak modeli**
+  - Basic: Paylaşılan, işlem başı fiyat
+  - Standard: Paylaşılan, işlem başı fiyat
+  - Premium: **Ayrılmış messaging unit**, öngörülebilir gecikme
+- **VNet/Private Link, geo-replication** — Basic: Hayır · Standard: Hayır/kısıtlı · Premium: **Evet**
 
 *(Tier ayrıntılarını sınavdan önce resmî tablodan doğrula.)* Basit karar: topic gerekiyorsa en az **Standard**; izolasyon/büyük mesaj/ağ gereksinimi → **Premium**.
 
@@ -375,16 +396,30 @@ az group delete --name $RG --yes --no-wait
 
 Bir perakende şirketinin sipariş hattı:
 
-| Gereksinim | Karar | Neden |
-|---|---|---|
-| Kampanyada saniyede binlerce sipariş, ödeme servisi yavaş | **Queue** (`order-processing`) | Yük tamponu; tüketici sayısı ölçeklenir |
-| Aynı sipariş hem stok, hem fraud, hem e-posta servisine gitmeli | **Topic `orders`** + 3 subscription | Her servis kendi kopyasını, kendi hızında alır |
-| Yalnızca > 1000 TL siparişler fraud servisine | **SQL filter** (`amount > 1000`) + `$Default` silinmiş | Gereksiz iş yok |
-| Aynı müşterinin sipariş güncellemeleri sıralı işlenmeli | **Session** (`SessionId = customerId`) | FIFO + tek alıcı |
-| Çift tıklama aynı siparişi iki kez göndermesin | **Duplicate detection** (`MessageId = orderId`) | Gönderici tekrarını yutar |
-| Bozuk JSON bütün hattı durdurmasın | Uygulama **dead-letter** (`BadPayload`) + DLQ izleme alarmı | Zehirli mesaj izole; operatör inceler, düzeltip yeniden gönderir |
-| 24 saat içinde ödenmeyen sipariş iptal | **Scheduled message** (iptal kontrolü) | Cron'suz zamanlayıcı |
-| Özel ağ + 5 MB sipariş eki | **Premium** tier (veya claim-check) | VNet/Private Link, büyük mesaj |
+- **Kampanyada saniyede binlerce sipariş, ödeme servisi yavaş**
+  - Karar: **Queue** (`order-processing`)
+  - Neden: Yük tamponu; tüketici sayısı ölçeklenir
+- **Aynı sipariş hem stok, hem fraud, hem e-posta servisine gitmeli**
+  - Karar: **Topic `orders`** + 3 subscription
+  - Neden: Her servis kendi kopyasını, kendi hızında alır
+- **Yalnızca > 1000 TL siparişler fraud servisine**
+  - Karar: **SQL filter** (`amount > 1000`) + `$Default` silinmiş
+  - Neden: Gereksiz iş yok
+- **Aynı müşterinin sipariş güncellemeleri sıralı işlenmeli**
+  - Karar: **Session** (`SessionId = customerId`)
+  - Neden: FIFO + tek alıcı
+- **Çift tıklama aynı siparişi iki kez göndermesin**
+  - Karar: **Duplicate detection** (`MessageId = orderId`)
+  - Neden: Gönderici tekrarını yutar
+- **Bozuk JSON bütün hattı durdurmasın**
+  - Karar: Uygulama **dead-letter** (`BadPayload`) + DLQ izleme alarmı
+  - Neden: Zehirli mesaj izole; operatör inceler, düzeltip yeniden gönderir
+- **24 saat içinde ödenmeyen sipariş iptal**
+  - Karar: **Scheduled message** (iptal kontrolü)
+  - Neden: Cron'suz zamanlayıcı
+- **Özel ağ + 5 MB sipariş eki**
+  - Karar: **Premium** tier (veya claim-check)
+  - Neden: VNet/Private Link, büyük mesaj
 
 ---
 
@@ -438,16 +473,26 @@ Bir perakende şirketinin sipariş hattı:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| PeekLock → ReceiveAndDelete | Daha az ağ gidiş-dönüşü | Kayıp riski (at-most-once) |
-| `PrefetchCount` ↑ | Yüksek verim | Prefetch edilen mesajların lock'u çalışmadan dolabilir → tekrar teslim |
-| `MaxConcurrentCalls` ↑ | Paralellik | Aşağı akış baskısı; sıra garantisi azalır (sıra için session) |
-| Session | Sıralı işleme | Paralellik session sayısıyla sınırlı; "sıcak" session darboğaz |
-| Duplicate detection | Gönderici tekrarını eler | Bellek/penceresi; yalnızca pencere içinde |
-| Correlation filter (SQL yerine) | Daha ucuz değerlendirme | Yalnızca eşitlik |
-| Standard → Premium | İzolasyon, büyük mesaj, VNet, öngörülebilir gecikme | Messaging unit başına sabit maliyet |
-| `MaxDeliveryCount` düşük | Zehirli mesaj hızla izole | Geçici hata yaşayan mesajlar erken DLQ'ya gider (backoff yok) |
+- **PeekLock → ReceiveAndDelete** — Kazanç: Daha az ağ gidiş-dönüşü · Bedel: Kayıp riski (at-most-once)
+- **`PrefetchCount` ↑**
+  - Kazanç: Yüksek verim
+  - Bedel: Prefetch edilen mesajların lock'u çalışmadan dolabilir → tekrar teslim
+- **`MaxConcurrentCalls` ↑**
+  - Kazanç: Paralellik
+  - Bedel: Aşağı akış baskısı; sıra garantisi azalır (sıra için session)
+- **Session**
+  - Kazanç: Sıralı işleme
+  - Bedel: Paralellik session sayısıyla sınırlı; "sıcak" session darboğaz
+- **Duplicate detection**
+  - Kazanç: Gönderici tekrarını eler
+  - Bedel: Bellek/penceresi; yalnızca pencere içinde
+- **Correlation filter (SQL yerine)** — Kazanç: Daha ucuz değerlendirme · Bedel: Yalnızca eşitlik
+- **Standard → Premium**
+  - Kazanç: İzolasyon, büyük mesaj, VNet, öngörülebilir gecikme
+  - Bedel: Messaging unit başına sabit maliyet
+- **`MaxDeliveryCount` düşük**
+  - Kazanç: Zehirli mesaj hızla izole
+  - Bedel: Geçici hata yaşayan mesajlar erken DLQ'ya gider (backoff yok)
 
 ---
 

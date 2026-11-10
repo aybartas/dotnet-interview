@@ -26,10 +26,8 @@ Bir subnet'teki VM'lere gelen trafiği **IP, port ve protokole** göre filtrelem
 #### Soru 2: Tek seçim
 Bir NSG'de aşağıdaki iki inbound kural var. `443` portuna internetten gelen bir istek ne olur?
 
-| Öncelik | Ad | Port | Kaynak | Eylem |
-|---|---|---|---|---|
-| 200 | deny-all-web | 443 | Internet | Deny |
-| 300 | allow-web | 443 | Internet | Allow |
+- **200** — Ad: deny-all-web · Port: 443 · Kaynak: Internet · Eylem: Deny
+- **300** — Ad: allow-web · Port: 443 · Kaynak: Internet · Eylem: Allow
 
 - A) İzin verilir, çünkü Allow kuralı sonradan tanımlanmıştır
 - B) Engellenir, çünkü düşük numaralı (200) kural önce işlenir ve ilk eşleşme uygulanır
@@ -43,11 +41,9 @@ Bir NSG'de aşağıdaki iki inbound kural var. `443` portuna internetten gelen b
 
 #### Soru 3: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) NSG stateful'dur; izin verilen bir inbound bağlantının dönüş trafiği için ayrı kural gerekmez. | ☐ | ☐ |
-| b) Varsayılan olarak NSG, internete giden (outbound) trafiği engeller. | ☐ | ☐ |
-| c) Varsayılan olarak NSG, internetten gelen (inbound) trafiği engeller. | ☐ | ☐ |
+- a) NSG stateful'dur; izin verilen bir inbound bağlantının dönüş trafiği için ayrı kural gerekmez. — Evet: ☐ · Hayır: ☐
+- **b) Varsayılan olarak NSG, internete giden (outbound) trafiği engeller.** — Evet: ☐ · Hayır: ☐
+- c) Varsayılan olarak NSG, internetten gelen (inbound) trafiği engeller. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -95,11 +91,9 @@ Her ihtiyacı servisle eşleştirin: **NSG · Azure Firewall Premium · Azure DD
 
 #### Soru 7: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure'daki tüm public IP'ler için altyapı düzeyinde temel DDoS koruması varsayılan ve ücretsiz olarak açıktır. | ☐ | ☐ |
-| b) DDoS Protection, uygulama katmanı (L7) SQL injection saldırılarını durdurmak için tek başına yeterlidir. | ☐ | ☐ |
-| c) DDoS IP Protection, tek tek public IP'ler için seçilebilen bir korumadır. | ☐ | ☐ |
+- a) Azure'daki tüm public IP'ler için altyapı düzeyinde temel DDoS koruması varsayılan ve ücretsiz olarak açıktır. — Evet: ☐ · Hayır: ☐
+- b) DDoS Protection, uygulama katmanı (L7) SQL injection saldırılarını durdurmak için tek başına yeterlidir. — Evet: ☐ · Hayır: ☐
+- c) DDoS IP Protection, tek tek public IP'ler için seçilebilen bir korumadır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -173,11 +167,9 @@ Yeni bir Key Vault için veri düzlemi (secret/key/certificate) erişimi hangi m
 
 #### Soru 13: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Key Vault'ta soft delete, silinen nesnelerin bekleme süresi boyunca geri alınmasını sağlar. | ☐ | ☐ |
-| b) Purge protection açıldığında silinmiş bir nesne bekleme süresi dolmadan kalıcı olarak silinemez. | ☐ | ☐ |
-| c) Purge protection bir kez açıldıktan sonra istenirse kapatılabilir. | ☐ | ☐ |
+- a) Key Vault'ta soft delete, silinen nesnelerin bekleme süresi boyunca geri alınmasını sağlar. — Evet: ☐ · Hayır: ☐
+- b) Purge protection açıldığında silinmiş bir nesne bekleme süresi dolmadan kalıcı olarak silinemez. — Evet: ☐ · Hayır: ☐
+- **c) Purge protection bir kez açıldıktan sonra istenirse kapatılabilir.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

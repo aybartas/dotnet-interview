@@ -124,11 +124,9 @@ Her işi servisle eşleştirin: **Data Factory · Data Lake Storage Gen2 · Powe
 
 #### Soru 10: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Microsoft Fabric, veri mühendisliği, depo ve Power BI'ı birleştiren bir SaaS analitik platformudur. | ☐ | ☐ |
-| b) Azure Data Factory, verinin kalıcı olarak saklandığı asıl depolama servisidir. | ☐ | ☐ |
-| c) Data Lake Storage Gen2, Blob Storage üzerine hiyerarşik namespace ekler. | ☐ | ☐ |
+- a) Microsoft Fabric, veri mühendisliği, depo ve Power BI'ı birleştiren bir SaaS analitik platformudur. — Evet: ☐ · Hayır: ☐
+- b) Azure Data Factory, verinin kalıcı olarak saklandığı asıl depolama servisidir. — Evet: ☐ · Hayır: ☐
+- c) Data Lake Storage Gen2, Blob Storage üzerine hiyerarşik namespace ekler. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

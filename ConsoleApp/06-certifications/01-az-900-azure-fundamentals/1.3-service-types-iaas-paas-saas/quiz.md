@@ -185,11 +185,9 @@ Bir yazılım ekibi kendi geliştirdiği uygulamayı çalıştıracak ve **en az
 
 #### Soru 15: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Bir iş yükü önce lift-and-shift ile IaaS'a taşınıp sonra PaaS'a dönüştürülebilir. | ☐ | ☐ |
-| b) SaaS'ta, kullanıcı hesaplarının ve erişim izinlerinin yönetimi sağlayıcının sorumluluğundadır. | ☐ | ☐ |
-| c) Çok yüksek ve sürekli yükte, 7/24 açık bir kaynak serverless'ten daha ekonomik olabilir. | ☐ | ☐ |
+- a) Bir iş yükü önce lift-and-shift ile IaaS'a taşınıp sonra PaaS'a dönüştürülebilir. — Evet: ☐ · Hayır: ☐
+- b) SaaS'ta, kullanıcı hesaplarının ve erişim izinlerinin yönetimi sağlayıcının sorumluluğundadır. — Evet: ☐ · Hayır: ☐
+- c) Çok yüksek ve sürekli yükte, 7/24 açık bir kaynak serverless'ten daha ekonomik olabilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

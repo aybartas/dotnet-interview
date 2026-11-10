@@ -39,11 +39,9 @@ Her ihtiyacı destek planıyla eşleştirin: **Basic · Developer · Standard ·
 
 #### Soru 3: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Basic plan 7/24 telefonla teknik sorun giderme desteği içerir. | ☐ | ☐ |
-| b) Destek talebinde "yanıt süresi", sorunun çözüldüğü süreyi ifade eder. | ☐ | ☐ |
-| c) Azure Status ve Service Health, Basic planda da kullanılabilen self-service kaynaklardır. | ☐ | ☐ |
+- **a) Basic plan 7/24 telefonla teknik sorun giderme desteği içerir.** — Evet: ☐ · Hayır: ☐
+- b) Destek talebinde "yanıt süresi", sorunun çözüldüğü süreyi ifade eder. — Evet: ☐ · Hayır: ☐
+- c) Azure Status ve Service Health, Basic planda da kullanılabilen self-service kaynaklardır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

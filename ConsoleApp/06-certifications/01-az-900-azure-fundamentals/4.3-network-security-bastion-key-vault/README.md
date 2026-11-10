@@ -12,18 +12,36 @@
 
 [C1.10](../2.7-security-zero-trust-defender/README.md) *defense in depth* modelinin katmanlarını anlattı; bu konu o katmanlardaki **somut Azure servislerini** anlatır:
 
-| Katman (C1.10) | Servis | Tek cümle |
-|---|---|---|
-| **Ağ** | **NSG** | Subnet/NIC düzeyinde, IP-port-protokol tabanlı **stateful** izin/engel kuralları |
-| **Ağ** | **ASG** | VM'leri **mantıksal gruplara** ayırıp NSG kurallarında IP yerine grup adı kullanma |
-| **Çevre / ağ** | **Azure Firewall** | Merkezi, yönetilen, **stateful** güvenlik duvarı (L3–L7, FQDN kuralları, threat intelligence) |
-| **Çevre** | **Azure DDoS Protection** | Hacimsel/protokol saldırılarına karşı koruma |
-| **Uygulama / çevre** | **WAF** | Web saldırılarına (SQL injection, XSS) karşı L7 koruma (→ [C1.17](../4.2-load-balancing-traffic/README.md)) |
-| **Compute / yönetim erişimi** | **Azure Bastion**, **JIT VM access** | Public IP'siz / süreli açılan yönetim erişimi |
-| **Ağ** | **Service endpoint ↔ Private endpoint** | PaaS servisine ağ izolasyonlu erişim (→ C1.7) |
-| **Uygulama / veri** | **Azure Key Vault** | Secret, anahtar ve sertifika için merkezi, denetimli depo |
-| **Veri** | **Şifreleme** (at rest / in transit) | Platform yönetimli ya da müşteri yönetimli anahtarlar |
-| *(bağlam)* | **Sentinel, Defender XDR, Customer Lockbox** | SIEM/SOAR, XDR, Microsoft mühendis erişimine onay |
+- **Ağ**
+  - Servis: **NSG**
+  - Tek cümle: Subnet/NIC düzeyinde, IP-port-protokol tabanlı **stateful** izin/engel kuralları
+- **Ağ**
+  - Servis: **ASG**
+  - Tek cümle: VM'leri **mantıksal gruplara** ayırıp NSG kurallarında IP yerine grup adı kullanma
+- **Çevre / ağ**
+  - Servis: **Azure Firewall**
+  - Tek cümle: Merkezi, yönetilen, **stateful** güvenlik duvarı (L3–L7, FQDN kuralları, threat intelligence)
+- **Çevre**
+  - Servis: **Azure DDoS Protection**
+  - Tek cümle: Hacimsel/protokol saldırılarına karşı koruma
+- **Uygulama / çevre**
+  - Servis: **WAF**
+  - Tek cümle: Web saldırılarına (SQL injection, XSS) karşı L7 koruma (→ [C1.17](../4.2-load-balancing-traffic/README.md))
+- **Compute / yönetim erişimi**
+  - Servis: **Azure Bastion**, **JIT VM access**
+  - Tek cümle: Public IP'siz / süreli açılan yönetim erişimi
+- **Ağ**
+  - Servis: **Service endpoint ↔ Private endpoint**
+  - Tek cümle: PaaS servisine ağ izolasyonlu erişim (→ C1.7)
+- **Uygulama / veri**
+  - Servis: **Azure Key Vault**
+  - Tek cümle: Secret, anahtar ve sertifika için merkezi, denetimli depo
+- **Veri**
+  - Servis: **Şifreleme** (at rest / in transit)
+  - Tek cümle: Platform yönetimli ya da müşteri yönetimli anahtarlar
+- ***(bağlam)***
+  - Servis: **Sentinel, Defender XDR, Customer Lockbox**
+  - Tek cümle: SIEM/SOAR, XDR, Microsoft mühendis erişimine onay
 
 Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.7).
 
@@ -49,14 +67,14 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.7).
 - **Hizmet etiketleri (service tags):** `Internet`, `VirtualNetwork`, `AzureLoadBalancer`, `Storage`, `Sql`… — Microsoft'un yönettiği IP gruplarıdır; IP listesini elle takip etmezsin.
 - **Varsayılan kurallar** (silinemez, en düşük öncelikli — 65000+):
 
-| Yön | Kural | Öncelik | Etki |
-|---|---|---|---|
-| Inbound | `AllowVnetInBound` | 65000 | VNet içi trafiğe izin |
-| Inbound | `AllowAzureLoadBalancerInBound` | 65001 | Azure LB health probe'larına izin |
-| Inbound | `DenyAllInBound` | 65500 | Geri kalan **her şey engel** |
-| Outbound | `AllowVnetOutBound` | 65000 | VNet içi |
-| Outbound | `AllowInternetOutBound` | 65001 | İnternete çıkışa **izin** |
-| Outbound | `DenyAllOutBound` | 65500 | Geri kalan engel |
+- **Inbound** — Kural: `AllowVnetInBound` · Öncelik: 65000 · Etki: VNet içi trafiğe izin
+- **Inbound**
+  - Kural: `AllowAzureLoadBalancerInBound` · Öncelik: 65001
+  - Etki: Azure LB health probe'larına izin
+- **Inbound** — Kural: `DenyAllInBound` · Öncelik: 65500 · Etki: Geri kalan **her şey engel**
+- **Outbound** — Kural: `AllowVnetOutBound` · Öncelik: 65000 · Etki: VNet içi
+- **Outbound** — Kural: `AllowInternetOutBound` · Öncelik: 65001 · Etki: İnternete çıkışa **izin**
+- **Outbound** — Kural: `DenyAllOutBound` · Öncelik: 65500 · Etki: Geri kalan engel
 
 > Yani: internetten **gelen** trafik varsayılan olarak **engelli**; **giden** internet trafiği varsayılan olarak **serbest**.
 
@@ -83,15 +101,21 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.7).
 
 **NSG ↔ Azure Firewall** ⭐
 
-| | **NSG** | **Azure Firewall** |
-|---|---|---|
-| Ne? | Subnet/NIC'te **paket filtresi** (dağıtık) | **Merkezi**, yönetilen güvenlik duvarı servisi |
-| Katman | L3–L4 (IP, port, protokol) | L3–**L7** (FQDN, URL; Premium'da TLS/IDPS) |
-| FQDN/URL filtreleme | **Yok** | **Var** |
-| Threat intelligence / IDPS | Yok | Var (IDPS Premium) |
-| Kapsam | Tek VNet'in subnet'i/NIC'i | Birçok VNet/subscription'ı **merkezden** (hub-spoke) |
-| Maliyet | **Ücretsiz** | **Sabit saatlik + veri** |
-| Tipik rol | **Segmentasyon**, mikro-ağ kuralları | **Çevre ve çıkış kontrolü**, merkezi politika |
+- **Ne?**
+  - NSG: Subnet/NIC'te **paket filtresi** (dağıtık)
+  - Azure Firewall: **Merkezi**, yönetilen güvenlik duvarı servisi
+- **Katman**
+  - NSG: L3–L4 (IP, port, protokol)
+  - Azure Firewall: L3–**L7** (FQDN, URL; Premium'da TLS/IDPS)
+- **FQDN/URL filtreleme** — NSG: **Yok** · Azure Firewall: **Var**
+- **Threat intelligence / IDPS** — NSG: Yok · Azure Firewall: Var (IDPS Premium)
+- **Kapsam**
+  - NSG: Tek VNet'in subnet'i/NIC'i
+  - Azure Firewall: Birçok VNet/subscription'ı **merkezden** (hub-spoke)
+- **Maliyet** — NSG: **Ücretsiz** · Azure Firewall: **Sabit saatlik + veri**
+- **Tipik rol**
+  - NSG: **Segmentasyon**, mikro-ağ kuralları
+  - Azure Firewall: **Çevre ve çıkış kontrolü**, merkezi politika
 
 İkisi **birlikte** kullanılır (defense in depth): NSG her subnet'te "ne konuşabilir"i, Firewall merkezde "internete/dışarıya ne gidebilir"i belirler.
 
@@ -99,11 +123,15 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.7).
 
 **DDoS** (Distributed Denial of Service): kaynağı, çok sayıda kaynaktan gelen sahte trafikle erişilemez kılma saldırısı.
 
-| Koruma | Kapsam | Not |
-|---|---|---|
-| **Altyapı koruması (basic)** | **Tüm Azure** public IP'leri için **varsayılan, ücretsiz, her zaman açık** | Platformun kendini koruması; ayarlanamaz |
-| **DDoS Network Protection** | Bir **VNet**'teki tüm public IP'ler (plan VNet'lere bağlanır) | Adaptif ayarlama, **DDoS Rapid Response** uzman desteği, **maliyet koruması**, WAF indirimi; sabit aylık ücret **yüksek** |
-| **DDoS IP Protection** | **Tek tek public IP** başına | Aynı mitigasyon motoru; **Rapid Response, cost protection, WAF indirimi yok**; küçük ölçeklerde daha ucuz |
+- **Altyapı koruması (basic)**
+  - Kapsam: **Tüm Azure** public IP'leri için **varsayılan, ücretsiz, her zaman açık**
+  - Not: Platformun kendini koruması; ayarlanamaz
+- **DDoS Network Protection**
+  - Kapsam: Bir **VNet**'teki tüm public IP'ler (plan VNet'lere bağlanır)
+  - Not: Adaptif ayarlama, **DDoS Rapid Response** uzman desteği, **maliyet koruması**, WAF indirimi; sabit aylık ücret **yüksek**
+- **DDoS IP Protection**
+  - Kapsam: **Tek tek public IP** başına
+  - Not: Aynı mitigasyon motoru; **Rapid Response, cost protection, WAF indirimi yok**; küçük ölçeklerde daha ucuz
 
 > Eski adlandırma: "DDoS Protection **Basic / Standard**" — sınav materyallerinde hâlâ geçebilir. **Basic ≈ varsayılan altyapı koruması; Standard ≈ Network Protection**. Fiyatlar için güncel fiyat sayfasına bak.
 > DDoS Protection **L3/L4 hacimsel** saldırıları durdurur; **uygulama katmanı (L7)** saldırılar (SQL injection, bot) için **WAF** gerekir — ikisi tamamlayıcıdır.
@@ -140,31 +168,44 @@ Bu konunun kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.7).
 
 **Key Vault**, **secret'ları** (parola, connection string, API anahtarı), **kriptografik anahtarları** ve **sertifikaları** güvenli saklayan, erişimi denetleyen ve **denetim kaydı** (audit log) tutan yönetilen servistir. Amaç: secret'ların **kodda, config dosyasında veya repoda** durmaması.
 
-| Nesne | Ne? | Örnek |
-|---|---|---|
-| **Secret** | Küçük gizli metin (≤ 25 KB) | DB parolası, API anahtarı, connection string |
-| **Key** | Şifreleme/imzalama için **kriptografik anahtar** (RSA/EC); anahtarın kendisi dışarı çıkmadan işlem yapılır | Customer-managed key, imzalama |
-| **Certificate** | Sertifika yaşam döngüsü (oluştur, yenile, sakla) | TLS sertifikası |
+- **Secret**
+  - Ne?: Küçük gizli metin (≤ 25 KB)
+  - Örnek: DB parolası, API anahtarı, connection string
+- **Key**
+  - Ne?: Şifreleme/imzalama için **kriptografik anahtar** (RSA/EC); anahtarın kendisi dışarı çıkmadan işlem yapılır
+  - Örnek: Customer-managed key, imzalama
+- **Certificate**
+  - Ne?: Sertifika yaşam döngüsü (oluştur, yenile, sakla)
+  - Örnek: TLS sertifikası
 
 **Katmanlar:**
 
-| | **Standard** | **Premium** | **Managed HSM** |
-|---|---|---|---|
-| Anahtar koruması | Yazılım tabanlı | **HSM destekli** anahtarlar (paylaşımlı HSM) | **Tek kiracılı, ayrılmış HSM** (yüksek güvence/uyumluluk) |
-| Tür | Key Vault | Key Vault | Ayrı kaynak türü; kendi RBAC'ı |
-| Ne zaman? | Çoğu uygulama | Uyumluluk HSM gerektiriyorsa | Katı regülasyon, tam anahtar sahipliği |
+- **Anahtar koruması**
+  - Standard: Yazılım tabanlı
+  - Premium: **HSM destekli** anahtarlar (paylaşımlı HSM)
+  - Managed HSM: **Tek kiracılı, ayrılmış HSM** (yüksek güvence/uyumluluk)
+- **Tür** — Standard: Key Vault · Premium: Key Vault · Managed HSM: Ayrı kaynak türü; kendi RBAC'ı
+- **Ne zaman?**
+  - Standard: Çoğu uygulama · Premium: Uyumluluk HSM gerektiriyorsa
+  - Managed HSM: Katı regülasyon, tam anahtar sahipliği
 
 **Erişim kontrolü — iki düzlem:**
 
 - **Yönetim düzlemi (management plane):** kasa oluşturma/silme/ayar — **Azure RBAC** (Owner, Contributor…).
 - **Veri düzlemi (data plane):** secret/key/certificate **okuma/yazma** — **Azure RBAC** (önerilen) **veya** eski **vault access policy**.
 
-| | **Azure RBAC (önerilen)** | **Access policy (eski model)** |
-|---|---|---|
-| Rol örnekleri | `Key Vault Administrator`, `Secrets Officer`, `Secrets User`, `Crypto User`, `Certificates Officer`, `Reader` | Kasa başına izin listesi (get/list/set…) |
-| Kapsam | Kasa, resource group, subscription ya da **tek nesne** düzeyinde | Yalnızca kasa düzeyinde |
-| Tutarlılık | Tüm Azure ile aynı model, PIM/koşullu erişim, merkezi denetim | Ayrı yönetim, ayrıntı sınırlı |
-| Tuzak | — | **Contributor** rolü olan biri kendine access policy ekleyip **secret'lara erişebilir** (RBAC modelinde Contributor veri düzlemine erişemez) |
+- **Rol örnekleri**
+  - Azure RBAC (önerilen): `Key Vault Administrator`, `Secrets Officer`, `Secrets User`, `Crypto User`, `Certificates Officer`, `Reader`
+  - Access policy (eski model): Kasa başına izin listesi (get/list/set…)
+- **Kapsam**
+  - Azure RBAC (önerilen): Kasa, resource group, subscription ya da **tek nesne** düzeyinde
+  - Access policy (eski model): Yalnızca kasa düzeyinde
+- **Tutarlılık**
+  - Azure RBAC (önerilen): Tüm Azure ile aynı model, PIM/koşullu erişim, merkezi denetim
+  - Access policy (eski model): Ayrı yönetim, ayrıntı sınırlı
+- **Tuzak**
+  - Azure RBAC (önerilen): —
+  - Access policy (eski model): **Contributor** rolü olan biri kendine access policy ekleyip **secret'lara erişebilir** (RBAC modelinde Contributor veri düzlemine erişemez)
 
 **Silinme koruması:**
 
@@ -267,16 +308,28 @@ az group delete --name $RG --yes --no-wait
 
 <details><summary>Beklenen gözlemler ve açıklamaları</summary>
 
-| Adım | Gözlem | Kavram |
-|---|---|---|
-| 1 | Özel kurallar 100/110'da; `65000-65500` varsayılanlar listelenir | Öncelik ve varsayılan kurallar; `DenyAllInBound` en sonda |
-| 2 | Subnet'e NSG bağlanır | NSG subnet düzeyinde uygulanır |
-| 3 | ASG kuralı IP içermez | Kuralları uygulama rolüne göre yaz |
-| 5 | Rol atamadan `secret set` → `Forbidden` / yetki hatası (Owner olsan bile) | RBAC modelinde **veri düzlemi** ayrı roller ister |
-| 6 | Secret değeri düz metin döner | Kasadan okuma; erişimler audit log'a yazılır |
-| 7 | Silinen secret `list-deleted`'da görünür, `recover` ile geri gelir | Soft delete |
-| 8 | Identity yalnızca `Secrets User` — secret okur ama **yazamaz/silemez** | En az yetki + managed identity |
-| 9 | `az keyvault purge` olmadan aynı ad yeniden alınamaz | Soft-deleted kasa adı rezerve kalır |
+- **1**
+  - Gözlem: Özel kurallar 100/110'da; `65000-65500` varsayılanlar listelenir
+  - Kavram: Öncelik ve varsayılan kurallar; `DenyAllInBound` en sonda
+- **2** — Gözlem: Subnet'e NSG bağlanır · Kavram: NSG subnet düzeyinde uygulanır
+- **3**
+  - Gözlem: ASG kuralı IP içermez
+  - Kavram: Kuralları uygulama rolüne göre yaz
+- **5**
+  - Gözlem: Rol atamadan `secret set` → `Forbidden` / yetki hatası (Owner olsan bile)
+  - Kavram: RBAC modelinde **veri düzlemi** ayrı roller ister
+- **6**
+  - Gözlem: Secret değeri düz metin döner
+  - Kavram: Kasadan okuma; erişimler audit log'a yazılır
+- **7**
+  - Gözlem: Silinen secret `list-deleted`'da görünür, `recover` ile geri gelir
+  - Kavram: Soft delete
+- **8**
+  - Gözlem: Identity yalnızca `Secrets User` — secret okur ama **yazamaz/silemez**
+  - Kavram: En az yetki + managed identity
+- **9**
+  - Gözlem: `az keyvault purge` olmadan aynı ad yeniden alınamaz
+  - Kavram: Soft-deleted kasa adı rezerve kalır
 
 **Düşünce deneyi:** VM'e RDP açmak için Bastion kullansaydık, NSG'de 3389'a hâlâ internetten izin gerekir miydi? (Hayır — Bastion VM'e VNet içinden özel IP ile bağlanır; VM'de public IP olmaz.)
 </details>
@@ -355,17 +408,33 @@ Bir sağlık-teknolojisi şirketi hasta portalını Azure'a taşıyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| NSG ile segmentasyon | Ücretsiz, basit, dağıtık | L3/L4 sınırı; kural karmaşıklığı büyüyebilir (ASG ile azaltılır) |
-| Azure Firewall | Merkezi politika, FQDN/L7, IDPS, çıkış kontrolü | Sabit saatlik ücret yüksek; tüm trafik hub'dan geçer (gecikme/tek nokta tasarımı) |
-| DDoS Network Protection | Rapid Response, maliyet koruması, adaptif ayar | Yüksek aylık sabit ücret; IP Protection daha ucuz ama daha az yetenek |
-| Bastion | Public IP'siz yönetim, kaba kuvvet yüzeyi yok | Saatlik ücret; ek subnet; bazı SKU'larda sınırlı özellik |
-| JIT | Portlar çoğu zaman kapalı | Talep/onay süreci; Defender for Servers gerektirir (ücretli plan) |
-| Key Vault + managed identity | Secret kodda yok, denetim, rotasyon | Bağımlılık (kasa kesintisi/throttling → önbellekle); RBAC yönetimi |
-| Customer-managed key | Anahtar kontrolü, iptal imkânı | Operasyonel yük; anahtar kaybı = veri kaybı; ek gecikme/maliyet |
-| Managed HSM | En yüksek güvence, tek kiracılı | En pahalı seçenek; yönetim karmaşıklığı |
-| Purge protection | Kötü niyetli/yanlışlıkla kalıcı silmeyi engeller | Geri alınamaz; kasa adı süre boyunca rezerve |
+- **NSG ile segmentasyon**
+  - Kazanç: Ücretsiz, basit, dağıtık
+  - Bedel: L3/L4 sınırı; kural karmaşıklığı büyüyebilir (ASG ile azaltılır)
+- **Azure Firewall**
+  - Kazanç: Merkezi politika, FQDN/L7, IDPS, çıkış kontrolü
+  - Bedel: Sabit saatlik ücret yüksek; tüm trafik hub'dan geçer (gecikme/tek nokta tasarımı)
+- **DDoS Network Protection**
+  - Kazanç: Rapid Response, maliyet koruması, adaptif ayar
+  - Bedel: Yüksek aylık sabit ücret; IP Protection daha ucuz ama daha az yetenek
+- **Bastion**
+  - Kazanç: Public IP'siz yönetim, kaba kuvvet yüzeyi yok
+  - Bedel: Saatlik ücret; ek subnet; bazı SKU'larda sınırlı özellik
+- **JIT**
+  - Kazanç: Portlar çoğu zaman kapalı
+  - Bedel: Talep/onay süreci; Defender for Servers gerektirir (ücretli plan)
+- **Key Vault + managed identity**
+  - Kazanç: Secret kodda yok, denetim, rotasyon
+  - Bedel: Bağımlılık (kasa kesintisi/throttling → önbellekle); RBAC yönetimi
+- **Customer-managed key**
+  - Kazanç: Anahtar kontrolü, iptal imkânı
+  - Bedel: Operasyonel yük; anahtar kaybı = veri kaybı; ek gecikme/maliyet
+- **Managed HSM**
+  - Kazanç: En yüksek güvence, tek kiracılı
+  - Bedel: En pahalı seçenek; yönetim karmaşıklığı
+- **Purge protection**
+  - Kazanç: Kötü niyetli/yanlışlıkla kalıcı silmeyi engeller
+  - Bedel: Geri alınamaz; kasa adı süre boyunca rezerve
 
 ---
 

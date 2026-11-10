@@ -10,11 +10,18 @@
 
 **Azure Functions**, olay güdümlü, **serverless** bir compute servisidir: kodu (bir *function*) yazarsın, platform onu bir **trigger** (tetikleyici) ile çalıştırır, ölçekler ve altyapıyı yönetir. Bir function'ın bağlantı kodunu azaltan iki kavram sınavın merkezidir:
 
-| Kavram | Ne yapar? | Kaç tane? | Örnek |
-|---|---|---|---|
-| **Trigger** | Function'ı **başlatır**, veriyi function'a taşır | Function başına **tam 1** | HTTP, Timer, Service Bus, Event Grid, Cosmos DB (change feed), Blob, Queue |
-| **Input binding** | Function çalışırken başka bir kaynaktan **veri okur** | 0..n | Cosmos DB'den belge, Blob içeriği |
-| **Output binding** | Function'ın sonucunu başka bir kaynağa **yazar** | 0..n | Cosmos DB'ye belge, Service Bus'a mesaj, kuyruğa ekleme |
+- **Trigger**
+  - Ne yapar?: Function'ı **başlatır**, veriyi function'a taşır
+  - Kaç tane?: Function başına **tam 1**
+  - Örnek: HTTP, Timer, Service Bus, Event Grid, Cosmos DB (change feed), Blob, Queue
+- **Input binding**
+  - Ne yapar?: Function çalışırken başka bir kaynaktan **veri okur**
+  - Kaç tane?: 0..n
+  - Örnek: Cosmos DB'den belge, Blob içeriği
+- **Output binding**
+  - Ne yapar?: Function'ın sonucunu başka bir kaynağa **yazar**
+  - Kaç tane?: 0..n
+  - Örnek: Cosmos DB'ye belge, Service Bus'a mesaj, kuyruğa ekleme
 
 ```text
 HTTP isteği ──▶ [HTTP trigger] Function ──▶ [Cosmos DB output binding] ──▶ orders container
@@ -38,11 +45,13 @@ Bu konu: **isolated worker model** (.NET) ve **Python v2** programlama modeli, H
 
 #### 3.1 Programlama modelleri
 
-| Dil | Model | Not |
-|---|---|---|
-| **.NET** | **Isolated worker** (kendi `Program.cs`'i olan ayrı süreç) | Functions runtime v4; .NET 10 (LTS), 9, 8 ve .NET Framework 4.8 desteklenir; **in-process model .NET 8'de kalır ve 10 Kasım 2026'da destek dışına çıkar** |
-| **Python** | **v2 programlama modeli** (decorator tabanlı, `function_app.py`) | v1'deki `function.json` dosyası gerekmez; binding'ler decorator ile tanımlanır |
-| JavaScript/TypeScript, Java, PowerShell | Kendi worker'ları | Sınav odağı .NET ve Python |
+- **.NET**
+  - Model: **Isolated worker** (kendi `Program.cs`'i olan ayrı süreç)
+  - Not: Functions runtime v4; .NET 10 (LTS), 9, 8 ve .NET Framework 4.8 desteklenir; **in-process model .NET 8'de kalır ve 10 Kasım 2026'da destek dışına çıkar**
+- **Python**
+  - Model: **v2 programlama modeli** (decorator tabanlı, `function_app.py`)
+  - Not: v1'deki `function.json` dosyası gerekmez; binding'ler decorator ile tanımlanır
+- **JavaScript/TypeScript, Java, PowerShell** — Model: Kendi worker'ları · Not: Sınav odağı .NET ve Python
 
 Isolated worker'ın in-process'e göre avantajları: kendi DI/middleware/yapılandırması, .NET sürümünü runtime'dan bağımsız seçme, **ASP.NET Core entegrasyonu** (HTTP function'larda `HttpRequest`/`IActionResult`), çakışmayan assembly'ler.
 
@@ -101,15 +110,28 @@ public class OrdersApi(ILogger<OrdersApi> logger)
 
 #### 3.3 Trigger ve binding seçimi ⭐
 
-| İhtiyaç | Trigger | Binding örneği | Not |
-|---|---|---|---|
-| HTTP API / webhook | **HTTP** | Cosmos DB output | Yanıt en fazla ~230 sn bekler (load balancer zaman aşımı) — uzun iş kuyruğa |
-| Zamanlanmış iş | **Timer** | — | **6 alanlı NCRONTAB** `{saniye} {dakika} {saat} {gün} {ay} {haftanın günü}` |
-| Kuyruktaki iş | **Service Bus** (queue/topic) | Cosmos DB input | Hata → abandon → DLQ (→ [C2.9](../3.2-service-bus/README.md)) |
-| Olay tepkisi | **Event Grid** | — | Olay şeması veya `CloudEvent` (→ [C2.10](../3.3-event-grid/README.md)) |
-| Veri değişimine tepki | **Cosmos DB** (change feed) | — | Lease container tutar (→ [C2.5](../2.2-cosmos-vector-change-feed/README.md)) |
-| Blob'a tepki | **Blob** | Blob input/output | Flex Consumption'da yalnızca **event-based** (Event Grid kaynaklı) blob trigger desteklenir *(doğrula)* |
-| Basit kuyruk | **Queue** (Storage) | Queue output | 64 KB mesaj sınırı; zengin özellik için Service Bus |
+- **HTTP API / webhook**
+  - Trigger: **HTTP** · Binding örneği: Cosmos DB output
+  - Not: Yanıt en fazla ~230 sn bekler (load balancer zaman aşımı) — uzun iş kuyruğa
+- **Zamanlanmış iş**
+  - Trigger: **Timer** · Binding örneği: —
+  - Not: **6 alanlı NCRONTAB** `{saniye} {dakika} {saat} {gün} {ay} {haftanın günü}`
+- **Kuyruktaki iş**
+  - Trigger: **Service Bus** (queue/topic)
+  - Binding örneği: Cosmos DB input
+  - Not: Hata → abandon → DLQ (→ [C2.9](../3.2-service-bus/README.md))
+- **Olay tepkisi**
+  - Trigger: **Event Grid** · Binding örneği: —
+  - Not: Olay şeması veya `CloudEvent` (→ [C2.10](../3.3-event-grid/README.md))
+- **Veri değişimine tepki**
+  - Trigger: **Cosmos DB** (change feed) · Binding örneği: —
+  - Not: Lease container tutar (→ [C2.5](../2.2-cosmos-vector-change-feed/README.md))
+- **Blob'a tepki**
+  - Trigger: **Blob** · Binding örneği: Blob input/output
+  - Not: Flex Consumption'da yalnızca **event-based** (Event Grid kaynaklı) blob trigger desteklenir *(doğrula)*
+- **Basit kuyruk**
+  - Trigger: **Queue** (Storage) · Binding örneği: Queue output
+  - Not: 64 KB mesaj sınırı; zengin özellik için Service Bus
 
 **Binding ifadeleri:** `{queueTrigger}`, `{data.orderId}` (JSON alanı), `{rand-guid}`, `{DateTime}`; ayar değerleri `%SettingName%` ile okunur (ör. `Connection = "ServiceBusConnection"`, `QueueName = "%OrdersQueue%"`).
 
@@ -130,11 +152,15 @@ public async Task Run(
 
 #### 3.4 `host.json` ve `local.settings.json`
 
-| Dosya | Amaç | Dağıtılır mı? |
-|---|---|---|
-| **`host.json`** | **Host** düzeyi davranış: loglama/sampling, `extensions.*` (Service Bus `maxConcurrentCalls`, `maxAutoLockRenewalDuration`, HTTP `routePrefix`), `functionTimeout`, `retry` | Evet |
-| **`local.settings.json`** | **Yerel** app settings + connection string'ler (`Values`) | **Hayır** (`.gitignore`'a gider; secret içerir) — Azure'da karşılığı *Application settings* |
-| `*.csproj` / `function_app.py` | Function tanımı (attribute / decorator) | Evet |
+- **`host.json`**
+  - Amaç: **Host** düzeyi davranış: loglama/sampling, `extensions.*` (Service Bus `maxConcurrentCalls`, `maxAutoLockRenewalDuration`, HTTP `routePrefix`), `functionTimeout`, `retry`
+  - Dağıtılır mı?: Evet
+- **`local.settings.json`**
+  - Amaç: **Yerel** app settings + connection string'ler (`Values`)
+  - Dağıtılır mı?: **Hayır** (`.gitignore`'a gider; secret içerir) — Azure'da karşılığı *Application settings*
+- **`*.csproj` / `function_app.py`**
+  - Amaç: Function tanımı (attribute / decorator)
+  - Dağıtılır mı?: Evet
 
 ```jsonc
 // host.json
@@ -161,16 +187,42 @@ public async Task Run(
 
 #### 3.5 Hosting planları ⭐
 
-| | **Flex Consumption** | **Consumption** (klasik) | **Premium** (Elastic) | **Dedicated** (App Service planı) |
-|---|---|---|---|---|
-| Scale to zero | **Evet** | Evet | Hayır (en az 1 instance) | Hayır |
-| Cold start azaltma | **Always ready** instance'lar (isteğe bağlı) + hızlı ölçek | Yok | **Pre-warmed** + her zaman ısınmış instance | Always On |
-| **VNet entegrasyonu** | **Evet** | **Hayır** | Evet | Evet |
-| Varsayılan zaman aşımı | 30 dk (üst sınır sınırsız) | 5 dk (en çok 10 dk) | 30 dk (sınırsız) | 30 dk (sınırsız) |
-| Ölçek | Fonksiyon/grup başına bağımsız; en çok **1000** instance (kota ile sınırlı) | Eski ölçek denetleyicisi (daha yavaş) | Önceden ısınmış + elastik | Manuel/otomatik App Service ölçeği |
-| Instance boyutu | **2048 / 4096 MB** | Sabit | EP1-EP3 | Plan SKU'su |
-| Fiyat modeli | İstek/çalışma süresi (+ always ready) | Çalışma süresi × bellek | Instance-saati (ısınmış min.) | Plan ücreti (sabit) |
-| Not | Linux; **in-process .NET desteklenmez**; deployment slot desteklenmez *(doğrula)* | Linux Consumption **30 Eyl 2028**'de emekli | Slot, uzun işler | Mevcut App Service planını yeniden kullanma |
+- **Scale to zero**
+  - Flex Consumption: **Evet** · Consumption (klasik): Evet
+  - Premium (Elastic): Hayır (en az 1 instance)
+  - Dedicated (App Service planı): Hayır
+- **Cold start azaltma**
+  - Flex Consumption: **Always ready** instance'lar (isteğe bağlı) + hızlı ölçek
+  - Consumption (klasik): Yok
+  - Premium (Elastic): **Pre-warmed** + her zaman ısınmış instance
+  - Dedicated (App Service planı): Always On
+- **VNet entegrasyonu**
+  - Flex Consumption: **Evet** · Consumption (klasik): **Hayır**
+  - Premium (Elastic): Evet · Dedicated (App Service planı): Evet
+- **Varsayılan zaman aşımı**
+  - Flex Consumption: 30 dk (üst sınır sınırsız)
+  - Consumption (klasik): 5 dk (en çok 10 dk)
+  - Premium (Elastic): 30 dk (sınırsız)
+  - Dedicated (App Service planı): 30 dk (sınırsız)
+- **Ölçek**
+  - Flex Consumption: Fonksiyon/grup başına bağımsız; en çok **1000** instance (kota ile sınırlı)
+  - Consumption (klasik): Eski ölçek denetleyicisi (daha yavaş)
+  - Premium (Elastic): Önceden ısınmış + elastik
+  - Dedicated (App Service planı): Manuel/otomatik App Service ölçeği
+- **Instance boyutu**
+  - Flex Consumption: **2048 / 4096 MB** · Consumption (klasik): Sabit
+  - Premium (Elastic): EP1-EP3
+  - Dedicated (App Service planı): Plan SKU'su
+- **Fiyat modeli**
+  - Flex Consumption: İstek/çalışma süresi (+ always ready)
+  - Consumption (klasik): Çalışma süresi × bellek
+  - Premium (Elastic): Instance-saati (ısınmış min.)
+  - Dedicated (App Service planı): Plan ücreti (sabit)
+- **Not**
+  - Flex Consumption: Linux; **in-process .NET desteklenmez**; deployment slot desteklenmez *(doğrula)*
+  - Consumption (klasik): Linux Consumption **30 Eyl 2028**'de emekli
+  - Premium (Elastic): Slot, uzun işler
+  - Dedicated (App Service planı): Mevcut App Service planını yeniden kullanma
 
 **Karar ağacı:**
 1. Hem **VNet** hem **scale-to-zero** gerekiyor → **Flex Consumption**.
@@ -182,13 +234,21 @@ public async Task Run(
 
 Trigger/binding'in `Connection` özelliği bir **ayar adı öneki**dir. Connection string yerine kimlik kullanmak için ayarlar **`<ÖNEK>__<özellik>`** (çift alt çizgi) biçiminde verilir:
 
-| Servis | Ayar adı (önek `MyConn`) | Gereken rol |
-|---|---|---|
-| **Service Bus** | `MyConn__fullyQualifiedNamespace` = `mysb.servicebus.windows.net` | *Azure Service Bus Data Receiver* (trigger) · *Data Sender* (output) |
-| **Cosmos DB** | `MyConn__accountEndpoint` = `https://myacct.documents.azure.com:443/` | Cosmos DB **data-plane RBAC** rolü (*Built-in Data Contributor*) — Azure RBAC değil, `az cosmosdb sql role assignment` |
-| **Storage** (Blob/Queue) | `MyConn__accountName` (veya `__blobServiceUri`, `__queueServiceUri`) | *Storage Blob Data Owner/Contributor*, *Storage Queue Data Contributor* |
-| **Event Hubs** | `MyConn__fullyQualifiedNamespace` | *Azure Event Hubs Data Receiver/Sender* |
-| **`AzureWebJobsStorage`** (host'un kendi deposu) | `AzureWebJobsStorage__accountName` | Blob/Queue/Table için ilgili *Data* rolleri |
+- **Service Bus**
+  - Ayar adı (önek `MyConn`): `MyConn__fullyQualifiedNamespace` = `mysb.servicebus.windows.net`
+  - Gereken rol: *Azure Service Bus Data Receiver* (trigger) · *Data Sender* (output)
+- **Cosmos DB**
+  - Ayar adı (önek `MyConn`): `MyConn__accountEndpoint` = `https://myacct.documents.azure.com:443/`
+  - Gereken rol: Cosmos DB **data-plane RBAC** rolü (*Built-in Data Contributor*) — Azure RBAC değil, `az cosmosdb sql role assignment`
+- **Storage** (Blob/Queue)
+  - Ayar adı (önek `MyConn`): `MyConn__accountName` (veya `__blobServiceUri`, `__queueServiceUri`)
+  - Gereken rol: *Storage Blob Data Owner/Contributor*, *Storage Queue Data Contributor*
+- **Event Hubs**
+  - Ayar adı (önek `MyConn`): `MyConn__fullyQualifiedNamespace`
+  - Gereken rol: *Azure Event Hubs Data Receiver/Sender*
+- **`AzureWebJobsStorage`** (host'un kendi deposu)
+  - Ayar adı (önek `MyConn`): `AzureWebJobsStorage__accountName`
+  - Gereken rol: Blob/Queue/Table için ilgili *Data* rolleri
 
 - Kullanıcı tarafından atanmış (user-assigned) kimlik için ek olarak `MyConn__credential = managedidentity` ve `MyConn__clientId = <id>` verilir; atanmamışsa **system-assigned** kimlik kullanılır.
 - Aynı önek için hem connection string hem identity ayarı varsa **connection string önceliklidir**.
@@ -197,13 +257,21 @@ Trigger/binding'in `Connection` özelliği bir **ayar adı öneki**dir. Connecti
 
 #### 3.7 Dağıtım
 
-| Yöntem | Komut / araç | Not |
-|---|---|---|
-| Core Tools | `func azure functionapp publish <app>` | Hızlı geliştirici dağıtımı |
-| Zip deploy / Run-from-package | `az functionapp deployment source config-zip` | Paket salt-okunur bağlanır |
-| CI/CD | **GitHub Actions** (`Azure/functions-action`), Azure Pipelines | OIDC (federated credential) ile secret'sız giriş |
-| **Deployment slot** | `az functionapp deployment slot create` + `swap` | Premium/Dedicated (ve sınırlı Consumption); sıfır kesintili geçiş |
-| IaC | Bicep / Terraform | Flex için `functionAppConfig` bölümü |
+- **Core Tools**
+  - Komut / araç: `func azure functionapp publish <app>`
+  - Not: Hızlı geliştirici dağıtımı
+- **Zip deploy / Run-from-package**
+  - Komut / araç: `az functionapp deployment source config-zip`
+  - Not: Paket salt-okunur bağlanır
+- **CI/CD**
+  - Komut / araç: **GitHub Actions** (`Azure/functions-action`), Azure Pipelines
+  - Not: OIDC (federated credential) ile secret'sız giriş
+- **Deployment slot**
+  - Komut / araç: `az functionapp deployment slot create` + `swap`
+  - Not: Premium/Dedicated (ve sınırlı Consumption); sıfır kesintili geçiş
+- **IaC**
+  - Komut / araç: Bicep / Terraform
+  - Not: Flex için `functionAppConfig` bölümü
 
 *(bağlam)* **Durable Functions** (orchestrator + activity): fan-out/fan-in, human interaction, async HTTP API gibi kalıpları kod olarak yazılan bir iş akışıyla çözer; AI-200 hedeflerinde açıkça yoktur, mimari bilgisi olarak yeterlidir.
 
@@ -307,15 +375,23 @@ az group delete --name $RG --yes --no-wait
 
 Bir e-ticaret şirketi sipariş akışını Functions ile kuruyor:
 
-| Parça | Seçim | Neden |
-|---|---|---|
-| `POST /api/orders` | **HTTP trigger** + **Cosmos DB output binding**, function key | Kodsuz persist; Easy Auth/APIM ile kullanıcı doğrulama |
-| Ödeme sonrası iş akışı | **Service Bus trigger** (`order-processing`) | Yük dalgalanmasını tamponlar, DLQ ile zehirli mesaj izolasyonu |
-| Stok bilgisinin okunması | **Cosmos DB input binding** | Bağlantı kodu yok |
-| Gece raporu | **Timer trigger** (`0 0 2 * * *`) | Sunucu yönetimi yok |
-| Ortam | **Flex Consumption** (VNet: özel Cosmos/Service Bus endpoint'leri; scale-to-zero) | Gece trafik yokken maliyet ~0, kampanyada hızlı ölçek |
-| Gizli bilgiler | **Managed identity** (`__fullyQualifiedNamespace`, `__accountEndpoint`), Key Vault referansı | Secret rotasyon yükü yok |
-| Dağıtım | GitHub Actions + OIDC | Sıfır statik credential |
+- **`POST /api/orders`**
+  - Seçim: **HTTP trigger** + **Cosmos DB output binding**, function key
+  - Neden: Kodsuz persist; Easy Auth/APIM ile kullanıcı doğrulama
+- **Ödeme sonrası iş akışı**
+  - Seçim: **Service Bus trigger** (`order-processing`)
+  - Neden: Yük dalgalanmasını tamponlar, DLQ ile zehirli mesaj izolasyonu
+- **Stok bilgisinin okunması** — Seçim: **Cosmos DB input binding** · Neden: Bağlantı kodu yok
+- **Gece raporu**
+  - Seçim: **Timer trigger** (`0 0 2 * * *`)
+  - Neden: Sunucu yönetimi yok
+- **Ortam**
+  - Seçim: **Flex Consumption** (VNet: özel Cosmos/Service Bus endpoint'leri; scale-to-zero)
+  - Neden: Gece trafik yokken maliyet ~0, kampanyada hızlı ölçek
+- **Gizli bilgiler**
+  - Seçim: **Managed identity** (`__fullyQualifiedNamespace`, `__accountEndpoint`), Key Vault referansı
+  - Neden: Secret rotasyon yükü yok
+- **Dağıtım** — Seçim: GitHub Actions + OIDC · Neden: Sıfır statik credential
 
 ---
 
@@ -365,15 +441,25 @@ Bir e-ticaret şirketi sipariş akışını Functions ile kuruyor:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Flex Consumption **always ready** instance | Soğuk başlangıç yok / çok kısa | Kullanılmasa da ücretlenen instance |
-| 2048 → 4096 MB instance | Daha fazla bellek/CPU | Birim süre maliyeti ↑ |
-| Yüksek `maxConcurrentCalls` / `maxScale` | Verim ↑ | Aşağı akış servisi (Cosmos RU, SQL bağlantısı) boğulabilir; **maximum instance count** ile sınırla |
-| Premium | Sıfır soğuk başlangıç, slot, VNet | En az 1 instance sürekli ücretli |
-| Binding'ler | Az kod | Esneklik azalır (özel retry, toplu işlem, bağlantı havuzu denetimi için SDK) |
-| ASP.NET Core entegrasyonu | Tanıdık `HttpRequest`/`IActionResult` | Biraz daha büyük ayak izi |
-| `host.json` `retry` | Geçici hatalarda basit tekrar | Service Bus gibi kendi teslim sayacı olan kaynaklarda **çift retry**; idempotency şart |
+- Flex Consumption **always ready** instance
+  - Kazanç: Soğuk başlangıç yok / çok kısa
+  - Bedel: Kullanılmasa da ücretlenen instance
+- **2048 → 4096 MB instance** — Kazanç: Daha fazla bellek/CPU · Bedel: Birim süre maliyeti ↑
+- **Yüksek `maxConcurrentCalls` / `maxScale`**
+  - Kazanç: Verim ↑
+  - Bedel: Aşağı akış servisi (Cosmos RU, SQL bağlantısı) boğulabilir; **maximum instance count** ile sınırla
+- **Premium**
+  - Kazanç: Sıfır soğuk başlangıç, slot, VNet
+  - Bedel: En az 1 instance sürekli ücretli
+- **Binding'ler**
+  - Kazanç: Az kod
+  - Bedel: Esneklik azalır (özel retry, toplu işlem, bağlantı havuzu denetimi için SDK)
+- **ASP.NET Core entegrasyonu**
+  - Kazanç: Tanıdık `HttpRequest`/`IActionResult`
+  - Bedel: Biraz daha büyük ayak izi
+- **`host.json` `retry`**
+  - Kazanç: Geçici hatalarda basit tekrar
+  - Bedel: Service Bus gibi kendi teslim sayacı olan kaynaklarda **çift retry**; idempotency şart
 
 Functions **at-least-once** çalışır: aynı mesaj iki kez işlenebilir → function'ı **idempotent** yaz.
 

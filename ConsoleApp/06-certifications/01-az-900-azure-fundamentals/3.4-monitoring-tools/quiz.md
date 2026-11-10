@@ -116,11 +116,9 @@ Bir VM'in CPU kullanımı 10 dakika boyunca %85'in üzerinde kalırsa operasyon 
 
 #### Soru 9: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure Monitor, Azure dışındaki (on-prem, diğer bulutlar) kaynaklardan da veri toplayabilir. | ☐ | ☐ |
-| b) Application Insights, Azure Monitor'un bir özelliğidir. | ☐ | ☐ |
-| c) Azure Monitor alerts yalnızca e-posta gönderebilir. | ☐ | ☐ |
+- a) Azure Monitor, Azure dışındaki (on-prem, diğer bulutlar) kaynaklardan da veri toplayabilir. — Evet: ☐ · Hayır: ☐
+- **b) Application Insights, Azure Monitor'un bir özelliğidir.** — Evet: ☐ · Hayır: ☐
+- **c) Azure Monitor alerts yalnızca e-posta gönderebilir.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -181,11 +179,9 @@ Kullanıcılar uygulamanın yavaşladığını bildiriyor. Ekip önce **sorunun 
 
 #### Soru 14: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure Status sayfası, yalnızca oturum açmış kullanıcıların kendi kaynaklarını gösterir. | ☐ | ☐ |
-| b) Resource Health, tek bir kaynağın geçmiş sağlık durumunu da gösterir. | ☐ | ☐ |
-| c) Service Health, planlı bakım bildirimlerini içerir. | ☐ | ☐ |
+- a) Azure Status sayfası, yalnızca oturum açmış kullanıcıların kendi kaynaklarını gösterir. — Evet: ☐ · Hayır: ☐
+- b) Resource Health, tek bir kaynağın geçmiş sağlık durumunu da gösterir. — Evet: ☐ · Hayır: ☐
+- **c) Service Health, planlı bakım bildirimlerini içerir.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

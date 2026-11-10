@@ -38,11 +38,9 @@ Bir yönetici, üretim resource group'undaki kaynakların **kazara silinmesini**
 
 #### Soru 3: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Owner rolüne sahip bir kullanıcı, CanNotDelete lock'ı olan bir kaynağı lock'ı kaldırmadan silebilir. | ☐ | ☐ |
-| b) Bir resource group'a uygulanan lock, içindeki kaynaklara miras kalır. | ☐ | ☐ |
-| c) ReadOnly lock, kaynağın okunmasına izin verir ama değiştirilmesini ve silinmesini engeller. | ☐ | ☐ |
+- a) Owner rolüne sahip bir kullanıcı, CanNotDelete lock'ı olan bir kaynağı lock'ı kaldırmadan silebilir. — Evet: ☐ · Hayır: ☐
+- b) Bir resource group'a uygulanan lock, içindeki kaynaklara miras kalır. — Evet: ☐ · Hayır: ☐
+- c) ReadOnly lock, kaynağın okunmasına izin verir ama değiştirilmesini ve silinmesini engeller. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -116,11 +114,9 @@ Bir şirket, tüm subscription'larındaki (şu an 40, her ay yenileri ekleniyor)
 
 #### Soru 9: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Deny etkili bir politika atandığında, kurala aykırı **mevcut** kaynaklar otomatik olarak silinir. | ☐ | ☐ |
-| b) Azure Policy, mevcut kaynakların uyumluluk durumunu bir panoda gösterir. | ☐ | ☐ |
-| c) Azure Policy'yi management group, subscription veya resource group kapsamına atayabilirsiniz. | ☐ | ☐ |
+- a) Deny etkili bir politika atandığında, kurala aykırı **mevcut** kaynaklar otomatik olarak silinir. — Evet: ☐ · Hayır: ☐
+- b) Azure Policy, mevcut kaynakların uyumluluk durumunu bir panoda gösterir. — Evet: ☐ · Hayır: ☐
+- c) Azure Policy'yi management group, subscription veya resource group kapsamına atayabilirsiniz. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -207,11 +203,9 @@ Bir ekip, her gece otomatik olarak bir test resource group'unu silip yeniden olu
 
 #### Soru 16: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Resource lock'lar subscription, resource group veya tek kaynak düzeyinde uygulanabilir. | ☐ | ☐ |
-| b) CanNotDelete lock'lı bir storage account'taki blob'lar da silinemez. | ☐ | ☐ |
-| c) Bir lock'ı kaldırmak için de uygun yetki (ör. Owner veya User Access Administrator) gerekir. | ☐ | ☐ |
+- a) Resource lock'lar subscription, resource group veya tek kaynak düzeyinde uygulanabilir. — Evet: ☐ · Hayır: ☐
+- b) CanNotDelete lock'lı bir storage account'taki blob'lar da silinemez. — Evet: ☐ · Hayır: ☐
+- c) Bir lock'ı kaldırmak için de uygun yetki (ör. Owner veya User Access Administrator) gerekir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

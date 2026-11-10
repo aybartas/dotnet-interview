@@ -38,11 +38,9 @@ Bir şirket, **LDAP ve Kerberos** kullanan ve sunucularının **domain'e katılm
 
 #### Soru 3: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Microsoft Entra ID, OAuth 2.0, OpenID Connect ve SAML gibi modern protokolleri kullanır. | ☐ | ☐ |
-| b) Microsoft Entra ID, sanal makinelerin geleneksel domain join işlemini doğrudan sağlar. | ☐ | ☐ |
-| c) Kurum içi Active Directory kullanıcıları Microsoft Entra ID'ye senkronize edilebilir. | ☐ | ☐ |
+- a) Microsoft Entra ID, OAuth 2.0, OpenID Connect ve SAML gibi modern protokolleri kullanır. — Evet: ☐ · Hayır: ☐
+- b) Microsoft Entra ID, sanal makinelerin geleneksel domain join işlemini doğrudan sağlar. — Evet: ☐ · Hayır: ☐
+- c) Kurum içi Active Directory kullanıcıları Microsoft Entra ID'ye senkronize edilebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -144,11 +142,9 @@ Microsoft'un passwordless kimlik doğrulama seçenekleri hangileridir?
 
 #### Soru 11: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Passwordless kimlik doğrulama, şifreye göre phishing saldırılarına daha dayanıklıdır. | ☐ | ☐ |
-| b) Windows Hello for Business, kullanıcının cihazına bağlı biyometri veya PIN kullanır. | ☐ | ☐ |
-| c) Passwordless yöntemler, kullanıcı deneyimini zorlaştırdığı için yalnızca yöneticilere önerilir. | ☐ | ☐ |
+- a) Passwordless kimlik doğrulama, şifreye göre phishing saldırılarına daha dayanıklıdır. — Evet: ☐ · Hayır: ☐
+- b) Windows Hello for Business, kullanıcının cihazına bağlı biyometri veya PIN kullanır. — Evet: ☐ · Hayır: ☐
+- c) Passwordless yöntemler, kullanıcı deneyimini zorlaştırdığı için yalnızca yöneticilere önerilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -209,11 +205,9 @@ Bir şirket, kullanıcıların **ofis ağından** girişte yalnızca şifre kull
 
 #### Soru 16: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Conditional Access, cihazın kurumsal politikalara uyumlu olup olmadığını bir sinyal olarak kullanabilir. | ☐ | ☐ |
-| b) Security defaults, tüm kullanıcılara MFA kaydı yaptırır ve eski kimlik doğrulama protokollerini engeller. | ☐ | ☐ |
-| c) Conditional Access, bir kullanıcının bir VM'i yeniden başlatma iznini belirler. | ☐ | ☐ |
+- a) Conditional Access, cihazın kurumsal politikalara uyumlu olup olmadığını bir sinyal olarak kullanabilir. — Evet: ☐ · Hayır: ☐
+- b) Security defaults, tüm kullanıcılara MFA kaydı yaptırır ve eski kimlik doğrulama protokollerini engeller. — Evet: ☐ · Hayır: ☐
+- c) Conditional Access, bir kullanıcının bir VM'i yeniden başlatma iznini belirler. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -248,11 +242,9 @@ Bir geliştirici ekibi bir resource group'ta kaynak oluşturup silebilmeli, anca
 
 #### Soru 19: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Bir subscription kapsamında atanan rol, o subscription'daki tüm resource group'lara ve kaynaklara miras kalır. | ☐ | ☐ |
-| b) Bir rol ataması; bir güvenlik sorumlusu, bir rol tanımı ve bir kapsamdan oluşur. | ☐ | ☐ |
-| c) Azure RBAC rolleri yalnızca tek tek kullanıcılara atanabilir, gruplara atanamaz. | ☐ | ☐ |
+- a) Bir subscription kapsamında atanan rol, o subscription'daki tüm resource group'lara ve kaynaklara miras kalır. — Evet: ☐ · Hayır: ☐
+- b) Bir rol ataması; bir güvenlik sorumlusu, bir rol tanımı ve bir kapsamdan oluşur. — Evet: ☐ · Hayır: ☐
+- c) Azure RBAC rolleri yalnızca tek tek kullanıcılara atanabilir, gruplara atanamaz. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

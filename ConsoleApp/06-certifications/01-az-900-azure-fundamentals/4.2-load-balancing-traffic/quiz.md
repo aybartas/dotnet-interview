@@ -176,11 +176,9 @@ Aşağıdaki mimaride bir isteğin izleyeceği yolu **internetten başlayarak** 
 
 #### Soru 14: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Availability zone'lar, yük dengeleyicinin yerini alır. | ☐ | ☐ |
-| b) Zone-redundant bir Load Balancer frontend'i, bir zone arızasında hizmetin sürmesine yardımcı olur. | ☐ | ☐ |
-| c) Region arızasına karşı dayanıklılık için bölgesel yük dengeleyici tek başına yeterlidir. | ☐ | ☐ |
+- **a) Availability zone'lar, yük dengeleyicinin yerini alır.** — Evet: ☐ · Hayır: ☐
+- b) Zone-redundant bir Load Balancer frontend'i, bir zone arızasında hizmetin sürmesine yardımcı olur. — Evet: ☐ · Hayır: ☐
+- c) Region arızasına karşı dayanıklılık için bölgesel yük dengeleyici tek başına yeterlidir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

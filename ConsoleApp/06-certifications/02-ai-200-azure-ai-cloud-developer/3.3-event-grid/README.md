@@ -70,11 +70,15 @@ Laboratuvar: custom topic'e **`amount > 1000`** siparişleri filtreleyip Functio
 
 `EventGridPublisherClient` (paket `Azure.Messaging.EventGrid`) custom topic endpoint'ine (`https://<topic>.<region>-1.eventgrid.azure.net/api/events`) yazar. Kimlik doğrulama yolları:
 
-| Yol | Kullanım | Not |
-|---|---|---|
-| **Entra ID** (`DefaultAzureCredential`) | **Önerilen** | Kimliğe **EventGrid Data Sender** rolü |
-| **Access key** (`AzureKeyCredential`) | Hızlı deneme | `az eventgrid topic key list`; secret yönetimi gerekir |
-| **SAS token** | Kısa ömürlü, yetkisi daraltılmış paylaşım | `aeg-sas-token` header'ı |
+- **Entra ID** (`DefaultAzureCredential`)
+  - Kullanım: **Önerilen**
+  - Not: Kimliğe **EventGrid Data Sender** rolü
+- **Access key** (`AzureKeyCredential`)
+  - Kullanım: Hızlı deneme
+  - Not: `az eventgrid topic key list`; secret yönetimi gerekir
+- **SAS token**
+  - Kullanım: Kısa ömürlü, yetkisi daraltılmış paylaşım
+  - Not: `aeg-sas-token` header'ı
 
 ```csharp
 using Azure.Identity;
@@ -98,11 +102,15 @@ await client.SendEventAsync(evt);            // SendEventsAsync(IEnumerable<Clou
 
 Filtreler **event subscription**'a yazılır; uymayan olay o subscription'a **hiç teslim edilmez** (diğer subscription'ları etkilemez).
 
-| Filtre | Ne yapar? | Ne zaman? |
-|---|---|---|
-| **Event type** (`--included-event-types`) | Yalnızca listelenen `eventType`/`type` değerleri | Varsayılan hepsi (`All`) |
-| **Subject begins with / ends with** | `subject` alanında **önek/sonek** eşleşmesi (varsayılan **büyük/küçük harf duyarsız**; `--subject-case-sensitive`) | Yol benzeri hiyerarşi: `/blobServices/default/containers/images/`, `.jpg` uzantısı |
-| **Advanced filter** | `data.*` dahil herhangi bir alanda **operatör** tabanlı koşul | Payload'a göre yönlendirme (`data.amount`, `data.region`) |
+- **Event type** (`--included-event-types`)
+  - Ne yapar?: Yalnızca listelenen `eventType`/`type` değerleri
+  - Ne zaman?: Varsayılan hepsi (`All`)
+- **Subject begins with / ends with**
+  - Ne yapar?: `subject` alanında **önek/sonek** eşleşmesi (varsayılan **büyük/küçük harf duyarsız**; `--subject-case-sensitive`)
+  - Ne zaman?: Yol benzeri hiyerarşi: `/blobServices/default/containers/images/`, `.jpg` uzantısı
+- **Advanced filter**
+  - Ne yapar?: `data.*` dahil herhangi bir alanda **operatör** tabanlı koşul
+  - Ne zaman?: Payload'a göre yönlendirme (`data.amount`, `data.region`)
 
 **Advanced filter operatörleri:** sayı: `NumberIn`, `NumberNotIn`, `NumberLessThan`, `NumberGreaterThan`, `…OrEquals`, `NumberInRange`, `NumberNotInRange` · metin: `StringIn`, `StringNotIn`, `StringContains`, `StringBeginsWith`, `StringEndsWith` (+ `Not…`) · `BoolEquals` · `IsNullOrUndefined`, `IsNotNull`.
 
@@ -131,14 +139,27 @@ Event Grid **at-least-once** teslim eder: aynı olay **birden fazla** gelebilir 
 
 #### 3.5 Event Grid vs Service Bus vs Event Hubs ⭐
 
-| | **Event Grid** | **Service Bus** | **Event Hubs** |
-|---|---|---|---|
-| Mesajın doğası | **Olay** (oldu bilgisi) | **Mesaj/iş komutu** (yapılması gereken iş) | **Telemetri akışı** |
-| Teslim | **Push** (klasik: handler'a it; namespace: push + pull) | **Pull** (alıcı çeker, lock/settle) | Pull (offset ile okuma) |
-| Kalıcılık / işleme garantisi | Retry + (isteğe bağlı) dead-letter; **kuyruk değildir** | **Kuyruk**, PeekLock, DLQ, TTL | Saklama süresi boyunca log |
-| Sıralama, session, transaction | Yok | **Var** | Partition içinde sıra |
-| Kimler tüketir? | Çok sayıda bağımsız abone (fan-out) | Queue: biri; topic: abone başına kopya | Consumer group'lar |
-| Tipik örnek | "Blob yüklendi", "Order.Placed" bildirimi | "Bu siparişi işle", ödeme komutu | Log/IoT telemetri, saniyede milyonlarca olay |
+- **Mesajın doğası**
+  - Event Grid: **Olay** (oldu bilgisi)
+  - Service Bus: **Mesaj/iş komutu** (yapılması gereken iş)
+  - Event Hubs: **Telemetri akışı**
+- **Teslim**
+  - Event Grid: **Push** (klasik: handler'a it; namespace: push + pull)
+  - Service Bus: **Pull** (alıcı çeker, lock/settle)
+  - Event Hubs: Pull (offset ile okuma)
+- **Kalıcılık / işleme garantisi**
+  - Event Grid: Retry + (isteğe bağlı) dead-letter; **kuyruk değildir**
+  - Service Bus: **Kuyruk**, PeekLock, DLQ, TTL
+  - Event Hubs: Saklama süresi boyunca log
+- **Sıralama, session, transaction** — Event Grid: Yok · Service Bus: **Var** · Event Hubs: Partition içinde sıra
+- **Kimler tüketir?**
+  - Event Grid: Çok sayıda bağımsız abone (fan-out)
+  - Service Bus: Queue: biri; topic: abone başına kopya
+  - Event Hubs: Consumer group'lar
+- **Tipik örnek**
+  - Event Grid: "Blob yüklendi", "Order.Placed" bildirimi
+  - Service Bus: "Bu siparişi işle", ödeme komutu
+  - Event Hubs: Log/IoT telemetri, saniyede milyonlarca olay
 
 **Birlikte kullanım:** Event Grid → **Service Bus queue** handler'ı ("olay geldi → işi dayanıklı kuyruğa koy → tüketici kendi hızında işlesin"). Bu, "Event Grid'i kuyruk gibi kullanma" hatasının doğru çözümüdür.
 
@@ -167,12 +188,16 @@ Function bir **trigger**'dır (→ C2.8); Event Grid subscription'ı Function'a 
 
 #### 3.7 System topic vs custom topic
 
-| | **System topic** | **Custom topic** |
-|---|---|---|
-| Olayı kim üretir? | Azure servisi (Storage, Resource Group, Key Vault, App Configuration…) | **Senin uygulaman** (`EventGridPublisherClient` ile) |
-| Yayın yapılır mı? | Hayır, servis kendisi yayınlar | Evet; endpoint + kimlik doğrulama |
-| Olay türleri | Servise göre sabit (`Microsoft.Storage.BlobCreated`) | Sana ait (`Contoso.Order.Placed`) |
-| Örnek | "Blob oluştu → Function" | "Sipariş verildi → muhasebe" |
+- **Olayı kim üretir?**
+  - System topic: Azure servisi (Storage, Resource Group, Key Vault, App Configuration…)
+  - Custom topic: **Senin uygulaman** (`EventGridPublisherClient` ile)
+- **Yayın yapılır mı?**
+  - System topic: Hayır, servis kendisi yayınlar
+  - Custom topic: Evet; endpoint + kimlik doğrulama
+- **Olay türleri**
+  - System topic: Servise göre sabit (`Microsoft.Storage.BlobCreated`)
+  - Custom topic: Sana ait (`Contoso.Order.Placed`)
+- **Örnek** — System topic: "Blob oluştu → Function" · Custom topic: "Sipariş verildi → muhasebe"
 
 #### 3.8 Lab — custom event, advanced filter, retry ve dead-letter
 
@@ -282,14 +307,24 @@ az group delete --name $RG --yes --no-wait
 
 Bir e-ticaret platformu:
 
-| Gereksinim | Karar | Neden |
-|---|---|---|
-| Ürün görseli blob'a yüklenince thumbnail üretilsin | **System topic** (Storage) + `subject-ends-with .jpg` + Function | Polling yok; yalnızca jpg tetikler |
-| `Order.Placed` olayını muhasebe, stok ve pazarlama bağımsız dinlesin | **Custom topic** + her biri için ayrı subscription | Yayıncı dinleyicileri bilmez; yeni servis = yeni subscription |
-| Yalnızca 1000 TL üstü siparişler fraud servisine | **Advanced filter** `data.amount NumberGreaterThan 1000` | Gereksiz çağrı ve maliyet yok |
-| Muhasebe sistemi geceleri kapalı, olaylar kaybolmamalı | Subscription **TTL 24 sa** + **dead-letter blob**; veya handler = **Service Bus queue** | Retry penceresi + kayıp olay incelemesi; kuyruk dayanıklılığı |
-| Ödeme komutu **tam bir kez**, sıralı işlenmeli | **Service Bus** (session + DLQ), Event Grid değil | Event Grid olay bildirir; iş garantisi vermez |
-| Aynı olay iki kez gelebilir | Handler'da `cloudEvent.Id` ile **idempotency** | At-least-once |
+- **Ürün görseli blob'a yüklenince thumbnail üretilsin**
+  - Karar: **System topic** (Storage) + `subject-ends-with .jpg` + Function
+  - Neden: Polling yok; yalnızca jpg tetikler
+- **`Order.Placed` olayını muhasebe, stok ve pazarlama bağımsız dinlesin**
+  - Karar: **Custom topic** + her biri için ayrı subscription
+  - Neden: Yayıncı dinleyicileri bilmez; yeni servis = yeni subscription
+- **Yalnızca 1000 TL üstü siparişler fraud servisine**
+  - Karar: **Advanced filter** `data.amount NumberGreaterThan 1000`
+  - Neden: Gereksiz çağrı ve maliyet yok
+- **Muhasebe sistemi geceleri kapalı, olaylar kaybolmamalı**
+  - Karar: Subscription **TTL 24 sa** + **dead-letter blob**; veya handler = **Service Bus queue**
+  - Neden: Retry penceresi + kayıp olay incelemesi; kuyruk dayanıklılığı
+- Ödeme komutu **tam bir kez**, sıralı işlenmeli
+  - Karar: **Service Bus** (session + DLQ), Event Grid değil
+  - Neden: Event Grid olay bildirir; iş garantisi vermez
+- **Aynı olay iki kez gelebilir**
+  - Karar: Handler'da `cloudEvent.Id` ile **idempotency**
+  - Neden: At-least-once
 
 ---
 
@@ -343,15 +378,23 @@ Bir e-ticaret platformu:
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Sunucu tarafı filtreleme | Gereksiz handler çağrısı/maliyeti yok | Filtre kotası; karmaşık mantık handler'da kalır |
-| Retry/TTL uzun | Geçici kesintiyi tolere eder | Eski olay geç teslim edilebilir; sıra bozulur |
-| Retry/TTL kısa + dead-letter | Hızlı hata görünürlüğü | Daha çok elle müdahale |
-| Batch teslim | Daha az HTTP çağrısı | Handler toplu işleme + kısmi hata yönetimi gerektirir |
-| Handler = Function | Sıfır altyapı, otomatik doğrulama | Function hata/zaman aşımı → retry maliyeti |
-| Handler = Service Bus queue | Dayanıklılık, sıra/session, DLQ | Ek servis maliyeti ve gecikmesi |
-| Namespace topic (pull) | Tüketici hızını kendisi belirler | Farklı model/varsayılanlar; klasik handler seti yok |
+- **Sunucu tarafı filtreleme**
+  - Kazanç: Gereksiz handler çağrısı/maliyeti yok
+  - Bedel: Filtre kotası; karmaşık mantık handler'da kalır
+- **Retry/TTL uzun**
+  - Kazanç: Geçici kesintiyi tolere eder
+  - Bedel: Eski olay geç teslim edilebilir; sıra bozulur
+- **Retry/TTL kısa + dead-letter** — Kazanç: Hızlı hata görünürlüğü · Bedel: Daha çok elle müdahale
+- **Batch teslim**
+  - Kazanç: Daha az HTTP çağrısı
+  - Bedel: Handler toplu işleme + kısmi hata yönetimi gerektirir
+- **Handler = Function**
+  - Kazanç: Sıfır altyapı, otomatik doğrulama
+  - Bedel: Function hata/zaman aşımı → retry maliyeti
+- **Handler = Service Bus queue** — Kazanç: Dayanıklılık, sıra/session, DLQ · Bedel: Ek servis maliyeti ve gecikmesi
+- **Namespace topic (pull)**
+  - Kazanç: Tüketici hızını kendisi belirler
+  - Bedel: Farklı model/varsayılanlar; klasik handler seti yok
 
 ---
 

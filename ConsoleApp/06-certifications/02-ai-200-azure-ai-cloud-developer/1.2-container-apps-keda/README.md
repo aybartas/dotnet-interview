@@ -43,10 +43,12 @@ Container Apps environment  (ortak ağ + log sınırı, Log Analytics)
 - **Environment**, uygulamaların aynı sanal ağ ve log hedefini paylaştığı sınırdır; uygulamalar aynı environment içinde **iç DNS** ile birbirine ulaşır. Varsayılan olarak tüm uygulamaların konsol/sistem logları ortak bir **Log Analytics** çalışma alanına gider.
 - **Environment türleri:**
 
-| Tür | Plan | Not |
-|---|---|---|
-| **Workload profiles** (yeni ortamlarda varsayılan) | **Consumption** (tüketim bazlı) **ve Dedicated** (ayrılmış VM profilleri, GPU dahil) | UDR, daha büyük kaynak boyutları; Dedicated'da ortam için sabit yönetim ücreti vardır |
-| **Consumption-only** (legacy) | Yalnızca Consumption | Uygulama başına sınırlı CPU/bellek tavanı (yaklaşık 4 vCPU / 8 GiB); ortamın kendisi ücretsiz, sadece uygulamalar faturalanır |
+- **Workload profiles** (yeni ortamlarda varsayılan)
+  - Plan: **Consumption** (tüketim bazlı) **ve Dedicated** (ayrılmış VM profilleri, GPU dahil)
+  - Not: UDR, daha büyük kaynak boyutları; Dedicated'da ortam için sabit yönetim ücreti vardır
+- **Consumption-only** (legacy)
+  - Plan: Yalnızca Consumption
+  - Not: Uygulama başına sınırlı CPU/bellek tavanı (yaklaşık 4 vCPU / 8 GiB); ortamın kendisi ücretsiz, sadece uygulamalar faturalanır
 
 - Yeni ortam oluştururken workload profiles kullan; sınavda "GPU / büyük kaynak / dedicated" geçiyorsa **Dedicated workload profile** cevaptır.
 - **Container Apps Jobs** *(bağlam)*: tetikleyici `Schedule` (cron), `Event` (KEDA scaler'ı ile, kuyruğa mesaj gelince) veya `Manual`. Sürekli çalışan servis değil, bitip kapanan iş içindir.
@@ -54,13 +56,21 @@ Container Apps environment  (ortak ağ + log sınırı, Log Analytics)
 
 #### 3.2 Uygulama yapılandırması
 
-| Alan | Ne? | Not |
-|---|---|---|
-| **Ingress** | `external` (internetten) veya `internal` (yalnızca environment/VNet); **target port** = container'ın dinlediği port | Port uyuşmazlığı = 502/timeout; ingress yoksa uygulama yalnızca dahili çağrı/worker'dır |
-| **Env var** | Düz değer veya `secretref:` ile secret'a referans | Env var değişikliği **yeni revision** üretir |
-| **Secret** | Uygulama düzeyinde saklanan değerler; **Key Vault referansı** + managed identity ile bağlanabilir (→ [C2.11](../4.1-managed-identity-key-vault/README.md)) | Secret değişikliği **yeni revision oluşturmaz**; çalışan revision'ın yeni değeri alması için restart gerekir |
-| **Registry kimliği** | `--registry-server` + `--registry-identity` (managed identity) → `AcrPull` | Admin parolası yerine **kimlik tabanlı çekme** |
-| **Managed identity** | System- veya user-assigned | Registry, Service Bus, Key Vault, KEDA kimlik doğrulaması için |
+- **Ingress**
+  - Ne?: `external` (internetten) veya `internal` (yalnızca environment/VNet); **target port** = container'ın dinlediği port
+  - Not: Port uyuşmazlığı = 502/timeout; ingress yoksa uygulama yalnızca dahili çağrı/worker'dır
+- **Env var**
+  - Ne?: Düz değer veya `secretref:` ile secret'a referans
+  - Not: Env var değişikliği **yeni revision** üretir
+- **Secret**
+  - Ne?: Uygulama düzeyinde saklanan değerler; **Key Vault referansı** + managed identity ile bağlanabilir (→ [C2.11](../4.1-managed-identity-key-vault/README.md))
+  - Not: Secret değişikliği **yeni revision oluşturmaz**; çalışan revision'ın yeni değeri alması için restart gerekir
+- **Registry kimliği**
+  - Ne?: `--registry-server` + `--registry-identity` (managed identity) → `AcrPull`
+  - Not: Admin parolası yerine **kimlik tabanlı çekme**
+- **Managed identity**
+  - Ne?: System- veya user-assigned
+  - Not: Registry, Service Bus, Key Vault, KEDA kimlik doğrulaması için
 
 > **Registry kimliği ve ilk dağıtım:** system-assigned identity uygulama **oluşturulduktan sonra** doğar; ama image çekmek için identity daha ilk revision'da gerekir. Bu yüzden pratikte **user-assigned identity** (önceden oluşturulup `AcrPull` verilmiş) kullanılır.
 
@@ -68,20 +78,30 @@ Container Apps environment  (ortak ağ + log sınırı, Log Analytics)
 
 **Revision** = uygulamanın değişmez bir sürümüdür. Hangi değişikliğin yeni revision ürettiği sınavın klasik tuzağıdır:
 
-| Kapsam | Örnekler | Yeni revision? |
-|---|---|---|
-| **Revision-scope** (`properties.template`) | Image/tag, container ayarları (CPU, bellek, env var, probe), **scale kuralları**, revision suffix | **Evet** |
-| **Application-scope** (`properties.configuration`) | **Secret'lar**, ingress ayarları, **trafik bölme kuralları**, revision mode, registry bilgisi | **Hayır** — tüm revision'lara geçerli |
+- **Revision-scope** (`properties.template`)
+  - Örnekler: Image/tag, container ayarları (CPU, bellek, env var, probe), **scale kuralları**, revision suffix
+  - Yeni revision?: **Evet**
+- **Application-scope** (`properties.configuration`)
+  - Örnekler: **Secret'lar**, ingress ayarları, **trafik bölme kuralları**, revision mode, registry bilgisi
+  - Yeni revision?: **Hayır** — tüm revision'lara geçerli
 
 **Revision mode** ⭐:
 
-| | **Single** (varsayılan) | **Multiple** |
-|---|---|---|
-| Aktif revision | Tek; yenisi **hazır olunca** (provisioning, replica, startup/readiness probe) trafik ona geçer, eskisi kapatılır | **Birden çok** aktif revision |
-| Trafik | %100 etkin revision'a | **Yüzdelerle bölünür** (toplam **%100** olmalı) |
-| Kullanım | Sıfır kesintili rolling güncelleme | **Canary / blue-green**, A/B, revision label'ları, geri alma |
-| Dikkat | Trafik bölme yok | Aktif revision'lar **kaynak/ücret** tüketir; kullanılmayanları **deactivate** et |
-| Olay güdümlü (HTTP olmayan) worker | **Single önerilir** | Birden çok aktif revision kuyruğu paralel tüketir |
+- **Aktif revision**
+  - Single (varsayılan): Tek; yenisi **hazır olunca** (provisioning, replica, startup/readiness probe) trafik ona geçer, eskisi kapatılır
+  - Multiple: **Birden çok** aktif revision
+- **Trafik**
+  - Single (varsayılan): %100 etkin revision'a
+  - Multiple: **Yüzdelerle bölünür** (toplam **%100** olmalı)
+- **Kullanım**
+  - Single (varsayılan): Sıfır kesintili rolling güncelleme
+  - Multiple: **Canary / blue-green**, A/B, revision label'ları, geri alma
+- **Dikkat**
+  - Single (varsayılan): Trafik bölme yok
+  - Multiple: Aktif revision'lar **kaynak/ücret** tüketir; kullanılmayanları **deactivate** et
+- **Olay güdümlü (HTTP olmayan) worker**
+  - Single (varsayılan): **Single önerilir**
+  - Multiple: Birden çok aktif revision kuyruğu paralel tüketir
 
 - **Revision label:** bir revision'a kalıcı bir isim/URL verir (`canary`, `stable`); label'ı başka bir revision'a **taşıyarak** trafiği değiştirirsin. Bir label aynı anda tek revision'dadır. Trafik kuralı `--revision-weight` (isimle) veya `--label-weight` (label ile) verilir.
 - Revision adı: `<app>--<suffix>` (suffix verilmezse rastgele).
@@ -98,14 +118,20 @@ Multiple mode:  v1 (%90) + v2 (%10) ──metrikler iyi──▶ v2 (%100) ─�
 - Her container app'in `min-replicas` / `max-replicas` değeri vardır. **`min-replicas 0`** = **scale-to-zero** (hiç replica yok, maliyet yok; ilk istek/mesajda **soğuk başlangıç** gecikmesi). Kural tanımlamazsan uygulama varsayılan olarak HTTP eşzamanlılığına göre ölçeklenir (min 0, max 10, replica başına ~10 eşzamanlı istek — güncel varsayılanları doğrula).
 - Birden çok kural varsa replica sayısı, **en çok replica isteyen kurala** göre belirlenir.
 
-| Kural türü | Neye bakar? | Tipik kullanım | Sıfıra inebilir mi? |
-|---|---|---|---|
-| **HTTP** | Replica başına **eşzamanlı istek** (`concurrentRequests`) | Web API | ✔ (varsayılan) |
-| **TCP** | Eşzamanlı TCP bağlantı | TCP servisleri | ✔ |
-| **Azure Service Bus** (KEDA `azure-servicebus`) | **Kuyruk/abonelik mesaj sayısı** (`messageCount`) | Sipariş worker'ı | ✔ |
-| **Azure Storage Queue** (`azure-queue`) | `queueLength` | Basit kuyruk worker'ı | ✔ |
-| **Custom** | Herhangi bir KEDA scaler (Kafka, Event Hubs, Cosmos…) | Özel kaynaklar | ✔ |
-| **CPU / bellek** | Kullanım yüzdesi | Hesaplama yoğun iş | ✘ **Sıfıra inemez** (en az 1 replica) |
+- **HTTP**
+  - Neye bakar?: Replica başına **eşzamanlı istek** (`concurrentRequests`)
+  - Tipik kullanım: Web API · Sıfıra inebilir mi?: ✔ (varsayılan)
+- **TCP** — Neye bakar?: Eşzamanlı TCP bağlantı · Tipik kullanım: TCP servisleri · Sıfıra inebilir mi?: ✔
+- **Azure Service Bus** (KEDA `azure-servicebus`)
+  - Neye bakar?: **Kuyruk/abonelik mesaj sayısı** (`messageCount`)
+  - Tipik kullanım: Sipariş worker'ı · Sıfıra inebilir mi?: ✔
+- **Azure Storage Queue** (`azure-queue`) — Neye bakar?: `queueLength` · Tipik kullanım: Basit kuyruk worker'ı · Sıfıra inebilir mi?: ✔
+- **Custom**
+  - Neye bakar?: Herhangi bir KEDA scaler (Kafka, Event Hubs, Cosmos…)
+  - Tipik kullanım: Özel kaynaklar · Sıfıra inebilir mi?: ✔
+- **CPU / bellek**
+  - Neye bakar?: Kullanım yüzdesi · Tipik kullanım: Hesaplama yoğun iş
+  - Sıfıra inebilir mi?: ✘ **Sıfıra inemez** (en az 1 replica)
 
 - **Service Bus kuralı:** `messageCount`, **replica başına hedef mesaj sayısıdır**: 500 mesaj, `messageCount=20` → ~25 replica istenir (max'ı aşamaz). Topic aboneliği için `queueName` yerine `topicName` + `subscriptionName`.
 - **Kimlik doğrulama:** (1) **secret** (`--scale-rule-auth connection=<secret-adı>`) veya (2) **managed identity** (kural şemasında `identity: system` ya da user-assigned identity'nin resource ID'si; kimliğe hedefte *Azure Service Bus Data Receiver* gibi rol gerekir). Üretimde secret'sız kimlik tercih edilir.
@@ -272,16 +298,26 @@ Container Apps / AKS / App Service karşılaştırması ve AKS teşhisi → [C2.
 
 Bir lojistik şirketi sipariş API'si ve gece yoğunlaşan bir sipariş-işleme worker'ı çalıştırıyor:
 
-| İhtiyaç | Karar | Neden |
-|---|---|---|
-| Yeni sürüm riskli; önce küçük bir kesime | **Multiple revision mode** + `%10` canary | Hata artarsa trafik tek komutla v1'e döner |
-| Canary'yi QA'nın doğrudan test etmesi | Revision **label**'ı (`canary`) | Kalıcı URL; trafik almadan test edilir |
-| Worker kuyruk dolunca hızla büyümeli, boşken sıfır olmalı | **Service Bus KEDA kuralı**, min 0 / max 10 | Mesaj sayısına göre ölçek, boşta maliyet yok |
-| API'nin ilk istek gecikmesi kritik | `min-replicas 1` | Scale-to-zero soğuk başlangıcı yok |
-| Image'ın tag'i yanlışlıkla değişmesin | **Digest ile** dağıtım | Değişmez referans (→ C2.1) |
-| Parola yönetimi istenmiyor | Managed identity ile ACR çekme + Service Bus erişimi | Secret yok |
-| Gece 02:00 raporu | **Container Apps Job** (cron) | Sürekli çalışan servis gerekmiyor |
-| Takım Kubernetes bilgisi/yönetim kapasitesi sınırlı | ACA (AKS değil) | Küme operasyonu yok |
+- **Yeni sürüm riskli; önce küçük bir kesime**
+  - Karar: **Multiple revision mode** + `%10` canary
+  - Neden: Hata artarsa trafik tek komutla v1'e döner
+- **Canary'yi QA'nın doğrudan test etmesi**
+  - Karar: Revision **label**'ı (`canary`)
+  - Neden: Kalıcı URL; trafik almadan test edilir
+- **Worker kuyruk dolunca hızla büyümeli, boşken sıfır olmalı**
+  - Karar: **Service Bus KEDA kuralı**, min 0 / max 10
+  - Neden: Mesaj sayısına göre ölçek, boşta maliyet yok
+- **API'nin ilk istek gecikmesi kritik**
+  - Karar: `min-replicas 1`
+  - Neden: Scale-to-zero soğuk başlangıcı yok
+- **Image'ın tag'i yanlışlıkla değişmesin** — Karar: **Digest ile** dağıtım · Neden: Değişmez referans (→ C2.1)
+- **Parola yönetimi istenmiyor**
+  - Karar: Managed identity ile ACR çekme + Service Bus erişimi
+  - Neden: Secret yok
+- **Gece 02:00 raporu**
+  - Karar: **Container Apps Job** (cron)
+  - Neden: Sürekli çalışan servis gerekmiyor
+- **Takım Kubernetes bilgisi/yönetim kapasitesi sınırlı** — Karar: ACA (AKS değil) · Neden: Küme operasyonu yok
 
 ---
 
@@ -333,16 +369,28 @@ Bir lojistik şirketi sipariş API'si ve gece yoğunlaşan bir sipariş-işleme 
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Scale-to-zero (min 0) | Boşta maliyet ~0 | **Soğuk başlangıç** gecikmesi (image çekme + uygulama başlatma) |
-| `min-replicas ≥ 1` | Sıcak, düşük gecikme | Sürekli (azaltılmış "idle") ücret |
-| Düşük `messageCount` | Hızlı boşaltma | Çok replica, daha yüksek maliyet / downstream baskısı |
-| Yüksek `messageCount` | Az replica, ucuz | Mesajlar daha uzun bekler |
-| Multiple mode + canary | Güvenli yayın, anında geri alma | Eski/yeni revision birlikte çalışır (çift kaynak, şema uyumluluğu ister) |
-| Consumption plan | Kullandığın kadar öde | Üst kaynak sınırı; GPU/çok büyük iş yükü için Dedicated |
-| Dedicated workload profile | Öngörülebilir kaynak, GPU, büyük boyut | Sabit ortam/instance ücreti |
-| ACA vs AKS | Operasyon yükü yok, KEDA/Dapr hazır | Kubernetes API/CRD/özel ağ eklentileri erişimi sınırlı |
+- **Scale-to-zero (min 0)**
+  - Kazanç: Boşta maliyet ~0
+  - Bedel: **Soğuk başlangıç** gecikmesi (image çekme + uygulama başlatma)
+- **`min-replicas ≥ 1`**
+  - Kazanç: Sıcak, düşük gecikme
+  - Bedel: Sürekli (azaltılmış "idle") ücret
+- **Düşük `messageCount`**
+  - Kazanç: Hızlı boşaltma
+  - Bedel: Çok replica, daha yüksek maliyet / downstream baskısı
+- **Yüksek `messageCount`** — Kazanç: Az replica, ucuz · Bedel: Mesajlar daha uzun bekler
+- **Multiple mode + canary**
+  - Kazanç: Güvenli yayın, anında geri alma
+  - Bedel: Eski/yeni revision birlikte çalışır (çift kaynak, şema uyumluluğu ister)
+- **Consumption plan**
+  - Kazanç: Kullandığın kadar öde
+  - Bedel: Üst kaynak sınırı; GPU/çok büyük iş yükü için Dedicated
+- **Dedicated workload profile**
+  - Kazanç: Öngörülebilir kaynak, GPU, büyük boyut
+  - Bedel: Sabit ortam/instance ücreti
+- **ACA vs AKS**
+  - Kazanç: Operasyon yükü yok, KEDA/Dapr hazır
+  - Bedel: Kubernetes API/CRD/özel ağ eklentileri erişimi sınırlı
 
 ---
 

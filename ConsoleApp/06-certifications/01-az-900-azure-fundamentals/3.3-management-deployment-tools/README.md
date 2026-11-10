@@ -18,14 +18,24 @@ Azure'da bir kaynağı oluşturmanın, değiştirmenin ve silmenin birden çok y
  ARM/Bicep ────┘
 ```
 
-| Araç | Ne? | En iyi olduğu iş |
-|---|---|---|
-| **Azure portal** | Web tabanlı grafik konsol | Keşif, tek seferlik işler, dashboard'lar, öğrenme |
-| **Azure Cloud Shell** | Tarayıcıdan açılan, kimliği hazır Bash/PowerShell kabuğu | Kurulumsuz komut satırı, hızlı betikler |
-| **Azure CLI** (`az …`) | Platformlar arası komut satırı aracı | Komut satırı otomasyonu (Bash/PowerShell/cmd) |
-| **Azure PowerShell** (`*-Az*` cmdlet'leri) | PowerShell modülü | PowerShell ekosisteminde otomasyon |
-| **ARM template / Bicep** | Deklaratif **infrastructure as code** | Tekrarlanabilir, tutarlı ortam kurulumu |
-| **Azure Arc** | Azure dışındaki kaynakları ARM'a yansıtma | Hybrid ve multicloud yönetişimi |
+- **Azure portal**
+  - Ne?: Web tabanlı grafik konsol
+  - En iyi olduğu iş: Keşif, tek seferlik işler, dashboard'lar, öğrenme
+- **Azure Cloud Shell**
+  - Ne?: Tarayıcıdan açılan, kimliği hazır Bash/PowerShell kabuğu
+  - En iyi olduğu iş: Kurulumsuz komut satırı, hızlı betikler
+- **Azure CLI** (`az …`)
+  - Ne?: Platformlar arası komut satırı aracı
+  - En iyi olduğu iş: Komut satırı otomasyonu (Bash/PowerShell/cmd)
+- **Azure PowerShell** (`*-Az*` cmdlet'leri)
+  - Ne?: PowerShell modülü
+  - En iyi olduğu iş: PowerShell ekosisteminde otomasyon
+- **ARM template / Bicep**
+  - Ne?: Deklaratif **infrastructure as code**
+  - En iyi olduğu iş: Tekrarlanabilir, tutarlı ortam kurulumu
+- **Azure Arc**
+  - Ne?: Azure dışındaki kaynakları ARM'a yansıtma
+  - En iyi olduğu iş: Hybrid ve multicloud yönetişimi
 
 Konunun kodu yoktur; pratik, README'deki `az` CLI ve Bicep laboratuvarıdır (3.7).
 
@@ -57,13 +67,19 @@ Konunun kodu yoktur; pratik, README'deki `az` CLI ve Bicep laboratuvarıdır (3.
 
 **Azure CLI ↔ Azure PowerShell** — aynı yetenekler, farklı ekosistem; ikisi de Windows, Linux ve macOS'a yerel olarak da kurulabilir:
 
-| İş | Azure CLI | Azure PowerShell |
-|---|---|---|
-| Giriş | `az login` | `Connect-AzAccount` |
-| Resource group oluştur | `az group create --name rg-demo --location westeurope` | `New-AzResourceGroup -Name rg-demo -Location westeurope` |
-| Listele | `az group list -o table` | `Get-AzResourceGroup \| Format-Table` |
-| Şablon dağıt | `az deployment group create -g rg-demo --template-file main.bicep` | `New-AzResourceGroupDeployment -ResourceGroupName rg-demo -TemplateFile main.bicep` |
-| Sil | `az group delete --name rg-demo --yes` | `Remove-AzResourceGroup -Name rg-demo -Force` |
+- **Giriş** — Azure CLI: `az login` · Azure PowerShell: `Connect-AzAccount`
+- **Resource group oluştur**
+  - Azure CLI: `az group create --name rg-demo --location westeurope`
+  - Azure PowerShell: `New-AzResourceGroup -Name rg-demo -Location westeurope`
+- **Listele**
+  - Azure CLI: `az group list -o table`
+  - Azure PowerShell: `Get-AzResourceGroup | Format-Table`
+- **Şablon dağıt**
+  - Azure CLI: `az deployment group create -g rg-demo --template-file main.bicep`
+  - Azure PowerShell: `New-AzResourceGroupDeployment -ResourceGroupName rg-demo -TemplateFile main.bicep`
+- **Sil**
+  - Azure CLI: `az group delete --name rg-demo --yes`
+  - Azure PowerShell: `Remove-AzResourceGroup -Name rg-demo -Force`
 
 Çıktıyı süzmek: Azure CLI'da `--query` (JMESPath) ve `-o table|tsv|json`; PowerShell'de nesne boru hattı (`Where-Object`, `Select-Object`):
 
@@ -320,15 +336,25 @@ Bir SaaS şirketi her yeni kurumsal müşteri için ayrı bir ortam (VNet, App S
 
 ### 7. Performans & trade-off
 
-| Seçim | Kazanç | Bedel |
-|---|---|---|
-| Portal | Öğrenmesi en kolay, görsel | Tekrarlanamaz, ölçeklenmez, hata yapmaya açık |
-| CLI/PowerShell betiği (imperatif) | Hızlı otomasyon, esnek mantık | Durum takibi ve idempotentlik betiği yazana kalır |
-| ARM JSON | Tam yetenek, her araç destekler | Uzun, okunması/yazılması zor |
-| Bicep | Kısa, okunabilir, modüler, aynı yetenek | Ek araç (Bicep CLI — `az` içinde gelir); yalnızca Azure |
-| *(bağlam)* Terraform | Çok bulutlu, geniş ekosistem | Ayrı durum (state) dosyası yönetimi (→ S8.2) |
-| Azure Arc | Azure yönetişimi her yerde | Ajan kurulumu, bağlantı gereksinimi; bazı Arc özellikleri ücretli |
-| Cloud Shell | Kurulumsuz, kimlik hazır | Oturum zaman aşımı; ephemeral modda dosyalar kalıcı değil |
+- **Portal**
+  - Kazanç: Öğrenmesi en kolay, görsel
+  - Bedel: Tekrarlanamaz, ölçeklenmez, hata yapmaya açık
+- **CLI/PowerShell betiği (imperatif)**
+  - Kazanç: Hızlı otomasyon, esnek mantık
+  - Bedel: Durum takibi ve idempotentlik betiği yazana kalır
+- **ARM JSON** — Kazanç: Tam yetenek, her araç destekler · Bedel: Uzun, okunması/yazılması zor
+- **Bicep**
+  - Kazanç: Kısa, okunabilir, modüler, aynı yetenek
+  - Bedel: Ek araç (Bicep CLI — `az` içinde gelir); yalnızca Azure
+- ***(bağlam)* Terraform**
+  - Kazanç: Çok bulutlu, geniş ekosistem
+  - Bedel: Ayrı durum (state) dosyası yönetimi (→ S8.2)
+- **Azure Arc**
+  - Kazanç: Azure yönetişimi her yerde
+  - Bedel: Ajan kurulumu, bağlantı gereksinimi; bazı Arc özellikleri ücretli
+- **Cloud Shell**
+  - Kazanç: Kurulumsuz, kimlik hazır
+  - Bedel: Oturum zaman aşımı; ephemeral modda dosyalar kalıcı değil
 
 ---
 

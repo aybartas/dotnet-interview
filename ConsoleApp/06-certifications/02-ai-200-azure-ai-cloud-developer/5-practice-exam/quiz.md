@@ -194,11 +194,9 @@ requests
 #### Soru 12: `[B · C2.7]` Evet / Hayır
 Azure Managed Redis'te vector araması için bir cache hazırlanıyor.
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) RediSearch modülü, cache oluşturulduktan sonra da eklenebilir. | ☐ | ☐ |
-| b) RediSearch kullanılan cache'te eviction policy yalnızca `NoEviction` olabilir. | ☐ | ☐ |
-| c) TTL (expiration), bellek dolduğunda sunucunun hangi anahtarı sileceğine karar verdiği mekanizmadır. | ☐ | ☐ |
+- **a) RediSearch modülü, cache oluşturulduktan sonra da eklenebilir.** — Evet: ☐ · Hayır: ☐
+- b) RediSearch kullanılan cache'te eviction policy yalnızca `NoEviction` olabilir. — Evet: ☐ · Hayır: ☐
+- c) TTL (expiration), bellek dolduğunda sunucunun hangi anahtarı sileceğine karar verdiği mekanizmadır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -624,11 +622,9 @@ az eventgrid system-topic event-subscription create -n thumbs \
 #### Soru 33: `[A · C2.1]` Evet / Hayır
 ACR image yönetimi hakkında aşağıdaki ifadeleri değerlendirin.
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Aynı `todoapi:1.4.2` tag'i yeniden push edilirse (tag kilitli değilse) başka bir manifest'e işaret edebilir. | ☐ | ☐ |
-| b) Base image update trigger'ı, task bir kez çalışıp bağımlılıkları izlenmeye başlamadan önce de çalışır. | ☐ | ☐ |
-| c) ACR retention policy (Premium) tag'li image'ları da N gün sonra siler. | ☐ | ☐ |
+- a) Aynı `todoapi:1.4.2` tag'i yeniden push edilirse (tag kilitli değilse) başka bir manifest'e işaret edebilir. — Evet: ☐ · Hayır: ☐
+- b) Base image update trigger'ı, task bir kez çalışıp bağımlılıkları izlenmeye başlamadan önce de çalışır. — Evet: ☐ · Hayır: ☐
+- c) ACR retention policy (Premium) tag'li image'ları da N gün sonra siler. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -759,11 +755,9 @@ Yeni dağıtımdan sonra `todoapi` pod'ları `CrashLoopBackOff`'ta. Teşhis ve d
 #### Soru 42: `[B · C2.4]` Evet / Hayır
 Cosmos DB for NoSQL hakkında aşağıdaki ifadeleri değerlendirin.
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Transactional batch, **farklı partition key** değerlerine sahip item'ları tek bir atomik işlemde yazabilir. | ☐ | ☐ |
-| b) 429 (Request rate too large) aldığında .NET SDK varsayılan olarak isteği otomatik yeniden dener. | ☐ | ☐ |
-| c) İstek bazında consistency level, hesap varsayılanından **daha güçlü** bir seviyeye çıkarılabilir. | ☐ | ☐ |
+- a) Transactional batch, **farklı partition key** değerlerine sahip item'ları tek bir atomik işlemde yazabilir. — Evet: ☐ · Hayır: ☐
+- b) 429 (Request rate too large) aldığında .NET SDK varsayılan olarak isteği otomatik yeniden dener. — Evet: ☐ · Hayır: ☐
+- c) İstek bazında consistency level, hesap varsayılanından **daha güçlü** bir seviyeye çıkarılabilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -896,33 +890,67 @@ Bir ürün API'sinde cache-aside kullanılıyor. Fiyat güncellendikten sonra ku
 
 Her doğru cevabı ilgili satıra işaretle (çoklu seçim, evet/hayır, eşleştirme, sıralama ve çok boşluklu tamamlama sorularında **tümü** doğruysa 1 puan say). Vaka alt soruları ayrı ayrı puanlanır.
 
-| Alan | Ağırlık | Soru numaraları | Doğru | Yüzde |
-|---|---|---|---|---|
-| **A** — Develop containerized solutions (C2.1–C2.3) | %20-25 | 2, 6, 10, 13, 14, 16, 19, 23, 33, 37, 41 | ___ / 11 | |
-| **B** — AI solutions with data management services (C2.4–C2.7) | %30-35 | 1, 5, 9, 12, 18, 21, 24, 27, 29, 30, 31, 34, 38, 42, 45, 47, 50 | ___ / 17 | |
-| **C** — Connect to and consume Azure services (C2.8–C2.10) | %20-25 | 3, 7, 17, 22, 26, 32, 35, 39, 43, 46, 49 | ___ / 11 | |
-| **D** — Secure, monitor, and troubleshoot (C2.11–C2.13) | %20-25 | 4, 8, 11, 15, 20, 25, 28, 36, 40, 44, 48 | ___ / 11 | |
-| **Toplam** | | | ___ / 50 | |
+- **A** — Develop containerized solutions (C2.1–C2.3)
+  - Ağırlık: %20-25
+  - Soru numaraları: 2, 6, 10, 13, 14, 16, 19, 23, 33, 37, 41
+  - Doğru: ___ / 11 · Yüzde: ___
+- **B** — AI solutions with data management services (C2.4–C2.7)
+  - Ağırlık: %30-35
+  - Soru numaraları: 1, 5, 9, 12, 18, 21, 24, 27, 29, 30, 31, 34, 38, 42, 45, 47, 50
+  - Doğru: ___ / 17 · Yüzde: ___
+- **C** — Connect to and consume Azure services (C2.8–C2.10)
+  - Ağırlık: %20-25
+  - Soru numaraları: 3, 7, 17, 22, 26, 32, 35, 39, 43, 46, 49
+  - Doğru: ___ / 11 · Yüzde: ___
+- **D** — Secure, monitor, and troubleshoot (C2.11–C2.13)
+  - Ağırlık: %20-25
+  - Soru numaraları: 4, 8, 11, 15, 20, 25, 28, 36, 40, 44, 48
+  - Doğru: ___ / 11 · Yüzde: ___
+- **Toplam** — Ağırlık: — · Soru numaraları: — · Doğru: ___ / 50 · Yüzde: ___
 
 **Yorum:** ≥ 42 (%84) → sınav tarihi al (resmî practice assessment varsa önce onu çöz) · 35-41 → zayıf alanın konularını tekrar et, bir hafta sonra soruları farklı sırayla yeniden çöz · < 35 → zayıf konuların README + lab + quiz döngüsüne geri dön.
 
 ## Yanlışlarını C2.x ile eşleştir
 
-| Konu | Bu sınavdaki sorular | Yanlış sayın | Tekrar edilecek |
-|---|---|---|---|
-| C2.1 Container Registry ve ACR Tasks | 2, 10, 13, 33 | | [README](../1.1-container-registry-acr-tasks/README.md) · [quiz](../1.1-container-registry-acr-tasks/quiz.md) |
-| C2.2 Container Apps: revision ve KEDA | 14, 16, 23, 37 | | [README](../1.2-container-apps-keda/README.md) · [quiz](../1.2-container-apps-keda/quiz.md) |
-| C2.3 AKS manifest ve teşhis | 6, 19, 41 | | [README](../1.3-aks-manifests-diagnostics/README.md) · [quiz](../1.3-aks-manifests-diagnostics/quiz.md) |
-| C2.4 Cosmos DB for NoSQL | 1, 9, 18, 27, 42 | | [README](../2.1-cosmos-db-nosql/README.md) · [quiz](../2.1-cosmos-db-nosql/quiz.md) |
-| C2.5 Cosmos vector search ve change feed | 24, 29, 30, 45 | | [README](../2.2-cosmos-vector-change-feed/README.md) · [quiz](../2.2-cosmos-vector-change-feed/quiz.md) |
-| C2.6 PostgreSQL ve pgvector | 5, 21, 34, 47 | | [README](../2.3-postgresql-pgvector/README.md) · [quiz](../2.3-postgresql-pgvector/quiz.md) |
-| C2.7 Azure Managed Redis | 12, 31, 38, 50 | | [README](../2.4-managed-redis/README.md) · [quiz](../2.4-managed-redis/quiz.md) |
-| C2.8 Azure Functions | 3, 17, 26, 43 | | [README](../3.1-azure-functions/README.md) · [quiz](../3.1-azure-functions/quiz.md) |
-| C2.9 Service Bus | 7, 22, 35, 46 | | [README](../3.2-service-bus/README.md) · [quiz](../3.2-service-bus/quiz.md) |
-| C2.10 Event Grid | 32, 39, 49 | | [README](../3.3-event-grid/README.md) · [quiz](../3.3-event-grid/quiz.md) |
-| C2.11 Managed identity ve Key Vault | 4, 15, 28, 44 | | [README](../4.1-managed-identity-key-vault/README.md) · [quiz](../4.1-managed-identity-key-vault/quiz.md) |
-| C2.12 App Configuration | 8, 20, 36 | | [README](../4.2-app-configuration/README.md) · [quiz](../4.2-app-configuration/quiz.md) |
-| C2.13 OpenTelemetry ve KQL | 11, 25, 40, 48 | | [README](../4.3-opentelemetry-kql/README.md) · [quiz](../4.3-opentelemetry-kql/quiz.md) |
+- **C2.1 Container Registry ve ACR Tasks**
+  - Bu sınavdaki sorular: 2, 10, 13, 33 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../1.1-container-registry-acr-tasks/README.md) · [quiz](../1.1-container-registry-acr-tasks/quiz.md)
+- **C2.2 Container Apps: revision ve KEDA**
+  - Bu sınavdaki sorular: 14, 16, 23, 37 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../1.2-container-apps-keda/README.md) · [quiz](../1.2-container-apps-keda/quiz.md)
+- **C2.3 AKS manifest ve teşhis**
+  - Bu sınavdaki sorular: 6, 19, 41 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../1.3-aks-manifests-diagnostics/README.md) · [quiz](../1.3-aks-manifests-diagnostics/quiz.md)
+- **C2.4 Cosmos DB for NoSQL**
+  - Bu sınavdaki sorular: 1, 9, 18, 27, 42 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.1-cosmos-db-nosql/README.md) · [quiz](../2.1-cosmos-db-nosql/quiz.md)
+- **C2.5 Cosmos vector search ve change feed**
+  - Bu sınavdaki sorular: 24, 29, 30, 45 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.2-cosmos-vector-change-feed/README.md) · [quiz](../2.2-cosmos-vector-change-feed/quiz.md)
+- **C2.6 PostgreSQL ve pgvector**
+  - Bu sınavdaki sorular: 5, 21, 34, 47 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.3-postgresql-pgvector/README.md) · [quiz](../2.3-postgresql-pgvector/quiz.md)
+- **C2.7 Azure Managed Redis**
+  - Bu sınavdaki sorular: 12, 31, 38, 50 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.4-managed-redis/README.md) · [quiz](../2.4-managed-redis/quiz.md)
+- **C2.8 Azure Functions**
+  - Bu sınavdaki sorular: 3, 17, 26, 43 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../3.1-azure-functions/README.md) · [quiz](../3.1-azure-functions/quiz.md)
+- **C2.9 Service Bus**
+  - Bu sınavdaki sorular: 7, 22, 35, 46 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../3.2-service-bus/README.md) · [quiz](../3.2-service-bus/quiz.md)
+- **C2.10 Event Grid**
+  - Bu sınavdaki sorular: 32, 39, 49 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../3.3-event-grid/README.md) · [quiz](../3.3-event-grid/quiz.md)
+- **C2.11 Managed identity ve Key Vault**
+  - Bu sınavdaki sorular: 4, 15, 28, 44 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../4.1-managed-identity-key-vault/README.md) · [quiz](../4.1-managed-identity-key-vault/quiz.md)
+- **C2.12 App Configuration**
+  - Bu sınavdaki sorular: 8, 20, 36 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../4.2-app-configuration/README.md) · [quiz](../4.2-app-configuration/quiz.md)
+- **C2.13 OpenTelemetry ve KQL**
+  - Bu sınavdaki sorular: 11, 25, 40, 48 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../4.3-opentelemetry-kql/README.md) · [quiz](../4.3-opentelemetry-kql/quiz.md)
 
 **Tekrar planı:** Her yanlış için *bilgi eksiği* mi *dikkat hatası* mı olduğunu not et (kod/CLI/KQL tamamlamada: sözdizimini mi bilmiyordun, yoksa kavramı mı karıştırdın?). Bir konuda **2 veya daha fazla** bilgi eksiği varsa o konunun README'sini ve laboratuvarını baştan yap, ardından konu quiz'ini ≥ %80 olana kadar çöz. Vaka sorularında yanlışın nedeni çoğu zaman bir **gereksinimi kaçırmak**tır — [5.1 Sınav Stratejisi](README.md#33-vaka-çalışması-ve-kod--cli--kql-tamamlama-soruları)'teki gereksinim listesi tekniğini tekrar oku.
 

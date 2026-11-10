@@ -38,13 +38,21 @@ Bu konu sınavın üç sorusunu cevaplar: *Hangi kimlik türü? Hangi rol? Rotat
 
 #### 3.1 Managed identity türleri
 
-| | **System-assigned** | **User-assigned** |
-|---|---|---|
-| Oluşturma | Kaynakta açılır (`--system-assigned`) | Ayrı kaynak olarak oluşturulur, kaynağa **bağlanır** |
-| Yaşam döngüsü | Kaynakla **birlikte** silinir | Bağımsız; kaynak silinse de kalır |
-| Paylaşım | Hayır (kaynağa özel) | **Evet** — aynı kimlik N kaynakta |
-| Ne zaman? | Tek kaynak, basit, en az yönetim | Birden çok kaynak aynı yetkiyi paylaşır (ör. 3 Function + 1 API); **yetkiyi dağıtımdan önce hazırlamak** gerekir; kaynak sık yeniden oluşturulur; Key Vault referansı için önceden tanımlı kimlik |
-| Tuzak | Kaynağı silip yeniden oluşturunca principal ID değişir → rol atamaları **kaybolur** | Bir kaynağa **birden çok** user-assigned atanabilir → hangisini kullanacağını (`client_id`) belirtmelisin |
+- **Oluşturma**
+  - System-assigned: Kaynakta açılır (`--system-assigned`)
+  - User-assigned: Ayrı kaynak olarak oluşturulur, kaynağa **bağlanır**
+- **Yaşam döngüsü**
+  - System-assigned: Kaynakla **birlikte** silinir
+  - User-assigned: Bağımsız; kaynak silinse de kalır
+- **Paylaşım**
+  - System-assigned: Hayır (kaynağa özel)
+  - User-assigned: **Evet** — aynı kimlik N kaynakta
+- **Ne zaman?**
+  - System-assigned: Tek kaynak, basit, en az yönetim
+  - User-assigned: Birden çok kaynak aynı yetkiyi paylaşır (ör. 3 Function + 1 API); **yetkiyi dağıtımdan önce hazırlamak** gerekir; kaynak sık yeniden oluşturulur; Key Vault referansı için önceden tanımlı kimlik
+- **Tuzak**
+  - System-assigned: Kaynağı silip yeniden oluşturunca principal ID değişir → rol atamaları **kaybolur**
+  - User-assigned: Bir kaynağa **birden çok** user-assigned atanabilir → hangisini kullanacağını (`client_id`) belirtmelisin
 
 > **Çoklu kimlik tuzağı:** Bir kaynakta hem system- hem user-assigned veya birden çok user-assigned varsa `DefaultAzureCredential()` hangisini seçeceğini bilemez; `AZURE_CLIENT_ID` ortam değişkeni veya `ManagedIdentityClientId` ile **belirt**.
 
@@ -83,42 +91,67 @@ var chained = new ChainedTokenCredential(
 
 #### 3.3 Key Vault nesneleri, sürümler ve izin modeli
 
-| Nesne | Ne? | Not |
-|---|---|---|
-| **Secret** | Rastgele bayt/metin (≤ 25 KB) | Her `set` **yeni sürüm** üretir; `.../secrets/<ad>` = **en son sürüm**, `.../secrets/<ad>/<version>` = sabit sürüm |
-| **Key** | RSA/EC anahtarı; şifrele/imzala/sar işlemleri **vault'ta** yapılır (anahtar dışarı çıkmaz) | **Rotation policy** ile otomatik döndürülebilir; Premium'da HSM destekli |
-| **Certificate** | X.509 + yönetilen yaşam döngüsü (yenileme, CA entegrasyonu) | Arkada bir key + bir secret üretir; auto-renew **sertifikalar** için yerleşiktir |
+- **Secret**
+  - Ne?: Rastgele bayt/metin (≤ 25 KB)
+  - Not: Her `set` **yeni sürüm** üretir; `.../secrets/<ad>` = **en son sürüm**, `.../secrets/<ad>/<version>` = sabit sürüm
+- **Key**
+  - Ne?: RSA/EC anahtarı; şifrele/imzala/sar işlemleri **vault'ta** yapılır (anahtar dışarı çıkmaz)
+  - Not: **Rotation policy** ile otomatik döndürülebilir; Premium'da HSM destekli
+- **Certificate**
+  - Ne?: X.509 + yönetilen yaşam döngüsü (yenileme, CA entegrasyonu)
+  - Not: Arkada bir key + bir secret üretir; auto-renew **sertifikalar** için yerleşiktir
 
 **İzin modeli — Azure RBAC (önerilen) vs access policy (eski):**
 
-| | **Azure RBAC** | **Access policy** |
-|---|---|---|
-| Yetki kapsamı | Management group → subscription → RG → **vault** → *tek secret* | Yalnızca **vault** düzeyi (tüm secret'lar) |
-| Denetim | Azure RBAC + PIM + Azure Policy + atama geçmişi | Vault'a özel, ayrı yönetim |
-| Durum | **Önerilen**; yeni vault'larda varsayılan (control plane API `2026-02-01` ve sonrasıyla oluşturulanlarda; mevcut vault'lar değişmez) | Eski model; ileri geçiş için migrasyon önerilir |
+- **Yetki kapsamı**
+  - Azure RBAC: Management group → subscription → RG → **vault** → *tek secret*
+  - Access policy: Yalnızca **vault** düzeyi (tüm secret'lar)
+- **Denetim**
+  - Azure RBAC: Azure RBAC + PIM + Azure Policy + atama geçmişi
+  - Access policy: Vault'a özel, ayrı yönetim
+- **Durum**
+  - Azure RBAC: **Önerilen**; yeni vault'larda varsayılan (control plane API `2026-02-01` ve sonrasıyla oluşturulanlarda; mevcut vault'lar değişmez)
+  - Access policy: Eski model; ileri geçiş için migrasyon önerilir
 
 Data plane rolleri (en az yetki sırasıyla):
 
-| Rol | Yapabildiği | Tipik sahibi |
-|---|---|---|
-| **Key Vault Secrets User** | Secret **değerini okur** (get/list) | **Uygulamanın MI'ı** ⭐ |
-| **Key Vault Secrets Officer** | Secret oluştur/güncelle/sil (okuma dahil) | Rotation Function'ı, dağıtım hattı |
-| **Key Vault Reader** | Vault ve nesne **meta verisi** (değer yok) | Envanter/denetim |
-| **Key Vault Crypto User** | Key ile şifrele/çöz/imzala | Şifreleme yapan uygulama |
-| **Key Vault Certificates Officer** | Sertifika yönetimi | PKI sahibi |
-| **Key Vault Administrator** | Tüm data plane | Yalnızca gerektiğinde (yönetici) |
+- **Key Vault Secrets User**
+  - Yapabildiği: Secret **değerini okur** (get/list)
+  - Tipik sahibi: **Uygulamanın MI'ı** ⭐
+- **Key Vault Secrets Officer**
+  - Yapabildiği: Secret oluştur/güncelle/sil (okuma dahil)
+  - Tipik sahibi: Rotation Function'ı, dağıtım hattı
+- **Key Vault Reader**
+  - Yapabildiği: Vault ve nesne **meta verisi** (değer yok)
+  - Tipik sahibi: Envanter/denetim
+- **Key Vault Crypto User** — Yapabildiği: Key ile şifrele/çöz/imzala · Tipik sahibi: Şifreleme yapan uygulama
+- **Key Vault Certificates Officer** — Yapabildiği: Sertifika yönetimi · Tipik sahibi: PKI sahibi
+- **Key Vault Administrator** — Yapabildiği: Tüm data plane · Tipik sahibi: Yalnızca gerektiğinde (yönetici)
 
 > **Büyük tuzak:** `Owner`/`Contributor` rolleri **control plane**'dir (vault'u oluşturur/siler/ayarlar); RBAC modelinde **secret değerini okutmaz**. Secret'ı okumak için data plane rolü gerekir. (Eski access policy modelinde vault üzerinde `Contributor` olan biri access policy ekleyip **kendine** veri erişimi verebilirdi; RBAC'ta rol atama yetkisi ayrı olduğu için bu yol kapanır.) Ayrıca RBAC rol atamasının yayılması **birkaç dakika** sürebilir.
 
 #### 3.4 Retrieval — secret'ı uygulamaya almanın yolları ⭐
 
-| Yol | Nasıl? | Yenileme | Ne zaman? |
-|---|---|---|---|
-| **SDK** — `SecretClient.GetSecretAsync` | Kod her ihtiyaçta/başlangıçta çağırır | Sen yönetirsin (önbellek TTL) | Tam kontrol, az sayıda secret |
-| **Configuration sağlayıcı** — `AddAzureKeyVault` | Secret'lar `IConfiguration` anahtarlarına dönüşür (`--` → `:`) | `ReloadInterval` ile periyodik | ASP.NET Core/worker; kod değişmeden |
-| **App Service / Functions Key Vault referansı** | App setting: `@Microsoft.KeyVault(SecretUri=https://…/secrets/db-conn/)` | Sürümsüz referans platform tarafından **yaklaşık 24 saatte** bir yenilenir (SLA yok); ayar değişimi/restart anında yeniler | Kodsuz; ortam değişkeni bekleyen uygulamalar |
-| **Container Apps secret** — `keyvaultref` | `az containerapp secret set --secrets "db=keyvaultref:<uri>,identityref:<id>"`; env var `secretref:db` | Sürümsüz URI'da yeni sürümler yaklaşık **30 dakikada** bir alınır ve ilgili revision restart edilir (dokümana göre — doğrula) | Container Apps (→ C2.2) |
-| **App Configuration → Key Vault referansı** | Anahtar App Config'te, değeri vault'ta (→ C2.12) | Sağlayıcının secret yenilemesi | Yapılandırma + secret birlikte |
+- **SDK** — `SecretClient.GetSecretAsync`
+  - Nasıl?: Kod her ihtiyaçta/başlangıçta çağırır
+  - Yenileme: Sen yönetirsin (önbellek TTL)
+  - Ne zaman?: Tam kontrol, az sayıda secret
+- **Configuration sağlayıcı** — `AddAzureKeyVault`
+  - Nasıl?: Secret'lar `IConfiguration` anahtarlarına dönüşür (`--` → `:`)
+  - Yenileme: `ReloadInterval` ile periyodik
+  - Ne zaman?: ASP.NET Core/worker; kod değişmeden
+- **App Service / Functions Key Vault referansı**
+  - Nasıl?: App setting: `@Microsoft.KeyVault(SecretUri=https://…/secrets/db-conn/)`
+  - Yenileme: Sürümsüz referans platform tarafından **yaklaşık 24 saatte** bir yenilenir (SLA yok); ayar değişimi/restart anında yeniler
+  - Ne zaman?: Kodsuz; ortam değişkeni bekleyen uygulamalar
+- **Container Apps secret** — `keyvaultref`
+  - Nasıl?: `az containerapp secret set --secrets "db=keyvaultref:<uri>,identityref:<id>"`; env var `secretref:db`
+  - Yenileme: Sürümsüz URI'da yeni sürümler yaklaşık **30 dakikada** bir alınır ve ilgili revision restart edilir (dokümana göre — doğrula)
+  - Ne zaman?: Container Apps (→ C2.2)
+- **App Configuration → Key Vault referansı**
+  - Nasıl?: Anahtar App Config'te, değeri vault'ta (→ C2.12)
+  - Yenileme: Sağlayıcının secret yenilemesi
+  - Ne zaman?: Yapılandırma + secret birlikte
 
 - **Sürümsüz URI ⇒ en son sürüm**; sürümlü URI ⇒ **sabitlenmiş**, rotation asla etki etmez. Rotation istiyorsan sürümsüz kullan.
 - **Önbellek:** Her istekte vault'a gitme (vault **throttling**'i: anahtar ve vault bazında istek sınırı; HTTP 429). Başlangıçta yükle + periyodik yenile.
@@ -336,16 +369,30 @@ for p in client.list_properties_of_secret_versions("Db--ConnectionString"):
 
 Bir sipariş platformunun API'si (Container Apps), 3 worker Function'ı ve PostgreSQL + Service Bus + Cosmos bağımlılığı var:
 
-| Sorun | Karar | Neden |
-|---|---|---|
-| Bağlantı dizeleri `appsettings.Production.json`'da, CI değişkenlerinde | Cosmos/Service Bus/Storage için **Entra kimliği (MI)**, secret yok; PostgreSQL parolası **Key Vault** | Saklanacak secret sayısı en aza iner |
-| 3 Function + API aynı vault'tan okuyor | **Tek user-assigned MI**, vault'ta **Secrets User** | Rol ataması bir kez; kaynaklar yeniden oluşturulsa kimlik sabit |
-| Secret'ı okuyup rotation yapan hat | Ayrı MI, **Secrets Officer** (yalnızca rotation Function'ında) | Uygulama okur ama yazamaz — en az yetki |
-| DB parolası 90 günde bir değişmeli | `--expires` + **Event Grid SecretNearExpiry → Function**; PostgreSQL'de ikinci rol/parola, vault'a yeni sürüm | Kesintisiz iki-kimlik bilgisi kalıbı |
-| Yeni parola uygulamaya ne zaman ulaşır? | Sürümsüz referans + `ReloadInterval` (5 dk) + `IOptionsMonitor` | Restart gerektirmez; pinned sürüm kullanılmaz |
-| Yanlışlıkla silinen vault | **Soft delete** (90 gün) + **purge protection** | Kurtarılabilir; kötü niyetli kalıcı silme engelli |
-| Vault internetten erişilebilir | **Private endpoint** + public erişim kapalı | Secret yalnızca VNet'ten |
-| Geliştiriciler yerelde çalışıyor | Dev vault + geliştirici kimliğine **Secrets User**; aynı `DefaultAzureCredential` kodu | Prod'a özgü kod dalı yok |
+- **Bağlantı dizeleri `appsettings.Production.json`'da, CI değişkenlerinde**
+  - Karar: Cosmos/Service Bus/Storage için **Entra kimliği (MI)**, secret yok; PostgreSQL parolası **Key Vault**
+  - Neden: Saklanacak secret sayısı en aza iner
+- **3 Function + API aynı vault'tan okuyor**
+  - Karar: **Tek user-assigned MI**, vault'ta **Secrets User**
+  - Neden: Rol ataması bir kez; kaynaklar yeniden oluşturulsa kimlik sabit
+- **Secret'ı okuyup rotation yapan hat**
+  - Karar: Ayrı MI, **Secrets Officer** (yalnızca rotation Function'ında)
+  - Neden: Uygulama okur ama yazamaz — en az yetki
+- **DB parolası 90 günde bir değişmeli**
+  - Karar: `--expires` + **Event Grid SecretNearExpiry → Function**; PostgreSQL'de ikinci rol/parola, vault'a yeni sürüm
+  - Neden: Kesintisiz iki-kimlik bilgisi kalıbı
+- **Yeni parola uygulamaya ne zaman ulaşır?**
+  - Karar: Sürümsüz referans + `ReloadInterval` (5 dk) + `IOptionsMonitor`
+  - Neden: Restart gerektirmez; pinned sürüm kullanılmaz
+- **Yanlışlıkla silinen vault**
+  - Karar: **Soft delete** (90 gün) + **purge protection**
+  - Neden: Kurtarılabilir; kötü niyetli kalıcı silme engelli
+- **Vault internetten erişilebilir**
+  - Karar: **Private endpoint** + public erişim kapalı
+  - Neden: Secret yalnızca VNet'ten
+- **Geliştiriciler yerelde çalışıyor**
+  - Karar: Dev vault + geliştirici kimliğine **Secrets User**; aynı `DefaultAzureCredential` kodu
+  - Neden: Prod'a özgü kod dalı yok
 
 ---
 
@@ -401,16 +448,30 @@ Bir sipariş platformunun API'si (Container Apps), 3 worker Function'ı ve Postg
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Secret → **MI + Entra kimliği** | Rotation ve sızıntı yüzeyi yok | Hedef servis Entra auth desteklemeli; rol yönetimi |
-| System → user-assigned MI | Paylaşım, öngörülebilir yaşam döngüsü | Ek kaynak; `client_id` seçimi; fazla paylaşım = geniş yetki |
-| RBAC ↔ access policy | Ayrıntılı kapsam, PIM/Policy, merkezî denetim | Atama sayısı artar; yayılım gecikmesi |
-| Kısa `ReloadInterval` | Rotation hızlı yansır | Daha çok vault isteği → throttling/maliyet |
-| Platform referansı (App Service/ACA) | Kodsuz | Yenileme gecikmesi (≈ saat/dakika), kontrol sende değil |
-| Purge protection | Kötü niyetli/yanlışlıkla kalıcı silmeye karşı | Geri alınamaz; vault adı bloklu kalır, test vault'larında can sıkar |
-| Private endpoint | Ağdan erişim kapanır | DNS (`privatelink`) yapılandırması, ek ücret |
-| Key Vault Standard ↔ Premium | Premium: HSM destekli key | Daha pahalı; secret için gereksiz |
+- Secret → **MI + Entra kimliği**
+  - Kazanç: Rotation ve sızıntı yüzeyi yok
+  - Bedel: Hedef servis Entra auth desteklemeli; rol yönetimi
+- **System → user-assigned MI**
+  - Kazanç: Paylaşım, öngörülebilir yaşam döngüsü
+  - Bedel: Ek kaynak; `client_id` seçimi; fazla paylaşım = geniş yetki
+- **RBAC ↔ access policy**
+  - Kazanç: Ayrıntılı kapsam, PIM/Policy, merkezî denetim
+  - Bedel: Atama sayısı artar; yayılım gecikmesi
+- **Kısa `ReloadInterval`**
+  - Kazanç: Rotation hızlı yansır
+  - Bedel: Daha çok vault isteği → throttling/maliyet
+- **Platform referansı (App Service/ACA)**
+  - Kazanç: Kodsuz
+  - Bedel: Yenileme gecikmesi (≈ saat/dakika), kontrol sende değil
+- **Purge protection**
+  - Kazanç: Kötü niyetli/yanlışlıkla kalıcı silmeye karşı
+  - Bedel: Geri alınamaz; vault adı bloklu kalır, test vault'larında can sıkar
+- **Private endpoint**
+  - Kazanç: Ağdan erişim kapanır
+  - Bedel: DNS (`privatelink`) yapılandırması, ek ücret
+- **Key Vault Standard ↔ Premium**
+  - Kazanç: Premium: HSM destekli key
+  - Bedel: Daha pahalı; secret için gereksiz
 
 ---
 

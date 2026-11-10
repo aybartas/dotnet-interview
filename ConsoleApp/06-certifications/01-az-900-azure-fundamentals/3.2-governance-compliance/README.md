@@ -10,14 +10,18 @@
 
 **Yönetişim (governance)**, bir kuruluşun kurallarını — güvenlik, maliyet, uyumluluk, adlandırma, veri — **ölçekte** uygulaması ve uygulandığını **denetleyebilmesidir**. Yüzlerce subscription ve binlerce kaynakta bu kuralları insan dikkatiyle korumak mümkün değildir; Azure bunun için birbirini tamamlayan araçlar sunar:
 
-| Araç | Soru | Neyi kontrol eder? |
-|---|---|---|
-| **Management group / subscription / RG** (→ C1.4) | Kurallar **nereye** uygulanır? | Kapsam ve miras |
-| **Azure RBAC** (→ C1.9) | **Kim** ne yapabilir? | Kullanıcının/kimliğin yetkisi |
-| **Azure Policy** ⭐ | Kaynak **nasıl** olabilir? | Kaynağın özellikleri (bölge, SKU, tag, ayar) |
-| **Resource lock** ⭐ | Kaynak **silinebilir/değiştirilebilir** mi? | Kazara silme/değişiklik |
-| **Tag** (→ C1.11) | Kaynak **kime/neye** ait? | Meta veri, maliyet raporlama |
-| **Microsoft Purview** | **Veri** nerede, ne içeriyor, kim kullanıyor? | Veri yönetişimi, risk ve uyumluluk |
+- **Management group / subscription / RG** (→ C1.4) — Soru: Kurallar **nereye** uygulanır? · Neyi kontrol eder?: Kapsam ve miras
+- **Azure RBAC** (→ C1.9) — Soru: **Kim** ne yapabilir? · Neyi kontrol eder?: Kullanıcının/kimliğin yetkisi
+- **Azure Policy** ⭐
+  - Soru: Kaynak **nasıl** olabilir?
+  - Neyi kontrol eder?: Kaynağın özellikleri (bölge, SKU, tag, ayar)
+- **Resource lock** ⭐
+  - Soru: Kaynak **silinebilir/değiştirilebilir** mi?
+  - Neyi kontrol eder?: Kazara silme/değişiklik
+- **Tag** (→ C1.11) — Soru: Kaynak **kime/neye** ait? · Neyi kontrol eder?: Meta veri, maliyet raporlama
+- **Microsoft Purview**
+  - Soru: **Veri** nerede, ne içeriyor, kim kullanıyor?
+  - Neyi kontrol eder?: Veri yönetişimi, risk ve uyumluluk
 
 Bu konu resmî hedefteki üç aracı — Policy, lock, Purview — derinlemesine işler. Konunun kodu yoktur; pratik, README'deki `az` CLI laboratuvarıdır (3.5).
 
@@ -44,25 +48,43 @@ Bu konu resmî hedefteki üç aracı — Policy, lock, Purview — derinlemesine
 
 **Yapı taşları:**
 
-| Kavram | Ne? | Örnek |
-|---|---|---|
-| **Policy definition** | Kural (JSON): hangi koşulda hangi etki | *Allowed locations*, *Require a tag and its value on resources* |
-| **Initiative** (policy set) | Birlikte yönetilen tanımlar kümesi | Bir güvenlik benchmark'ı (ör. Microsoft cloud security benchmark), "etiketleme standardı" |
-| **Assignment** | Tanımın/initiative'in bir **kapsama** atanması (+ parametreler, istisnalar) | *Allowed locations* → `rg-prod`, `listOfAllowedLocations = [westeurope]` |
-| **Exemption** *(bağlam)* | Belirli bir kapsamı değerlendirmenin dışında tutma | Test aboneliği |
-| **Remediation task** | Mevcut uyumsuz kaynakları düzeltme (Modify / DeployIfNotExists) | Eksik tag'i gruptan kopyalamak |
+- **Policy definition**
+  - Ne?: Kural (JSON): hangi koşulda hangi etki
+  - Örnek: *Allowed locations*, *Require a tag and its value on resources*
+- **Initiative** (policy set)
+  - Ne?: Birlikte yönetilen tanımlar kümesi
+  - Örnek: Bir güvenlik benchmark'ı (ör. Microsoft cloud security benchmark), "etiketleme standardı"
+- **Assignment**
+  - Ne?: Tanımın/initiative'in bir **kapsama** atanması (+ parametreler, istisnalar)
+  - Örnek: *Allowed locations* → `rg-prod`, `listOfAllowedLocations = [westeurope]`
+- **Exemption** *(bağlam)*
+  - Ne?: Belirli bir kapsamı değerlendirmenin dışında tutma
+  - Örnek: Test aboneliği
+- **Remediation task**
+  - Ne?: Mevcut uyumsuz kaynakları düzeltme (Modify / DeployIfNotExists)
+  - Örnek: Eksik tag'i gruptan kopyalamak
 
 **Etkiler (effect)** — her tanımın tek bir etkisi vardır:
 
-| Etki | Ne yapar? | Sınavdaki ipucu |
-|---|---|---|
-| **Audit** | Kaynağa izin verir, **uyumsuz** olarak raporlar | "uyar / raporla, engelleme" |
-| **Deny** | Kurala aykırı oluşturma/güncellemeyi **reddeder** | "izin verme / engelle" |
-| **Append** / **Modify** | İstek sırasında özellik/tag **ekler veya düzeltir** | "tag'i otomatik ekle" |
-| **AuditIfNotExists** | İlişkili bir kaynak/ayar (ör. tanılama ayarı) yoksa raporlar | |
-| **DeployIfNotExists** | İlişkili kaynak/ayar yoksa **dağıtır** | "eksikse otomatik kur" |
-| **Disabled** | Tanımı devre dışı bırakır | |
-| *(bağlam)* **DenyAction**, **Manual** | Belirli bir eylemi (ör. silme) engeller · uyumluluğu elle beyan | |
+- **Audit**
+  - Ne yapar?: Kaynağa izin verir, **uyumsuz** olarak raporlar
+  - Sınavdaki ipucu: "uyar / raporla, engelleme"
+- **Deny**
+  - Ne yapar?: Kurala aykırı oluşturma/güncellemeyi **reddeder**
+  - Sınavdaki ipucu: "izin verme / engelle"
+- **Append** / **Modify**
+  - Ne yapar?: İstek sırasında özellik/tag **ekler veya düzeltir**
+  - Sınavdaki ipucu: "tag'i otomatik ekle"
+- **AuditIfNotExists**
+  - Ne yapar?: İlişkili bir kaynak/ayar (ör. tanılama ayarı) yoksa raporlar
+  - Sınavdaki ipucu: —
+- **DeployIfNotExists**
+  - Ne yapar?: İlişkili kaynak/ayar yoksa **dağıtır**
+  - Sınavdaki ipucu: "eksikse otomatik kur"
+- **Disabled** — Ne yapar?: Tanımı devre dışı bırakır · Sınavdaki ipucu: —
+- *(bağlam)* **DenyAction**, **Manual**
+  - Ne yapar?: Belirli bir eylemi (ör. silme) engeller · uyumluluğu elle beyan
+  - Sınavdaki ipucu: —
 
 **Bir politikanın yaşam döngüsü:**
 
@@ -78,10 +100,8 @@ Bu konu resmî hedefteki üç aracı — Policy, lock, Purview — derinlemesine
 
 **Resource lock**, kaynakların **kazara silinmesini veya değiştirilmesini** önler. İki tür vardır:
 
-| Tür | Portaldaki adı | Okuma | Değiştirme | Silme |
-|---|---|---|---|---|
-| **CanNotDelete** | **Delete** | ✅ | ✅ | ❌ |
-| **ReadOnly** | **Read-only** | ✅ | ❌ | ❌ |
+- **CanNotDelete** — Portaldaki adı: **Delete** · Okuma: ✅ · Değiştirme: ✅ · Silme: ❌
+- **ReadOnly** — Portaldaki adı: **Read-only** · Okuma: ✅ · Değiştirme: ❌ · Silme: ❌
 
 - Subscription, resource group veya tek kaynak düzeyinde uygulanır; alt kapsamlara **miras** kalır (RG'deki lock, içindeki tüm kaynakları korur).
 - **Rol yetkisinden bağımsızdır:** Owner bile kilitli kaynağı silemez; önce lock'ı **kaldırması** gerekir (lock'ı kaldırmak için de `Microsoft.Authorization/locks/*` yetkisi gerekir — Owner ve User Access Administrator'da vardır).
@@ -92,10 +112,12 @@ Bu konu resmî hedefteki üç aracı — Policy, lock, Purview — derinlemesine
 
 **Microsoft Purview**, kuruluşun **verisini** yönetmek, korumak ve uyumluluğunu sağlamak için bir **veri yönetişimi, risk ve uyumluluk** çözümleri ailesidir. Kimlik ya da maliyet aracı değildir; konusu **veridir**.
 
-| Alan | Ne yapar? | Örnek |
-|---|---|---|
-| **Birleşik veri yönetişimi** (Data Map + Unified Catalog) | On-prem, multicloud ve SaaS veri kaynaklarını (Azure SQL, Data Lake, Amazon S3, Power BI…) **tarar**, meta verisini bir **veri haritasına** toplar; aranabilir **katalog**, veri **soy ağacı** (lineage), veri kalitesi ve erişim yönetimi | "Müşteri verisi hangi veritabanlarında, kim kullanıyor, nereden besleniyor?" |
-| **Risk ve uyumluluk** (çoğunlukla Microsoft 365 verisi) | Hassas veriyi otomatik **keşif ve sınıflandırma** (kredi kartı, kimlik numarası), **bilgi koruma** (sensitivity label), **veri kaybı önleme** (DLP), kayıt/yaşam döngüsü yönetimi, denetim | "Kredi kartı numarası içeren e-posta dışarı gönderilmesin" |
+- **Birleşik veri yönetişimi** (Data Map + Unified Catalog)
+  - Ne yapar?: On-prem, multicloud ve SaaS veri kaynaklarını (Azure SQL, Data Lake, Amazon S3, Power BI…) **tarar**, meta verisini bir **veri haritasına** toplar; aranabilir **katalog**, veri **soy ağacı** (lineage), veri kalitesi ve erişim yönetimi
+  - Örnek: "Müşteri verisi hangi veritabanlarında, kim kullanıyor, nereden besleniyor?"
+- **Risk ve uyumluluk** (çoğunlukla Microsoft 365 verisi)
+  - Ne yapar?: Hassas veriyi otomatik **keşif ve sınıflandırma** (kredi kartı, kimlik numarası), **bilgi koruma** (sensitivity label), **veri kaybı önleme** (DLP), kayıt/yaşam döngüsü yönetimi, denetim
+  - Örnek: "Kredi kartı numarası içeren e-posta dışarı gönderilmesin"
 
 - Purview'un Data Map ve katalog rolleri **meta veriye** erişim verir; alttaki verinin kendisine erişim vermez.
 - Sınav düzeyinde akılda kalması gereken: **"tüm verinin haritası, sınıflandırma, soy ağacı, veri yönetişimi" → Purview**.
@@ -224,15 +246,27 @@ Bir sağlık şirketi, KVKK ve sektör denetimi öncesinde Azure ortamını düz
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| **Deny** etkisi | Kural ihlali hiç oluşmaz | Yanlış kapsam/parametre meşru dağıtımları kırar; istisna yönetimi gerekir |
-| **Audit** etkisi | Kimseyi durdurmadan görünürlük | İhlaller oluşmaya devam eder; birinin raporu takip etmesi gerekir |
-| **Modify / DeployIfNotExists** | Uyumsuzluğu otomatik düzeltir | Managed identity ve yetki gerektirir; "sihirli" değişiklikler ekipleri şaşırtabilir |
-| Politikaları üst management group'a atamak | Tek noktadan, tüm ortama tutarlı kural | Etki alanı büyük; hata da tüm ortama yayılır — önce test kapsamında dene |
-| **CanNotDelete** lock | Kazara silmeye karşı ucuz, etkili koruma | Meşru silme/yeniden dağıtım için önce lock kaldırılmalı (otomasyonda adım) |
-| **ReadOnly** lock | Yapılandırma kaymasını tamamen durdurur | Anahtar listeleme, rol ataması, bazı portal işlemleri bozulur |
-| Purview ile veri kataloğu | Hassas verinin görünürlüğü, uyumluluk kanıtı | Tarama ve sınıflandırma kurulumu, sahiplik ve süreç gerektirir; ayrı lisans/ücret |
+- **Deny** etkisi
+  - Kazanç: Kural ihlali hiç oluşmaz
+  - Bedel: Yanlış kapsam/parametre meşru dağıtımları kırar; istisna yönetimi gerekir
+- **Audit** etkisi
+  - Kazanç: Kimseyi durdurmadan görünürlük
+  - Bedel: İhlaller oluşmaya devam eder; birinin raporu takip etmesi gerekir
+- **Modify / DeployIfNotExists**
+  - Kazanç: Uyumsuzluğu otomatik düzeltir
+  - Bedel: Managed identity ve yetki gerektirir; "sihirli" değişiklikler ekipleri şaşırtabilir
+- **Politikaları üst management group'a atamak**
+  - Kazanç: Tek noktadan, tüm ortama tutarlı kural
+  - Bedel: Etki alanı büyük; hata da tüm ortama yayılır — önce test kapsamında dene
+- **CanNotDelete** lock
+  - Kazanç: Kazara silmeye karşı ucuz, etkili koruma
+  - Bedel: Meşru silme/yeniden dağıtım için önce lock kaldırılmalı (otomasyonda adım)
+- **ReadOnly** lock
+  - Kazanç: Yapılandırma kaymasını tamamen durdurur
+  - Bedel: Anahtar listeleme, rol ataması, bazı portal işlemleri bozulur
+- **Purview ile veri kataloğu**
+  - Kazanç: Hassas verinin görünürlüğü, uyumluluk kanıtı
+  - Bedel: Tarama ve sınıflandırma kurulumu, sahiplik ve süreç gerektirir; ayrı lisans/ücret
 
 ---
 

@@ -73,11 +73,9 @@ TransactionalBatchResponse r = await container
 #### Soru 5: Evet / Hayır
 Cosmos DB SDK kullanımı hakkında:
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) `CosmosClient` uygulama yaşam süresi boyunca tek örnek (singleton) olarak kullanılmalıdır. | ☐ | ☐ |
-| b) Transactional batch, farklı partition key değerlerine sahip item'ları tek atomik işlemde yazabilir. | ☐ | ☐ |
-| c) SDK, 429 yanıtlarını varsayılan olarak belirli sayıda otomatik yeniden dener. | ☐ | ☐ |
+- a) `CosmosClient` uygulama yaşam süresi boyunca tek örnek (singleton) olarak kullanılmalıdır. — Evet: ☐ · Hayır: ☐
+- b) Transactional batch, farklı partition key değerlerine sahip item'ları tek atomik işlemde yazabilir. — Evet: ☐ · Hayır: ☐
+- c) SDK, 429 yanıtlarını varsayılan olarak belirli sayıda otomatik yeniden dener. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -207,11 +205,9 @@ Bir ekip, geliştirme ortamı için seyrek kullanılan küçük bir uygulama yaz
 
 #### Soru 14: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Sorguda partition key filtresi verilmezse sorgu cross-partition olur ve RU genellikle artar. | ☐ | ☐ |
-| b) `x-ms-request-charge` başlığı / `RequestCharge` özelliği işlemin RU maliyetini verir. | ☐ | ☐ |
-| c) Bir container'daki iki farklı partition key değeri aynı `id`'ye sahip item'lar içeremez. | ☐ | ☐ |
+- a) Sorguda partition key filtresi verilmezse sorgu cross-partition olur ve RU genellikle artar. — Evet: ☐ · Hayır: ☐
+- b) `x-ms-request-charge` başlığı / `RequestCharge` özelliği işlemin RU maliyetini verir. — Evet: ☐ · Hayır: ☐
+- c) Bir container'daki iki farklı partition key değeri aynı `id`'ye sahip item'lar içeremez. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

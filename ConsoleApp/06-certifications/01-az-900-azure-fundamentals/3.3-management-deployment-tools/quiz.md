@@ -103,11 +103,9 @@ Infrastructure as code (IaC) yaklaşımının **hangi ikisi** faydasıdır?
 
 #### Soru 8: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) ARM template'leri deklaratiftir: kurulacak son durumu tanımlarsınız. | ☐ | ☐ |
-| b) Aynı ARM template'i aynı resource group'a ikinci kez dağıtmak, kaynakların kopyalarını oluşturur. | ☐ | ☐ |
-| c) Resource Manager, şablondaki bağımsız kaynakları paralel olarak dağıtabilir. | ☐ | ☐ |
+- a) ARM template'leri deklaratiftir: kurulacak son durumu tanımlarsınız. — Evet: ☐ · Hayır: ☐
+- b) Aynı ARM template'i aynı resource group'a ikinci kez dağıtmak, kaynakların kopyalarını oluşturur. — Evet: ☐ · Hayır: ☐
+- c) Resource Manager, şablondaki bağımsız kaynakları paralel olarak dağıtabilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

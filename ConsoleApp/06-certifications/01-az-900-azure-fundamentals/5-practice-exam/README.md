@@ -12,11 +12,15 @@
 
 AZ-900 bir **genişlik** sınavıdır: derin yapılandırma değil, kavramların ve Azure servislerinin **doğru senaryoya eşleştirilmesi** ölçülür. Bu konu üç parçadan oluşur:
 
-| Parça | Dosya | Amaç |
-|---|---|---|
-| **Deneme sınavı** | [`quiz.md`](quiz.md) | Alan ağırlıklarına göre dağıtılmış **50 özgün soru**; her soru bir konu koduna (C1.x) bağlı |
-| **Puanlama ve tekrar planı** | `quiz.md` sonu | Alan bazlı puan tablosu; yanlışları C1.x'e eşleyip zayıf konuları tekrar etme |
-| **Sınav stratejisi** | Bu README | Soru türleri, eleme yöntemi, anahtar kelimeler, zaman yönetimi, sınav günü |
+- **Deneme sınavı**
+  - Dosya: [`quiz.md`](quiz.md)
+  - Amaç: Alan ağırlıklarına göre dağıtılmış **50 özgün soru**; her soru bir konu koduna (C1.x) bağlı
+- **Puanlama ve tekrar planı**
+  - Dosya: `quiz.md` sonu
+  - Amaç: Alan bazlı puan tablosu; yanlışları C1.x'e eşleyip zayıf konuları tekrar etme
+- **Sınav stratejisi**
+  - Dosya: Bu README
+  - Amaç: Soru türleri, eleme yöntemi, anahtar kelimeler, zaman yönetimi, sınav günü
 
 **Sınavın genel çerçevesi** (ayrıntılar değişebilir, resmî sayfadan doğrula):
 
@@ -52,18 +56,36 @@ AZ-900 bir **genişlik** sınavıdır: derin yapılandırma değil, kavramların
 
 #### 3.2 Soru çözme teknikleri
 
-| Teknik | Nasıl? | Örnek |
-|---|---|---|
-| **Önce soru kökünü oku** | Senaryonun son cümlesi asıl soruyu taşır: "en düşük maliyet", "en az yönetim yükü", "en yüksek erişilebilirlik" | "…**en az yönetim yükü** ile web uygulaması" → PaaS (App Service) |
-| **NOT / EXCEPT soruları** | Soruyu olumluya çevir, her şıkkı "bu doğru mu?" diye işaretle; tek "yanlış" olanı seç | "Aşağıdakilerden hangisi resource group için **doğru değildir**?" |
-| **Eleme yöntemi** | Kesin yanlışları at (kategori dışı, farklı katman, mutlak ifade); kalan iki şık arasında anahtar kelimeye bak | Zone ↔ pair: "datacenter arızası" mı "bölgesel felaket" mi? |
-| **Anahtar kelime avı** | Kelime → kavram eşlemesi (aşağıdaki tablo) | "internetten geçmeden" → ExpressRoute |
-| **Evet/hayır tablosu** | Her satır **bağımsızdır**; bir satırın cevabı diğerini etkilemez. "Hepsi evet olamaz" gibi bir kural yoktur | — |
-| **Mutlak ifadeler** | "Her zaman", "hiçbir zaman", "yalnızca", "tüm" — ifade tek bir istisnayla çöker mi? | "SaaS'ta **tüm** sorumluluk Microsoft'tadır" → Hayır |
-| **"En iyi" cevap** | Birden çok şık teknik olarak çalışabilir; senaryonun kısıtını (maliyet, yönetim, zaman) en iyi karşılayanı seç | VM de web uygulaması çalıştırır ama "OS yönetmeden" denmişse App Service |
-| **Çoklu seçim** | Kaç cevap istendiğini oku ("iki doğru cevap"); kısmi puan olabilir ama varsayma | — |
-| **Tahmin** | Boş bırakılan soru puan getirmez; yanlış cevap için ek ceza yoktur — her soruyu cevapla | — |
-| **İşaretle ve geç** | 60 saniyeyi aşan soruyu işaretle (*mark for review*), sona bırak | — |
+- **Önce soru kökünü oku**
+  - Nasıl?: Senaryonun son cümlesi asıl soruyu taşır: "en düşük maliyet", "en az yönetim yükü", "en yüksek erişilebilirlik"
+  - Örnek: "…**en az yönetim yükü** ile web uygulaması" → PaaS (App Service)
+- **NOT / EXCEPT soruları**
+  - Nasıl?: Soruyu olumluya çevir, her şıkkı "bu doğru mu?" diye işaretle; tek "yanlış" olanı seç
+  - Örnek: "Aşağıdakilerden hangisi resource group için **doğru değildir**?"
+- **Eleme yöntemi**
+  - Nasıl?: Kesin yanlışları at (kategori dışı, farklı katman, mutlak ifade); kalan iki şık arasında anahtar kelimeye bak
+  - Örnek: Zone ↔ pair: "datacenter arızası" mı "bölgesel felaket" mi?
+- **Anahtar kelime avı**
+  - Nasıl?: Kelime → kavram eşlemesi (aşağıdaki tablo)
+  - Örnek: "internetten geçmeden" → ExpressRoute
+- **Evet/hayır tablosu**
+  - Nasıl?: Her satır **bağımsızdır**; bir satırın cevabı diğerini etkilemez. "Hepsi evet olamaz" gibi bir kural yoktur
+  - Örnek: —
+- **Mutlak ifadeler**
+  - Nasıl?: "Her zaman", "hiçbir zaman", "yalnızca", "tüm" — ifade tek bir istisnayla çöker mi?
+  - Örnek: "SaaS'ta **tüm** sorumluluk Microsoft'tadır" → Hayır
+- **"En iyi" cevap**
+  - Nasıl?: Birden çok şık teknik olarak çalışabilir; senaryonun kısıtını (maliyet, yönetim, zaman) en iyi karşılayanı seç
+  - Örnek: VM de web uygulaması çalıştırır ama "OS yönetmeden" denmişse App Service
+- **Çoklu seçim**
+  - Nasıl?: Kaç cevap istendiğini oku ("iki doğru cevap"); kısmi puan olabilir ama varsayma
+  - Örnek: —
+- **Tahmin**
+  - Nasıl?: Boş bırakılan soru puan getirmez; yanlış cevap için ek ceza yoktur — her soruyu cevapla
+  - Örnek: —
+- **İşaretle ve geç**
+  - Nasıl?: 60 saniyeyi aşan soruyu işaretle (*mark for review*), sona bırak
+  - Örnek: —
 
 **Anahtar kelime → cevap tablosu** (tüm konulardan):
 
@@ -105,12 +127,18 @@ AZ-900 bir **genişlik** sınavıdır: derin yapılandırma değil, kavramların
 
 #### 3.4 Sınav günü
 
-| | Test merkezi (Pearson VUE) | Çevrimiçi gözetimli (online proctored) |
-|---|---|---|
-| Ortam | Hazır bilgisayar, gözetmen yerinde | Kendi bilgisayarın; webcam ve mikrofon zorunlu |
-| Hazırlık | Kimlik belgesi, randevudan önce varış | **Sistem testi** (önceden), sessiz ve boş bir oda, masada hiçbir şey olmaması, check-in fotoğrafları |
-| Risk | Ulaşım | İnternet kopması, ortam kurallarının ihlali (birinin odaya girmesi, ekrandan uzaklaşmak) |
-| Öneri | İlk sınavında stres azaltır | Esnek saat; ama check-in için 15-30 dakika erken başla |
+- **Ortam**
+  - Test merkezi (Pearson VUE): Hazır bilgisayar, gözetmen yerinde
+  - Çevrimiçi gözetimli (online proctored): Kendi bilgisayarın; webcam ve mikrofon zorunlu
+- **Hazırlık**
+  - Test merkezi (Pearson VUE): Kimlik belgesi, randevudan önce varış
+  - Çevrimiçi gözetimli (online proctored): **Sistem testi** (önceden), sessiz ve boş bir oda, masada hiçbir şey olmaması, check-in fotoğrafları
+- **Risk**
+  - Test merkezi (Pearson VUE): Ulaşım
+  - Çevrimiçi gözetimli (online proctored): İnternet kopması, ortam kurallarının ihlali (birinin odaya girmesi, ekrandan uzaklaşmak)
+- **Öneri**
+  - Test merkezi (Pearson VUE): İlk sınavında stres azaltır
+  - Çevrimiçi gözetimli (online proctored): Esnek saat; ama check-in için 15-30 dakika erken başla
 
 - Sınav arayüzünü önceden görmek için Microsoft'un **exam sandbox** (sınav deneyimi demosu) sayfasını dene.
 - Kimlikteki ad, sınav profilindeki adla **aynı** olmalıdır.
@@ -170,13 +198,19 @@ Bir geliştirici AZ-900'e beş haftalık plana göre hazırlanıyor (→ C1 mod�
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Erken sınav tarihi almak | Motivasyon ve odak | Hazır değilsen tekrar ücreti ve bekleme süresi |
-| Test merkezi | Teknik risk yok, sakin ortam | Ulaşım, sınırlı saat |
-| Online proctored | Esnek saat ve yer | Bağlantı/ortam riski, sıkı kurallar |
-| Çok sayıda deneme sınavı | Format rahatlığı | Ezber riski: aynı soruları tanımaya başlarsın; gerekçeyi açıklayamıyorsan bilmiyorsundur |
-| Laboratuvarları atlamak | Zaman kazancı | Kavramlar soyut kalır; senaryo sorularında "hangisi gerçekten böyle çalışır?" sezgisi zayıflar |
+- **Erken sınav tarihi almak**
+  - Kazanç: Motivasyon ve odak
+  - Bedel: Hazır değilsen tekrar ücreti ve bekleme süresi
+- **Test merkezi** — Kazanç: Teknik risk yok, sakin ortam · Bedel: Ulaşım, sınırlı saat
+- **Online proctored**
+  - Kazanç: Esnek saat ve yer
+  - Bedel: Bağlantı/ortam riski, sıkı kurallar
+- **Çok sayıda deneme sınavı**
+  - Kazanç: Format rahatlığı
+  - Bedel: Ezber riski: aynı soruları tanımaya başlarsın; gerekçeyi açıklayamıyorsan bilmiyorsundur
+- **Laboratuvarları atlamak**
+  - Kazanç: Zaman kazancı
+  - Bedel: Kavramlar soyut kalır; senaryo sorularında "hangisi gerçekten böyle çalışır?" sezgisi zayıflar
 
 ---
 

@@ -187,11 +187,9 @@ rules:
 
 #### Soru 13: Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Consumption-only environment'ta GPU kullanılabilir. | ☐ | ☐ |
-| b) Aynı environment'taki uygulamalar aynı Log Analytics çalışma alanına log gönderir (varsayılan). | ☐ | ☐ |
-| c) Container Apps Job, cron ile zamanlanabilir. | ☐ | ☐ |
+- **a) Consumption-only environment'ta GPU kullanılabilir.** — Evet: ☐ · Hayır: ☐
+- b) Aynı environment'taki uygulamalar aynı Log Analytics çalışma alanına log gönderir (varsayılan). — Evet: ☐ · Hayır: ☐
+- **c) Container Apps Job, cron ile zamanlanabilir.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 

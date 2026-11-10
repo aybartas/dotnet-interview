@@ -12,11 +12,18 @@
 
 "Verim güvende mi?" sorusunun üç ayrı cevabı vardır ve karıştırılması bu konunun en büyük tuzağıdır:
 
-| Kavram | Soru | Çözüm | Azure servisi |
-|---|---|---|---|
-| **High availability (HA)** | "Küçük arızalarda hizmet **kesintisiz** sürsün" | Yedeklilik, zone'lar, load balancer | Availability zone, zone-redundant servisler (→ C1.2, C1.4) |
-| **Backup** (yedekleme) | "Sildim / bozuldu / fidye yazılımı vurdu — **geçmiş bir noktaya dönebilir miyim?**" | Zaman içinde alınan, **ayrı** saklanan kurtarma noktaları | **Azure Backup** |
-| **Disaster recovery (DR)** | "Bölge/datacenter **tamamen gitti** — hizmet başka yerde **ayağa kalkabilir mi?**" | İkincil konumda replika + failover | **Azure Site Recovery** |
+- **High availability (HA)**
+  - Soru: "Küçük arızalarda hizmet **kesintisiz** sürsün"
+  - Çözüm: Yedeklilik, zone'lar, load balancer
+  - Azure servisi: Availability zone, zone-redundant servisler (→ C1.2, C1.4)
+- **Backup** (yedekleme)
+  - Soru: "Sildim / bozuldu / fidye yazılımı vurdu — **geçmiş bir noktaya dönebilir miyim?**"
+  - Çözüm: Zaman içinde alınan, **ayrı** saklanan kurtarma noktaları
+  - Azure servisi: **Azure Backup**
+- **Disaster recovery (DR)**
+  - Soru: "Bölge/datacenter **tamamen gitti** — hizmet başka yerde **ayağa kalkabilir mi?**"
+  - Çözüm: İkincil konumda replika + failover
+  - Azure servisi: **Azure Site Recovery**
 
 Taşıma (migration) ise ayrı bir iştir: mevcut iş yüklerini **Azure'a** (veya Azure içinde başka bölgeye) getirmek. Araçları: **Azure Migrate**, **Database Migration Service**, **Data Box**, **Resource Mover** *(bağlam)*, hibrit yönetim için **Azure Arc**.
 
@@ -42,14 +49,25 @@ Bu konunun C# kodu yoktur. Pratik, `az` CLI ile Recovery Services vault ve VM ye
 
 #### 3.1 Yedekleme ↔ DR ↔ HA ayrımı ⭐
 
-| | HA | Backup | DR (Site Recovery) |
-|---|---|---|---|
-| Koruduğu şey | Küçük arızalar (VM, rack, zone) | Silinme, bozulma, fidye yazılımı, yanlış değişiklik | Bölge/datacenter kaybı |
-| Mekanizma | Yedeklilik, otomatik failover | Zaman içinde noktalar (point-in-time) | **Sürekli replikasyon** + failover |
-| Tipik RPO | ~0 (eşzamanlı yedeklilik) | Saat–gün (yedekleme sıklığı kadar) | Saniye–dakika |
-| Tipik RTO | Saniye–dakika | Saat (geri yükleme süresi) | Dakika–saat (recovery plan'a bağlı) |
-| Geçmişe dönüş | **Yok** (bozulma da yayılır) | **Evet** | Sınırlı (kısa süreli recovery point'ler) |
-| Maliyet | Ek kaynak | Depolama + korunan örnek ücreti | Replika + korunan örnek ücreti |
+- **Koruduğu şey**
+  - HA: Küçük arızalar (VM, rack, zone)
+  - Backup: Silinme, bozulma, fidye yazılımı, yanlış değişiklik
+  - DR (Site Recovery): Bölge/datacenter kaybı
+- **Mekanizma**
+  - HA: Yedeklilik, otomatik failover
+  - Backup: Zaman içinde noktalar (point-in-time)
+  - DR (Site Recovery): **Sürekli replikasyon** + failover
+- **Tipik RPO**
+  - HA: ~0 (eşzamanlı yedeklilik)
+  - Backup: Saat–gün (yedekleme sıklığı kadar)
+  - DR (Site Recovery): Saniye–dakika
+- **Tipik RTO**
+  - HA: Saniye–dakika · Backup: Saat (geri yükleme süresi)
+  - DR (Site Recovery): Dakika–saat (recovery plan'a bağlı)
+- **Geçmişe dönüş**
+  - HA: **Yok** (bozulma da yayılır) · Backup: **Evet**
+  - DR (Site Recovery): Sınırlı (kısa süreli recovery point'ler)
+- **Maliyet** — HA: Ek kaynak · Backup: Depolama + korunan örnek ücreti · DR (Site Recovery): Replika + korunan örnek ücreti
 
 > Hatırlatma: **HA arızayı sürdürür, backup geçmişi geri getirir, DR bölgeyi yedekler.** Üçü birbirinin yerine geçmez; üretim iş yükü genellikle üçüne birden ihtiyaç duyar.
 
@@ -62,11 +80,15 @@ Bu konunun C# kodu yoktur. Pratik, `az` CLI ile Recovery Services vault ve VM ye
           (kaybolacak veri)                (kesinti süresi)
 ```
 
-| Hedef | Anlamı | Çözüm yönü |
-|---|---|---|
-| RPO = 24 sa, RTO = 1 gün | Dün geceki yedeğe dönmek yeter, bir gün beklenebilir | Günlük Azure Backup |
-| RPO = 5 dk, RTO = 1 sa | Neredeyse hiç veri kaybı, hızlı dönüş | Site Recovery (sürekli replikasyon) + recovery plan |
-| RPO ≈ 0, RTO ≈ 0 | Kesintisiz | Aktif-aktif çok bölgeli mimari + veri tabanında senkron/yakın-senkron replikasyon (maliyetli; → C1.17, S8.3) |
+- **RPO = 24 sa, RTO = 1 gün**
+  - Anlamı: Dün geceki yedeğe dönmek yeter, bir gün beklenebilir
+  - Çözüm yönü: Günlük Azure Backup
+- **RPO = 5 dk, RTO = 1 sa**
+  - Anlamı: Neredeyse hiç veri kaybı, hızlı dönüş
+  - Çözüm yönü: Site Recovery (sürekli replikasyon) + recovery plan
+- **RPO ≈ 0, RTO ≈ 0**
+  - Anlamı: Kesintisiz
+  - Çözüm yönü: Aktif-aktif çok bölgeli mimari + veri tabanında senkron/yakın-senkron replikasyon (maliyetli; → C1.17, S8.3)
 
 Kural: **RPO küçüldükçe ve RTO küçüldükçe maliyet artar.** İş birimi bu iki sayıyı verir; mimari araç seçimi onlardan çıkar.
 
@@ -96,12 +118,14 @@ Kural: **RPO küçüldükçe ve RTO küçüldükçe maliyet artar.** İş birimi
 
 **Backup ↔ snapshot** ⭐:
 
-| | Snapshot | Azure Backup |
-|---|---|---|
-| Ne | Bir diskin/blob'un o anki **salt-okunur kopyası** | Politika, saklama, vault ve yönetim sunan **servis** |
-| Nerede | Çoğunlukla **kaynağın yanında** (aynı bölge/hesap) | Ayrı **vault** (izole, farklı yönetim sınırı) |
-| Saklama/otomasyon | Elle | Politika tabanlı, otomatik |
-| Silme koruması | Kaynakla birlikte silinebilir | Soft delete, immutable vault |
+- **Ne**
+  - Snapshot: Bir diskin/blob'un o anki **salt-okunur kopyası**
+  - Azure Backup: Politika, saklama, vault ve yönetim sunan **servis**
+- **Nerede**
+  - Snapshot: Çoğunlukla **kaynağın yanında** (aynı bölge/hesap)
+  - Azure Backup: Ayrı **vault** (izole, farklı yönetim sınırı)
+- **Saklama/otomasyon** — Snapshot: Elle · Azure Backup: Politika tabanlı, otomatik
+- **Silme koruması** — Snapshot: Kaynakla birlikte silinebilir · Azure Backup: Soft delete, immutable vault
 
 Azure Backup VM yedeklerken **snapshot kullanır** (anlık görüntü → vault'a aktarım); ama "snapshot almak = yedekleme stratejisi" demek değildir.
 
@@ -156,14 +180,20 @@ Bu nedenle: **GRS "yedek" değildir.** Blob için ek koruma: *soft delete, versi
 
 Taşıma stratejileri — **"R" modeli** (Cloud Adoption Framework'ün sınıflandırması; kaynağa göre 5 veya 6 R olarak anlatılır):
 
-| Strateji | Ne yapılır | Efor | Kazanç |
-|---|---|---|---|
-| **Rehost** ("lift and shift") | Olduğu gibi Azure VM'e | Düşük | Hızlı çıkış; bulut faydaları sınırlı |
-| **Replatform** *(bazı anlatımlarda)* | Küçük değişiklikle yönetilen servise (ör. SQL Server → Azure SQL MI) | Orta-düşük | Yönetim yükü azalır |
-| **Refactor** | Kodu bulut servislerini kullanacak şekilde düzenle (ör. App Service) | Orta | PaaS faydaları |
-| **Rearchitect** | Mimariyi değiştir (monolit → mikroservis) | Yüksek | Ölçek, çeviklik |
-| **Rebuild** | Bulut-yerel sıfırdan yeniden yaz | Çok yüksek | Tam bulut-yerel |
-| **Replace** | Hazır SaaS ile değiştir | Değişken | Yazılım bakımı biter |
+- **Rehost** ("lift and shift")
+  - Ne yapılır: Olduğu gibi Azure VM'e · Efor: Düşük
+  - Kazanç: Hızlı çıkış; bulut faydaları sınırlı
+- **Replatform** *(bazı anlatımlarda)*
+  - Ne yapılır: Küçük değişiklikle yönetilen servise (ör. SQL Server → Azure SQL MI)
+  - Efor: Orta-düşük · Kazanç: Yönetim yükü azalır
+- **Refactor**
+  - Ne yapılır: Kodu bulut servislerini kullanacak şekilde düzenle (ör. App Service)
+  - Efor: Orta · Kazanç: PaaS faydaları
+- **Rearchitect**
+  - Ne yapılır: Mimariyi değiştir (monolit → mikroservis)
+  - Efor: Yüksek · Kazanç: Ölçek, çeviklik
+- **Rebuild** — Ne yapılır: Bulut-yerel sıfırdan yeniden yaz · Efor: Çok yüksek · Kazanç: Tam bulut-yerel
+- **Replace** — Ne yapılır: Hazır SaaS ile değiştir · Efor: Değişken · Kazanç: Yazılım bakımı biter
 
 > Sınav ayrıntı sormaz; "olduğu gibi taşı" → **rehost / lift-and-shift**, "SaaS'a geç" → **replace** bilmek yeter.
 
@@ -261,21 +291,23 @@ Bir lojistik şirketi kurum içi iki VMware kümesinde 120 sunucu ve bir SQL Ser
 
 **Sınav neyi, nasıl sorar?** Senaryo → servis eşleştirmesi (Backup / Site Recovery / Migrate / Data Box / DMS), RPO ve RTO tanımları, "redundancy yedek midir?" ve evet/hayır tabloları.
 
-| Soru kalıbı | Doğru cevap | Tuzak |
-|---|---|---|
-| "Silinen/bozulan VM'i **dünkü haline** geri getir" | **Azure Backup** | Site Recovery, GRS |
-| "Bölge arızasında VM'leri **başka bölgede çalıştır**, failover" | **Azure Site Recovery** | Azure Backup |
-| "Kurum içi VMware/Hyper-V'yi Azure'a **DR için** replike et" | **Site Recovery** | Azure Migrate |
-| "Kurum içi sunucuları **keşfet, değerlendir ve taşı**" | **Azure Migrate** | Data Box, Site Recovery |
-| "Veritabanını (SQL Server → Azure SQL) **kesintiyi azaltarak** taşı" | **Database Migration Service** | Backup |
-| "Çevrimdışı, onlarca/yüzlerce TB, ağ yetersiz" | **Azure Data Box** | AzCopy, Azure Migrate |
-| "En fazla kabul edilen **veri kaybı** süresi" | **RPO** | RTO |
-| "Hizmetin **geri gelme** süresi hedefi" | **RTO** | RPO |
-| "GRS açık, o halde yedeğim var" | **Yanlış**: redundancy ≠ backup | |
-| "Kodu değiştirmeden olduğu gibi Azure VM'e taşı" | **Rehost (lift-and-shift)** | Refactor, Rearchitect |
-| "Kurum içi sunucuları Azure'dan **yönet**, taşımadan" | **Azure Arc** | Azure Migrate |
-| "Yedeklerin ransomware ile silinmesini/değiştirilmesini engelle" | **Soft delete + immutable vault** | Yalnız GRS |
-| "Aynı tarihe **geri dönülebilen** kurtarma noktaları" | **Azure Backup** (recovery point) | Site Recovery |
+- "Silinen/bozulan VM'i **dünkü haline** geri getir" — Doğru cevap: **Azure Backup** · Tuzak: Site Recovery, GRS
+- "Bölge arızasında VM'leri **başka bölgede çalıştır**, failover" — Doğru cevap: **Azure Site Recovery** · Tuzak: Azure Backup
+- "Kurum içi VMware/Hyper-V'yi Azure'a **DR için** replike et" — Doğru cevap: **Site Recovery** · Tuzak: Azure Migrate
+- "Kurum içi sunucuları **keşfet, değerlendir ve taşı**" — Doğru cevap: **Azure Migrate** · Tuzak: Data Box, Site Recovery
+- "Veritabanını (SQL Server → Azure SQL) **kesintiyi azaltarak** taşı" — Doğru cevap: **Database Migration Service** · Tuzak: Backup
+- **"Çevrimdışı, onlarca/yüzlerce TB, ağ yetersiz"** — Doğru cevap: **Azure Data Box** · Tuzak: AzCopy, Azure Migrate
+- "En fazla kabul edilen **veri kaybı** süresi" — Doğru cevap: **RPO** · Tuzak: RTO
+- "Hizmetin **geri gelme** süresi hedefi" — Doğru cevap: **RTO** · Tuzak: RPO
+- **"GRS açık, o halde yedeğim var"** — Doğru cevap: **Yanlış**: redundancy ≠ backup · Tuzak: —
+- **"Kodu değiştirmeden olduğu gibi Azure VM'e taşı"** — Doğru cevap: **Rehost (lift-and-shift)** · Tuzak: Refactor, Rearchitect
+- "Kurum içi sunucuları Azure'dan **yönet**, taşımadan" — Doğru cevap: **Azure Arc** · Tuzak: Azure Migrate
+- **"Yedeklerin ransomware ile silinmesini/değiştirilmesini engelle"**
+  - Doğru cevap: **Soft delete + immutable vault**
+  - Tuzak: Yalnız GRS
+- "Aynı tarihe **geri dönülebilen** kurtarma noktaları"
+  - Doğru cevap: **Azure Backup** (recovery point)
+  - Tuzak: Site Recovery
 
 **Anahtar kelimeler:** *recovery point, retention, vault, restore* → Backup · *failover, failback, replicate, recovery plan, test failover* → Site Recovery · *discover, assess, migrate, lift and shift* → Azure Migrate · *offline, physical device, terabytes* → Data Box · *RPO = data loss, RTO = downtime*.
 
@@ -307,18 +339,36 @@ Bir lojistik şirketi kurum içi iki VMware kümesinde 120 sunucu ve bir SQL Ser
 
 ### 7. Performans & trade-off
 
-| Karar | Kazanç | Bedel |
-|---|---|---|
-| Daha sık yedek (günde 1 → saatlik) | Daha küçük RPO | Daha çok depolama, işlem; her iş yükü desteklemez |
-| Uzun retention (yıllık noktalar) | Uyumluluk, geriye dönük adli analiz | Depolama maliyeti (vault tier ile düşürülür) |
-| Vault GRS + cross-region restore | Bölge kaybında yedekten bölgesel olmayan geri yükleme | LRS'ten pahalı |
-| Immutable vault / always-on soft delete | Fidye yazılımına ve kötü niyetli silmeye karşı koruma | Hatalı politikayı geri almak zorlaşır; planlı olmayan silinemez |
-| Site Recovery ile hot DR | Dakikalar mertebesinde RPO/RTO | Korunan örnek ücreti + hedef bölgede depolama; test failover'ın geçici hesaplama maliyeti |
-| Backup-only (DR yok) | Ucuz; bölge felaketinde gün-hafta RTO | Bölge çökerse yeniden kurulum süresi uzun |
-| Rehost (lift-and-shift) | Hızlı, düşük risk | PaaS faydaları (yönetim, ölçek) alınmaz; maliyet optimizasyonu sonraya kalır |
-| Refactor/Rearchitect | Uzun vadeli maliyet ve çeviklik | Yüksek mühendislik eforu, uzun süre |
-| Çevrimiçi DMS (minimal kesinti) | Kesinti dakikalar | Kurulum karmaşıklığı; çevrimdışıya göre daha çok izleme |
-| Data Box | Ağ yükü yok, büyük veri hızlı | Kargo süresi, cihaz ücreti, sürekli senkron değil |
+- **Daha sık yedek (günde 1 → saatlik)**
+  - Kazanç: Daha küçük RPO
+  - Bedel: Daha çok depolama, işlem; her iş yükü desteklemez
+- **Uzun retention (yıllık noktalar)**
+  - Kazanç: Uyumluluk, geriye dönük adli analiz
+  - Bedel: Depolama maliyeti (vault tier ile düşürülür)
+- **Vault GRS + cross-region restore**
+  - Kazanç: Bölge kaybında yedekten bölgesel olmayan geri yükleme
+  - Bedel: LRS'ten pahalı
+- **Immutable vault / always-on soft delete**
+  - Kazanç: Fidye yazılımına ve kötü niyetli silmeye karşı koruma
+  - Bedel: Hatalı politikayı geri almak zorlaşır; planlı olmayan silinemez
+- **Site Recovery ile hot DR**
+  - Kazanç: Dakikalar mertebesinde RPO/RTO
+  - Bedel: Korunan örnek ücreti + hedef bölgede depolama; test failover'ın geçici hesaplama maliyeti
+- **Backup-only (DR yok)**
+  - Kazanç: Ucuz; bölge felaketinde gün-hafta RTO
+  - Bedel: Bölge çökerse yeniden kurulum süresi uzun
+- **Rehost (lift-and-shift)**
+  - Kazanç: Hızlı, düşük risk
+  - Bedel: PaaS faydaları (yönetim, ölçek) alınmaz; maliyet optimizasyonu sonraya kalır
+- **Refactor/Rearchitect**
+  - Kazanç: Uzun vadeli maliyet ve çeviklik
+  - Bedel: Yüksek mühendislik eforu, uzun süre
+- **Çevrimiçi DMS (minimal kesinti)**
+  - Kazanç: Kesinti dakikalar
+  - Bedel: Kurulum karmaşıklığı; çevrimdışıya göre daha çok izleme
+- **Data Box**
+  - Kazanç: Ağ yükü yok, büyük veri hızlı
+  - Bedel: Kargo süresi, cihaz ücreti, sürekli senkron değil
 
 ---
 

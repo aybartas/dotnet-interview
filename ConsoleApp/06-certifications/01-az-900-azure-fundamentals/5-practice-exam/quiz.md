@@ -90,11 +90,9 @@ Bir yönetici, Microsoft'un **kendi aboneliğindeki** kaynakları etkileyecek **
 
 #### Soru 7: `[B · C1.9]` Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Authentication, bir kullanıcının kimliğini doğrulama işlemidir. | ☐ | ☐ |
-| b) Authorization, kimliği doğrulanmış bir kullanıcının hangi kaynaklara ne düzeyde erişebileceğini belirler. | ☐ | ☐ |
-| c) Bir şifre ve bir güvenlik sorusu birlikte kullanıldığında bu, iki farklı faktörlü kimlik doğrulamadır. | ☐ | ☐ |
+- **a) Authentication, bir kullanıcının kimliğini doğrulama işlemidir.** — Evet: ☐ · Hayır: ☐
+- b) Authorization, kimliği doğrulanmış bir kullanıcının hangi kaynaklara ne düzeyde erişebileceğini belirler. — Evet: ☐ · Hayır: ☐
+- c) Bir şifre ve bir güvenlik sorusu birlikte kullanıldığında bu, iki farklı faktörlü kimlik doğrulamadır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -181,11 +179,9 @@ Bir banka, datacenter'ı ile Azure arasında **public internet üzerinden geçme
 
 #### Soru 14: `[C · C1.12]` Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) CanNotDelete (Delete) lock bulunan bir kaynağın ayarları değiştirilebilir. | ☐ | ☐ |
-| b) Bir resource group'a uygulanan lock, içindeki kaynaklara miras kalır. | ☐ | ☐ |
-| c) Owner rolüne sahip bir kullanıcı, ReadOnly lock bulunan bir kaynağı lock'ı kaldırmadan silebilir. | ☐ | ☐ |
+- a) CanNotDelete (Delete) lock bulunan bir kaynağın ayarları değiştirilebilir. — Evet: ☐ · Hayır: ☐
+- b) Bir resource group'a uygulanan lock, içindeki kaynaklara miras kalır. — Evet: ☐ · Hayır: ☐
+- c) Owner rolüne sahip bir kullanıcı, ReadOnly lock bulunan bir kaynağı lock'ı kaldırmadan silebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -384,11 +380,9 @@ Her senaryoyu doğru faydayla eşleştirin: **Governance · Security · Manageab
 
 #### Soru 30: `[C · C1.11]` Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Aynı Azure servisi farklı region'larda farklı fiyatlara sahip olabilir. | ☐ | ☐ |
-| b) Azure'dan dışarı (egress) giden veri trafiği ücretlendirilebilir. | ☐ | ☐ |
-| c) Cost Management'ta tanımlanan bir budget aşıldığında kaynaklar otomatik olarak durdurulur. | ☐ | ☐ |
+- a) Aynı Azure servisi farklı region'larda farklı fiyatlara sahip olabilir. — Evet: ☐ · Hayır: ☐
+- **b) Azure'dan dışarı (egress) giden veri trafiği ücretlendirilebilir.** — Evet: ☐ · Hayır: ☐
+- c) Cost Management'ta tanımlanan bir budget aşıldığında kaynaklar otomatik olarak durdurulur. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -540,11 +534,9 @@ Bir uygulama, bulunduğu region'ın tamamını etkileyen bir felaketten sonra ba
 
 #### Soru 42: `[C · C1.13]` Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Azure portal, Azure CLI ve Azure PowerShell'den gelen istekler Azure Resource Manager üzerinden işlenir. | ☐ | ☐ |
-| b) ARM template'leri JSON biçiminde, deklaratif şablonlardır. | ☐ | ☐ |
-| c) Bicep dosyaları dağıtımdan önce ARM JSON'a dönüştürülür (derlenir). | ☐ | ☐ |
+- a) Azure portal, Azure CLI ve Azure PowerShell'den gelen istekler Azure Resource Manager üzerinden işlenir. — Evet: ☐ · Hayır: ☐
+- **b) ARM template'leri JSON biçiminde, deklaratif şablonlardır.** — Evet: ☐ · Hayır: ☐
+- **c) Bicep dosyaları dağıtımdan önce ARM JSON'a dönüştürülür (derlenir).** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -644,11 +636,9 @@ Bir güvenlik ekibi, birlikte uygulanması gereken **30 farklı policy tanımın
 
 #### Soru 50: `[A · C1.2]` Evet / Hayır
 
-| İfade | Evet | Hayır |
-|---|---|---|
-| a) Bir VM'e daha fazla CPU ve bellek eklemek scale up (vertical scaling) örneğidir. | ☐ | ☐ |
-| b) Preview (önizleme) aşamasındaki Azure servisleri genellikle bir SLA ile sunulmaz. | ☐ | ☐ |
-| c) Seri bağlı iki servisin composite SLA'sı, iki servisin SLA'larından yüksek olanına eşittir. | ☐ | ☐ |
+- a) Bir VM'e daha fazla CPU ve bellek eklemek scale up (vertical scaling) örneğidir. — Evet: ☐ · Hayır: ☐
+- b) Preview (önizleme) aşamasındaki Azure servisleri genellikle bir SLA ile sunulmaz. — Evet: ☐ · Hayır: ☐
+- c) Seri bağlı iki servisin composite SLA'sı, iki servisin SLA'larından yüksek olanına eşittir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
@@ -661,33 +651,66 @@ Bir güvenlik ekibi, birlikte uygulanması gereken **30 farklı policy tanımın
 
 Her doğru cevabı ilgili satıra işaretle (çoklu seçim, evet/hayır, eşleştirme ve sıralamada **tümü** doğruysa 1 puan say).
 
-| Alan | Ağırlık | Soru numaraları | Doğru | Yüzde |
-|---|---|---|---|---|
-| **A** — Describe cloud concepts | %25-30 | 1, 4, 8, 12, 16, 21, 24, 25, 29, 33, 37, 41, 47, 50 | ___ / 14 | |
-| **B** — Describe Azure architecture and services | %35-40 | 2, 5, 7, 10, 13, 15, 17, 19, 22, 26, 28, 31, 34, 35, 38, 40, 43, 45, 48 | ___ / 19 | |
-| **C** — Describe Azure management and governance | %30-35 | 3, 6, 9, 11, 14, 18, 20, 23, 27, 30, 32, 36, 39, 42, 44, 46, 49 | ___ / 17 | |
-| **Toplam** | | | ___ / 50 | |
+- **A** — Describe cloud concepts
+  - Ağırlık: %25-30
+  - Soru numaraları: 1, 4, 8, 12, 16, 21, 24, 25, 29, 33, 37, 41, 47, 50
+  - Doğru: ___ / 14 · Yüzde: ___
+- **B** — Describe Azure architecture and services
+  - Ağırlık: %35-40
+  - Soru numaraları: 2, 5, 7, 10, 13, 15, 17, 19, 22, 26, 28, 31, 34, 35, 38, 40, 43, 45, 48
+  - Doğru: ___ / 19 · Yüzde: ___
+- **C** — Describe Azure management and governance
+  - Ağırlık: %30-35
+  - Soru numaraları: 3, 6, 9, 11, 14, 18, 20, 23, 27, 30, 32, 36, 39, 42, 44, 46, 49
+  - Doğru: ___ / 17 · Yüzde: ___
+- **Toplam** — Ağırlık: — · Soru numaraları: — · Doğru: ___ / 50 · Yüzde: ___
 
 **Yorum:** ≥ 42 (%84) → resmî Practice Assessment'a geç, sonra sınav tarihi al · 35-41 → zayıf alanı tekrar et, bir hafta sonra yeniden çöz · < 35 → zayıf konuların README + laboratuvar + quiz döngüsüne geri dön.
 
 ## Yanlışlarını C1.x ile eşleştir
 
-| Konu | Bu sınavdaki sorular | Yanlış sayın | Tekrar edilecek |
-|---|---|---|---|
-| C1.1 Cloud computing, modeller, fiyatlandırma | 1, 12, 25, 37, 47 | | [README](../1.1-cloud-computing-models-pricing/README.md) · [quiz](../1.1-cloud-computing-models-pricing/quiz.md) |
-| C1.2 Cloud'un faydaları, SLA | 8, 16, 29, 41, 50 | | [README](../1.2-cloud-benefits/README.md) · [quiz](../1.2-cloud-benefits/quiz.md) |
-| C1.3 IaaS, PaaS, SaaS, serverless | 4, 21, 24, 33 | | [README](../1.3-service-types-iaas-paas-saas/README.md) · [quiz](../1.3-service-types-iaas-paas-saas/quiz.md) |
-| C1.4 Temel mimari bileşenler | 2, 15, 26, 38 | | [README](../2.1-core-architecture/README.md) · [quiz](../2.1-core-architecture/quiz.md) |
-| C1.5 Compute ve VM'ler | 10, 31, 48 | | [README](../2.2-compute-virtual-machines/README.md) · [quiz](../2.2-compute-virtual-machines/quiz.md) |
-| C1.6 Uygulama barındırma | 17, 35 | | [README](../2.3-app-hosting-containers-functions-avd/README.md) · [quiz](../2.3-app-hosting-containers-functions-avd/quiz.md) |
-| C1.7 Ağ servisleri | 13, 28, 43 | | [README](../2.4-networking/README.md) · [quiz](../2.4-networking/quiz.md) |
-| C1.8 Storage | 5, 22, 40 | | [README](../2.5-storage/README.md) · [quiz](../2.5-storage/quiz.md) |
-| C1.9 Kimlik ve erişim | 7, 34, 45 | | [README](../2.6-identity-access-rbac/README.md) · [quiz](../2.6-identity-access-rbac/quiz.md) |
-| C1.10 Güvenlik | 19 | | [README](../2.7-security-zero-trust-defender/README.md) · [quiz](../2.7-security-zero-trust-defender/quiz.md) |
-| C1.11 Maliyet yönetimi | 9, 18, 30, 44 | | [README](../3.1-cost-management/README.md) · [quiz](../3.1-cost-management/quiz.md) |
-| C1.12 Yönetişim ve uyumluluk | 3, 14, 27, 39, 49 | | [README](../3.2-governance-compliance/README.md) · [quiz](../3.2-governance-compliance/quiz.md) |
-| C1.13 Yönetim ve dağıtım araçları | 11, 20, 32, 42 | | [README](../3.3-management-deployment-tools/README.md) · [quiz](../3.3-management-deployment-tools/quiz.md) |
-| C1.14 İzleme araçları | 6, 23, 36, 46 | | [README](../3.4-monitoring-tools/README.md) · [quiz](../3.4-monitoring-tools/quiz.md) |
+- **C1.1 Cloud computing, modeller, fiyatlandırma**
+  - Bu sınavdaki sorular: 1, 12, 25, 37, 47 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../1.1-cloud-computing-models-pricing/README.md) · [quiz](../1.1-cloud-computing-models-pricing/quiz.md)
+- **C1.2 Cloud'un faydaları, SLA**
+  - Bu sınavdaki sorular: 8, 16, 29, 41, 50 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../1.2-cloud-benefits/README.md) · [quiz](../1.2-cloud-benefits/quiz.md)
+- **C1.3 IaaS, PaaS, SaaS, serverless**
+  - Bu sınavdaki sorular: 4, 21, 24, 33 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../1.3-service-types-iaas-paas-saas/README.md) · [quiz](../1.3-service-types-iaas-paas-saas/quiz.md)
+- **C1.4 Temel mimari bileşenler**
+  - Bu sınavdaki sorular: 2, 15, 26, 38 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.1-core-architecture/README.md) · [quiz](../2.1-core-architecture/quiz.md)
+- **C1.5 Compute ve VM'ler**
+  - Bu sınavdaki sorular: 10, 31, 48 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.2-compute-virtual-machines/README.md) · [quiz](../2.2-compute-virtual-machines/quiz.md)
+- **C1.6 Uygulama barındırma**
+  - Bu sınavdaki sorular: 17, 35 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.3-app-hosting-containers-functions-avd/README.md) · [quiz](../2.3-app-hosting-containers-functions-avd/quiz.md)
+- **C1.7 Ağ servisleri**
+  - Bu sınavdaki sorular: 13, 28, 43 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.4-networking/README.md) · [quiz](../2.4-networking/quiz.md)
+- **C1.8 Storage**
+  - Bu sınavdaki sorular: 5, 22, 40 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.5-storage/README.md) · [quiz](../2.5-storage/quiz.md)
+- **C1.9 Kimlik ve erişim**
+  - Bu sınavdaki sorular: 7, 34, 45 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.6-identity-access-rbac/README.md) · [quiz](../2.6-identity-access-rbac/quiz.md)
+- **C1.10 Güvenlik**
+  - Bu sınavdaki sorular: 19 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../2.7-security-zero-trust-defender/README.md) · [quiz](../2.7-security-zero-trust-defender/quiz.md)
+- **C1.11 Maliyet yönetimi**
+  - Bu sınavdaki sorular: 9, 18, 30, 44 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../3.1-cost-management/README.md) · [quiz](../3.1-cost-management/quiz.md)
+- **C1.12 Yönetişim ve uyumluluk**
+  - Bu sınavdaki sorular: 3, 14, 27, 39, 49 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../3.2-governance-compliance/README.md) · [quiz](../3.2-governance-compliance/quiz.md)
+- **C1.13 Yönetim ve dağıtım araçları**
+  - Bu sınavdaki sorular: 11, 20, 32, 42 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../3.3-management-deployment-tools/README.md) · [quiz](../3.3-management-deployment-tools/quiz.md)
+- **C1.14 İzleme araçları**
+  - Bu sınavdaki sorular: 6, 23, 36, 46 · Yanlış sayın: ___
+  - Tekrar edilecek: [README](../3.4-monitoring-tools/README.md) · [quiz](../3.4-monitoring-tools/quiz.md)
 
 **Tekrar planı:** Her yanlış için *bilgi eksiği* mi *dikkat hatası* mı olduğunu not et. Bir konuda **2 veya daha fazla** bilgi eksiği varsa o konunun README'sini ve laboratuvarını baştan yap, ardından konu quiz'ini ≥ %80 olana kadar çöz. Dikkat hataları için [5.1 Sınav Stratejisi](README.md#32-soru-çözme-teknikleri)'deki teknikleri tekrar oku.
 
