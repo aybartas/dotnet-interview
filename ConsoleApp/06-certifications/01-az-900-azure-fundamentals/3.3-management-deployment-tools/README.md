@@ -54,7 +54,8 @@ Konunun kodu yoktur; pratik, README'deki `az` CLI ve Bicep laboratuvarıdır (3.
 #### 3.1 Azure portal
 
 - Web tabanlı, birleşik konsol (`portal.azure.com`): kaynak oluşturma ve yönetme, maliyet ve izleme ekranları, **özelleştirilebilir dashboard**'lar (→ C1.14), erişilebilirlik desteği.
-- Microsoft tarafından sürekli güncellenir; bakım için kesinti gerektirmez. Ayrıca mobil cihazlar için **Azure mobile app** vardır *(bağlam)*.
+- Microsoft tarafından sürekli güncellenir; bakım için kesinti gerektirmez. Ayrıca mobil cihazlar için **Azure mobile app** vardır *(bağlam)*: kaynak durumunu, uyarıları ve Service Health'i telefondan izleme, VM başlatma/durdurma gibi temel işlemler ve uygulama içinden **Cloud Shell**.
+- *(bağlam)* **Microsoft Copilot in Azure:** portal içinde doğal dille soru sorup ("bu VM neden pahalı?", "son 24 saatte hangi kaynaklar değişti?") öneri, açıklama ve CLI/PowerShell/Bicep taslağı alırsın. Kendi yetkinle (RBAC) çalışır; sana yapamayacağın bir işi yaptırmaz. Yönetim aracıdır, IaC'nin yerine geçmez.
 - Sınır: grafik arayüz **tekrarlanabilir ve otomatik** işler için uygun değildir; yüz ortamı aynı şekilde kurmak için betik veya IaC gerekir.
 
 #### 3.2 Azure Cloud Shell, Azure CLI ve Azure PowerShell

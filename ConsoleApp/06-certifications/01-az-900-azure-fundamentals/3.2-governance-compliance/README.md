@@ -119,6 +119,11 @@ Bu konu resmî hedefteki üç aracı — Policy, lock, Purview — derinlemesine
   - Ne yapar?: Hassas veriyi otomatik **keşif ve sınıflandırma** (kredi kartı, kimlik numarası), **bilgi koruma** (sensitivity label), **veri kaybı önleme** (DLP), kayıt/yaşam döngüsü yönetimi, denetim
   - Örnek: "Kredi kartı numarası içeren e-posta dışarı gönderilmesin"
 
+- **Compliance Manager** (Purview portalında)
+  - Ne yapar?: GDPR, ISO 27001, NIST gibi düzenlemeler için hazır **değerlendirme şablonları** (assessment) sunar; her kontrolü **Microsoft'un** yönettiği ve **senin** yapman gereken eylemler (improvement actions) olarak ayırır; ilerlemeyi **compliance score** ile ölçer
+  - Örnek: "Kuruluşumuz GDPR'a ne kadar uyumlu, sırada hangi adımlar var?"
+  - Farkı: **Service Trust Portal** *Microsoft'un* denetim raporlarını indirir (ISO/SOC belgeleri); **Compliance Manager** *senin* uyumluluk durumunu takip eder; **Azure Policy** kaynakların **yapılandırmasını** zorlar; **Defender for Cloud** güvenlik duruşunu (secure score) ve regulatory compliance panosunu gösterir (→ C1.10)
+
 - Purview'un Data Map ve katalog rolleri **meta veriye** erişim verir; alttaki verinin kendisine erişim vermez.
 - Sınav düzeyinde akılda kalması gereken: **"tüm verinin haritası, sınıflandırma, soy ağacı, veri yönetişimi" → Purview**.
 

@@ -1,9 +1,11 @@
 # 🎓 AZ-900: Microsoft Azure Fundamentals — Kapsamlı Çalışma Dokümanı
 
-> **Son Güncelleme:** Ekim 2026 · **Resmî Sınav Hedefleri:** [Skills measured as of July 20, 2026](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)
+> **Son Güncelleme:** Kasım 2026 · **Resmî Sınav Hedefleri:** [Skills measured as of July 20, 2026](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)
 > **Sınav Formatı:** 40-60 soru · 45-60 dakika · Geçme puanı: **700 / 1000** · Soru tipleri: Tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo
 >
 > Bu doküman, 22 konunun tüm teorik anlatımlarını, mimari tablolarını, karşılaştırma matrislerini, sınav ipuçlarını ve 400'e yakın sınav formatında özgün quiz ve deneme sınavı sorusunu tek bir kaynakta birleştirmektedir.
+
+> 📱 **Nasıl okunur?** Her konu kendi klasöründe: `README.md` konu anlatımı, `quiz.md` gerekçeli sorular. Her sayfanın başında ve sonunda *İçindekiler / Quiz / Sonraki konu* linkleri var; telefonda konudan konuya kaydırmadan geçebilirsin. Sınavdan önceki gün: [⚡ Hızlı Tekrar Kartı](5-practice-exam/cheat-sheet.md).
 
 ---
 
@@ -65,9 +67,10 @@
   - [4.6 Entegrasyon, Mesajlaşma ve DevOps](4.6-integration-messaging-devops/README.md)
     - [4.6 Quiz Soruları](4.6-integration-messaging-devops/quiz.md)
   - [4.7 Destek Planları, SLA ve Servis Yaşam Döngüsü](4.7-support-sla-lifecycle/README.md)
-    - [4.7 Quiz Soruları](4.7-support-sla-lifecycle/README.md)
+    - [4.7 Quiz Soruları](4.7-support-sla-lifecycle/quiz.md)
 - **BÖLÜM 5: AZ-900 Deneme Sınavı ve Sınav Stratejisi**
   - [5.0 Kapsamlı AZ-900 Deneme Sınavı (50 Soru) ve Sınav Stratejisi](5-practice-exam/README.md)
     - [5.1 Sınav Stratejisi ve Hazırlık Rehberi](5-practice-exam/README.md#51-sınav-stratejisi-ve-hazırlık-rehberi)
     - [5.2 50 Soruluk AZ-900 Deneme Sınavı](5-practice-exam/quiz.md)
     - [5.3 Puanlama ve Zayıf Alan Analizi](5-practice-exam/quiz.md#puan-tablosu)
+    - [⚡ Hızlı Tekrar Kartı (sınavdan önceki gün)](5-practice-exam/cheat-sheet.md)

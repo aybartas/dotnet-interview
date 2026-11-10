@@ -6,7 +6,7 @@ Guidance for Claude Code when working in this repository.
 
 A .NET Junior → Mid → Senior interview-prep study repo (target: **.NET 10 LTS / C# 14**; .NET 11 / C# 15 features only when marked **(.NET 11)**). `ROADMAP.md` is the master plan (6 tracks, 51 modules, ~300 topics); the repo is filled in one topic at a time.
 
-Written so far: **J1–J6** (J1 5 topics, J2 6, J3 3, J4 3, J5 3, J6 6) **C1 (AZ-900) — 22 topics** (C1.1–C1.15 official objectives + practice exam, C1.16–C1.22 extended course coverage) and **C2 (AI-200) — all 14 topics** (one Markdown file per section, theory + quiz; no code projects, labs are `az` CLI / C# / Python code blocks).
+Written so far: **J1–J6** (J1 5 topics, J2 6, J3 3, J4 3, J5 3, J6 6) **C1 (AZ-900) — 22 topics** (C1.1–C1.15 official objectives + practice exam, C1.16–C1.22 extended course coverage) and **C2 (AI-200) — all 14 topics** (one folder per topic with `README.md` + `quiz.md`; no code projects, labs are `az` CLI / C# / Python code blocks).
 
 ## Structure (keep it this simple)
 
@@ -53,7 +53,7 @@ Gotchas: `GlobalUsings.cs` (J2) is project-wide — alias any type that clashes 
 
 ## Certification track (`ConsoleApp/06-certifications/`)
 
-C1 = AZ-900, C2 = AI-200 (level-independent). Each certification folder holds a `README.md` (exam domains + table of contents) and one file per section named `<part>.<topic>-<slug>.md` (e.g. `2.4-networking.md`; `5.1`–`5.3` = strategy, practice exam, scoring). Each section file has the topic text (📌 official objective, "skills measured as of …" date) followed by its quiz (original exam-format questions, answers and rationale in `<details>`; **never reproduce real exam questions**). Keep files split per section; do not merge them back into one study guide. Labs are `az` CLI code blocks in the topic text, cheap, ending with a cleanup step and a budget-alarm note. Fact-check Azure claims against the official study guide; record sources in ROADMAP `## 2026 Radarı`.
+C1 = AZ-900, C2 = AI-200 (level-independent). Each certification folder holds a `README.md` (exam domains + table of contents) and one folder per topic named `<part>.<topic>-<slug>/` (e.g. `2.4-networking/`) with `README.md` (topic text: 📌 official objective, "skills measured as of …" date) and `quiz.md` (original exam-format questions, answers and rationale in `<details>`; **never reproduce real exam questions**); `5-practice-exam/` holds the strategy (`README.md`), the practice exam with scoring (`quiz.md`) and, for AZ-900, `cheat-sheet.md`. Every page starts and ends with navigation links (table of contents, quiz, next topic). Write for phone screens: no tables with 4+ columns or long rows — use bullet "cards" (bold title, `Header: value` items); two-column and short three-column tables are fine. Do not merge topics back into one study guide. Labs are `az` CLI code blocks in the topic text, cheap, ending with a cleanup step and a budget-alarm note. Fact-check Azure claims against the official study guide; record sources in ROADMAP `## 2026 Radarı`.
 
 ## Editing ROADMAP.md
 

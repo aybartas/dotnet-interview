@@ -104,6 +104,7 @@ Azure'daki container seçenekleri:
 - **Kimlik ve güvenlik:** Microsoft Entra ID ile kimlik doğrulama, **MFA** ve Conditional Access (→ C1.9); uygulama ve **veri cihazda değil bulutta** kalır — kaybolan bir dizüstü veri sızıntısı demek değildir.
 - **Yönetim:** masaüstleri ve kullanıcı atamaları merkezden yönetilir; altta yatan oturum host'ları senin aboneliğindeki VM'lerdir (ölçeklenebilir, gerektiğinde kapatılabilir).
 - Tipik senaryolar: uzaktan çalışma, geçici/sözleşmeli personel, güvenlik gereği verinin cihaza inmemesi, ağır uygulamaları zayıf cihazlarda çalıştırma.
+- *(bağlam)* **AVD vs Windows 365:** AVD bir **Azure servisidir** — oturum host'larını sen kurar, ölçekler ve VM saati kadar ödersin; **multi-session** ile maliyeti düşürürsün. **Windows 365** ise kullanıcı başına **sabit aylık lisansla** satılan hazır **Cloud PC**'dir (SaaS'a yakın, Microsoft 365 tarafından yönetilir, multi-session yoktur). Sınav ifadesi "Azure'da, esnek, çok oturumlu sanal masaüstü" ise cevap **AVD**'dir.
 
 #### 3.4 Azure Functions
 

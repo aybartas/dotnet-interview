@@ -1,4 +1,4 @@
-[← AZ-900 İçindekiler](../README.md) · [📝 Quiz](quiz.md) · [← Önceki konu](../4.7-support-sla-lifecycle/README.md)
+[← AZ-900 İçindekiler](../README.md) · [📝 Quiz](quiz.md) · [⚡ Hızlı tekrar](cheat-sheet.md) · [← Önceki konu](../4.7-support-sla-lifecycle/README.md)
 
 ## 5.0 Kapsamlı AZ-900 Deneme Sınavı (50 Soru) ve Sınav Stratejisi
 

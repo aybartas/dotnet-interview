@@ -5,7 +5,7 @@
 
 **Hedef sürüm:** .NET 10 (LTS, Kasım 2025 → Kasım 2028) / C# 14
 **Yaklaşan:** .NET 11 (STS, Kasım 2026, 24 ay destek) / C# 15 — önizleme özellikleri metinde **(.NET 11)** ile işaretli
-**Güncelleme:** Ekim 2026
+**Güncelleme:** Kasım 2026
 
 ---
 
@@ -4369,8 +4369,8 @@ dotnet-interview/
 │   │   └── 06-mock-checklist/
 │   │
 │   └── 06-certifications/              # level-independent certification track
-│       ├── 01-az-900-azure-fundamentals/      # AZ-900 Study Guide (README.md içindekiler + bölüm başına bir MD dosyası: 1.1–5.3; 400+ quiz ve deneme sınavı)
-│       └── 02-ai-200-azure-ai-cloud-developer/ # AI-200 Study Guide (README.md içindekiler + bölüm başına bir MD dosyası: 1.1–5.3; 260 quiz ve deneme sınavı)
+│       ├── 01-az-900-azure-fundamentals/      # AZ-900: README.md içindekiler + konu başına klasör (README.md + quiz.md) + 5-practice-exam/ (strateji, deneme, hızlı tekrar kartı)
+│       └── 02-ai-200-azure-ai-cloud-developer/ # AI-200: README.md içindekiler + konu başına klasör (README.md + quiz.md) + 5-practice-exam/
 │
 └── WebApp/                         # the ONE web project: topics that need an HTTP server (J1.3, J6, J7, M3, M5 …)
     ├── WebApp.csproj
@@ -4402,7 +4402,7 @@ Modülün konuları kökteki `docker-compose.yml`'deki servisleri (PostgreSQL + 
 - Proje ayarları (`InvariantGlobalization`, `GenerateDocumentationFile`, `EnforceCodeStyleInBuild`) iki `.csproj`'a yazılır; yalnızca bir konuyu ilgilendiren analyzer ayarları o konu klasöründeki `.editorconfig`'e
 - Altyapı kökteki `docker-compose.yml`'den gelir; connection string'ler `appsettings.Development.json` + User Secrets
 - Capstone'lar katmanlı mimariyi göstermek için ek projeler içerebilir; hepsi aynı solution'a eklenir (tek istisna)
-- **Sertifika pisti:** `ConsoleApp/06-certifications/` altında sertifika = klasör (`01-az-900-azure-fundamentals`, `02-ai-200-azure-ai-cloud-developer`); sertifika klasöründe `README.md` (sınav alanları + içindekiler) ve konu başına bir dosya (`<bölüm>.<konu>-<slug>.md`, ör. `2.4-networking.md`); her dosya konunun anlatımını ve sonundaki **Quiz Soruları** bölümünü (sınav tarzı sorular, cevaplar `<details>` içinde) içerir; `5.1`–`5.3` = sınav stratejisi, deneme sınavı, puanlama. `interview-questions.md` yerine quiz kullanılır; testler yine yoktur.
+- **Sertifika pisti:** `ConsoleApp/06-certifications/` altında sertifika = klasör (`01-az-900-azure-fundamentals`, `02-ai-200-azure-ai-cloud-developer`); sertifika klasöründe `README.md` (sınav alanları + içindekiler) ve konu başına bir klasör (`<bölüm>.<konu>-<slug>/`, ör. `2.4-networking/`): `README.md` konu anlatımı, **`quiz.md`** sınav tarzı sorular (cevaplar `<details>` içinde); `5-practice-exam/` = sınav stratejisi (`README.md`), deneme sınavı + puanlama (`quiz.md`) ve AZ-900 için hızlı tekrar kartı (`cheat-sheet.md`). Metin **telefonda okunacak** şekilde yazılır: 4+ sütunlu veya uzun satırlı tablolar yerine madde listesi ("kart") kullanılır. `interview-questions.md` yerine quiz kullanılır; testler yine yoktur.
 
 ---
 
@@ -4656,6 +4656,6 @@ Sertifika pisti seviye sırasının parçası değildir; ilgili modüller bittik
 
 ---
 
-*Son güncelleme: Ekim 2026 · Hedef sürüm: .NET 10 LTS / C# 14 · .NET 11 Kasım 2026*
+*Son güncelleme: Kasım 2026 · Hedef sürüm: .NET 10 LTS / C# 14 · .NET 11 Kasım 2026*
 *.NET ekosistemi (özellikle AI, Azure ve lisans tarafı) hızlı değişiyor — [2026 Radarı](#2026-radarı--neler-değişti)'nı 3 ayda bir gözden geçir.*
 

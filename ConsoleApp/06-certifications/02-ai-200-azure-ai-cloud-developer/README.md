@@ -5,6 +5,8 @@
 >
 > Bu doküman, AI-200 sınavının 14 konusunun tüm teorik anlatımlarını, mimari şemalarını, SDK/kod örneklerini, KQL/CLI komutlarını, performans/trade-off analizlerini ve 260'a yakın özgün sınav formatında quiz ve deneme sınavı sorusunu (2 vaka çalışması dahil) tek bir kaynakta birleştirmektedir.
 
+> 📱 **Nasıl okunur?** Her konu kendi klasöründe: `README.md` konu anlatımı, `quiz.md` gerekçeli sorular. Her sayfanın başında ve sonunda *İçindekiler / Quiz / Sonraki konu* linkleri var; telefonda konudan konuya kaydırmadan geçebilirsin.
+
 ---
 
 ## 📋 Sınav Alanları ve Ağırlıkları

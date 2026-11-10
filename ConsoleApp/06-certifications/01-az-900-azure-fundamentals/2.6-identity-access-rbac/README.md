@@ -214,6 +214,8 @@ Role assignment = Security principal (WHO)  +  Role definition (WHAT)  +  Scope 
   - Erişim (rol atamalarını) yönetme: ✓
 
 - Ayrıca **servise özel** built-in roller vardır (Virtual Machine Contributor, Storage Blob Data Reader…) ve ihtiyaca göre **custom roller** tanımlanabilir.
+- **Custom rol:** Built-in roller tam uymuyorsa izin listesini kendin yazarsın: `Actions` (izin verilen yönetim işlemleri), `NotActions` (bu listeden çıkarılanlar), `DataActions` (verinin kendisi, ör. blob okuma) ve `AssignableScopes` (rolün atanabileceği management group/subscription/RG). Örnek: "VM'leri başlatıp durdurabilsin ama silemesin". `NotActions` bir **yasak değildir**; yalnızca o rolün verdiği izinden çıkarır, başka bir rol aynı izni yine verebilir.
+- **Control plane vs data plane:** Owner/Contributor **kaynağı** yönetir (storage account oluşturma, anahtar ayarı); bir blob'u Entra kimliğiyle **okumak** için ayrıca *Storage Blob Data Reader* gibi bir **data** rolü gerekir. Sınavda "Contributor'ım ama blob'u okuyamıyorum" senaryosu bu farktır.
 - **Kapsam ve miras:** Bir kapsamda verilen rol, **altındaki tüm kapsamlara miras** kalır. Subscription'da Reader olan kullanıcı, o subscription'daki tüm resource group'ları ve kaynakları okuyabilir (→ C1.4 hiyerarşisi).
 - **İzinler toplanır (additive):** Bir kullanıcının subscription'da Reader, bir resource group'ta Contributor rolü varsa, o resource group'ta **Contributor** gibi davranır. *(bağlam)* Açıkça yasaklamak için ayrı bir mekanizma olan **deny assignment** vardır; bunları genellikle platform (ör. managed application) oluşturur.
 - **En az yetki ilkesi (least privilege):** İşi yapmaya yetecek **en düşük** rolü, **en dar** kapsamda ver; kişiler yerine **gruplara** ata.
