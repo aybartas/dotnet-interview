@@ -19,9 +19,4 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- J5.2: CopyToOutputDirectory — copied to bin/<config>/<tfm>/ as appsettings.json (Link: the topic folder path is not carried into the output) -->
-    <None Include="01-junior/05-build-run-basics/02-bin-obj/appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>
