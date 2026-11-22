@@ -28,11 +28,11 @@ Bulut hizmetleri, sağlayıcının yığının **ne kadarını** yönettiğine g
   - SaaS (Software as a Service): Kullanıcılar, veri, ayarlar
 - **Kullanım senaryosu**
   - IaaS (Infrastructure as a Service): **Lift-and-shift** taşıma, test/geliştirme ortamı, özel yazılım, depolama/yedekleme, yüksek performanslı hesap (HPC)
-  - PaaS (Platform as a Service): Web/API geliştirme, iş zekâsı/analitik, geliştirme çerçeveleri, IoT backend
+  - PaaS (Platform as a Service): Web/API geliştirme, iş zekâsı/analitik, uygulama geliştirme çerçeveleri
   - SaaS (Software as a Service): E-posta ve iletişim, ofis uygulamaları, CRM/ERP, iş birliği
 - **Azure örnekleri**
   - IaaS (Infrastructure as a Service): Virtual Machines, VM Scale Sets, Virtual Network, Managed Disks
-  - PaaS (Platform as a Service): App Service, Azure SQL Database, Cosmos DB, AKS, **Functions**
+  - PaaS (Platform as a Service): App Service, Azure SQL Database, Container Instances, **Functions**
   - SaaS (Software as a Service): Microsoft 365, Dynamics 365, Outlook.com
 
 
@@ -88,8 +88,8 @@ Sağlayıcı altyapıya ek olarak **işletim sistemini, runtime'ı, ara katmanı
 
 - **Avantaj:** daha hızlı geliştirme ve dağıtım; OS/yama yükü yok; yerleşik ölçekleme, yedekleme ve yüksek erişilebilirlik.
 - **Dezavantaj:** daha az kontrol — OS'a erişemezsin, platformun desteklemediği bir bileşeni (özel sürücü, belirli bir OS ayarı) kuramazsın; platforma bağımlılık.
-- **Senaryolar:** web uygulaması ve API geliştirme, iş zekâsı/analitik, uygulama geliştirme çerçeveleri, IoT backend.
-- **Azure:** App Service, **Azure SQL Database**, Azure SQL Managed Instance, Cosmos DB, Azure Kubernetes Service (yönetilen Kubernetes; control plane Microsoft'ta), Container Instances; serverless olanlar → 3.5.
+- **Senaryolar:** web uygulaması ve API geliştirme, iş zekâsı/analitik, uygulama geliştirme çerçeveleri.
+- **Azure:** App Service, **Azure SQL Database**, Azure Container Instances, Azure Functions (serverless → 3.5).
 
 #### 3.4 SaaS — Software as a Service
 
@@ -114,18 +114,16 @@ Sağlayıcı **uygulamanın kendisini** işletir; sen yalnızca kullanır, kulla
 Azure'da serverless örnekleri:
 
 - **Azure Functions** — kod (C#, JavaScript, Python …) ile olay tetiklemeli fonksiyonlar. Microsoft yeni uygulamalar için **Flex Consumption** planını öneriyor; klasik Consumption planı da aynı mantıkla (çağrı + GB-saniye, aylık ücretsiz kota) faturalanır.
-- **Azure Logic Apps** — kod yazmadan (low-code), görsel tasarımcıyla iş akışı ve entegrasyon (yüzlerce hazır connector).
 - **Azure Container Apps** — serverless container platformu; sıfıra kadar ölçeklenir (→ C1.6).
-- *(bağlam)* Event Grid (olay yönlendirme), Cosmos DB'nin serverless kapasite modu.
 
-`Section04`, 300 ms süren ve 512 MB bellek kullanan bir fonksiyonun aylık maliyetini çağrı sayısına göre 7/24 açık küçük bir sunucuyla karşılaştırır (oranlar örnektir): aralıklı ve düşük/orta yükte serverless **neredeyse bedavaya** yakındır; çok yüksek ve **sürekli** yükte 7/24 açık kaynak ucuzlayabilir. Trade-off: boştan uyanırken **cold start** gecikmesi ve uzun süren işler için çalışma süresi sınırları.
+Örneğin 300 ms süren ve 512 MB bellek kullanan bir fonksiyonun aylık maliyeti, çağrı sayısına göre 7/24 açık küçük bir sunucuyla karşılaştırılabilir: aralıklı ve düşük/orta yükte serverless **neredeyse bedavaya** yakındır; çok yüksek ve **sürekli** yükte 7/24 açık kaynak ucuzlayabilir. Trade-off: boştan uyanırken **cold start** gecikmesi ve uzun süren işler için çalışma süresi sınırları.
 
 #### 3.6 Ürün → hizmet türü ve senaryo → hizmet türü
 
 **Karar sırası** (yukarıdan aşağı, ilk "evet"te dur):
 
 1. İhtiyacı karşılayan **hazır bir uygulama** var mı? → **SaaS**
-2. Kendi kodun var ve **olayla/aralıklı** mı çalışıyor? → **Serverless** (Functions, Logic Apps)
+2. Kendi kodun var ve **olayla/aralıklı** mı çalışıyor? → **Serverless** (Azure Functions)
 3. Kendi kodun var, **OS'a erişim gerekmiyor** mu? → **PaaS** (App Service, SQL Database)
 4. OS/ağ üzerinde **tam kontrol** veya **aynen taşıma** mı gerekiyor? → **IaaS** (VM)
 
@@ -133,11 +131,11 @@ Azure'da serverless örnekleri:
 
 - **SQL Server**
   - IaaS: SQL Server on Azure VM
-  - PaaS: Azure SQL Database, SQL Managed Instance
+  - PaaS: Azure SQL Database
   - SaaS: —
 - **Web sitesi** — IaaS: VM'e IIS/nginx kurmak · PaaS: App Service · SaaS: Hazır site oluşturucu
 - **E-posta** — IaaS: VM'de Exchange Server · PaaS: — · SaaS: Exchange Online (Microsoft 365)
-- **Container** — IaaS: VM'e Docker kurmak · PaaS: AKS, Container Instances · SaaS: —
+- **Container** — IaaS: VM'e Docker kurmak · PaaS: Container Instances · SaaS: —
 
 #### 3.7 Pratik — aynı uygulama, üç hizmet türü
 
@@ -165,7 +163,7 @@ Azure'da serverless örnekleri:
   - PaaS: Microsoft (otomatik yedek, saklama süresini sen seçersin)
   - SaaS: Sağlayıcı
 - **Ölçekleme**
-  - IaaS: Daha büyük VM veya scale set + load balancer kurmak
+  - IaaS: Daha büyük VM veya VM Scale Set kurmak
   - PaaS: Plan katmanını/instance sayısını değiştirmek (autoscale)
   - SaaS: Daha çok lisans almak
 - **Özelleştirme**
@@ -198,7 +196,7 @@ az vm list --resource-group rg-az900-c13 --show-details --output table
 az group delete --name rg-az900-c13 --yes --no-wait
 ```
 
-Gözlem: App Service için ne bir OS imajı seçtin ne de bir disk; VM için imaj, boyut, kullanıcı, SSH anahtarı ve (oluşturulan) public IP/NSG gibi altyapı parçalarıyla uğraştın. Fark, shared responsibility tablosunun ta kendisidir.
+Gözlem: App Service için ne bir OS imajı seçtin ne de bir disk; VM için imaj, boyut, kullanıcı, SSH anahtarı ve (oluşturulan) public IP gibi altyapı parçalarıyla uğraştın. Fark, shared responsibility tablosunun ta kendisidir.
 
 ---
 
@@ -215,9 +213,6 @@ Bir lojistik şirketi on yıllık uygulama portföyünü buluta taşıyor ve her
 - Sürücülerin yüklediği teslimat fotoğraflarını küçültüp etiketleyen işlem
   - Karar: **Serverless** (Azure Functions, blob yükleme tetikleyicisi)
   - Neden: Gün içinde düzensiz, gece neredeyse hiç; boşta ücret yok
-- **Muhasebe sistemine fatura aktaran onay akışı**
-  - Karar: **Serverless** (Logic Apps)
-  - Neden: Hazır connector'larla kod yazmadan entegrasyon
 - **Kurum içi e-posta ve doküman paylaşımı**
   - Karar: **SaaS** (Microsoft 365)
   - Neden: Hazır ürün; sunucu yönetimi tamamen kalkıyor
@@ -239,10 +234,10 @@ Bir yıl sonra depo yazılımı yeniden yazıldığında o da VM'den PaaS'a geç
 | "**En az** yönetim yükü" + hazır uygulama | **SaaS** |
 | "**En az** yönetim yükü" + kendi kodunu çalıştırma | **PaaS / serverless** |
 | "Yalnızca kod **çalışırken** ödeme", "olaya tepki olarak çalışma" | **Serverless** |
-| Azure SQL Database / App Service / Cosmos DB | **PaaS** |
+| Azure SQL Database / App Service | **PaaS** |
 | VM üzerinde SQL Server / Virtual Machines | **IaaS** |
 | Microsoft 365 / Dynamics 365 / Outlook.com | **SaaS** |
-| Azure Functions / Logic Apps | **Serverless** (PaaS) |
+| Azure Functions | **Serverless** (PaaS) |
 
 **Tuzaklar:**
 - "SQL" kelimesi tek başına türü belirlemez: **nerede ve kim yönetiyor?**
@@ -258,7 +253,7 @@ Bir yıl sonra depo yazılımı yeniden yazıldığında o da VM'den PaaS'a geç
 | Hata | Doğrusu |
 |---|---|
 | "Serverless = sunucusuz" | Sunucular var; sağlama, ölçekleme ve yönetim sağlayıcıda |
-| "Azure SQL = IaaS" | Azure SQL Database ve Managed Instance PaaS; yalnızca VM'deki SQL Server IaaS |
+| "Azure SQL = IaaS" | Azure SQL Database PaaS; yalnızca VM'deki SQL Server IaaS |
 | "SaaS'ta hiçbir sorumluluğum yok" | Kullanıcılar, erişim, MFA ve veri hâlâ sende (→ C1.1) |
 | "PaaS her zaman IaaS'tan ucuz" | Fatura tek başına belirleyici değil; ama operasyon emeği hesaba katılınca genellikle PaaS lehine |
 | "Her şeyi VM'e koyalım, sonra bakarız" | Lift-and-shift hızlıdır ama IaaS'ın tüm işletme yükünü getirir; uygun iş yüklerini zamanla PaaS'a taşımak planlanmalı |
@@ -272,7 +267,7 @@ Bir yıl sonra depo yazılımı yeniden yazıldığında o da VM'den PaaS'a geç
 - **Kontrol/özelleştirme** — IaaS: ★★★★ · PaaS: ★★★ · Serverless: ★★ · SaaS: ★
 - **Yönetim yükü** — IaaS: Yüksek · PaaS: Orta · Serverless: Düşük · SaaS: En düşük
 - **Ölçekleme**
-  - IaaS: Kendin kurarsın (scale set, LB)
+  - IaaS: Kendin kurarsın (VM Scale Set)
   - PaaS: Yerleşik (plan/instance, autoscale)
   - Serverless: Otomatik, sıfıra kadar · SaaS: Sağlayıcı
 - **Maliyet modeli**

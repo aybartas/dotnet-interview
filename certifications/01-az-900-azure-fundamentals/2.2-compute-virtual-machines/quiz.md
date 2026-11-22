@@ -27,13 +27,13 @@ Bir şirket, kurum içindeki bir uygulamayı özel bir sürücüye ihtiyaç duyd
 Bir Azure VM oluşturulurken **hangi ikisi** VM'in çalışması için **gerekli** kaynaklardır?
 
 - A) Network interface (NIC)
-- B) Load balancer
+- B) Public IP adresi
 - C) Virtual network / subnet
 - D) App Service plan
 
 <details><summary>Cevap</summary>
 
-**A ve C.** VM bir NIC ile bir VNet'teki subnet'e bağlanır (ayrıca boyut, image ve OS diski gerekir). Load balancer isteğe bağlıdır; App Service plan VM ile ilgisizdir.
+**A ve C.** VM bir NIC ile bir VNet'teki subnet'e bağlanır (ayrıca boyut, image ve OS diski gerekir). Public IP isteğe bağlıdır (prod'da genellikle verilmez); App Service plan VM ile ilgisizdir.
 </details>
 
 #### Soru 3: Tek seçim
@@ -79,7 +79,7 @@ Bir geliştirici, gece kullanılmayan test VM'leri için **compute ücreti ödem
 Bir web uygulamasının trafiği gün içinde çok dalgalanıyor. Şirket, **aynı yapılandırmadaki** VM'lerin sayısının CPU kullanımına göre **otomatik** artıp azalmasını istiyor. Ne kullanmalıdır?
 
 - A) Availability set
-- B) Proximity placement group
+- B) Availability zone
 - C) Virtual Machine Scale Set
 - D) Tek, büyük bir VM
 
@@ -132,51 +132,51 @@ Bir şirket, iki VM'li uygulamasının **datacenter düzeyinde** bir arızada da
 
 - A) VM'leri aynı availability set'e koymak
 - B) VM'leri iki farklı availability zone'a dağıtmak
-- C) VM'leri bir proximity placement group'a koymak
+- C) VM'leri aynı resource group'a koymak
 - D) VM'leri daha büyük bir boyuta yükseltmek
 
 <details><summary>Cevap</summary>
 
-**B.** Availability zone'lar bir region içinde fiziksel olarak ayrı datacenter gruplarıdır. Availability set tek datacenter içinde korur; PPG VM'leri bilerek yakınlaştırır.
+**B.** Availability zone'lar bir region içinde fiziksel olarak ayrı datacenter gruplarıdır. Availability set tek datacenter içinde korur; resource group yalnızca mantıksal bir kaptır, fiziksel yerleşimi değiştirmez.
 </details>
 
 #### Soru 11: Tek seçim
-Çok katmanlı bir finansal işlem uygulamasında katmanlar arasındaki **ağ gecikmesinin mümkün olan en düşük** seviyede olması gerekiyor. Hangi özellik bunu sağlar?
+Bir VM oluşturulurken seçilen **image** neyi belirler?
 
-- A) Availability zone
-- B) Region pair
-- C) Proximity placement group
-- D) Update domain
+- A) VM'in bağlanacağı subnet'i
+- B) VM'in kurulacağı işletim sistemini ve (varsa) hazır yazılımı
+- C) VM'in aylık bütçe sınırını
+- D) VM'in bulunacağı availability zone'u
 
 <details><summary>Cevap</summary>
 
-**C.** Proximity placement group VM'leri fiziksel olarak birbirine yakın (aynı datacenter içinde) yerleştirir. Bedeli: dayanıklılığın azalması.
+**B.** Image, VM'in kurulacağı işletim sistemini (Windows Server, Ubuntu…) ve varsa hazır yazılımı belirler; Azure Marketplace'ten veya kendi özel image'ından seçilebilir. Subnet NIC/VNet ile, zone ise yerleşim ayarıyla belirlenir.
 </details>
 
 #### Soru 12: Eşleştirme
-Her gereksinimi doğru seçenekle eşleştirin: **Availability set · Availability zone · VM Scale Set · Proximity placement group**
+Her gereksinimi doğru seçenekle eşleştirin: **Availability set · Availability zone · VM Scale Set · Deallocate**
 
 1. "Yük artınca yeni VM'ler otomatik eklensin."
 2. "Aynı datacenter'da kalsınlar ama aynı raf arızasından etkilenmesinler."
 3. "Bir datacenter yansa da uygulama çalışsın."
-4. "VM'ler arası gecikme en düşük olsun."
+4. "Gece kullanılmayan VM için compute ücreti ödenmesin."
 
 <details><summary>Cevap</summary>
 
-**1 → VM Scale Set · 2 → Availability set · 3 → Availability zone · 4 → Proximity placement group.**
+**1 → VM Scale Set · 2 → Availability set · 3 → Availability zone · 4 → Deallocate** (yalnızca işletim sisteminden kapatmak yetmez; donanım ayrılmış kalır).
 </details>
 
 #### Soru 13: Tek seçim
-İki veya daha fazla VM'in aynı **availability set**'e yerleştirildiği bir yapı için Microsoft'un tipik SLA'sı nedir?
+Bir VM'i bir VNet içindeki subnet'e bağlayan ve VM'in **özel IP adresini** taşıyan sanal ağ bileşeni hangisidir?
 
-- A) %99,9
-- B) %99,95
-- C) %99,99
-- D) SLA yoktur
+- A) Network interface (NIC)
+- B) Managed disk
+- C) Availability set
+- D) Resource group
 
 <details><summary>Cevap</summary>
 
-**B.** Tek VM (Premium SSD) %99,9, availability set'te 2+ VM %99,95, iki+ zone'a yayılmış 2+ VM %99,99 (→ C1.2). Güncel değerler için SLA belgesine bakılmalıdır.
+**A.** **NIC**, VM'i subnet'e bağlar ve özel IP'yi taşır; bir VM'de birden çok NIC olabilir. Managed disk depolama, availability set yerleşim, resource group ise mantıksal kap bileşenidir.
 </details>
 
 #### Soru 14: Çoklu seçim (iki doğru cevap)
@@ -202,18 +202,18 @@ Bir yönetici bir VM'i siliyor ama ay sonunda faturada hâlâ o VM'le ilgili dis
 
 <details><summary>Cevap</summary>
 
-**B.** VM'in diskleri, NIC, public IP ve NSG ayrı kaynaklardır; VM'i silmek onları her zaman silmez. Bütün ortamı silmenin temiz yolu resource group'u silmektir.
+**B.** VM'in diskleri, NIC ve public IP ayrı kaynaklardır; VM'i silmek onları her zaman silmez. Bütün ortamı silmenin temiz yolu resource group'u silmektir.
 </details>
 
 #### Soru 16: Evet / Hayır
 
 - a) VM Scale Set, ölçekleme kurallarına göre instance sayısını otomatik değiştirebilir. — Evet: ☐ · Hayır: ☐
-- b) Proximity placement group, VM'leri farklı region'lara dağıtarak dayanıklılığı artırır. — Evet: ☐ · Hayır: ☐
+- b) Availability set, bir datacenter'ın tamamen çökmesine karşı da korur. — Evet: ☐ · Hayır: ☐
 - c) Var olan, çalışan bir VM sonradan bir availability set'e eklenebilir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
-**a) Evet · b) Hayır · c) Hayır.** PPG VM'leri bir araya toplar (gecikme için); VM availability set'e oluşturulurken yerleştirilir.
+**a) Evet · b) Hayır · c) Hayır.** Availability set tek datacenter içindedir; datacenter arızası için availability zone gerekir. VM availability set'e oluşturulurken yerleştirilir.
 </details>
 
 #### Soru 17: Tek seçim
@@ -226,7 +226,7 @@ Bir şirketin veritabanı sunucusu yüksek disk performansı (IOPS) ve düşük 
 
 <details><summary>Cevap</summary>
 
-**C.** Premium SSD (veya daha uç ihtiyaçlarda Premium SSD v2 / Ultra Disk) üretim veritabanları için yüksek IOPS ve düşük gecikme sağlar; tek VM SLA'sını da etkiler.
+**C.** Premium SSD (veya daha uç ihtiyaçlarda Premium SSD v2 / Ultra Disk) üretim veritabanları için yüksek IOPS ve düşük gecikme sağlar.
 </details>
 
 #### Soru 18: Senaryo
@@ -234,17 +234,17 @@ Bir e-ticaret sitesinin web katmanı için şu gereksinimler var: (1) trafik art
 
 - A) Tek bir availability set'te iki VM
 - B) Availability zone'lara yayılmış ve autoscale kuralı tanımlı bir VM Scale Set
-- C) Proximity placement group'ta dört VM
+- C) Aynı VM'e bağlı dört veri diski
 - D) Tek bir büyük VM ve günlük yedek
 
 <details><summary>Cevap</summary>
 
-**B.** Scale set + autoscale otomatik ölçeği, zone'lara yayılma datacenter arızasına dayanıklılığı sağlar. A otomatik ölçek ve datacenter koruması sunmaz; C dayanıklılığı azaltır; D tek arıza noktasıdır.
+**B.** Scale set + autoscale otomatik ölçeği, zone'lara yayılma datacenter arızasına dayanıklılığı sağlar. A otomatik ölçek ve datacenter koruması sunmaz; C yalnızca depolama kapasitesini artırır; D tek arıza noktasıdır.
 </details>
 
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.2 (VM kaynakları ve ücretlendirme) ile 3.4'teki karşılaştırma tablosunu tekrar et · < 12 → konuyu baştan çalış ve 3.6 laboratuvarını yap.
+**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.2 (VM kaynakları ve ücretlendirme) ile 3.4'teki karşılaştırma tablosunu tekrar et · < 12 → konuyu baştan çalış ve 3.5 laboratuvarını yap.
 
 ---
 

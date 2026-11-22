@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 3.3 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 16 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 17 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 13/16**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 14/17**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -14,13 +14,13 @@
 Bir şirket, geliştirme, test ve üretim ortamlarının **aynı şekilde ve tekrar tekrar tutarlı** kurulmasını, altyapı tanımlarının da git'te sürümlenmesini istiyor. Hangisini kullanmalıdır?
 
 - A) Azure portal
-- B) ARM template'leri veya Bicep
+- B) ARM template'leri (infrastructure as code)
 - C) Azure Advisor
 - D) Azure Service Health
 
 <details><summary>Cevap</summary>
 
-**B.** Tekrarlanabilir, sürüm kontrollü, deklaratif dağıtım = infrastructure as code (ARM template / Bicep). Portal elle ve tekrarlanamaz; Advisor ve Service Health izleme araçlarıdır (→ C1.14).
+**B.** Tekrarlanabilir, sürüm kontrollü, deklaratif dağıtım = infrastructure as code (ARM template). Portal elle ve tekrarlanamaz; Advisor ve Service Health izleme araçlarıdır (→ C1.14).
 </details>
 
 #### Soru 2: Tek seçim
@@ -85,7 +85,7 @@ ARM template'leri hangi biçimde yazılır?
 
 <details><summary>Cevap</summary>
 
-**C.** ARM template'leri JSON biçimindedir; Bicep ise ARM JSON'a derlenen, daha okunabilir bir dildir.
+**C.** ARM template'leri **JSON** biçimindedir ve deklaratiftir.
 </details>
 
 #### Soru 7: Çoklu seçim (iki doğru cevap)
@@ -113,16 +113,16 @@ Infrastructure as code (IaC) yaklaşımının **hangi ikisi** faydasıdır?
 </details>
 
 #### Soru 9: Tek seçim
-Bir ekip, ARM template'lerinin JSON sözdizimini fazla uzun buluyor ve aynı yetenekleri daha kısa, okunabilir bir dille kullanmak istiyor. Ne kullanmalıdır?
+Bir ARM template'inde web uygulaması kaynağının, App Service plan'ı oluşturulmadan **önce** kurulmaması gerekiyor. Bu sıralama şablonda nasıl sağlanır?
 
-- A) Bicep
-- B) Azure Policy
-- C) Azure Arc
-- D) Azure Blueprints
+- A) Kaynaklar arasındaki bağımlılığı (`dependsOn`) belirterek
+- B) Kaynakları alfabetik sıraya dizerek
+- C) Her kaynağı ayrı bir subscription'a dağıtarak
+- D) Önce Azure Policy atayarak
 
 <details><summary>Cevap</summary>
 
-**A.** Bicep, ARM JSON'a derlenen Azure'a özgü bir dildir; aynı yetenekler, daha kısa sözdizimi.
+**A.** Şablonda kaynak bağımlılıkları `dependsOn` (veya kaynağa referans) ile belirtilir; ARM bağımlılıkları doğru sırada kurar, bağımsız kaynakları ise paralel dağıtır.
 </details>
 
 #### Soru 10: Eşleştirme
@@ -135,11 +135,11 @@ Her ihtiyacı en uygun araçla eşleştirin: **Azure portal · Cloud Shell · AR
 
 <details><summary>Cevap</summary>
 
-**1 → Azure portal · 2 → Azure Arc · 3 → Cloud Shell · 4 → ARM template** (veya Bicep).
+**1 → Azure portal · 2 → Azure Arc · 3 → Cloud Shell · 4 → ARM template**.
 </details>
 
 #### Soru 11: Tek seçim
-Bir mühendis, bir ARM/Bicep şablonunu dağıtmadan **önce**, mevcut ortamda hangi kaynakların oluşturulacağını, değiştirileceğini veya silineceğini görmek istiyor. Ne kullanmalıdır?
+Bir mühendis, bir ARM şablonunu dağıtmadan **önce**, mevcut ortamda hangi kaynakların oluşturulacağını, değiştirileceğini veya silineceğini görmek istiyor. Ne kullanmalıdır?
 
 - A) Export template
 - B) What-if işlemi
@@ -207,7 +207,7 @@ Cloud Shell'i **storage account bağlamadan** (ephemeral session) kullanan bir k
 Bir şirketin mevcut süreci: bir mühendis her yeni ortam için 40 adımlık bir belgeyi takip ederek portalda tıklıyor; ortamlar arasında farklar ve hatalar oluşuyor. Hangi değişiklik bu sorunu **en iyi** çözer?
 
 - A) Daha deneyimli bir mühendis görevlendirmek
-- B) Ortamı Bicep/ARM template ile tanımlayıp her ortamı aynı şablondan dağıtmak
+- B) Ortamı ARM template ile tanımlayıp her ortamı aynı şablondan dağıtmak
 - C) Her ortama ReadOnly lock uygulamak
 - D) Azure Advisor önerilerini haftalık incelemek
 
@@ -216,10 +216,23 @@ Bir şirketin mevcut süreci: bir mühendis her yeni ortam için 40 adımlık bi
 **B.** Elle yapılan çok adımlı kurulumun kalıcı çözümü IaC'dir: deklaratif şablon, tekrarlanabilir ve sürüm kontrollü dağıtım. Lock (C) değişikliği engeller ama doğru kurulumu sağlamaz.
 </details>
 
+#### Soru 17: Tek seçim
+Aşağıdakilerden hangisi **Azure Resource Manager (ARM)** ile **ARM template** arasındaki farkı doğru anlatır?
+
+- A) ARM bir JSON dosyasıdır; ARM template ise bir servistir
+- B) ARM, portal/CLI/PowerShell/API'den gelen tüm istekleri işleyen yönetim ve dağıtım servisidir; ARM template ise ARM'a verilen, kaynakları tanımlayan JSON dosyasıdır
+- C) İkisi de aynı şeyin farklı adlarıdır
+- D) ARM yalnızca portalda, ARM template yalnızca CLI'da kullanılır
+
+<details><summary>Cevap</summary>
+
+**B.** **ARM** servistir (her yönetim isteği ondan geçer, RBAC/Policy/lock'ı uygular); **ARM template** ise dağıtılacak kaynakları deklaratif olarak tarif eden JSON dosyasıdır. Template, ARM'ın deklaratif dağıtım yeteneğine verilen girdidir.
+</details>
+
 ---
 
-**Puanlama:** 15-16 → hazırsın · 11-14 → README 3.4–3.6'yı (ARM, IaC, şablonlar) tekrar et · < 11 → konuyu baştan çalış, 3.7'deki Bicep laboratuvarını uygula.
+**Puanlama:** 16-17 → hazırsın · 12-15 → README 3.4–3.6'yı (ARM, IaC, şablonlar) tekrar et · < 12 → konuyu baştan çalış, 3.7'deki ARM template laboratuvarını uygula.
 
 ---
 
-➡️ **Sonraki konu:** [3.4 İzleme Araçları: Monitor, Log Analytics, Service Health, Advisor](../3.4-monitoring-tools/README.md) · [AZ-900 İçindekiler](../README.md)
+➡️ **Sonraki konu:** [3.4 İzleme Araçları: Monitor, Log Analytics, Alerts, Application Insights, Service Health, Advisor](../3.4-monitoring-tools/README.md) · [AZ-900 İçindekiler](../README.md)

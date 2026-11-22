@@ -22,7 +22,7 @@ Bu konu güvenliğe üç farklı açıdan bakar:
 
 Zero Trust **nasıl düşündüğünü**, defense in depth kontrolleri **nereye koyduğunu**, Defender for Cloud ise bunun **ne kadar iyi uygulandığını** gösterir. Kimlik tarafı (Entra ID, MFA, Conditional Access, RBAC) → C1.9.
 
-Bu konunun C# kodu yoktur. Pratik, defense in depth tablo alıştırması (3.2) ve `az` CLI ile Defender for Cloud laboratuvarıdır (3.4).
+Bu konunun kodu yok. Pratik, defense in depth tablo alıştırması (3.2) ve `az` CLI ile Defender for Cloud laboratuvarıdır (3.4).
 
 ---
 
@@ -47,10 +47,10 @@ Bu konunun C# kodu yoktur. Pratik, defense in depth tablo alıştırması (3.2) 
   - Azure'daki karşılığı: Entra ID + **MFA** + **Conditional Access** (→ C1.9)
 - **Use least privilege access** (en az yetki)
   - Anlamı: Yalnızca gerektiği kadar (**just-enough-access**) ve yalnızca gerektiği süre (**just-in-time**) yetki ver; risk tabanlı uyarlanabilir politikalar; veriyi koru
-  - Azure'daki karşılığı: Dar kapsamlı **RBAC** rolleri, *(bağlam)* Privileged Identity Management (PIM), VM'ler için just-in-time erişim
+  - Azure'daki karşılığı: Dar kapsamlı **RBAC** rolleri (en az yetki ilkesi), yetkinin yalnızca gereken kadar ve gereken süre verilmesi
 - **Assume breach** (ihlali varsay)
   - Anlamı: İhlal olmuş gibi tasarla: **etki alanını küçült** (segmentasyon), **uçtan uca şifrele**, analitik ve izlemeyle tehditleri **tespit et**
-  - Azure'daki karşılığı: VNet/subnet segmentasyonu, NSG, **private endpoint** (→ C1.7), şifreleme, Defender for Cloud, Microsoft Sentinel *(bağlam)*
+  - Azure'daki karşılığı: VNet/subnet segmentasyonu, **private endpoint** (→ C1.7), şifreleme, izleme ve tehdit tespiti (Defender for Cloud)
 
 > Zero Trust bir ürün değildir; satın alınmaz, **uygulanır**. Sınav ilkenin adını tanımla eşleştirir: "her isteği konum ve cihaz durumuyla doğrula" → *verify explicitly*; "yetkiyi yalnızca iş süresince ver" → *least privilege*; "ağı segmentlere ayır, saldırganın yatay hareketini sınırla" → *assume breach*.
 
@@ -71,21 +71,21 @@ Bu konunun C# kodu yoktur. Pratik, defense in depth tablo alıştırması (3.2) 
 - **3**
   - Katman: **Çevre (perimeter)**
   - Ne korunur / amaç: Ağın dış sınırı, büyük ölçekli saldırılar
-  - Örnek kontroller ve Azure servisleri: **Azure DDoS Protection**, çevre güvenlik duvarı (Azure Firewall)
+  - Örnek kontroller ve Azure servisleri: Büyük ölçekli saldırılara (ör. DDoS) karşı koruma, çevre güvenlik duvarı
   - Kimin sorumluluğu (bulutta): Paylaşımlı
 - **4**
   - Katman: **Ağ**
   - Ne korunur / amaç: Kaynaklar arası iletişim, yatay hareket
-  - Örnek kontroller ve Azure servisleri: **Segmentasyon** (VNet/subnet), **NSG**, varsayılan olarak engelle, internete erişimi kısıtla, private endpoint
+  - Örnek kontroller ve Azure servisleri: **Segmentasyon** (VNet/subnet), ağ trafiği kuralları, varsayılan olarak engelle, internete erişimi kısıtla, private endpoint
   - Kimin sorumluluğu (bulutta): Müşteri
 - **5**
   - Katman: **Compute** · Ne korunur / amaç: Sanal makineler ve sunucular
-  - Örnek kontroller ve Azure servisleri: VM erişimini kısıtla, **yamaları güncel tut**, uç nokta koruması (antimalware), Defender for Servers
+  - Örnek kontroller ve Azure servisleri: VM erişimini kısıtla, **yamaları güncel tut**, uç nokta koruması (antimalware)
   - Kimin sorumluluğu (bulutta): IaaS'ta müşteri
 - **6**
   - Katman: **Uygulama**
   - Ne korunur / amaç: Uygulama kodu ve yapılandırması
-  - Örnek kontroller ve Azure servisleri: Güvenli geliştirme (zafiyetsiz kod), **secret'ları koda değil Azure Key Vault'a** koymak, Web Application Firewall
+  - Örnek kontroller ve Azure servisleri: Güvenli geliştirme (zafiyetsiz kod), **parola ve anahtarları koda gömmemek**, uygulamayı yalnızca HTTPS ile sunmak
   - Kimin sorumluluğu (bulutta): Müşteri
 - **7**
   - Katman: **Veri**
@@ -111,15 +111,15 @@ Hatırlatma cümlesi (dıştan içe): **F**iziksel → **K**imlik → **Ç**evre
 >
 > | Katman | Kontrol |
 > |---|---|
-> | Fiziksel güvenlik | Microsoft'un datacenter kontrolleri. Müşteri tarafında yapılacak bir şey yok; denetim raporları Service Trust Portal'da (→ C1.12) |
-> | Kimlik ve erişim | Tüm yöneticilere MFA ve Conditional Access; RBAC ile ekiplere dar kapsamlı roller; uygulamanın SQL/storage'a erişimi için şifre yerine **managed identity** (→ C2.11) |
-> | Çevre | Web uygulamasının önünde **WAF**'lı Application Gateway veya Front Door; **DDoS Protection** |
-> | Ağ | SQL ve storage için **private endpoint**, public erişim kapalı (→ C1.7); jump box subnet'inde NSG ile SSH yalnızca şirket IP'sinden; varsayılan engelle |
-> | Compute | Jump box'ta otomatik OS yaması, Defender for Servers, just-in-time VM erişimi (port yalnızca istek anında ve süreli açılır) |
-> | Uygulama | Connection string ve API anahtarları **Key Vault**'ta; App Service'te yalnızca HTTPS ve güncel TLS; bağımlılık zafiyet taraması |
-> | Veri | SQL'de Transparent Data Encryption (varsayılan açık), storage'da durağan şifreleme (varsayılan açık), hassas sütunlar için sınıflandırma (Purview → C1.12), düzenli yedek ve geri yükleme testi |
+> | Fiziksel güvenlik | Microsoft'un datacenter kontrolleri. Müşteri tarafında yapılacak bir şey yok; Microsoft'un uyumluluk belgeleri herkese açık yayımlanır |
+> | Kimlik ve erişim | Tüm yöneticilere MFA ve Conditional Access; RBAC ile ekiplere dar kapsamlı roller |
+> | Çevre | İnternete açılan giriş noktasını sınırla; büyük ölçekli saldırılara (DDoS) karşı platform koruması |
+> | Ağ | SQL ve storage için **private endpoint**, public erişim kapalı (→ C1.7); jump box'a erişim yalnızca şirket ağından; varsayılan olarak engelle |
+> | Compute | Jump box'ta otomatik OS yaması ve antimalware; VM erişimini kısıtla |
+> | Uygulama | Parola ve anahtarlar koda gömülmez; App Service'te yalnızca HTTPS; güvenli kod geliştirme |
+> | Veri | Veritabanı ve storage'da durağan şifreleme (varsayılan açık), aktarımda TLS, hassas veri için sınıflandırma (Purview → C1.12) |
 >
-> Gözlem: Bir katman (ör. uygulamadaki bir SQL injection zafiyeti) aşılsa bile private endpoint, en az yetkili managed identity ve şifreleme hasarı sınırlar. Defense in depth tam olarak budur.
+> Gözlem: Bir katman (ör. uygulamadaki bir zafiyet) aşılsa bile private endpoint, en az yetkili roller ve şifreleme hasarı sınırlar. Defense in depth tam olarak budur.
 > </details>
 
 #### 3.3 Microsoft Defender for Cloud
@@ -137,8 +137,7 @@ Hatırlatma cümlesi (dıştan içe): **F**iziksel → **K**imlik → **Ç**evre
 
 - **Azure:** Azure'un kendi kaynakları; PaaS servisleri için ajan gerekmeden yerleşik.
 - **Kurum içi (on-prem) ve diğer bulutlardaki sunucular:** **Azure Arc** ile Azure'a bağlanır (→ C1.13).
-- **Diğer bulutlar:** **AWS** ve **Google Cloud (GCP)** hesapları, **connector**'larla ajan gerektirmeden bağlanır.
-- *(bağlam)* Kod depoları (GitHub, Azure DevOps, GitLab): DevOps güvenliği.
+- **Diğer bulutlar:** **AWS** ve **Google Cloud (GCP)** hesapları, **connector**'larla bağlanır.
 
 **Üç ihtiyaç: Assess → Secure → Defend**
 
@@ -149,31 +148,24 @@ Hatırlatma cümlesi (dıştan içe): **F**iziksel → **K**imlik → **Ç**evre
   - Ne yapar: **Microsoft cloud security benchmark** (MCSB; Azure Policy tabanlı varsayılan güvenlik girişimi) ile kaynakları karşılaştırır; **öneriler** ve **secure score** sunar; regulatory compliance panosu (ISO 27001, PCI DSS… standartlarına göre)
   - Örnek: "Storage account public erişime açık → kapat", secure score %62 → %71
 - **Defend** (tehditlere karşı koru)
-  - Ne yapar: **Güvenlik uyarıları** (ör. olağandışı konumdan erişim, kaba kuvvet denemesi, şüpheli işlem), MITRE ATT&CK eşlemesi, olay müdahalesi, *(bağlam)* just-in-time VM erişimi, Microsoft Sentinel'e (SIEM) aktarım
+  - Ne yapar: **Güvenlik uyarıları** (ör. olağandışı konumdan erişim, kaba kuvvet denemesi, şüpheli işlem) üretir ve ne yapılacağına dair yönlendirme sunar
   - Örnek: "VM'e 500 başarısız SSH denemesi", "storage'dan olağandışı miktarda veri indirildi"
 
 **Secure score:** Önerilerin uygulanma oranına göre hesaplanan güvenlik duruşu **yüzdesidir**. Öneriler **güvenlik kontrolleri** (security controls) altında gruplanır. Bir kontrolün puanını almak için o kontroldeki önerilerin **tüm** ilgili kaynaklarda düzeltilmesi gerekir. Yüksek puan = daha az açık. Puan **düşük riskli** demek değildir; yalnızca bilinen önerilere uyumu ölçer.
 
-**Planlar** *(bağlam — adlar sınavda geçebilir)*:
-
-- **Foundational CSPM** — **ücretsiz**; Defender for Cloud açıldığı anda gelir: temel değerlendirmeler, öneriler, secure score, MCSB.
-- **Defender CSPM** — ücretli; ajansız zafiyet taraması, saldırı yolu analizi (attack path), cloud security graph, veri farkındalıklı duruş.
-- **CWP planları** — her iş yükü türü için ayrı açılır (ücretli): **Defender for Servers** (Plan 1 / Plan 2), Defender for Storage, Defender for Databases (SQL, açık kaynak veritabanları, Cosmos DB), Defender for Containers, Defender for App Service, Defender for Key Vault, Defender for Resource Manager, Defender for APIs, AI iş yükleri için tehdit koruması.
+**Ücretsiz ↔ ücretli:** Defender for Cloud'un temel **CSPM** özellikleri (değerlendirme, öneriler, secure score) **ücretsizdir** ve abonelikte varsayılan olarak gelir. İş yüklerini tehditlere karşı koruyan gelişmiş (**workload protection**) planlar ise **ücretlidir** ve iş yükü türü başına (sunucu, storage, veritabanı…) ayrı açılır.
 
 **Defender for Cloud ile karıştırılan araçlar:**
 
 - **Defender for Cloud**
   - Odak: **Güvenlik** duruşu + tehdit tespiti (Azure, hybrid, multicloud)
-  - Fark: Güvenlik uzmanı aracı
+  - Fark: Güvenliğe özel araç
 - **Azure Policy** (→ C1.12)
   - Odak: **Kaynak kurallarını** zorla/denetle (bölge, SKU, tag, güvenlik ayarı)
   - Fark: Defender'ın güvenlik önerileri altta Policy tanımlarıyla değerlendirilir; Policy **genel yönetişim** aracıdır
 - **Azure Advisor** (→ C1.14)
   - Odak: Beş kategoride **genel öneri**: reliability, security, performance, cost, operational excellence
   - Fark: Advisor'ın **Security** kategorisindeki öneriler **Defender for Cloud'dan** gelir
-- **Microsoft Sentinel** *(bağlam)*
-  - Odak: **SIEM/SOAR**: birçok kaynaktan log toplayıp olay korelasyonu ve otomatik müdahale
-  - Fark: Defender uyarılarını da tüketir; güvenlik operasyon merkezinin (SOC) aracı
 
 #### 3.4 Pratik — Defender for Cloud: secure score ve bir öneriyi uygulamak (`az` CLI)
 
@@ -216,8 +208,8 @@ Beklenen gözlem: Değerlendirme yenilendiğinde *"Storage account public access
 
 Bir sağlık teknolojisi şirketi, hasta verisi işleyen platformunu Azure'da çalıştırıyor. Ayrıca eski bir raporlama sistemi kendi datacenter'ında, bir analitik iş yükü ise AWS'te.
 
-1. **Zero Trust'a geçiş:** VPN'e bağlanan herkesin her şeye erişebildiği eski model bırakılıyor. *Verify explicitly*: tüm girişler Entra ID + MFA + Conditional Access'ten geçiyor ve yönetilmeyen cihazdan hasta verisine erişim yok. *Least privilege*: geliştiricilerin üretimdeki yetkileri yalnızca talep edildiğinde ve 4 saatliğine açılıyor. *Assume breach*: veritabanları private endpoint arkasına alınıp ağ segmentlere ayrılıyor.
-2. **Defense in depth:** Çevrede DDoS Protection ve WAF; ağda NSG ve private endpoint; compute'ta otomatik yama ve Defender for Servers; uygulamada secret'lar Key Vault'ta; veride şifreleme ve sınıflandırma. Pentest'te uygulamada bir zafiyet bulunuyor, ama saldırgan simülasyonu en az yetkili managed identity ve private endpoint yüzünden veritabanının dışına çıkamıyor.
+1. **Zero Trust'a geçiş:** VPN'e bağlanan herkesin her şeye erişebildiği eski model bırakılıyor. *Verify explicitly*: tüm girişler Entra ID + MFA + Conditional Access'ten geçiyor ve yönetilmeyen cihazdan hasta verisine erişim yok. *Least privilege*: geliştiricilere üretimde yalnızca ihtiyaçları kadar dar kapsamlı roller veriliyor. *Assume breach*: veritabanları private endpoint arkasına alınıp ağ segmentlere ayrılıyor.
+2. **Defense in depth:** Çevrede DDoS koruması; ağda segmentasyon ve private endpoint; compute'ta otomatik yama; uygulamada parolaların koda gömülmemesi; veride şifreleme ve sınıflandırma. Pentest'te uygulamada bir zafiyet bulunuyor, ama saldırgan simülasyonu en az yetkili roller ve private endpoint yüzünden veritabanının dışına çıkamıyor.
 3. **Defender for Cloud:** Azure subscription'ları, Azure Arc ile bağlanan kurum içi sunucular ve connector ile bağlanan AWS hesabı **tek panelde**. Başlangıç secure score'u %48. İlk sprintte en yüksek puanlı öneriler (MFA, public erişimli storage, eksik yamalar) kapatılıyor ve puan %74'e çıkıyor. Bir gece AWS'teki bir sunucuda olağandışı bir işlem için **güvenlik uyarısı** üretiliyor ve olay ekibi sunucuyu izole ediyor.
 4. **Uyumluluk:** Regulatory compliance panosu, ilgili standartlara (ör. ISO 27001) göre hangi kontrollerin eksik olduğunu denetçiye rapor olarak sunuyor.
 
@@ -237,9 +229,9 @@ Bir sağlık teknolojisi şirketi, hasta verisi işleyen platformunu Azure'da ç
 - **"Bir katman aşılsa bile diğerleri korur"** — Doğru cevap: **Defense in depth** · Tuzak: Zero Trust
 - **"Katmanların en dışı / en içi"** — Doğru cevap: **Fiziksel güvenlik** / **Veri** · Tuzak: Çevre / Uygulama
 - **"DDoS koruması hangi katman?"** — Doğru cevap: **Çevre (perimeter)** · Tuzak: Ağ
-- **"Segmentasyon, NSG, varsayılan engelle"** — Doğru cevap: **Ağ** · Tuzak: Çevre
+- **"Segmentasyon, ağ trafiği kuralları, varsayılan engelle"** — Doğru cevap: **Ağ** · Tuzak: Çevre
 - **"Yamalar, VM erişimini kısıtlama, antimalware"** — Doğru cevap: **Compute** · Tuzak: Uygulama
-- **"Secret'ları Key Vault'ta saklamak, güvenli kod"** — Doğru cevap: **Uygulama** · Tuzak: Veri
+- **"Parolaları koda gömmemek, güvenli kod geliştirme"** — Doğru cevap: **Uygulama** · Tuzak: Veri
 - **"MFA, SSO, erişim denetimi"** — Doğru cevap: **Kimlik ve erişim** · Tuzak: Çevre
 - **"Şifreleme ve verinin kendisine erişim kontrolü"** — Doğru cevap: **Veri** · Tuzak: —
 - "Azure, on-prem ve AWS/GCP kaynaklarının güvenlik duruşunu izle, tehditleri tespit et" — Doğru cevap: **Microsoft Defender for Cloud** · Tuzak: Azure Policy, Advisor
@@ -276,19 +268,19 @@ Bir sağlık teknolojisi şirketi, hasta verisi işleyen platformunu Azure'da ç
 - **Zero Trust (her isteği doğrula)**
   - Kazanç: İçeri sızan saldırganın yatay hareketi sınırlanır; uzaktan çalışma ve SaaS için uygun
   - Bedel: Kimlik, cihaz yönetimi ve politika yatırımı; yanlış ayarlanmış politika kullanıcı sürtünmesi yaratır
-- **Just-in-time / en az yetki**
+- **En az yetki**
   - Kazanç: Kalıcı yüksek yetki yok; ele geçirilen hesabın etkisi küçük
-  - Bedel: Erişim talep/onay süreci; acil durumlarda gecikme (break-glass hesabı gerekir)
+  - Bedel: Erişim talep/onay süreci; acil durumlarda gecikme
 - **Segmentasyon ve private endpoint (assume breach)**
   - Kazanç: Bir bileşenin ihlali tüm ortama yayılmaz
   - Bedel: Ağ tasarımı ve DNS karmaşıklığı (→ C1.7)
 - **Defense in depth (çok katman)**
   - Kazanç: Tek kontrol hatası felaket olmaz; saldırı yavaşlar ve tespit edilir
-  - Bedel: Maliyet, yönetilecek daha çok bileşen, olası gecikme (WAF, ek doğrulama)
+  - Bedel: Maliyet, yönetilecek daha çok bileşen, olası gecikme (ek doğrulama)
 - **Foundational CSPM (ücretsiz)**
-  - Kazanç: Secure score, öneriler ve MCSB sıfır maliyetle
-  - Bedel: Tehdit tespiti, saldırı yolu analizi ve gelişmiş tarama yok
-- **Ücretli Defender planları (CWP, Defender CSPM)**
+  - Kazanç: Secure score ve öneriler sıfır maliyetle
+  - Bedel: İş yüklerine yönelik gelişmiş tehdit tespiti yok
+- **Ücretli Defender planları (workload protection)**
   - Kazanç: Tehdit tespiti, zafiyet taraması, uyarılar
   - Bedel: Kaynak başına aylık ücret; uyarı hacmi için güvenlik ekibi/süreç gerekir
 
@@ -300,7 +292,7 @@ Bir sağlık teknolojisi şirketi, hasta verisi işleyen platformunu Azure'da ç
 - [Microsoft Learn — Describe Azure identity, access, and security](https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/) (Zero Trust, defense in depth, Defender for Cloud üniteleri)
 - [Zero Trust guidance center](https://learn.microsoft.com/en-us/security/zero-trust/) · [Zero Trust principles](https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview)
 - [What is Microsoft Defender for Cloud?](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction) · [Secure score](https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls)
-- [Cloud security posture management (Foundational CSPM / Defender CSPM)](https://learn.microsoft.com/en-us/azure/defender-for-cloud/concept-cloud-security-posture-management) · [Defender for Cloud pricing](https://azure.microsoft.com/pricing/details/defender-for-cloud/)
+- [Cloud security posture management (CSPM)](https://learn.microsoft.com/en-us/azure/defender-for-cloud/concept-cloud-security-posture-management)
 - [Microsoft cloud security benchmark](https://learn.microsoft.com/en-us/security/benchmark/azure/introduction)
 - [`az security`](https://learn.microsoft.com/en-us/cli/azure/security) · [Prevent anonymous read access to blobs](https://learn.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent)
 

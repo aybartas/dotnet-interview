@@ -24,7 +24,7 @@ Bu konu AZ-900'ün ilk alanının temelidir ve dört soruyu cevaplar:
 
 ### 2. Neden?
 
-- **Sınav ağırlığı:** "Describe cloud concepts" alanı sınavın **%25-30**'u; bu alanın en çok soru üreten iki tablosu (shared responsibility ve CapEx/OpEx) bu konudadır. Sonraki her konu (IaaS/PaaS/SaaS, SLA, maliyet, güvenlik) bu kavramların üzerine kurulur.
+- **Sınav ağırlığı:** "Describe cloud concepts" alanı sınavın **%25-30**'u; bu alanın en çok soru üreten iki tablosu (shared responsibility ve CapEx/OpEx) bu konudadır. Sonraki her konu (IaaS/PaaS/SaaS, yüksek erişilebilirlik, maliyet, güvenlik) bu kavramların üzerine kurulur.
 - **Gerçek işte:** "Bu sunucuyu buluta taşıyalım mı?" kararı; sorumluluğun kime geçtiğini (yama, yedek, güvenlik), hangi modelin regülasyona uyduğunu ve maliyetin nasıl değiştiğini bilmeyi gerektirir.
 - **Yaygın yanlış:** "Buluta taşıdık, güvenlik artık Microsoft'un işi" düşüncesi gerçek veri sızıntılarının bir numaralı sebeplerindendir — shared responsibility model tam olarak bunu düzeltir.
 
@@ -73,6 +73,7 @@ Bulutta güvenlik ve işletim sorumluluğu **sağlayıcı ile müşteri arasınd
 - **Uygulamalar** — On-prem: Müşteri · IaaS: Müşteri · PaaS: Paylaşımlı · SaaS: Microsoft
 - **Ağ kontrolleri** — On-prem: Müşteri · IaaS: Müşteri · PaaS: Paylaşımlı · SaaS: Microsoft
 - **İşletim sistemi** — On-prem: Müşteri · IaaS: Müşteri · PaaS: Microsoft · SaaS: Microsoft
+- **Sanallaştırma katmanı (hypervisor)** — On-prem: Müşteri · IaaS: **Microsoft** · PaaS: **Microsoft** · SaaS: **Microsoft**
 - **Fiziksel host'lar** — On-prem: Müşteri · IaaS: **Microsoft** · PaaS: **Microsoft** · SaaS: **Microsoft**
 - **Fiziksel ağ** — On-prem: Müşteri · IaaS: **Microsoft** · PaaS: **Microsoft** · SaaS: **Microsoft**
 - **Fiziksel datacenter** — On-prem: Müşteri · IaaS: **Microsoft** · PaaS: **Microsoft** · SaaS: **Microsoft**
@@ -80,7 +81,7 @@ Bulutta güvenlik ve işletim sorumluluğu **sağlayıcı ile müşteri arasınd
 Tabloyu ezberlemek yerine **üç kural** yeterli:
 
 1. **Veri, cihazlar, hesaplar ve kimlikler her zaman müşteride** — SaaS'ta bile. Microsoft 365'te kimin hangi dosyaya erişebildiği, MFA'nın açık olup olmadığı, hangi verinin sınıflandırıldığı senin sorumluluğundur.
-2. **Fiziksel her şey bulutta her zaman Microsoft'ta** — datacenter'ın kapısındaki güvenlikten diskin imhasına kadar.
+2. **Fiziksel altyapı ve sanallaştırma katmanı bulutta her zaman Microsoft'ta** — datacenter'ın kapısındaki güvenlikten fiziksel ağ ve host'lara, üzerlerindeki hypervisor'dan diskin imhasına kadar. Müşteri VM'i yalnızca bu katmanın üzerinde oluşturur.
 3. **Arada kalanlar modele göre kayar:** IaaS → PaaS → SaaS yönünde ilerledikçe sorumluluk Microsoft'a geçer. İşletim sistemi IaaS'ta müşteride (yama, antivirüs, güvenlik duvarı), PaaS'ta Microsoft'tadır.
 
 "**Paylaşımlı**" ne demek? Platformu (ör. App Service'in ağ özellikleri, Entra ID'nin kimlik altyapısı) Microsoft sağlar ve işletir; **doğru yapılandırmak** (hangi IP'lerin erişeceği, hangi kimlik politikalarının açık olduğu) müşterinindir.
@@ -183,7 +184,7 @@ Tabloyu ezberlemek yerine **üç kural** yeterli:
   - CapEx (capital expenditure): Tahmin hatası: fazla alırsan para boşta, az alırsan kapasite yetmez
   - OpEx (operational expenditure): Kullanım kontrol edilmezse fatura sürprizi (→ bütçe alarmı)
 
-**Bulut, harcamayı CapEx'ten OpEx'e kaydırır.** `Section04`, zirvesi dalgalı bir e-ticaret yükünde (aylık 4 → 20 sunucu) kendi donanımın zirveye göre boyutlanınca kapasitenin büyük kısmının yıl boyunca boşta kaldığını, tüketim bazlı modelde bu boşluk için ödeme yapılmadığını hesaplar (fiyatlar örnektir).
+**Bulut, harcamayı CapEx'ten OpEx'e kaydırır.** Örneğin zirvesi dalgalı bir e-ticaret yükünde (aylık 4 → 20 sunucu) kendi donanımını zirveye göre boyutlarsan kapasitenin büyük kısmı yıl boyunca boşta kalır ve yine de baştan ödenmiştir; tüketim bazlı modelde ise bu boşluk için ödeme yapmazsın.
 
 > Dikkat: Yük **sabit ve 7/24** ise tüketim bazlı modelin avantajı azalır; o durumda reservation gibi taahhütlü fiyatlar devreye girer (3.5).
 

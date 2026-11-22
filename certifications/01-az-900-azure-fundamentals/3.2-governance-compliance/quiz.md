@@ -133,7 +133,7 @@ Bir yönetici, kritik bir storage account'a **ReadOnly** lock uyguladıktan sonr
 
 <details><summary>Cevap</summary>
 
-**B.** ReadOnly lock yalnızca "değiştirmeyi" değil, `listKeys` gibi POST işlemlerini de engeller. Bu yüzden ReadOnly beklenmedik yan etkiler doğurabilir; çoğu durumda CanNotDelete yeterlidir. Lock rolleri değiştirmez (C).
+**B.** ReadOnly lock yalnızca "değiştirmeyi" değil, anahtar listeleme gibi bazı işlemleri de engeller. Bu yüzden ReadOnly beklenmedik yan etkiler doğurabilir; çoğu durumda CanNotDelete yeterlidir. Lock rolleri değiştirmez (C).
 </details>
 
 #### Soru 11: Tek seçim
@@ -154,25 +154,25 @@ Microsoft Purview ile **hangi ikisi** yapılabilir?
 
 - A) Kredi kartı numarası gibi hassas verileri otomatik keşfedip sınıflandırmak
 - B) Kullanıcılara MFA zorunluluğu getirmek
-- C) Hassas verinin kuruluş dışına gönderilmesini veri kaybı önleme (DLP) politikalarıyla engellemek
+- C) Veri kaynaklarını tarayıp aranabilir bir veri kataloğu ve veri soy ağacı (lineage) oluşturmak
 - D) Sanal makinelerin boyutunu otomatik büyütmek
 
 <details><summary>Cevap</summary>
 
-**A ve C.** Purview'un risk ve uyumluluk tarafı sınıflandırma, bilgi koruma ve DLP'yi kapsar. MFA Entra ID'nin (→ C1.9), ölçekleme autoscale'in işidir.
+**A ve C.** Purview veri keşfi, sınıflandırma, veri kataloğu ve lineage sağlar. MFA Entra ID'nin (→ C1.9), ölçekleme autoscale'in işidir.
 </details>
 
 #### Soru 13: Tek seçim
-Bir denetçi, **Microsoft'un** Azure için aldığı ISO 27001 sertifikasını ve SOC denetim raporlarını görmek istiyor. Bu belgeler nereden alınır?
+Bir denetçi, abonelikteki hangi kaynakların kurumun **"yalnızca West Europe'ta kaynak açılabilir"** kuralına **uymadığını** görmek istiyor. Hangi aracın raporuna bakmalıdır?
 
-- A) Azure Policy compliance panosu
-- B) Microsoft Service Trust Portal
-- C) Azure Advisor
-- D) Microsoft Purview Data Map
+- A) Azure Policy compliance (uyumluluk) panosu
+- B) Azure RBAC rol atamaları
+- C) Resource lock listesi
+- D) Resource tag'leri
 
 <details><summary>Cevap</summary>
 
-**B.** Service Trust Portal, Microsoft'un bağımsız denetim raporlarını ve uyumluluk belgelerini yayımlar. Policy compliance panosu (A) **senin** kaynaklarının kurallarına uyumunu gösterir.
+**A.** Azure Policy, kaynakların kurallara uyumunu değerlendirir ve uyumsuz kaynakları compliance panosunda listeler. RBAC kimin ne yapabileceğini, lock silme/değiştirme korumasını, tag meta veriyi gösterir.
 </details>
 
 #### Soru 14: Senaryo
@@ -205,11 +205,11 @@ Bir ekip, her gece otomatik olarak bir test resource group'unu silip yeniden olu
 
 - a) Resource lock'lar subscription, resource group veya tek kaynak düzeyinde uygulanabilir. — Evet: ☐ · Hayır: ☐
 - b) CanNotDelete lock'lı bir storage account'taki blob'lar da silinemez. — Evet: ☐ · Hayır: ☐
-- c) Bir lock'ı kaldırmak için de uygun yetki (ör. Owner veya User Access Administrator) gerekir. — Evet: ☐ · Hayır: ☐
+- c) Owner rolündeki bir kullanıcı da lock'lı kaynağı lock'ı kaldırmadan silemez. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
-**a) Evet · b) Hayır · c) Evet.** Lock yönetim düzlemini (hesabın kendisini) korur, içindeki veriyi değil; blob'ları korumak için soft delete/versioning gibi veri koruma özellikleri gerekir. Lock kaldırmak `Microsoft.Authorization/locks/*` yetkisi ister.
+**a) Evet · b) Hayır · c) Evet.** Lock kaynağın kendisini (storage account'u) korur, içindeki veriyi değil. Lock rol yetkisinden bağımsızdır: Owner bile önce lock'ı kaldırmalıdır.
 </details>
 
 #### Soru 17: Eşleştirme
@@ -244,4 +244,4 @@ Bir şirket, kaynaklara `env` tag'inin **resource group'tan otomatik olarak kopy
 
 ---
 
-➡️ **Sonraki konu:** [3.3 Kaynak Yönetme ve Dağıtma Araçları: Portal, CLI, PowerShell, Arc, Bicep](../3.3-management-deployment-tools/README.md) · [AZ-900 İçindekiler](../README.md)
+➡️ **Sonraki konu:** [3.3 Kaynak Yönetme ve Dağıtma Araçları: Portal, CLI, PowerShell, Arc, ARM Template'leri](../3.3-management-deployment-tools/README.md) · [AZ-900 İçindekiler](../README.md)

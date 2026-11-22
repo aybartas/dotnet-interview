@@ -1,35 +1,35 @@
 [← AZ-900 İçindekiler](../README.md) · [📝 Quiz](quiz.md) · [← Önceki konu](../2.7-security-zero-trust-defender/README.md)
 
-## 3.1 Maliyet Yönetimi: Pricing Calculator, TCO, Budgets
+## 3.1 Maliyet Yönetimi: Pricing Calculator, Cost Management, Tag'ler
 
 > **Sınav Alanı:** Describe Azure management and governance (%30-35) · **Konu Kodu:** C1.11
 >
-> 📌 **Resmî hedef (skills measured as of July 20, 2026):** *Describe cost management in Azure* — **maliyeti etkileyen faktörler** · **Pricing Calculator** · **Microsoft Cost Management** yetenekleri · **tag**'lerin amacı. TCO Calculator'ın güncel müfredattaki yeri için 3.2'deki nota ve resmî [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)'a bak.
+> 📌 **Resmî hedef (skills measured as of July 20, 2026):** *Describe cost management in Azure* — **maliyeti etkileyen faktörler** · **Pricing Calculator** · **Microsoft Cost Management** yetenekleri · **tag**'lerin amacı. Sınavdan önce resmî [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)'a bak.
 
 ### 1. Ne?
 
 Bulutta maliyet **tüketime bağlıdır** (→ C1.1): ne kadar, ne tür ve nerede kullandığına göre değişir. Maliyet yönetimi üç zamana ayrılır:
 
 - **Önce** (tahmin)
-  - Soru: "Bu mimari ayda kaça mal olur?" · "On-prem'e göre ne kazanırım?"
-  - Araç: **Pricing Calculator** · on-prem kıyası (TCO / Azure Migrate business case)
+  - Soru: "Bu mimari ayda kaça mal olur?"
+  - Araç: **Pricing Calculator**
 - **Sırasında** (izleme)
   - Soru: "Şu an ne harcıyorum, nereye gidiyor, bütçeyi aşacak mıyım?"
-  - Araç: **Microsoft Cost Management**: cost analysis, budgets, alerts
+  - Araç: **Microsoft Cost Management**: cost analysis, budgets, alerts, forecast
 - **Sonra** (iyileştirme)
   - Soru: "Nerede tasarruf ederim?"
-  - Araç: Advisor önerileri, reservation, Hybrid Benefit, kapatma/silme
+  - Araç: Maliyet önerileri (Advisor), reservation, Hybrid Benefit, kapatma/silme
 
 Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, ortama göre raporlamanın yolu.
 
 
-> Koddaki tüm fiyatlar **örnektir**; amaç maliyet kalemlerinin **yapısını** görmek, gerçek teklif çıkarmak değil.
+> Dokümandaki tüm fiyatlar **örnektir**; amaç maliyet kalemlerinin **yapısını** görmek, gerçek teklif çıkarmak değil.
 
 ---
 
 ### 2. Neden?
 
-- **Sınav:** "Management and governance" alanının (%30-35) ilk hedefidir; araç seçimi (Pricing Calculator ↔ Cost Management ↔ TCO), maliyet faktörü ve tag soruları her sınavda çıkar.
+- **Sınav:** "Management and governance" alanının (%30-35) ilk hedefidir; araç seçimi (Pricing Calculator ↔ Cost Management), maliyet faktörü ve tag soruları her sınavda çıkar.
 - **Gerçek işte:** Bulut faturası sürprizleri neredeyse hep aynı sebeplerden gelir: unutulan kaynaklar, yanlış boyut, bölgeler arası/internete çıkan trafik, 7/24 sabit yükte pay-as-you-go. Bunları önceden bilmek ve **bütçe alarmıyla** yakalamak FinOps'un temelidir.
 - **Yönetişimle bağı:** Tag'lerin zorunlu kılınması ve gruptan kopyalanması Azure Policy ile yapılır (→ C1.12); "kim ne harcıyor?" sorusu tag disiplini olmadan cevaplanamaz.
 
@@ -59,7 +59,7 @@ Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, or
   - Örnek: Free account kotası bitince pay-as-you-go'ya geçiş
 - **Azure Marketplace**
   - Açıklama: Üçüncü taraf ürünlerde Azure ücretine ek olarak **satıcının ücreti**
-  - Örnek: Ticari bir güvenlik duvarı imajı
+  - Örnek: Marketplace'ten alınan ücretli üçüncü taraf bir yazılım imajı
 
 **Tasarruf yolları**:
 
@@ -82,7 +82,7 @@ Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, or
   - Ne?: Advisor önerileri, otomatik kapatma (auto-shutdown), deallocate, kullanılmayanı silme
   - Ne zaman?: Her zaman
 
-#### 3.2 Pricing Calculator ve on-prem karşılaştırması (TCO)
+#### 3.2 Azure Pricing Calculator
 
 **Azure Pricing Calculator** — henüz **kurulmamış** bir mimarinin **tahmini** aylık maliyeti:
 
@@ -93,16 +93,16 @@ Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, or
 
 > Pricing Calculator bir **tahmin**dir, fatura değildir: gerçek tüketim, trafik ve indirimler sonucu değiştirir. Calculator'a erişmek için Azure aboneliği gerekmez.
 
-**TCO (Total Cost of Ownership) — on-prem vs Azure.** Klasik **TCO Calculator**, mevcut on-prem altyapını (sunucu, depolama, ağ, lisans, enerji, datacenter alanı, işçilik) girip aynı iş yükünün Azure'daki 3-5 yıllık toplam maliyetiyle karşılaştırmanı sağlıyordu. *(Durum notu — Ekim 2026: Bazı güncel AZ-900 kaynakları bağımsız TCO Calculator aracının 2025'te kaldırıldığını ve on-prem ↔ Azure karşılaştırmasının artık **Azure Migrate business case** özelliğiyle yapıldığını belirtiyor; Microsoft'un resmî duyurusunu doğrulayamadık. Eski materyallerde ve sorularda TCO Calculator geçebilir — sınav için ayrım aynı kalır.)*
+**Maliyeti hangi girdiler belirler?** Pricing Calculator'a girdiğin her parametre bir maliyet faktörüdür: **kaynak türü ve boyutu** (compute), **depolama** miktarı/türü/redundancy/tier, **ağ bant genişliği** (giden trafik), **kullanım süresi** (saat, gün) ve **bölge**. Aynı mimariyi değiştirerek (boyut küçült, tier düşür, bölge değiştir) maliyetin nasıl değiştiğini görmek **cost optimization**'ın ilk adımıdır.
 
-| | Pricing Calculator | TCO (TCO Calculator / Azure Migrate business case) |
+**Pricing Calculator ↔ Cost Management:**
+
+| | Pricing Calculator | Cost Management |
 |---|---|---|
-| Soru | "Azure'da bu ne kadar tutar?" | "On-prem'de kalmak mı, Azure'a geçmek mi ucuz?" |
-| Girdi | Azure servisleri ve ayarları | Mevcut on-prem altyapı + varsayımlar (enerji, işçilik…) |
-| Çıktı | Aylık tahmini Azure maliyeti | Çok yıllık toplam sahip olma maliyeti karşılaştırması |
-
-TCO karşılaştırmasının yapısı: on-prem'de donanım, depolama/ağ ve lisans **1. yılda peşin** (CapEx), enerji/alan/bakım/emek her yıl; Azure'da yalnızca dönemsel (OpEx) kalemler. Sonuçta on-prem'in harcamasının büyük kısmı ilk yıla yığılır, bulutta yıllara eşit yayılır; sabit 7/24 yükte pay-as-you-go en pahalı bulut seçeneğidir, reservation ve Hybrid Benefit farkı kapatır.
-
+| Soru | "Azure'da bu ne kadar **tutar**?" | "Ne kadar **harcadım**, nereye gidiyor?" |
+| Zaman | **Önce** (kurulmadan) | **Sırasında / sonra** (gerçekleşen) |
+| Girdi | Senin seçtiğin servisler ve ayarlar | Aboneliğindeki gerçek kullanım |
+| Erişim | Herkese açık, abonelik gerekmez | Azure aboneliği gerekir |
 
 #### 3.3 Microsoft Cost Management
 
@@ -110,13 +110,16 @@ Azure (ve bağlanırsa AWS) harcamasını **izleme, analiz etme ve optimize etme
 
 | Yetenek | Ne yapar? |
 |---|---|
-| **Cost analysis** | Gerçekleşen ve tahmin edilen (forecast) maliyeti **kaynak, servis, bölge, resource group, tag** bazında gruplama ve filtreleme; trend grafikleri |
+| **Cost analysis** | Gerçekleşen maliyeti **kaynak, servis, bölge, resource group, tag** bazında gruplama ve filtreleme; trend grafikleri |
+| **Forecast (tahmin)** | Geçmiş kullanıma bakarak ay sonu / dönem sonu **tahmini harcamayı** gösterir; bütçe aşımını önceden fark ettirir |
 | **Budgets** | Bir kapsam (subscription, RG…) için aylık/çeyreklik/yıllık limit; gerçekleşen veya tahmini harcama eşiği (%50, %80, %100…) aşılınca **uyarı** (e-posta, **action group** → otomasyon) |
 | **Cost alerts** | Bütçe uyarıları, **kredi** uyarıları (ör. Azure kredisinin %90'ı bitti), **departman harcama kotası** uyarıları (EA), anomali uyarıları |
 | **Öneriler** | Advisor'ın maliyet önerileri (az kullanılan VM, reservation fırsatı) (→ C1.14) |
-| **Exports** | Maliyet verisini zamanlanmış olarak storage account'a dışa aktarma (Power BI, özel raporlar) |
+| **Raporlama / dışa aktarma** | Maliyet raporlarını paylaşma, zamanlanmış dışa aktarma |
 
-> **Budget harcamayı durdurmaz**, yalnızca uyarır. Kaynakları otomatik kapatmak istiyorsan bütçe uyarısını bir **action group**'a (ör. Automation/Logic App/Function) bağlarsın.
+> **Budget harcamayı durdurmaz**, yalnızca uyarır. Kaynakları otomatik kapatmak istiyorsan bütçe uyarısını bir **action group**'a bağlayıp bir otomasyon tetiklersin.
+
+**Spending limit (harcama limiti) ↔ budget:** Bazı abonelik türlerinde (ör. **ücretsiz hesap**, bazı Visual Studio/öğrenci abonelikleri) kredi bittiğinde kaynakları **durduran** bir *spending limit* vardır; pay-as-you-go aboneliklerinde böyle bir otomatik durdurma yoktur — yalnızca **budget + uyarı** kurulabilir. Yani: spending limit = sert sınır (kaynaklar devre dışı), budget = yumuşak sınır (yalnızca uyarı).
 
 #### 3.4 Resource tags ⭐
 
@@ -131,10 +134,10 @@ Azure (ve bağlanırsa AWS) harcamasını **izleme, analiz etme ve optimize etme
 | Uyumluluk/yönetişim | `owner` tag'i olmayan kaynağa izin verme (Policy) |
 
 **Kurallar:**
-- Tag'ler **varsayılan olarak miras alınmaz**: resource group'un `costCenter=1001` tag'i içerideki kaynağa **geçmez**. `Section04`'te tag'i unutulmuş iki kaynağın maliyeti raporda **"(no tag)"** satırına düşer.
+- Tag'ler **varsayılan olarak miras alınmaz**: resource group'un `costCenter=1001` tag'i içerideki kaynağa **geçmez**. Tag'i unutulmuş kaynakların maliyeti raporda **"(no tag)"** satırına düşer.
 - Mirası ve zorunluluğu **Azure Policy** sağlar: *Require a tag on resources* (**Deny** — tag'siz kaynak oluşturulamaz), *Inherit a tag from the resource group if missing* (**Modify** — eksik tag'i gruptan kopyalar; mevcut kaynaklar için **remediation**) (→ C1.12).
-- *(bağlam)* Cost Management'ın **tag inheritance** ayarı, subscription/RG tag'lerini kaynakların kendisine değil yalnızca **maliyet kayıtlarına** uygular — raporlama için bir kolaylıktır; kaynak üzerindeki tag'ler yine değişmez. Sınavdaki "kaynak, RG'nin tag'lerini devralır mı?" sorusunun cevabı **Hayır**'dır.
-- Tag'ler portal, CLI, PowerShell, ARM/Bicep ile eklenir; her kaynak türü tag desteklemez ve kaynak başına tag sayısı sınırlıdır *(bağlam: 50)*.
+- Sınavdaki "kaynak, RG'nin tag'lerini devralır mı?" sorusunun cevabı **Hayır**'dır.
+- Tag'ler portal, CLI, PowerShell ve ARM template'leri ile eklenir; her kaynak türü tag desteklemez.
 
 #### 3.5 Pratik — CLI ile bütçe, tag ve fiyat sorgusu
 
@@ -192,7 +195,7 @@ Bir e-ticaret şirketinin bulut faturası üç ayda %60 artmış; FinOps ekibi �
 3. **Bakım:** Advisor; 40 az kullanılan VM, 120 sahipsiz disk ve 30 kullanılmayan public IP buluyor → küçültme ve silme.
 4. **Tüketim modeli:** Üretimdeki 7/24 veritabanı ve web katmanı için 3 yıllık reservation; Windows sunucularında **Azure Hybrid Benefit**; gece çalışan raporlama işleri **spot VM**'lere.
 5. **Ağ:** CDN ile görsellerin internete çıkışı (egress) azaltılıyor; gereksiz bölgeler arası replikasyon kapatılıyor.
-6. **Yeni projeler:** Her yeni mimari önce **Pricing Calculator**'da tahmin ediliyor; on-prem'den taşınacak uygulamalar için **Azure Migrate business case** ile TCO karşılaştırması yapılıyor.
+6. **Yeni projeler:** Her yeni mimari önce **Pricing Calculator**'da tahmin ediliyor; gerçekleşen harcama ise Cost Management'ta izleniyor.
 
 ---
 
@@ -203,9 +206,10 @@ Bir e-ticaret şirketinin bulut faturası üç ayda %60 artmış; FinOps ekibi �
 | Senaryodaki ifade | Cevap |
 |---|---|
 | "Henüz kurulmamış bir çözümün aylık maliyetini tahmin et" | **Pricing Calculator** |
-| "On-prem datacenter'ın toplam maliyetini Azure ile karşılaştır" | **TCO Calculator** (güncel: Azure Migrate business case) |
 | "Mevcut harcamayı görüntüle/analiz et, departmana göre grupla" | **Cost Management — cost analysis** (+ tag) |
 | "Harcama limitin %80'ine ulaşınca e-posta gönder" | **Cost Management — budget** + uyarı |
+| "Ay sonu harcamanın ne olacağını önceden gör" | **Cost Management — forecast** |
+| "Kredi bitince kaynaklar otomatik dursun" | **Spending limit** (ücretsiz/kredili abonelik türlerinde) · Tuzak: Budget (yalnızca uyarır) |
 | "Maliyeti departmana/projeye göre raporla" | **Resource tags** |
 | "RG'nin tag'i içindeki kaynaklara otomatik uygulansın" | Varsayılan olarak **olmaz** → **Azure Policy** (Modify) |
 | "Mevcut Windows Server lisanslarını kullanarak tasarruf" | **Azure Hybrid Benefit** |
@@ -233,7 +237,7 @@ Bir e-ticaret şirketinin bulut faturası üç ayda %60 artmış; FinOps ekibi �
 | "Ağ trafiği ücretsizdir" | Egress, bölgeler arası ve zone'lar arası trafik ücretlidir |
 | VM'i silip diskleri/IP'leri unutmak | Kalan kaynaklar faturalanır; RG düzeyinde temizlik veya Advisor |
 | Kısa süreli projeye 3 yıllık reservation | Taahhüt süre boyunca ödenir; değişken/kısa yükte pay-as-you-go |
-| "On-prem daha ucuz" sonucuna yalnızca donanım fiyatına bakarak varmak | TCO'da enerji, alan, bakım, **emek** ve yenileme döngüsü de vardır |
+| Pricing Calculator'daki tahmini gerçek fatura sanmak | Calculator varsayımlara dayanır; gerçekleşen maliyet Cost Management'ta görülür |
 
 ---
 
@@ -250,7 +254,7 @@ Bir e-ticaret şirketinin bulut faturası üç ayda %60 artmış; FinOps ekibi �
   - Kazanç: Daha düşük birim fiyat
   - Bedel: Kullanıcıya gecikme, veri ikametgâhı, servis uygunluğu
 - **Yüksek redundancy / çok bölge**
-  - Kazanç: Dayanıklılık, yüksek SLA (→ C1.2, C1.8)
+  - Kazanç: Dayanıklılık (→ C1.2, C1.8)
   - Bedel: Daha çok kaynak + replikasyon trafiği (egress)
 - **Sıkı tag politikası (Deny)**
   - Kazanç: Temiz maliyet raporu
@@ -266,10 +270,8 @@ Bir e-ticaret şirketinin bulut faturası üç ayda %60 artmış; FinOps ekibi �
 - [AZ-900 study guide (skills measured)](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)
 - [Microsoft Learn — Describe cost management in Azure](https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/)
 - [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/) · [Azure Retail Prices REST API](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices)
-- [Azure Migrate business case overview](https://learn.microsoft.com/en-us/azure/migrate/concepts-business-case-calculation) — on-prem ↔ Azure TCO karşılaştırması
-- TCO Calculator durumu (ikincil kaynaklar): [MindMesh Academy — AZ-900 3.2.2](https://www.mindmeshacademy.com/certifications/azure/az-900-microsoft-azure-fundamentals/study-guide/3-2-2-estimating-cost-before-you-spend) · [Tutorials Dojo forum yanıtı](https://portal.tutorialsdojo.com/forums/reply/778971/)
 - [What is Microsoft Cost Management?](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/overview-cost-management) · [Create and manage budgets](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets)
-- [Use tags to organize your Azure resources](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources) · [Group and allocate costs using tag inheritance](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/enable-tag-inheritance)
+- [Use tags to organize your Azure resources](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-resources)
 - [Azure Hybrid Benefit](https://azure.microsoft.com/pricing/hybrid-benefit/) · [Azure reservations](https://learn.microsoft.com/en-us/azure/cost-management-billing/reservations/save-compute-costs-reservations) · [Azure savings plan for compute](https://learn.microsoft.com/en-us/azure/cost-management-billing/savings-plan/savings-plan-compute-overview)
 - [Bandwidth pricing](https://azure.microsoft.com/pricing/details/bandwidth/) (egress)
 

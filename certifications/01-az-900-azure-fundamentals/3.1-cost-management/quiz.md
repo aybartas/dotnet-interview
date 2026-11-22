@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 3.1 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 18 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 19 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 15/18**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 16/19**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -24,16 +24,16 @@ Bir ekip, **henüz kurmadığı** bir web uygulamasının (App Service + Azure S
 </details>
 
 #### Soru 2: Tek seçim
-Bir CFO, şirketin kendi datacenter'ını işletmenin 3 yıllık toplam maliyetini (donanım, enerji, alan, işçilik dahil) aynı iş yükünün Azure'daki maliyetiyle **karşılaştırmak** istiyor. Hangi yaklaşım bu ihtiyaca yöneliktir?
+Bir yönetici, Azure aboneliğinde **şu ana kadar gerçekleşen** harcamayı kaynak grubuna ve tag'e göre gruplayıp ay sonu için **tahmini harcamayı** (forecast) da görmek istiyor. Hangi aracı kullanmalıdır?
 
-- A) Pricing Calculator
-- B) TCO karşılaştırması (TCO Calculator / Azure Migrate business case)
+- A) Azure Pricing Calculator
+- B) Microsoft Cost Management (cost analysis)
 - C) Azure Policy
-- D) Resource tags
+- D) Azure Service Health
 
 <details><summary>Cevap</summary>
 
-**B.** On-prem ↔ Azure toplam sahip olma maliyeti karşılaştırması TCO'nun işidir. Klasik TCO Calculator'ın yerini bazı kaynaklara göre Azure Migrate business case almıştır; sınav mantığı aynıdır: Pricing Calculator yalnızca Azure tarafını tahmin eder.
+**B.** Cost Management, **gerçekleşen** maliyeti analiz eder ve geçmiş kullanıma göre **forecast** üretir. Pricing Calculator kurulmamış mimarinin tahminini yapar; Policy kural zorlar; Service Health platform olaylarını bildirir.
 </details>
 
 #### Soru 3: Çoklu seçim (iki doğru cevap)
@@ -92,7 +92,7 @@ Bir şirket, maliyetleri **departmanlara göre** raporlamak istiyor. Kaynaklara 
 - A) Resource lock
 - B) `costCenter` gibi bir **tag**
 - C) Ek bir subscription rolü
-- D) Daha yüksek bir SLA
+- D) Daha yüksek bir region
 
 <details><summary>Cevap</summary>
 
@@ -238,9 +238,22 @@ Bir şirket kesintiye dayanıklı, gece çalışan toplu veri işleme işlerinin
 **A.** Spot VM, Azure'un boşta kapasitesini büyük indirimle sunar; karşılığında VM geri alınabilir — kesintiye dayanıklı toplu işler için idealdir.
 </details>
 
+#### Soru 19: Tek seçim
+Bir öğrenci, ücretsiz Azure kredisi kullanıyor ve kredi bittiğinde **kaynakların otomatik olarak devre dışı kalmasını**, hiçbir ek ücret doğmamasını istiyor. Hangi mekanizma bunu sağlar?
+
+- A) Cost Management budget (yalnızca e-posta uyarısı)
+- B) Pricing Calculator
+- C) Subscription'ın **spending limit** (harcama limiti) özelliği
+- D) Resource tags
+
+<details><summary>Cevap</summary>
+
+**C.** Spending limit, kredili/ücretsiz abonelik türlerinde kredi bitince kaynakları durdurur (sert sınır). **Budget** harcamayı durdurmaz, yalnızca uyarır; Pricing Calculator tahmin aracıdır; tag'ler raporlama içindir.
+</details>
+
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.2 (araç ayrımı) ve 3.4 (tag kuralları) bölümlerini tekrar et · < 12 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
+**Puanlama:** 17-19 → hazırsın · 13-16 → README 3.2–3.3 (araç ayrımı, Cost Management) ve 3.4 (tag kuralları) bölümlerini tekrar et · < 13 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
 
 ---
 

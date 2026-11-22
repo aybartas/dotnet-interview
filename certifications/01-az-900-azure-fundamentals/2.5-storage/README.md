@@ -134,9 +134,8 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
 - **Archive'daki blob okunamaz:** önce Hot/Cool/Cold'a taşınması (rehydrate) gerekir; standart öncelikte **saatler** (en çok ~15 saat), yüksek öncelikte daha kısa sürer ve daha pahalıdır.
 - En az süre dolmadan silmek veya tier değiştirmek **erken silme ücreti** doğurur.
 - Tier **blob düzeyinde** ayarlanabilir; hesap düzeyinde bir varsayılan tier vardır (Archive varsayılan olamaz).
-- **Lifecycle management:** kurallarla otomatik geçiş — "30 gün değişmeyen blob → Cool, 180 gün → Archive, 7 yıl → sil".
 
-`Section03` 1 TB veri için üç farklı okuma yoğunluğunda aylık maliyeti hesaplar (örnek fiyatlar): az okunan veride Archive, orta yoğunlukta Cool, çok okunan veride Hot kazanır — **depolama ucuzladıkça erişim pahalılaşır**.
+Örnek: 1 TB veri için az okunan veride Archive, orta yoğunlukta Cool, çok okunan veride Hot en düşük toplam maliyeti verir — **depolama ucuzladıkça erişim pahalılaşır**. Tier seçimi, verinin **ne sıklıkla okunacağına** göre yapılır.
 
 #### 3.4 Azure Files ve Azure File Sync
 
@@ -160,12 +159,18 @@ Azure Storage veriyi her zaman **birden çok kopya** olarak tutar; seçenek, kop
 
 #### 3.6 Migration seçenekleri
 
-- **Azure Migrate:** buluta taşıma için **merkezi hub**: on-prem ortamı **keşfet** (discovery) → **değerlendir** (boyutlandırma, uyumluluk, tahmini maliyet) → **taşı**. Sunucular, veritabanları, web uygulamaları ve sanal masaüstleri için entegre araçlar içerir: *Discovery and assessment*, *Migration and modernization* (sunucu taşıma), *Data Migration Assistant*, *Azure Database Migration Service*, *Web app migration assistant*, Data Box. Ayrıca on-prem ile Azure maliyetini karşılaştıran **business case** üretir (→ C1.11).
+- **Azure Migrate:** buluta taşıma için **merkezi hub**: on-prem ortamı **keşfet** (discovery) → **değerlendir** (boyutlandırma, uyumluluk, tahmini maliyet) → **taşı**. Sunucular, veritabanları, web uygulamaları ve sanal masaüstleri için entegre araçlar sunar. Kural: *"on-prem sunucuları keşfedip değerlendirmek ve taşımak"* → **Azure Migrate**.
 - **Azure Data Box:** veriyi **fiziksel cihazla** taşıma — Microsoft güvenli bir cihaz gönderir, veriyi yerelde kopyalarsın, cihaz Azure datacenter'ına döner ve veri storage account'a yüklenir; cihaz sonra NIST standartlarına göre güvenle silinir. Hem **içe** (on-prem → Azure) hem **dışa** (Azure → on-prem) aktarım.
   - Ne zaman: **çok büyük veri** (onlarca TB – petabayt), **ağ bağlantısı yok/yavaş/pahalı**, tek seferlik toplu taşıma, ilk yükleme sonrası ağdan artımlı senkron, felaket kurtarma için toplu geri yükleme.
-  - Ailesi *(bağlam — kapasiteler değişir)*: **Data Box Disk** (SSD diskler, küçük-orta veri), **Data Box** (yeni nesil cihazlar ~120 TB ve ~525 TB kullanılabilir kapasite; eski 80 TB'lık cihaz bölge bölge kullanımdan kalkıyor), **Data Box Heavy** emekliye ayrıldı. Sınav kapasite değil **"ağ yetersiz + büyük veri → Data Box"** eşleştirmesini sorar.
+  - Cihaz ailesi birkaç kapasitede gelir (küçük-orta veri için SSD tabanlı **Data Box Disk**, çok büyük veri için **Data Box**); sınav kapasite değil **"ağ yetersiz + büyük veri → Data Box"** eşleştirmesini sorar.
 
 Kaba hesap: 100 Mbps'lik bir hatla 40 TB, hattın tamamı bu işe ayrılsa bile **~37 gün** sürer; Data Box birkaç günlük kargo ve kopyalama süresiyle biter.
+
+**Online ↔ fiziksel (offline) veri aktarımı**
+
+- **Online (ağ üzerinden)** — AzCopy, Azure Storage Explorer, Azure File Sync, Azure Migrate (sunucu taşıma): Yeterli bant genişliği varken, sürekli/artımlı veya küçük-orta ölçekli aktarımlar için.
+- **Fiziksel (cihazla)** — Azure Data Box: Veri çok büyük, ağ yok/yavaş/pahalı olduğunda; cihaz kargoyla gider ve gelir.
+
 
 #### 3.7 Pratik — CLI ve AzCopy laboratuvarı
 
@@ -225,10 +230,10 @@ Bir sigorta şirketi on yıllık dosya arşivini ve dosya sunucularını buluta 
   - Karar: **Azure Data Box** (birden çok cihaz)
   - Neden: Ağdan aylar sürer; cihazla birkaç hafta
 - **Arşiv yalnızca denetimde okunuyor, 10 yıl saklanmalı**
-  - Karar: Blob **Archive** tier + lifecycle kuralı
+  - Karar: Blob **Archive** tier
   - Neden: En ucuz depolama; denetimden önce rehydrate için saatler yeterli
 - **Son 1 yılın poliçeleri müşteri portalında gösteriliyor**
-  - Karar: Blob **Hot** (eski olanlar lifecycle ile **Cool**'a)
+  - Karar: Blob **Hot** (eski olanlar **Cool**'a)
   - Neden: Sık okunan veri pahalı erişim ücretine girmemeli
 - Müşteri belgeleri hem zone arızasında erişilebilir hem bölgesel felakette korunmalı; felakette okunabilmeli
   - Karar: **RA-GZRS**

@@ -73,7 +73,7 @@ Bir şirket SQL Server'ı bir Azure sanal makinesine kurup çalıştırıyor. Bu
 
 <details><summary>Cevap</summary>
 
-**A.** VM üzerinde SQL Server = IaaS: OS ve SQL Server yamaları müşteride. Yönetilen Azure SQL Database veya Managed Instance olsaydı PaaS olurdu.
+**A.** VM üzerinde SQL Server = IaaS: OS ve SQL Server yamaları müşteride. Yönetilen bir Azure SQL Database olsaydı PaaS olurdu.
 </details>
 
 #### Soru 6: Tek seçim
@@ -108,11 +108,11 @@ Aşağıdakilerden **hangi ikisi** serverless bilgi işlemin niteliğidir?
 |---|---|---|
 | a) Serverless'te kodun çalıştığı fiziksel sunucular yoktur. | ☐ | ☐ |
 | b) Azure Functions bir serverless bilgi işlem hizmetidir. | ☐ | ☐ |
-| c) Azure Logic Apps, kod yazmadan iş akışları oluşturmaya olanak tanır. | ☐ | ☐ |
+| c) Serverless'te genellikle yalnızca kodun çalıştığı süre/çağrı kadar ücret ödenir. | ☐ | ☐ |
 
 <details><summary>Cevap</summary>
 
-**a) Hayır · b) Evet · c) Evet.** Sunucular vardır; sağlanmaları ve yönetimleri sağlayıcıdadır. Functions (kod) ve Logic Apps (görsel, low-code iş akışı) Azure'un serverless hizmetleridir.
+**a) Hayır · b) Evet · c) Evet.** Sunucular vardır; sağlanmaları ve yönetimleri sağlayıcıdadır. Functions Azure'un serverless bilgi işlem hizmetidir; serverless'te ücret genellikle çağrı ve çalışma süresine göre ölçülür, boşta ücret yoktur.
 </details>
 
 #### Soru 9: Senaryo
@@ -141,25 +141,25 @@ Aşağıdaki senaryolardan hangisi **en tipik** IaaS kullanım senaryosudur?
 
 - A) Çalışanlara hazır bir CRM uygulaması sunmak
 - B) Geliştiricilerin, gerektiğinde dakikalar içinde açıp işi bitince silebilecekleri, özel yazılım kurulu test ortamları oluşturmak
-- C) Kod yazmadan iki SaaS uygulaması arasında veri aktarmak
+- C) Hazır bir e-posta ve ofis paketi kiralamak
 - D) Bir web API'sini OS yönetmeden yayınlamak
 
 <details><summary>Cevap</summary>
 
-**B.** Hızla açılıp kapatılan, özel yapılandırmalı test/geliştirme ortamları IaaS'ın klasik senaryosudur. A → SaaS, C → serverless (Logic Apps), D → PaaS.
+**B.** Hızla açılıp kapatılan, özel yapılandırmalı test/geliştirme ortamları IaaS'ın klasik senaryosudur. A → SaaS, C → SaaS, D → PaaS.
 </details>
 
 #### Soru 12: Tek seçim
-Bir şirket "SQL Server ile neredeyse tam uyumlu ama yama ve yedeklemeyi Microsoft'un yaptığı" bir veritabanı istiyor. Hangisini seçmelidir ve bu hangi hizmet türüdür?
+Bir şirket, olay olduğunda çalışan küçük bir kod parçasını **sunucu yönetmeden** ve yalnızca kod çalıştığı süre için ödeme yaparak çalıştırmak istiyor. Hangisini seçmelidir ve bu hangi hizmet türüdür?
 
-- A) SQL Server on Azure VM — IaaS
-- B) Azure SQL Managed Instance — PaaS
+- A) Azure Virtual Machines — IaaS
+- B) Azure Functions — serverless (PaaS)
 - C) Microsoft 365 — SaaS
-- D) Azure Virtual Machines — IaaS
+- D) Şirket içi sunucu — on-premises
 
 <details><summary>Cevap</summary>
 
-**B.** SQL Managed Instance, SQL Server'a yüksek uyumluluğu yönetilen (PaaS) bir hizmette sunar. A da uyumludur ama yama/yedek müşteride kalır.
+**B.** Olay tetiklemeli kodu sunucu yönetmeden ve kullanım kadar ücretle çalıştırmak **Azure Functions**'tır (serverless). VM'ler (A) 7/24 açıkken boşta da ücretlenir ve OS yönetimi gerektirir.
 </details>
 
 #### Soru 13: Cümle tamamlama

@@ -28,7 +28,7 @@ Geography (e.g. Europe)                    Microsoft Entra tenant
                                                              └─ Resource (VM, VNet, storage…)
 ```
 
-Bu konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.7).
+Bu konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.8).
 
 ---
 
@@ -48,7 +48,7 @@ Bu konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.7).
 - **Region:** bir coğrafi alanda bulunan ve **düşük gecikmeli** bir ağla birbirine bağlı bir veya daha çok datacenter. Azure'da 60'ı aşkın region vardır; kaynak oluştururken genellikle bir region seçersin.
   - Servis ve özellik **uygunluğu** region'a göre değişir (her servis veya VM boyutu her region'da yoktur).
   - **Fiyat** region'a göre değişebilir (→ C1.11).
-  - Bazı servisler **global**'dir, belirli bir region'a bağlanmaz: **Microsoft Entra ID**, **Azure Front Door**, **Traffic Manager**, **Azure DNS**.
+  - Bazı servisler **global**'dir, belirli bir region'a bağlanmaz (ör. **Microsoft Entra ID**, **Azure DNS**).
 
 **Region seçim kriterleri:**
 
@@ -65,7 +65,7 @@ Bu konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.7).
 **Availability zone**, bir region içinde **fiziksel olarak ayrı** bir veya daha çok datacenter'dan oluşan gruptur; her zone'un **bağımsız gücü, soğutması ve ağı** vardır. Zone'lar birbirine yüksek hızlı, özel fiber ağla bağlıdır.
 
 - Zone destekleyen region'larda **en az üç** zone bulunur. Her region zone desteklemez.
-- Koruduğu arıza: **bir datacenter'ın (zone'un) tamamen çökmesi** — elektrik, soğutma veya ağ kesintisi. Bir kaynağın kopyalarını farklı zone'lara koyarsan biri düşse de diğerleri çalışır (→ C1.2: iki zone'a yayılmış VM'ler %99,99 SLA).
+- Koruduğu arıza: **bir datacenter'ın (zone'un) tamamen çökmesi** — elektrik, soğutma veya ağ kesintisi. Bir kaynağın kopyalarını farklı zone'lara koyarsan biri düşse de diğerleri çalışır (→ C1.2: high availability).
 - Zone'ları kullanan servisler iki gruptadır:
 
 - **Zonal**
@@ -74,7 +74,7 @@ Bu konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.7).
 - **Zone-redundant**
   - Anlamı: Platform kaynağı zone'lar arasında **otomatik** çoğaltır
   - Örnek: ZRS storage (→ C1.8), Azure SQL Database (zone-redundant yapılandırma)
-- ***(bağlam)* Zone desteği olmayan / global** — Anlamı: Zone kavramı uygulanmaz · Örnek: Entra ID, Front Door
+- **Zone desteği olmayan / global** — Anlamı: Zone kavramı uygulanmaz · Örnek: Microsoft Entra ID
 
 > Zone yedekliliği ek maliyet getirir: daha çok kaynak ve zone'lar arası veri aktarımı (→ C1.11).
 
@@ -111,7 +111,7 @@ Sovereign bulutlarda portal adresi, servis listesi ve fiyatlar global Azure'dan 
 
 #### 3.5 Resources ve resource groups ⭐
 
-- **Resource (kaynak):** Azure'da oluşturduğun her yönetilebilir öğe — VM, VNet, storage account, veritabanı, web app, public IP, NSG…
+- **Resource (kaynak):** Azure'da oluşturduğun her yönetilebilir öğe — VM, VNet, storage account, veritabanı, web app, public IP…
 - **Resource group (RG):** kaynakların **mantıksal kabı**. Genellikle **aynı yaşam döngüsünü** paylaşan (birlikte oluşturulup, güncellenip, silinen) kaynaklar aynı gruba konur — ör. "bir uygulamanın test ortamı".
 
 **Resource group kuralları** (sınavın en sevdiği liste):
@@ -173,7 +173,22 @@ Entra tenant
             └─ rg-shop-dev
 ```
 
-#### 3.7 Pratik — region keşfi, resource group yaşam döngüsü, hiyerarşi
+#### 3.7 Azure Resource Manager (ARM) ve kaynak dağıtım kapsamları
+
+Portal, Azure CLI, Azure PowerShell, REST API ve SDK'lar ile yaptığın **her** kaynak oluşturma/değiştirme/silme isteği aynı yerden geçer: **Azure Resource Manager (ARM)**, Azure'un dağıtım ve yönetim katmanıdır. ARM isteği kimlik doğrular ve yetkilendirir (RBAC), ardından ilgili servise iletir; bu yüzden hangi aracı kullandığından bağımsız olarak sonuç ve izinler aynıdır (ayrıntı → C1.13).
+
+Hiyerarşi aynı zamanda ARM'ın **kapsam (scope)** düzeyleridir: bir RBAC rolü, Azure Policy ataması, kilit veya şablon dağıtımı şu kapsamlardan birine uygulanır ve **aşağıya doğru miras kalır**:
+
+| Kapsam (geniş → dar) | Örnek kullanım |
+|---|---|
+| **Management group** | Birden çok subscription'a aynı politikayı/rolü uygula |
+| **Subscription** | Bir ortamın (ör. prod) tamamına rol/politika/bütçe |
+| **Resource group** | Bir uygulamanın kaynaklarına rol, kilit veya şablon dağıtımı |
+| **Resource** | Tek bir kaynağa rol veya kilit |
+
+> Kural: **Mümkün olan en geniş uygun kapsama bir kez ata; alt kapsamlar miras alır.** Dağıtım (ARM template) için de aynı kapsamlar geçerlidir: bir şablon çoğunlukla bir resource group'a, gerektiğinde subscription veya management group'a dağıtılır (→ C1.13).
+
+#### 3.8 Pratik — region keşfi, resource group yaşam döngüsü, hiyerarşi
 
 Bu laboratuvar **neredeyse ücretsizdir**: boş bir VNet ücret üretmez, boş bir storage account kuruşluk maliyetlidir ve hemen silinir. Bütçe alarmın kurulu değilse önce C1.1 / 3.6'yı yap.
 
@@ -186,7 +201,7 @@ az account list-locations --output table
 az account list-locations \
   --query "[?metadata.regionType=='Physical'].{Region:name, Name:displayName, Pair:metadata.pairedRegion[0].name, Geography:metadata.geographyGroup}" \
   --output table
-# Which zones have the VM size in a region? (same command as C1.2 / 3.5)
+# Which zones have the VM size in a region? (same command as C1.2 / 3.3)
 az vm list-skus --location westeurope --size Standard_B1s --zone --output table
 
 # 2) Resource group lifecycle: two resources, one delete
@@ -259,7 +274,7 @@ Bir Avrupa e-ticaret şirketi Azure'a geçerken mimarisini kuruyor:
   - Cevap: Management group → subscription → resource group → resource
   - Tuzak: —
 - **"Region seçmeden kullanılan servis"**
-  - Cevap: Global servisler (Entra ID, Front Door, DNS)
+  - Cevap: Global servisler (Entra ID, Azure DNS)
   - Tuzak: —
 
 **Anahtar kelimeler:** *physically separate locations within a region* (zone) · *at least three zones* · *300 miles* (pair) · *sequential updates* · *logical container* (RG) · *billing boundary / access control boundary* (subscription) · *inherit* (management group).
@@ -286,7 +301,7 @@ Bir Avrupa e-ticaret şirketi Azure'a geçerken mimarisini kuruyor:
 
 - **Tek zone (zonal) yerleşim** — Kazanç: En düşük gecikme ve maliyet · Bedel: Datacenter arızasında kesinti
 - **Zone'lara yayılmak**
-  - Kazanç: Datacenter arızasına dayanıklılık, daha yüksek SLA
+  - Kazanç: Datacenter arızasına dayanıklılık (yüksek erişilebilirlik)
   - Bedel: Ek kaynak, zone'lar arası trafik ücreti ve küçük gecikme
 - **İkinci region (pair)**
   - Kazanç: Bölgesel felakete dayanıklılık

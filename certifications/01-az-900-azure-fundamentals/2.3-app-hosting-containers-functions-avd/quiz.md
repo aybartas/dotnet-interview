@@ -11,7 +11,7 @@
 ---
 
 #### Soru 1: Tek seçim
-Bir ekip ASP.NET Core web uygulamasını yayınlamak istiyor. İşletim sistemi yaması yapmak istemiyor; otomatik ölçekleme ve deployment slot'larına ihtiyaç duyuyor. Hangi servis **en uygundur**?
+Bir ekip ASP.NET Core web uygulamasını yayınlamak istiyor. İşletim sistemi yaması yapmak istemiyor; otomatik ölçekleme ve yerleşik yama yönetimi istiyor. Hangi servis **en uygundur**?
 
 - A) Azure Virtual Machines
 - B) Azure App Service
@@ -20,13 +20,13 @@ Bir ekip ASP.NET Core web uygulamasını yayınlamak istiyor. İşletim sistemi 
 
 <details><summary>Cevap</summary>
 
-**B.** App Service, OS yönetmeden web/API barındıran PaaS'tır; autoscale ve deployment slot'ları yerleşik özelliklerdir. VM OS yönetimi gerektirir; ACI orkestrasyonsuz tek container içindir; AVD masaüstü sanallaştırmadır.
+**B.** App Service, OS yönetmeden web/API barındıran PaaS'tır; otomatik yama ve autoscale yerleşik özelliklerdir. VM OS yönetimi gerektirir; ACI orkestrasyonsuz tek container içindir; AVD masaüstü sanallaştırmadır.
 </details>
 
 #### Soru 2: Tek seçim
 App Service'te uygulamanın çalıştığı compute kaynağını tanımlayan ve **ücretlendirilen birim** olan nedir?
 
-- A) Deployment slot
+- A) Storage account
 - B) Resource group
 - C) App Service plan
 - D) WebJob
@@ -124,31 +124,31 @@ Aşağıdakilerden **hangi ikisi** Azure Functions'ı tetikleyebilir?
 
 <details><summary>Cevap</summary>
 
-**A ve C.** Blob, zamanlayıcı, HTTP, kuyruk mesajı, Event Grid gibi olaylar tetikleyicidir.
+**A ve C.** Blob yüklemesi, zamanlayıcı, HTTP isteği ve kuyruk mesajı gibi olaylar tetikleyicidir.
 </details>
 
 #### Soru 10: Evet / Hayır
 
 - **a) Azure Functions yalnızca HTTP istekleriyle tetiklenebilir.** — Evet: ☐ · Hayır: ☐
-- b) Durable Functions, durum tutan (stateful) uzun süreli iş akışları yazmaya olanak tanır. — Evet: ☐ · Hayır: ☐
+- b) Azure Functions kullanırken müşteri sunucu veya işletim sistemi yönetmez. — Evet: ☐ · Hayır: ☐
 - c) Serverless planlarda Functions, çalışmadığı sürede de compute ücreti doğurur. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
-**a) Hayır · b) Evet · c) Hayır.** Birçok tetikleyici vardır; Durable Functions stateful orkestrasyon sağlar; serverless planlarda boşta compute ücreti yoktur.
+**a) Hayır · b) Evet · c) Hayır.** Birçok tetikleyici vardır; Functions serverless olduğundan sunucu/OS yönetimi yoktur; serverless planlarda boşta compute ücreti yoktur.
 </details>
 
 #### Soru 11: Tek seçim
-Bir iş analisti, **kod yazmadan**, görsel bir tasarımcıyla bir SaaS uygulamasındaki yeni kaydı e-postayla bildiren bir iş akışı kurmak istiyor. Hangi servis **en uygundur**?
+Bir platform ekibi, **çok sayıda** container'ı orkestre etmek ve Kubernetes API'sine tam erişimle yönetmek istiyor. Hangi servis **en uygundur**?
 
-- A) Azure Functions
-- B) Azure Logic Apps
-- C) Azure Kubernetes Service
+- A) Azure Container Instances
+- B) Azure Kubernetes Service (AKS)
+- C) Azure Functions
 - D) Azure App Service
 
 <details><summary>Cevap</summary>
 
-**B.** Low-code, görsel tasarımcı ve hazır connector'lar = Logic Apps. Functions aynı işi **kodla** yapar.
+**B.** Çok sayıda container'ın orkestrasyonu ve Kubernetes'e tam erişim = AKS. ACI tek/basit container içindir ve orkestrasyon sunmaz; Functions olay tetiklemeli koddur; App Service web/API barındırır.
 </details>
 
 #### Soru 12: Senaryo
@@ -169,7 +169,7 @@ Azure Virtual Desktop'ta birden çok kullanıcının **aynı VM üzerinde** eşz
 
 - A) Availability set
 - B) Windows 11 Enterprise multi-session
-- C) Deployment slot
+- C) Azure Blob Storage
 - D) VM Scale Sets
 
 <details><summary>Cevap</summary>
@@ -191,16 +191,16 @@ Azure Virtual Desktop'ta birden çok kullanıcının **aynı VM üzerinde** eşz
 </details>
 
 #### Soru 15: Tek seçim
-Bir .NET uygulaması App Service'te çalışıyor. Veritabanı connection string'ini **koda yazmadan** uygulamaya vermenin doğru yolu hangisidir?
+Container'lar ile sanal makineler (VM) arasındaki temel fark aşağıdakilerden hangisidir?
 
-- A) Connection string'i `appsettings.json`'a yazıp repoya eklemek
-- B) App Service'in Application settings / Connection strings ayarlarını kullanmak (uygulamaya environment variable olarak gelir)
-- C) Connection string'i bir VM'in masaüstüne kaydetmek
-- D) Her istekte kullanıcıdan istemek
+- A) Container'lar donanımı, VM'ler işletim sistemini sanallaştırır
+- B) Container'lar host işletim sisteminin çekirdeğini paylaşır; her VM'in kendi tam işletim sistemi vardır
+- C) Container'lar yalnızca Windows'ta çalışır
+- D) VM'ler container'lardan daha hızlı başlar
 
 <details><summary>Cevap</summary>
 
-**B.** App Service ayarları uygulamaya env var olarak verilir ve ASP.NET Core `IConfiguration` ile okunur; daha güvenli seçenek Key Vault referansıdır (→ C1.10).
+**B.** Container işletim sistemini sanallaştırır ve çekirdeği paylaşır; bu yüzden küçük (MB) ve hızlı başlar (saniyeler). VM donanımı sanallaştırır ve her VM tam bir işletim sistemi taşır (GB, dakikalar).
 </details>
 
 #### Soru 16: Sıralama
@@ -225,16 +225,16 @@ Bir uygulama, belirli bir OS sürümüne ve özel bir sürücüye bağımlı; ko
 </details>
 
 #### Soru 18: Tek seçim
-Bir geliştirici, yeni bir web sürümünü önce `staging` ortamında test edip ardından kesinti olmadan üretimle **yer değiştirmek** istiyor. App Service'in hangi özelliği bunu sağlar?
+Bir ekip, tek bir container'ı **VM veya orkestratör yönetmeden**, saniye bazında ücretle ve mümkün olan en basit biçimde çalıştırmak istiyor. Hangi servis **en uygundur**?
 
-- A) WebJobs
-- B) Deployment slot'ları ve swap
-- C) App Service plan
-- D) Log stream
+- A) Azure Kubernetes Service
+- B) Azure Container Instances
+- C) Azure Virtual Desktop
+- D) VM Scale Sets
 
 <details><summary>Cevap</summary>
 
-**B.** Deployment slot'ları ayrı bir canlı ortamdır; test sonrası **swap** ile üretime alınır, gerekirse geri swap edilir.
+**B.** Tek container'ı en hızlı ve en basit biçimde çalıştırmak **Azure Container Instances**'tır. AKS çok sayıda container'ın orkestrasyonu içindir; AVD masaüstü sanallaştırmadır; scale set VM grubudur.
 </details>
 
 ---

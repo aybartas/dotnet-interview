@@ -1,8 +1,8 @@
-[← AZ-900 İçindekiler](../README.md) · [📝 Quiz](quiz.md) · [⚡ Hızlı tekrar](cheat-sheet.md) · [← Önceki konu](../4.7-support-sla-lifecycle/README.md)
+[← AZ-900 İçindekiler](../README.md) · [📝 Quiz](quiz.md) · [⚡ Hızlı tekrar](cheat-sheet.md) · [← Önceki konu](../3.4-monitoring-tools/README.md)
 
 ## 5.0 Kapsamlı AZ-900 Deneme Sınavı (50 Soru) ve Sınav Stratejisi
 
-> **Kapsam:** Tüm Sınav Alanları (C1.1 – C1.22) · **Hedef:** Gerçek sınav simülasyonu (≥ 40/50 - %80)
+> **Kapsam:** Tüm Sınav Alanları (C1.1 – C1.14) · **Hedef:** Gerçek sınav simülasyonu (≥ 40/50 - %80)
 >
 > 📌 Bu konu yeni bir resmî hedef eklemez; **skills measured as of July 20, 2026** müfredatının üç alanını tek sınavda ölçer. Sınav formatı, süre, ücret ve dil seçenekleri değişebilir — sınavdan önce resmî [AZ-900 sertifika sayfası](https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/) ve [study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)'ı kontrol et.
 
@@ -113,7 +113,7 @@ AZ-900 bir **genişlik** sınavıdır: derin yapılandırma değil, kavramların
 | "maliyeti departmana göre raporla" | tag | C1.11 |
 | "izin verilmeyen bölgede kaynak oluşturmayı engelle" | Azure Policy (Deny) | C1.12 |
 | "kazara silinmeyi önle" | resource lock (CanNotDelete) | C1.12 |
-| "aynı ortamı tekrar tekrar tutarlı kur" | ARM template / Bicep (IaC) | C1.13 |
+| "aynı ortamı tekrar tekrar tutarlı kur" | ARM template (IaC) | C1.13 |
 | "başka buluttaki sunucuyu Azure'dan yönet" | Azure Arc | C1.13 |
 | "kişiselleştirilmiş öneri" | Azure Advisor | C1.14 |
 | "benim bölgemi etkileyen Azure olayı" | Service Health | C1.14 |
@@ -172,13 +172,13 @@ Bir geliştirici AZ-900'e beş haftalık plana göre hazırlanıyor (→ C1 mod�
 | VPN Gateway ↔ ExpressRoute | İnternet üzerinden şifreli mi, özel hat mı? |
 | LRS ↔ ZRS ↔ GRS ↔ GZRS ↔ RA-* | Hangi arızaya dayanmalı, ikincilden okuma gerekli mi? |
 | Entra ID ↔ Entra Domain Services | Modern kimlik mi, klasik AD özellikleri (domain join, LDAP, Kerberos) mi? |
-| B2B ↔ B2C (External ID) | İş ortağı mı, müşteri mi? |
+| Authentication ↔ authorization | "Kimsin?" mi, "ne yapabilirsin?" mi? |
 | RBAC ↔ Policy ↔ lock | Kim ne yapabilir mi, kaynak nasıl olmalı mı, silinmesin/değişmesin mi? |
-| Pricing Calculator ↔ TCO | Yeni iş yükünün tahmini mi, on-prem ile karşılaştırma mı? |
+| Pricing Calculator ↔ Cost Management | Henüz kurulmamış iş yükünün tahmini mi, gerçekleşen harcama mı? |
 | Advisor ↔ Service Health ↔ Monitor | Öneri mi, Azure olayı mı, benim telemetrim mi? |
 | Defender for Cloud ↔ Advisor | Güvenlik duruşu ve tehdit koruması mı, beş kategoride genel öneri mi? |
 
-**Sınavda olmayanlar:** komut sözdizimi ezberi, fiyat rakamları, hesaplama ağırlıklı sorular (SLA hesabı nadiren ve basit), portal ekranlarının yeri. Laboratuvar (hands-on lab) bölümü fundamentals sınavlarında genellikle yoktur.
+**Sınavda olmayanlar:** komut sözdizimi ezberi, fiyat rakamları, hesaplama ağırlıklı sorular, portal ekranlarının yeri. Laboratuvar (hands-on lab) bölümü fundamentals sınavlarında genellikle yoktur.
 
 ---
 

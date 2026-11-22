@@ -100,7 +100,7 @@ Bir finans ekibi, önümüzdeki çeyreğin bulut harcamasını gerçek kullanım
 </details>
 
 #### Soru 8: Tek seçim
-Bir web sitesinin kullanıcı sayısı gün içinde 10 kat dalgalanmasına rağmen, load balancer ve autoscale sayesinde sayfa yanıt süresi sürekli aynı aralıkta kalıyor. Bu en iyi hangi faydayla açıklanır?
+Bir web sitesinin kullanıcı sayısı gün içinde 10 kat dalgalanmasına rağmen, autoscale ve yeterli kapasite sayesinde sayfa yanıt süresi sürekli aynı aralıkta kalıyor. Bu en iyi hangi faydayla açıklanır?
 
 - A) Performance predictability
 - B) Cost predictability
@@ -153,65 +153,65 @@ Aşağıdakilerden **hangi ikisi** *management of the cloud* (bulutun yönetimi)
 
 #### Soru 12: Evet / Hayır
 
-- **a) Azure'daki her servis, preview aşamasında da bir SLA ile sunulur.** — Evet: ☐ · Hayır: ☐
-- **b) SLA tutturulamadığında müşteri servis kredisi talep edebilir.** — Evet: ☐ · Hayır: ☐
-- c) Bir servisin SLA'sı, nasıl yapılandırıldığına (ör. tek VM mi, birden çok zone'a yayılmış VM'ler mi) göre değişebilir. — Evet: ☐ · Hayır: ☐
+- a) Bir VM'in boyutunu 2 vCPU'dan 8 vCPU'ya çıkarmak **horizontal scaling**'dir. — Evet: ☐ · Hayır: ☐
+- b) VM sayısını 2'den 6'ya çıkarmak **scale out**'tur. — Evet: ☐ · Hayır: ☐
+- c) Horizontal scaling'de uygulamanın durumsuz (stateless) tasarlanması işi kolaylaştırır. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
-**a) Hayır · b) Evet · c) Evet.** Preview servislerin SLA'sı yoktur. SLA ihlalinde faturadan indirim (servis kredisi) talep edilir. Tek VM ile zone'lara yayılmış VM'lerin SLA'sı farklıdır.
+**a) Hayır · b) Evet · c) Evet.** Aynı kaynağı güçlendirmek **vertical** (scale up) ölçeklemedir. Kaynak **sayısını** artırmak horizontal (scale out) ölçeklemedir; instance'lar arasında oturum durumu tutulmazsa yeni instance'lar yükü sorunsuz paylaşır.
 </details>
 
 #### Soru 13: Tek seçim
-%99,9 SLA'lı bir servis için bir ayda (730 saat) izin verilen **en fazla** kesinti yaklaşık ne kadardır?
+Bir şirket, gelecek ayın bulut faturasını Cost Management ile tahmin edebiliyor ve uygulamanın yanıt süresi kullanıcı sayısı artsa da hedefte kalıyor. Bu iki durum bulutun hangi faydasını gösterir?
 
-- A) ~4 dakika
-- B) ~22 dakika
-- C) ~44 dakika
-- D) ~7 saat
+- A) Governance
+- B) Predictability
+- C) Reliability
+- D) Manageability
 
 <details><summary>Cevap</summary>
 
-**C.** `730 sa × 0,001 ≈ 0,73 sa ≈ 43,8 dk`. ~4 dk %99,99'a, ~22 dk %99,95'e, ~7 saat %99'a karşılık gelir.
+**B.** Predictability'nin iki yüzü vardır: **performans** (yük değişse de yanıt süresi hedefte) ve **maliyet** (kullanımı izleyip faturayı öngörebilmek).
 </details>
 
 #### Soru 14: Tek seçim
-Bir uygulama, SLA'sı %99,95 olan bir web servisi ile SLA'sı %99,99 olan bir veritabanından oluşuyor; çalışması için **ikisinin de** ayakta olması gerekiyor. Uygulamanın composite SLA'sı yaklaşık nedir?
+Bir kuruluş, kaynakların yalnızca onaylı region'larda oluşturulmasını zorunlu kılmak ve uyumsuz kaynakları raporlamak istiyor. Bu ihtiyaç bulutun hangi faydasıyla ilgilidir?
 
-- A) %99,99
-- B) %99,97
-- C) %99,95
-- D) %99,94
+- A) Security
+- B) Scalability
+- C) Governance
+- D) High availability
 
 <details><summary>Cevap</summary>
 
-**D.** Seri bağlı bileşenlerde SLA'lar çarpılır: `0,9995 × 0,9999 ≈ 0,9994`. Sonuç en zayıf bileşenden (%99,95) bile düşüktür.
+**C.** Kurumsal standartlara ve regülasyonlara **uyum** (kural, denetim, uyumsuzluk tespiti) governance'tır. Security ise saldırı/tehdit/koruma kontrolleriyle ilgilidir. Bu amaç için Azure'da **Azure Policy** kullanılır (→ C1.12).
 </details>
 
-#### Soru 15: Senaryo
-Bir şirket, kritik uygulamasının SLA'sını **yükseltmek** istiyor. Hangi değişiklik bunu **en etkili** biçimde sağlar?
+#### Soru 15: Tek seçim
+Bir ekip uygulamasının **yüksek erişilebilirliğini** artırmak istiyor. Hangi değişiklik bunu **en etkili** biçimde sağlar?
 
-- A) Uygulamanın çalıştığı tek VM'i daha büyük bir boyuta yükseltmek
-- B) Uygulamayı iki farklı availability zone'daki birden çok VM'e dağıtmak
-- C) VM'i spot fiyatlandırmaya geçirmek
-- D) VM'e daha fazla disk eklemek
+- A) Tek VM'i daha büyük bir boyuta yükseltmek
+- B) Aynı VM'in iki kopyasını farklı availability zone'lara dağıtmak
+- C) VM'i her gece elle yeniden başlatmak
+- D) VM'in diskini küçültmek
 
 <details><summary>Cevap</summary>
 
-**B.** SLA'yı yükselten şey **yedekliliktir**: zone'lara yayılmış birden çok VM (%99,99), tek VM'den (%99,9) yüksek SLA'ya sahiptir. Daha büyük VM (A) hâlâ tek arıza noktasıdır; spot (C) kesilebilir olduğundan HA'yı düşürür.
+**B.** Erişilebilirliği yükselten şey **yedekliliktir**: birden çok instance'ı farklı zone'lara yaymak tek arıza noktasını kaldırır. Daha büyük VM (A) hâlâ tek arıza noktasıdır.
 </details>
 
-#### Soru 16: Tek seçim (hesap)
-Composite SLA'sı %99,9 olan aynı uygulama yığını, birbirinden bağımsız iki region'a kuruluyor ve biri çökerse diğeri tüm trafiği alıyor (yönlendirme katmanını yok sayın). Toplam SLA yaklaşık nedir?
+#### Soru 16: Tek seçim
+Aşağıdakilerden hangisi bulutta **"management in the cloud"** (bulutta yönetim) kapsamında yer alır?
 
-- A) %99,8
-- B) %99,9
-- C) %99,95
-- D) %99,9999
+- A) Azure portal, Azure CLI ve REST API ile kaynakları yönetmek
+- B) Yük artınca kaynakların otomatik ölçeklenmesi
+- C) Arızalı kaynağın otomatik değiştirilmesi
+- D) Şablonla otomatik ve tekrarlanabilir dağıtım
 
 <details><summary>Cevap</summary>
 
-**D.** Paralel (yedekli) bileşenlerde: `1 − (1 − 0,999)² = 1 − 0,000001 = %99,9999`. Seri bağlantıda çarpım SLA'yı düşürürdü (A); yedeklilik yükseltir.
+**A.** *Management **in** the cloud*, yönetim **arayüzleridir**: portal, CLI, PowerShell, REST API. B, C ve D (otomatik ölçek, otomatik düzeltme, şablonla dağıtım) *management **of** the cloud* örnekleridir.
 </details>
 
 #### Soru 17: Eşleştirme
@@ -248,7 +248,7 @@ Bir ekip, uygulamanın altyapısını her ortam için aynı **şablondan** dağ�
 
 <details><summary>Cevap</summary>
 
-**A.** Şablonla dağıtım ve izleme/uyarı, *management of the cloud* yani manageability'dir (araçlar: ARM/Bicep, Azure Monitor → C1.13, C1.14).
+**A.** Şablonla dağıtım ve izleme/uyarı, *management of the cloud* yani manageability'dir (araçlar: ARM template'leri, Azure Monitor → C1.13, C1.14).
 </details>
 
 #### Soru 20: Senaryo

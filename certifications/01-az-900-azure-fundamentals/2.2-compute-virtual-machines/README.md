@@ -26,14 +26,14 @@
 - **Azure Functions** — Hizmet türü: Serverless · Ne zaman?: Olay tetiklemeli kısa kod · Konu: C1.6
 - **Azure Virtual Desktop** — Hizmet türü: Masaüstü sanallaştırma · Ne zaman?: Buluttan Windows masaüstü · Konu: C1.6
 
-Bu konu VM tarafını derinlemesine işler: **VM'in kendisi ve gerektirdiği kaynaklar**, **VM Scale Sets**, **availability sets** ve bağlam olarak **proximity placement groups**. Konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.6).
+Bu konu VM tarafını derinlemesine işler: **VM'in kendisi ve gerektirdiği kaynaklar**, **VM Scale Sets**, **availability sets** **VM boyutları, image'ları ve diskleri**. Konunun kodu yok; pratik, README'deki `az` CLI laboratuvarıdır (3.5).
 
 ---
 
 ### 2. Neden?
 
 - **Sınav:** "VM için hangi kaynak gerekir?", "availability set mi, scale set mi, zone mu?" ve "VM ücretini nasıl durdururum?" bu alanın standart sorularıdır.
-- **Gerçek işte:** Taşınan iş yüklerinin büyük kısmı önce VM olarak başlar (lift-and-shift). VM'in tek başına bir kaynak olmadığını (disk, NIC, IP, NSG, VNet) bilmek; maliyeti (silinmeyen disk ve IP'ler), güvenliği (internete açık port) ve dayanıklılığı (tek VM = tek arıza noktası) doğrudan etkiler.
+- **Gerçek işte:** Taşınan iş yüklerinin büyük kısmı önce VM olarak başlar (lift-and-shift). VM'in tek başına bir kaynak olmadığını (disk, NIC, IP, VNet) bilmek; maliyeti (silinmeyen disk ve IP'ler), güvenliği (internete açık port) ve dayanıklılığı (tek VM = tek arıza noktası) doğrudan etkiler.
 
 ---
 
@@ -62,7 +62,7 @@ Bir VM, birlikte çalışan birkaç Azure kaynağından oluşur. `az vm create` 
   - Seçenekler / not: Windows Server, Ubuntu, RHEL…; **Azure Marketplace** imajları; kendi özel imajın
 - **Disk**
   - Ne işe yarar: OS diski + isteğe bağlı **veri diskleri**
-  - Seçenekler / not: **Managed disk** (Azure yönetir); Standard HDD · Standard SSD · Premium SSD (· Premium SSD v2, Ultra Disk); disk performansı SLA'yı da etkiler (→ C1.2)
+  - Seçenekler / not: **Managed disk** (Azure yönetir); Standard HDD · Standard SSD · Premium SSD (· Premium SSD v2, Ultra Disk); disk türü performansı ve maliyeti belirler
 - **Virtual network + subnet**
   - Ne işe yarar: VM'in bağlandığı özel ağ
   - Seçenekler / not: VNet bir region'a bağlıdır (→ C1.7)
@@ -71,12 +71,12 @@ Bir VM, birlikte çalışan birkaç Azure kaynağından oluşur. `az vm create` 
   - Seçenekler / not: Bir VM'de birden çok NIC olabilir
 - **Public IP** *(isteğe bağlı)*
   - Ne işe yarar: İnternetten erişim
-  - Seçenekler / not: Prod'da genellikle yoktur; erişim VPN/Bastion/load balancer üzerinden
+  - Seçenekler / not: Prod'da genellikle yoktur; erişim özel ağ (VPN) üzerinden
 - **Network security group (NSG)**
   - Ne işe yarar: Gelen/giden trafik için izin/engelleme kuralları
   - Seçenekler / not: Varsayılan olarak SSH (22) / RDP (3389) açılabilir — internete açık bırakma
 
-> Sınav sorusu kalıbı: "Bir VM oluşturmak için aşağıdakilerden hangisi **gerekli değildir**?" — public IP (isteğe bağlı), load balancer, App Service plan, storage account gibi şıklar gelir. Zorunlu çekirdek: **boyut, image, OS diski, VNet/subnet ve NIC**.
+> Sınav sorusu kalıbı: "Bir VM oluşturmak için aşağıdakilerden hangisi **gerekli değildir**?" — public IP (isteğe bağlı), App Service plan, Azure Functions uygulaması gibi şıklar gelir. Zorunlu çekirdek: **boyut, image, OS diski, VNet/subnet ve NIC**.
 
 **Fiyatlandırma:**
 
@@ -89,18 +89,16 @@ Bir VM, birlikte çalışan birkaç Azure kaynağından oluşur. `az vm create` 
   - Compute ücreti: Yok
   - Disk ücreti: Disk/IP **ayrıca** silinmediyse ücret sürer
 
-Maliyeti düşüren diğer seçenekler: reservation/savings plan, spot VM (→ C1.1), Azure Hybrid Benefit, otomatik kapatma, doğru boyutlandırma (→ C1.11, C1.14 Advisor).
+Maliyeti düşüren diğer seçenekler: reservation/savings plan, spot VM (→ C1.1), Azure Hybrid Benefit, otomatik kapatma, doğru boyutlandırma (→ C1.11).
 
 #### 3.3 VM Scale Sets (VMSS)
 
 **VM Scale Set**, **aynı yapılandırmadaki** VM'lerden oluşan ve **tek bir kaynak gibi** yönetilen gruptur.
 
 - **Otomatik ölçekleme:** VM sayısı metriğe (CPU, kuyruk uzunluğu) veya zamana göre **otomatik** artar/azalır (scale out/in) — elasticity'nin (→ C1.2) VM'deki aracı.
-- **Yük dengeleme:** Önüne bir **load balancer** veya Application Gateway konarak trafik instance'lara dağıtılır.
 - **Dayanıklılık:** Instance'lar **availability zone'lara** ve fault domain'lere yayılabilir.
 - **Ölçek:** Yüzlerce VM'i (orkestrasyon moduna göre 1.000'e kadar) tek tanımla yönetmek; güncellemeleri kademeli uygulamak.
 - **Ücret:** Scale set'in kendisi ek ücretli değildir; çalışan VM'ler ve kullanılan kaynaklar ödenir.
-- *(bağlam)* İki orkestrasyon modu vardır: **Uniform** (tamamen aynı VM'ler) ve **Flexible** (farklı VM boyutlarını, spot ve normal VM'leri birlikte barındırabilir). Microsoft yeni yüksek erişilebilirlik tasarımları için Flexible modu öneriyor.
 
 Kullanım: değişken trafikli web katmanı, büyük hesaplama/toplu işler, container host'ları.
 
@@ -117,8 +115,7 @@ Kullanım: değişken trafikli web katmanı, büyük hesaplama/toplu işler, con
 
 - Ek ücret yoktur; yalnızca VM'ler ödenir.
 - VM availability set'e **oluşturulurken** yerleştirilir (mevcut bir VM sonradan eklenemez).
-- 2+ VM bir availability set'te → **%99,95** SLA (→ C1.2).
-- Microsoft, yeni dağıtımlarda daha yüksek dayanıklılık için **availability zone**'ları veya **Flexible** orkestrasyonlu scale set'leri öneriyor; availability set'ler hâlâ desteklenir ve sınav kapsamındadır.
+- Microsoft, yeni dağıtımlarda daha yüksek dayanıklılık için **availability zone**'ları öneriyor; availability set'ler hâlâ desteklenir ve sınav kapsamındadır.
 
 **Availability set ↔ availability zone ↔ scale set:**
 
@@ -126,24 +123,13 @@ Kullanım: değişken trafikli web katmanı, büyük hesaplama/toplu işler, con
   - Availability set: Datacenter **içindeki** donanım (raf) arızası ve planlı bakım
   - Availability zone: **Datacenter'ın** (zone'un) tamamen çökmesi
   - VM Scale Set: Kendisi koruma değil **ölçek** aracıdır; zone/FD'lere yayılarak korur
-- **Tipik SLA (2+ VM)**
-  - Availability set: %99,95 · Availability zone: %99,99
-  - VM Scale Set: Yerleşime bağlı (zone'lara yayılırsa %99,99)
 - **Otomatik ölçek** — Availability set: Yok · Availability zone: Yok · VM Scale Set: **Var**
 - **Ana fikir**
   - Availability set: "Aynı rafta olmasınlar"
   - Availability zone: "Aynı binada olmasınlar"
   - VM Scale Set: "Yüke göre çoğalsınlar"
 
-#### 3.5 Proximity placement groups *(bağlam — kurslarda işlenir)*
-
-**Proximity placement group (PPG)**, VM'leri (ve scale set/availability set'leri) **fiziksel olarak birbirine yakın** — aynı datacenter içinde — yerleştirerek aralarındaki **ağ gecikmesini en aza** indiren mantıksal gruplamadır.
-
-- Kullanım: katmanlar arası çok düşük gecikme isteyen iş yükleri (oyun sunucuları, finansal işlem sistemleri, HPC, SAP gibi çok katmanlı uygulamalar).
-- Trade-off: **yakınlık ↔ dayanıklılık.** VM'leri aynı yere toplamak, zone'lara yaymanın tam tersidir; bir datacenter arızası hepsini etkileyebilir. Ayrıca belirli bir datacenter'da istenen VM boyutu bulunmayabilir (kapasite riski).
-- Availability set ve scale set ile birlikte kullanılabilir: "aynı datacenter'da, ama farklı raflarda".
-
-#### 3.6 Pratik — VM, deallocate, scale set ve availability set
+#### 3.5 Pratik — VM, deallocate, scale set ve availability set
 
 > ⚠️ Bu laboratuvar **ücretlidir** (küçük `Standard_B1s` VM'ler, birkaç saatlik kullanım genellikle düşük maliyetlidir). Önce bütçe alarmını kur (→ C1.1 / 3.6), laboratuvarı tek oturumda bitir ve **en sondaki `az group delete`'i atlama**.
 
@@ -195,12 +181,12 @@ az vm get-instance-view --resource-group rg-az900-c15 --name vm-avset-1 \
 az group delete --name rg-az900-c15 --yes --no-wait
 ```
 
-> **Alıştırma.** Aşağıdaki gereksinimler için doğru seçeneği yaz (VM / availability set / availability zone / scale set / proximity placement group / deallocate):
+> **Alıştırma.** Aşağıdaki gereksinimler için doğru seçeneği yaz (VM / availability set / availability zone / scale set / deallocate):
 > 1. Gece kullanılmayan test VM'leri için compute ücreti ödenmesin.
 > 2. İki VM aynı datacenter'da kalsın ama aynı raf arızasından etkilenmesin.
 > 3. Web katmanı yük artınca kendiliğinden yeni VM eklesin.
 > 4. Bir datacenter tamamen çökse bile uygulama ayakta kalsın.
-> 5. İki katman arasındaki ağ gecikmesi mümkün olan en düşük düzeyde olsun.
+> 5. Mevcut sunucuyu hiç değiştirmeden, işletim sistemi üzerinde tam kontrolle buluta taşı.
 >
 > <details><summary>Çözüm</summary>
 >
@@ -208,7 +194,7 @@ az group delete --name rg-az900-c15 --yes --no-wait
 > 2. **Availability set** (farklı fault domain'ler).
 > 3. **VM Scale Set** + autoscale kuralı.
 > 4. **Availability zone** (VM'leri veya scale set'i zone'lara yaymak).
-> 5. **Proximity placement group** — bedeli: dayanıklılığın azalması.
+> 5. **Azure VM** (IaaS, lift-and-shift).
 > </details>
 
 ---
@@ -221,7 +207,7 @@ Bir sigorta şirketi poliçe uygulamasını kendi datacenter'ından Azure'a taş
 - **Dayanıklılık:** Poliçe motorunun iki VM'i aynı region'da **iki farklı availability zone'a** konuyor; ilk aşamada zone desteği olmayan bir yan sistem için iki VM bir **availability set**'te.
 - **Ölçek:** Müşteri portalının web katmanı **VM Scale Set**'te; ay sonu yoğunluğunda CPU kuralıyla 2'den 8 instance'a çıkıyor, sonra kendiliğinden 2'ye iniyor.
 - **Maliyet:** Test ortamının VM'leri her akşam 20:00'de **deallocate** ediliyor; ilk ay faturasında, silinen VM'lerden kalan **sahipsiz diskler ve public IP'ler** fark edilip temizleniyor.
-- **Güvenlik:** Prod VM'lerinin public IP'si yok; NSG'de RDP/SSH internete kapalı, yönetim erişimi özel ağ üzerinden (→ C1.7, C1.10).
+- **Güvenlik:** Prod VM'lerinin public IP'si yok; yönetim erişimi özel ağ (VPN) üzerinden (→ C1.7, C1.10).
 
 ---
 
@@ -238,14 +224,13 @@ Bir sigorta şirketi poliçe uygulamasını kendi datacenter'ından Azure'a taş
 - **"Datacenter arızasına karşı koru"** — Cevap: **Availability zone** · Tuzak: Availability set
 - "Talebe göre VM sayısı **otomatik** artsın" — Cevap: **VM Scale Set** · Tuzak: Availability set
 - **"Aynı yapılandırmadaki yüzlerce VM'i tek kaynak gibi yönet"** — Cevap: **VM Scale Set** · Tuzak: —
-- **"VM'ler arası en düşük gecikme"** — Cevap: **Proximity placement group** · Tuzak: Availability zone
 - **"Kullanılmayan VM için compute ücreti ödememek"** — Cevap: **Deallocate** (portalda Stop) · Tuzak: İşletim sisteminden kapatmak
 - **"OS üzerinde tam kontrol"** — Cevap: **VM** (IaaS) · Tuzak: App Service
 - **"VM oluşturmak için gerekmeyen kaynak"**
-  - Cevap: Public IP, load balancer, App Service plan…
+  - Cevap: Public IP, App Service plan…
   - Tuzak: NIC, disk, VNet (bunlar gerekli)
 
-**Anahtar kelimeler:** *fault domain* (güç/ağ/raf), *update domain* (planlı bakım, sırayla), *identical, load-balanced VMs* (scale set), *automatically increase or decrease* (scale set), *deallocated* (ücret yok), *co-locate / low latency* (PPG).
+**Anahtar kelimeler:** *fault domain* (güç/ağ/raf), *update domain* (planlı bakım, sırayla), *identical, load-balanced VMs* (scale set), *automatically increase or decrease* (scale set), *deallocated* (ücret yok).
 
 ---
 
@@ -254,13 +239,12 @@ Bir sigorta şirketi poliçe uygulamasını kendi datacenter'ından Azure'a taş
 | Hata | Doğrusu |
 |---|---|
 | "VM'i işletim sisteminden kapattım, ücret durdu" | Durum *Stopped* olur, donanım ayrılmış kalır; ücret için **deallocate** gerekir |
-| "VM'i silince her şey gitti" | Disk, public IP, NIC, NSG ayrı kaynaklardır; silinmeyenler kalır ve bazıları ücretlenir — RG'yi silmek en temiz yol |
+| "VM'i silince her şey gitti" | Disk, public IP ve NIC ayrı kaynaklardır; silinmeyenler kalır ve bazıları ücretlenir — RG'yi silmek en temiz yol |
 | "Availability set datacenter arızasına karşı korur" | Set tek datacenter içindedir; datacenter arızası için **zone** |
 | "Scale set otomatik HA demektir" | Scale set **ölçek** aracıdır; dayanıklılık için zone/FD'lere yayılmalıdır |
 | "Mevcut VM'i availability set'e eklerim" | Set'e oluşturma anında yerleştirilir |
 | "Public IP her VM için zorunlu" | İsteğe bağlıdır; prod'da genellikle verilmez |
-| "Proximity placement group dayanıklılığı artırır" | Gecikmeyi azaltır; dayanıklılığı **azaltabilir** |
-| NSG'de 22/3389'u internete açık bırakmak | Kaynak IP'yi kısıtla, Bastion/VPN kullan (→ C1.7, C1.10) |
+| "VM'in boyutu değiştirilemez" | Boyut sonradan değiştirilebilir (genellikle yeniden başlatma ile) |
 
 ---
 
@@ -268,22 +252,21 @@ Bir sigorta şirketi poliçe uygulamasını kendi datacenter'ından Azure'a taş
 
 - **Tek VM**
   - Kazanç: Basit, ucuz
-  - Bedel: Tek arıza noktası, SLA %99,9 (Premium SSD ile)
+  - Bedel: Tek arıza noktası
 - **Availability set**
   - Kazanç: Raf ve bakım arızasına dayanıklılık, ek ücret yok
   - Bedel: Datacenter arızasına karşı koruma yok
 - **Availability zone'lar**
-  - Kazanç: Datacenter arızasına dayanıklılık, %99,99
+  - Kazanç: Datacenter arızasına dayanıklılık
   - Bedel: Zone'lar arası gecikme ve trafik ücreti; her region desteklemez
 - **VM Scale Set + autoscale**
   - Kazanç: Talebe göre maliyet, insan müdahalesi yok
-  - Bedel: Stateless uygulama tasarımı, load balancer, ölçek kurallarının ayarı
-- **Proximity placement group** — Kazanç: En düşük ağ gecikmesi · Bedel: Dayanıklılık ve kapasite riski
+  - Bedel: Stateless uygulama tasarımı, ölçek kurallarının ayarı
 - **Büyük VM boyutu (scale up)**
   - Kazanç: Basit performans artışı
   - Bedel: Üst sınır, yeniden başlatma, maliyet
 - **Premium SSD / Ultra Disk**
-  - Kazanç: Yüksek IOPS, düşük gecikme, daha iyi tek VM SLA'sı
+  - Kazanç: Yüksek IOPS, düşük gecikme
   - Bedel: Daha yüksek disk maliyeti
 
 ---
@@ -293,8 +276,8 @@ Bir sigorta şirketi poliçe uygulamasını kendi datacenter'ından Azure'a taş
 - [AZ-900 study guide (skills measured)](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)
 - [Microsoft Learn — Describe Azure compute and networking services](https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/)
 - [Virtual machines in Azure](https://learn.microsoft.com/en-us/azure/virtual-machines/overview) · [VM sizes](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview) · [States and billing status](https://learn.microsoft.com/en-us/azure/virtual-machines/states-billing)
-- [What are Virtual Machine Scale Sets?](https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/overview) · [Orchestration modes](https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-orchestration-modes)
-- [Availability sets overview](https://learn.microsoft.com/en-us/azure/virtual-machines/availability-set-overview) · [Proximity placement groups](https://learn.microsoft.com/en-us/azure/virtual-machines/co-location)
+- [What are Virtual Machine Scale Sets?](https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/overview)
+- [Availability sets overview](https://learn.microsoft.com/en-us/azure/virtual-machines/availability-set-overview)
 - [`az vm`](https://learn.microsoft.com/en-us/cli/azure/vm) · [`az vmss`](https://learn.microsoft.com/en-us/cli/azure/vmss) · [`az monitor autoscale`](https://learn.microsoft.com/en-us/cli/azure/monitor/autoscale)
 
 ---

@@ -52,14 +52,14 @@ Bir şirket, çalışanlarının yalnızca **West Europe ve North Europe** regio
 #### Soru 4: `[A · C1.3]` Eşleştirme
 Her ürünü hizmet türüyle eşleştirin: **IaaS · PaaS · SaaS**
 
-1. Azure Cosmos DB
+1. Azure Functions
 2. Azure Virtual Machine Scale Sets
 3. Microsoft 365
 4. Azure App Service
 
 <details><summary>Cevap</summary>
 
-**1 → PaaS · 2 → IaaS · 3 → SaaS · 4 → PaaS.** Yönetilen veritabanı ve web platformu PaaS; VM grupları IaaS; hazır ofis uygulamaları SaaS.
+**1 → PaaS · 2 → IaaS · 3 → SaaS · 4 → PaaS.** Serverless (Functions) ve web platformu (App Service) PaaS türündedir; VM grupları IaaS; hazır ofis uygulamaları SaaS.
 </details>
 
 #### Soru 5: `[B · C1.8]` Tek seçim
@@ -113,16 +113,16 @@ Bir video platformu, akşam saatlerinde artan izleyici sayısına göre sunucu s
 </details>
 
 #### Soru 9: `[C · C1.11]` Tek seçim
-Bir şirket, kendi datacenter'ındaki sunucuları, depolamayı, enerjiyi ve BT işçiliğini **Azure'a taşıma maliyetiyle karşılaştırmak** istiyor. Hangi araç bu amaçla tasarlanmıştır?
+Bir yönetici, Azure aboneliğinde **şu ana kadar gerçekleşen** harcamayı resource group ve tag'e göre gruplayıp analiz etmek ve ay sonu için **tahmini harcamayı** görmek istiyor. Hangi araç bu amaçla kullanılır?
 
 - A) Azure Pricing Calculator
-- B) Total Cost of Ownership (TCO) Calculator
+- B) Microsoft Cost Management (cost analysis)
 - C) Azure Advisor
 - D) Azure Monitor
 
 <details><summary>Cevap</summary>
 
-**B.** TCO Calculator on-prem altyapının toplam sahip olma maliyetini Azure ile karşılaştırır. Pricing Calculator ise Azure'da kurulacak bir iş yükünün tahmini maliyetini verir. (TCO Calculator'ın güncel müfredattaki yerini study guide'dan kontrol et.)
+**B.** Cost Management, **gerçekleşen** maliyeti analiz eder ve geçmiş kullanıma göre tahmin (forecast) üretir. Pricing Calculator ise henüz kurulmamış bir iş yükünün tahmini maliyetini verir.
 </details>
 
 #### Soru 10: `[B · C1.5]` Tek seçim
@@ -130,12 +130,12 @@ Azure'un **planlı bakım** sırasında tüm VM'leri aynı anda yeniden başlatm
 
 - A) Availability set
 - B) Resource group
-- C) Proximity placement group
+- C) Azure Storage account
 - D) Azure Arc
 
 <details><summary>Cevap</summary>
 
-**A.** Availability set, VM'leri **update domain**'lere (planlı bakımda ayrı yeniden başlatma) ve **fault domain**'lere (ayrı güç/ağ donanımı) dağıtır. Proximity placement group ise VM'leri düşük gecikme için birbirine **yakın** yerleştirir.
+**A.** Availability set, VM'leri **update domain**'lere (planlı bakımda ayrı yeniden başlatma) ve **fault domain**'lere (ayrı güç/ağ donanımı) dağıtır. Resource group yalnızca mantıksal bir kaptır; fiziksel yerleşimi değiştirmez.
 </details>
 
 #### Soru 11: `[C · C1.13]` Tek seçim
@@ -202,16 +202,16 @@ Resource group'lar hakkında **hangi iki** ifade doğrudur?
 </details>
 
 #### Soru 16: `[A · C1.2]` Tek seçim
-SLA'sı **%99,99** olan bir servis için bir ayda izin verilen en fazla kesinti yaklaşık ne kadardır?
+Bir uygulama, **yük artınca kendiliğinden** VM sayısını artırıp yük azalınca azaltıyor. Bu yetenek, bulutun hangi faydasıyla **en iyi** açıklanır?
 
-- A) ~4 dakika
-- B) ~22 dakika
-- C) ~44 dakika
-- D) ~7 saat
+- A) Elasticity
+- B) Governance
+- C) Reliability
+- D) Security
 
 <details><summary>Cevap</summary>
 
-**A.** `730 sa × 0,0001 ≈ 0,073 sa ≈ 4,4 dk`. ~22 dk %99,95'e, ~44 dk %99,9'a karşılık gelir.
+**A.** Ölçeklemenin yüke göre **otomatik** yapılması elasticity'dir (altta yatan yetenek scalability'dir). Governance uyum, reliability toparlanma, security korumadır.
 </details>
 
 #### Soru 17: `[B · C1.6]` Tek seçim
@@ -252,13 +252,13 @@ Defense in depth katmanlarını **dıştan içe** doğru sıralayın: Ağ · Ver
 Bir ekip, geliştirme, test ve üretim ortamlarını **her seferinde aynı ve tekrarlanabilir** biçimde kurmak, altyapı tanımını sürüm kontrolünde tutmak istiyor. Hangi yaklaşım **en uygundur**?
 
 - A) Kaynakları Azure portal'da elle oluşturmak
-- B) ARM template veya Bicep dosyalarıyla infrastructure as code
+- B) ARM template dosyalarıyla infrastructure as code
 - C) Azure Advisor önerilerini uygulamak
 - D) Resource lock kullanmak
 
 <details><summary>Cevap</summary>
 
-**B.** Deklaratif şablonlar (ARM JSON, Bicep) aynı sonucu tekrar tekrar (idempotent) üretir, kod gibi sürümlenir ve incelenir. Portal tekrarlanabilir otomasyon için uygun değildir.
+**B.** Deklaratif şablonlar (ARM template'leri) aynı sonucu tekrar tekrar (idempotent) üretir, kod gibi sürümlenir ve incelenir. Portal tekrarlanabilir otomasyon için uygun değildir.
 </details>
 
 #### Soru 21: `[A · C1.3]` Çoklu seçim (iki doğru cevap)
@@ -536,11 +536,11 @@ Bir uygulama, bulunduğu region'ın tamamını etkileyen bir felaketten sonra ba
 
 - a) Azure portal, Azure CLI ve Azure PowerShell'den gelen istekler Azure Resource Manager üzerinden işlenir. — Evet: ☐ · Hayır: ☐
 - **b) ARM template'leri JSON biçiminde, deklaratif şablonlardır.** — Evet: ☐ · Hayır: ☐
-- **c) Bicep dosyaları dağıtımdan önce ARM JSON'a dönüştürülür (derlenir).** — Evet: ☐ · Hayır: ☐
+- **c) ARM template'inde kaynaklar arası bağımlılıklar `dependsOn` ile belirtilebilir.** — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
-**a) Evet · b) Evet · c) Evet.** Tüm yönetim istekleri ARM'dan geçer (RBAC, Policy, lock, tag burada uygulanır); ARM template JSON ve deklaratiftir; Bicep, ARM template'in okunabilir DSL'idir ve ARM JSON'a derlenir.
+**a) Evet · b) Evet · c) Evet.** Tüm yönetim istekleri ARM'dan geçer (RBAC, Policy, lock, tag burada uygulanır); ARM template JSON ve deklaratiftir; kaynak bağımlılıkları `dependsOn` ile belirtilir ve ARM doğru sırada dağıtır.
 </details>
 
 #### Soru 43: `[B · C1.7]` Tek seçim
@@ -613,12 +613,12 @@ Bir web katmanının, CPU kullanımına göre **otomatik olarak** 2 ile 20 aras�
 
 - A) Availability set
 - B) Virtual Machine Scale Sets
-- C) Proximity placement group
+- C) Azure Storage account
 - D) Tek bir büyük VM
 
 <details><summary>Cevap</summary>
 
-**B.** VM Scale Sets aynı yapılandırmadaki VM'leri yük dengeleyiciyle birlikte çalıştırır ve autoscale kurallarıyla sayıyı otomatik değiştirir.
+**B.** VM Scale Sets aynı yapılandırmadaki VM'leri tek kaynak gibi yönetir ve autoscale kurallarıyla sayıyı otomatik değiştirir.
 </details>
 
 #### Soru 49: `[C · C1.12]` Tek seçim
@@ -637,12 +637,12 @@ Bir güvenlik ekibi, birlikte uygulanması gereken **30 farklı policy tanımın
 #### Soru 50: `[A · C1.2]` Evet / Hayır
 
 - a) Bir VM'e daha fazla CPU ve bellek eklemek scale up (vertical scaling) örneğidir. — Evet: ☐ · Hayır: ☐
-- b) Preview (önizleme) aşamasındaki Azure servisleri genellikle bir SLA ile sunulmaz. — Evet: ☐ · Hayır: ☐
-- c) Seri bağlı iki servisin composite SLA'sı, iki servisin SLA'larından yüksek olanına eşittir. — Evet: ☐ · Hayır: ☐
+- b) VM sayısını artırmak (2 → 6) scale out (horizontal scaling) örneğidir. — Evet: ☐ · Hayır: ☐
+- c) Scalability ve elasticity aynı şeydir; ikisi de her zaman otomatik gerçekleşir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
-**a) Evet · b) Evet · c) Hayır.** Seri bağlı bileşenlerde SLA'lar çarpılır; sonuç her iki SLA'dan da **düşüktür** (ör. %99,95 × %99,99 ≈ %99,94).
+**a) Evet · b) Evet · c) Hayır.** Aynı kaynağı güçlendirmek scale up, kaynak sayısını artırmak scale out'tur. Scalability **yetenektir** (elle de olabilir); elasticity ise ölçeklemenin yüke göre **otomatik** yapılmasıdır.
 </details>
 
 ---
@@ -672,7 +672,7 @@ Her doğru cevabı ilgili satıra işaretle (çoklu seçim, evet/hayır, eşleş
 - **C1.1 Cloud computing, modeller, fiyatlandırma**
   - Bu sınavdaki sorular: 1, 12, 25, 37, 47 · Yanlış sayın: ___
   - Tekrar edilecek: [README](../1.1-cloud-computing-models-pricing/README.md) · [quiz](../1.1-cloud-computing-models-pricing/quiz.md)
-- **C1.2 Cloud'un faydaları, SLA**
+- **C1.2 Cloud'un faydaları**
   - Bu sınavdaki sorular: 8, 16, 29, 41, 50 · Yanlış sayın: ___
   - Tekrar edilecek: [README](../1.2-cloud-benefits/README.md) · [quiz](../1.2-cloud-benefits/quiz.md)
 - **C1.3 IaaS, PaaS, SaaS, serverless**
@@ -727,9 +727,7 @@ Her doğru cevabı ilgili satıra işaretle (çoklu seçim, evet/hayır, eşleş
 - [AZ-900 Study Guide (Skills Measured)](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)
 - [Microsoft Learn — AZ-900 Öğrenme Yolu](https://learn.microsoft.com/en-us/training/paths/azure-fundamentals-describe-cloud-concepts/)
 - [Microsoft Practice Assessment (Ücretsiz Resmî Deneme)](https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/practice/assessment?assessment-type=practice&assessmentId=23)
-- [Azure Architecture Center](https://learn.microsoft.com/en-us/azure/architecture/)
 - [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/)
-- [Azure SLA Dokümantasyonu](https://www.microsoft.com/licensing/docs/view/Service-Level-Agreements-SLA-for-Online-Services)
 
 ### Sınavda En Çok Hayat Kurtaran Kurallar
 
@@ -739,7 +737,7 @@ Her doğru cevabı ilgili satıra işaretle (çoklu seçim, evet/hayır, eşleş
 4. **Kesinti vs Toparlanma:** 'Sistem arızaya rağmen kesintisiz çalıştı' → **High Availability (HA)**. 'Sistem çöktü ama hızla toparlandı' → **Reliability**.
 5. **Daha Güçlü vs Daha Çok:** Tek sunucunun CPU/RAM'ini artırmak → **Scale Up (Vertical)**. Sunucu sayısını artırmak → **Scale Out (Horizontal)**.
 6. **Miras Alma:** Azure Policy, RBAC ve Resource Lock üst kapsamdan alt kapsama **miras kalır**. **Tag'ler (etiketler) varsayılan olarak miras KALMAZ**.
-7. **Preview Servisler:** Public Preview veya Private Preview servislerin **SLA garantisi YOKTUR** ve üretim (production) için önerilmez.
+7. **ARM ↔ ARM template:** **ARM** yönetim ve dağıtım **servisidir** (her istek ondan geçer); **ARM template** ise ona verilen deklaratif **JSON dosyasıdır**.
 8. **Stopped vs Deallocated:** Bir VM'i OS içinden kapatırsanız durumu 'Stopped' olur ve compute ücreti **ödenmeye devam eder**. Ücreti durdurmak için Azure Portal/CLI üzerinden 'Deallocate' edilmelidir.
 
 ---

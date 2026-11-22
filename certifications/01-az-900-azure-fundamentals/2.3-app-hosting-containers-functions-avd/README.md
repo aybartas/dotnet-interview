@@ -38,7 +38,7 @@ Bir uygulamayı Azure'da çalıştırmanın tek yolu VM değildir (VM'ler → C1
   - Ne çalıştırırsın?: Windows masaüstü ve uygulamaları
   - Tipik kullanım: Uzaktan çalışan kullanıcılara bulut masaüstü
 
-Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI ve `dotnet`/Core Tools komutlarından oluşur (3.6).
+Bu konunun kodu yok; pratik kısım `az` CLI komutlarından oluşur (3.6).
 
 ---
 
@@ -46,7 +46,6 @@ Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI ve `dotnet`/Core 
 
 - **Sınav:** "Hangi barındırma seçeneği?" soruları *Describe Azure architecture and services* alanının (%35-40) en sık senaryo sorularındandır. Anahtar ifadeyi ("OS yönetmeden", "tek container", "orkestrasyon", "zamanlayıcıyla", "uzaktan masaüstü") ürüne çevirebilmek gerekir.
 - **Gerçek işte:** Ekibin bir .NET API'sini nerede barındıracağı; maliyet modelini, ölçekleme biçimini, deployment sürecini ve operasyon yükünü belirler. Çoğu kurumsal web uygulaması için ilk soru "App Service yetmez mi?" olmalıdır.
-- **Geliştirici yolunda:** Container'lar ve AKS'nin geliştirici derinliği → C2.1–C2.3; Functions'ın geliştirici derinliği → C2.
 
 ---
 
@@ -59,14 +58,10 @@ Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI ve `dotnet`/Core 
 - **Diller/platformlar:** .NET, Java, Node.js, Python, PHP; **Windows ve Linux**; özel container image'ı da çalıştırabilir.
 - **Uygulama türleri:** Web Apps, **API Apps** (REST API), mobil backend, **WebJobs** (aynı App Service içinde arka plan işi/script).
 - **Platform özellikleri:**
-  - Otomatik OS ve runtime yaması, yerleşik yük dengeleme
+  - Otomatik OS ve runtime yaması
   - **Autoscale** (instance sayısını kurala göre artır/azalt — elasticity → C1.2)
-  - **Deployment slot**'ları (ör. `staging` slotuna dağıt, test et, üretimle **swap** et — kesintisiz yayın)
-  - CI/CD entegrasyonu (GitHub Actions, Azure DevOps), ZIP deploy
   - Özel domain ve TLS sertifikası, yerleşik kimlik doğrulama (Entra ID, sosyal hesaplar → C1.9)
-- **App Service plan:** uygulamanın çalıştığı **compute** kaynağıdır ve **ücretlendirilen birimdir** (katman + instance sayısı). Birden çok uygulama aynı planı paylaşabilir — plandaki kaynakları da paylaşırlar. Katmanlar kabaca: Free/Shared (deneme, SLA yok) → Basic → Standard → Premium → Isolated (ayrılmış ortam). Slot ve autoscale gibi özellikler belirli katmanlardan itibaren gelir.
-
-> Uygulama ayarları (**Application settings**) ve connection string'ler, uygulamaya **environment variable** olarak verilir; ASP.NET Core bunları `IConfiguration` üzerinden okur. Şifreleri koda/`appsettings.json`'a değil bu ayarlara (daha iyisi Key Vault referansına) koymak buradaki temel alışkanlıktır.
+- **App Service plan:** uygulamanın çalıştığı **compute** kaynağıdır ve **ücretlendirilen birimdir** (katman + instance sayısı). Birden çok uygulama aynı planı paylaşabilir — plandaki kaynakları da paylaşırlar. Katmanlar kabaca: Free/Shared (deneme) → Basic → Standard → Premium → Isolated (ayrılmış ortam). Slot ve autoscale gibi özellikler belirli katmanlardan itibaren gelir.
 
 #### 3.2 Container'lar: ACI, Container Apps, AKS
 
@@ -94,7 +89,7 @@ Azure'daki container seçenekleri:
   - Ne zaman?: **Çok sayıda** container'ın orkestrasyonu; Kubernetes API'sine tam erişim gereken platformlar
   - Öne çıkan nitelikler: Yönetilen Kubernetes: control plane Microsoft'ta, node'lar (VM'ler) senin aboneliğinde; en fazla kontrol, en fazla bilgi gerektirir
 
-> Container image'ları genellikle **Azure Container Registry (ACR)**'de saklanır *(bağlam)*. App Service de container çalıştırabilir.
+> App Service de container çalıştırabilir.
 
 #### 3.3 Azure Virtual Desktop (AVD)
 
@@ -104,24 +99,32 @@ Azure'daki container seçenekleri:
 - **Kimlik ve güvenlik:** Microsoft Entra ID ile kimlik doğrulama, **MFA** ve Conditional Access (→ C1.9); uygulama ve **veri cihazda değil bulutta** kalır — kaybolan bir dizüstü veri sızıntısı demek değildir.
 - **Yönetim:** masaüstleri ve kullanıcı atamaları merkezden yönetilir; altta yatan oturum host'ları senin aboneliğindeki VM'lerdir (ölçeklenebilir, gerektiğinde kapatılabilir).
 - Tipik senaryolar: uzaktan çalışma, geçici/sözleşmeli personel, güvenlik gereği verinin cihaza inmemesi, ağır uygulamaları zayıf cihazlarda çalıştırma.
-- *(bağlam)* **AVD vs Windows 365:** AVD bir **Azure servisidir** — oturum host'larını sen kurar, ölçekler ve VM saati kadar ödersin; **multi-session** ile maliyeti düşürürsün. **Windows 365** ise kullanıcı başına **sabit aylık lisansla** satılan hazır **Cloud PC**'dir (SaaS'a yakın, Microsoft 365 tarafından yönetilir, multi-session yoktur). Sınav ifadesi "Azure'da, esnek, çok oturumlu sanal masaüstü" ise cevap **AVD**'dir.
 
 #### 3.4 Azure Functions
 
 **Azure Functions**, **olay tetiklemeli**, kısa süreli kod parçalarını sunucu yönetmeden çalıştıran serverless compute servisidir (serverless kavramı → C1.3).
 
-- **Tetikleyiciler (trigger):** HTTP isteği, **zamanlayıcı** (cron), kuyruk mesajı (Storage Queue, Service Bus), **blob yüklemesi**, Event Grid/Event Hubs olayı, Cosmos DB değişikliği…
-- **Binding'ler** *(bağlam)*: girdi/çıktı bağlantılarını (ör. "sonucu bir kuyruğa yaz") kod yazmadan bildirmek.
-- **Stateless** (varsayılan; her çağrı bağımsız) ve **stateful** — **Durable Functions** ile uzun süren, adımları ve durumu olan iş akışları (orkestrasyon).
-- **Ölçek ve ücret:** yüke göre otomatik ölçek; serverless planlarda yalnızca çalıştığı süre ve çağrı kadar ücret. Microsoft yeni serverless uygulamalar için **Flex Consumption** planını öneriyor; Linux üzerindeki klasik Consumption barındırması **30 Eylül 2028**'de emekliye ayrılacak (Windows Consumption bu duyurunun dışında). Sürekli yük veya VNet/ön ısıtma ihtiyacı için Premium ve Dedicated (App Service plan) seçenekleri de var.
+- **Tetikleyiciler (trigger):** HTTP isteği, **zamanlayıcı** (cron), **kuyruk mesajı** (Storage Queue), **blob yüklemesi** gibi olaylar kodu çalıştırır.
+- **Ölçek ve ücret:** yüke göre otomatik ölçek; serverless planlarda yalnızca çalıştığı süre ve çağrı kadar ücret, boşta ücret yok. Sürekli yük gerekiyorsa sabit kapasiteli (App Service plan tabanlı) planlar da vardır.
+- **Kısıtlar:** boştan uyanırken **cold start** gecikmesi; tek bir çağrının çalışma süresi sınırlıdır — uzun süren, sürekli çalışan işler için uygun değildir.
 
-**Functions vs App Service vs Logic Apps:**
+**VM, container ve Functions karşılaştırması:**
+
+| | Virtual Machine | Container | Azure Functions |
+|---|---|---|---|
+| Ne sanallaştırılır? | Donanım (her VM'de tam OS) | İşletim sistemi (çekirdek paylaşılır) | Hiçbiri — sunucu tamamen gizli |
+| Yönetim yükü | En yüksek (OS, yama) | Orta (image ve çalıştırma ortamı) | En düşük (yalnızca kod) |
+| Başlama süresi | Dakikalar | Saniyeler | Anında / cold start |
+| Ölçek | Elle veya scale set | Platforma göre (ACI: elle; Container Apps: otomatik) | Otomatik, sıfıra kadar |
+| Ücret | Çalıştığı süre (deallocate edilene dek) | Çalıştığı süre / kaynak | Çağrı ve çalışma süresi |
+| Ne zaman? | OS kontrolü, lift-and-shift | Taşınabilir, hafif paketler; mikroservis | Olay tetiklemeli kısa kod |
+
+**Functions vs App Service:**
 
 | İhtiyaç | Seçim |
 |---|---|
 | Sürekli çalışan web uygulaması/API | App Service |
 | Bir olaya tepki veren, kısa süreli **kod** | Functions |
-| **Kod yazmadan**, görsel tasarımcı ve hazır connector'larla iş akışı | Logic Apps |
 
 #### 3.5 Barındırma karar ağacı
 
@@ -129,7 +132,6 @@ Azure'daki container seçenekleri:
 Full control over the OS / custom software / lift-and-shift? → Virtual Machines (→ C1.5)
 Serve desktops or Windows apps remotely?                     → Azure Virtual Desktop
 Short event-triggered code (timer, queue, blob, HTTP)?       → Azure Functions
-No code, visual workflow/integration?                        → Logic Apps
 Ready-made web/API platform, without managing the OS?        → App Service
 Container:
    single container, fast, no orchestration                  → Container Instances
@@ -137,58 +139,29 @@ Container:
    many containers, full Kubernetes control                  → AKS
 ```
 
-#### 3.6 Pratik — App Service, Container Instances ve yerel Function
+#### 3.6 Pratik — App Service ve Container Instances
 
-> Bütçe alarmın kurulu olsun (→ C1.1). App Service **F1 (ücretsiz)** katmanda; ACI saniye bazında ücretlenir (birkaç dakikalık deneme kuruşlar mertebesindedir); yerel Function ücretsizdir. **Sonunda `az group delete` şart.**
+> Bütçe alarmın kurulu olsun (→ C1.1). App Service **F1 (ücretsiz)** katmanında; ACI saniye bazında ücretlenir (birkaç dakikalık deneme kuruşlar mertebesindedir). **Sonunda `az group delete` şart.**
 
-**(a) Todo API'yi App Service'e deploy etmek**
+**(a) App Service: işletim sistemi seçmeden web uygulaması**
 
 ```bash
-# A small .NET Web API (we do not create a project in the repo; use a temporary folder)
-dotnet new webapi -n TodoApi && cd TodoApi
-
 az login
 az group create --name rg-az900-c16 --location westeurope
 
-# az webapp up: creates the plan + web app, builds the code and ZIP-deploys it
-APP=todo-c16-$RANDOM
+# App Service plan (the billed compute unit) + a web app on it
 az webapp list-runtimes --os linux --output table            # valid runtime values
-az webapp up --resource-group rg-az900-c16 --name $APP \
-  --sku F1 --os-type linux --runtime "DOTNETCORE:10.0"
-
-curl https://$APP.azurewebsites.net/weatherforecast          # the template's sample endpoint
+az appservice plan create --resource-group rg-az900-c16 --name plan-c16 --sku F1 --is-linux
+APP=todo-c16-$RANDOM
+az webapp create --resource-group rg-az900-c16 --plan plan-c16 \
+  --name $APP --runtime "DOTNETCORE:10.0"
+az webapp show --resource-group rg-az900-c16 --name $APP --query "{Host:defaultHostName,State:state}" --output table
+# Open https://$APP.azurewebsites.net in a browser: the platform's default page is already live
 ```
 
-**(b) Ayarların environment variable olarak `IConfiguration`'a akması**
+Gözlem: işletim sistemi, disk veya yama için hiçbir şey seçmedin; **plan** ücretlendirilen compute'tur, web app onun üzerinde çalışır.
 
-```bash
-# Application setting: "__" (double underscore) becomes ":" in IConfiguration → Todo:Greeting
-az webapp config appsettings set --resource-group rg-az900-c16 --name $APP \
-  --settings Todo__Greeting="Hello App Service"
-
-# Connection string: reaches the app as the SQLAZURECONNSTR_TodoDb env var;
-# ASP.NET Core reads it with builder.Configuration.GetConnectionString("TodoDb")
-az webapp config connection-string set --resource-group rg-az900-c16 --name $APP \
-  --connection-string-type SQLAzure --settings TodoDb="Server=tcp:example.database.windows.net;Database=todo;"
-
-az webapp config appsettings list --resource-group rg-az900-c16 --name $APP --output table
-```
-
-Uygulama tarafında okumak için `Program.cs`'e tek satırlık bir endpoint eklemek yeterli (deneme kodu, yeniden `az webapp up` ile dağıtılır):
-
-```csharp
-app.MapGet("/config", (IConfiguration c) => new { greeting = c["Todo:Greeting"], db = c.GetConnectionString("TodoDb") is not null });
-```
-
-**(c) Log stream — canlı log**
-
-```bash
-az webapp log config --resource-group rg-az900-c16 --name $APP \
-  --docker-container-logging filesystem --level information   # enable console logs on a Linux app
-az webapp log tail --resource-group rg-az900-c16 --name $APP   # exit with Ctrl+C; send a request from another terminal
-```
-
-**(d) Aynı işi bir container ile: Azure Container Instances**
+**(b) Aynı işi bir container ile: Azure Container Instances**
 
 ```bash
 # A sample web container with a single command — no VM, no plan, no orchestrator
@@ -200,20 +173,9 @@ az container show --resource-group rg-az900-c16 --name aci-c16 --query "{fqdn:ip
 az container logs --resource-group rg-az900-c16 --name aci-c16
 ```
 
-> Kendi Todo API'ni container olarak çalıştırmak için image'ı bir registry'ye (ör. Azure Container Registry) push etmen gerekir; .NET SDK `dotnet publish /t:PublishContainer` ile Dockerfile'sız image üretebilir *(bağlam — container derinliği → C2.1)*.
+**(c) Azure Functions: portaldan keşif (kod yazmadan)**
 
-**(e) HTTP tetiklemeli bir Azure Function — yerelde, Core Tools ile (ücretsiz)**
-
-```bash
-# Azure Functions Core Tools v4 must be installed (func --version)
-func init FuncC16 --worker-runtime dotnet-isolated
-cd FuncC16
-func new --name Hello --template "HTTP trigger" --authlevel anonymous
-func start                                       # http://localhost:7071/api/Hello
-curl "http://localhost:7071/api/Hello?name=az900"
-```
-
-Gözlem: Function için ne bir sunucu ne bir plan seçtin; yalnızca **tetikleyici** (HTTP) ve **kod** var. Azure'a yayınlamak istersen `func azure functionapp publish <ad>` kullanılır (bir Function App ve storage account gerektirir).
+Portalda **Create a resource → Function App** sihirbazını aç ve yalnızca seçenekleri incele: hosting planı (serverless seçenekler ve sabit kapasiteli planlar), runtime, region. Oluşturduktan sonra **Create function → HTTP trigger** şablonunu seç. Gözlem: ne bir sunucu ne bir VM seçtin; yalnızca **tetikleyici** ve **kod** var. İncelemen bitince Function App'i sil.
 
 **Temizlik**
 
@@ -225,11 +187,9 @@ az group delete --name rg-az900-c16 --yes --no-wait
 
 | Adım | Kavram |
 |---|---|
-| `az webapp up` → OS seçmeden uygulama yayında | App Service = PaaS; plan = ücretlendirilen compute |
-| `Todo__Greeting` → `Todo:Greeting` | Application settings env var olarak `IConfiguration`'a akar |
-| `az webapp log tail` | Platformun sunduğu yerleşik izleme (management *of* the cloud → C1.2) |
+| `az appservice plan create` + `az webapp create` | App Service = PaaS; plan = ücretlendirilen compute |
 | `az container create` | ACI: tek container, orkestrasyonsuz, saniye bazında ücret |
-| `func new … HTTP trigger` | Functions: tetikleyici + kod, sunucu yok |
+| Function App sihirbazı | Functions: tetikleyici + kod, sunucu yönetimi yok |
 | `az group delete` | Resource group yaşam döngüsü (→ C1.4) |
 </details>
 
@@ -240,8 +200,8 @@ az group delete --name rg-az900-c16 --yes --no-wait
 Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağıtıyor:
 
 - **Müşteri portalı ve mobil uygulamanın REST API'si**
-  - Seçim: **App Service** (Standard, autoscale, `staging` slotu)
-  - Gerekçe: Ekip .NET kodu yazıyor; OS yönetmek istemiyor; slot swap ile kesintisiz yayın
+  - Seçim: **App Service** (Standard, autoscale)
+  - Gerekçe: Ekip .NET kodu yazıyor; OS yönetmek istemiyor; yük artınca otomatik ölçek
 - **Poliçe PDF'lerini gece üreten iş**
   - Seçim: **Azure Functions** (zamanlayıcı tetikleyici)
   - Gerekçe: Günde bir kez birkaç dakika çalışıyor; boşta ücret yok
@@ -273,15 +233,13 @@ Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağ�
 | "**Binlerce container**, orkestrasyon, Kubernetes" | **AKS** |
 | "Serverless container, mikroservis, **sıfıra kadar ölçek**" | **Container Apps** |
 | "**Zamanlayıcıyla** / kuyruk mesajıyla / dosya yüklenince çalışan kısa kod" | **Azure Functions** |
-| "Uzun süren, **durum tutan** fonksiyon iş akışı" | **Durable Functions** |
-| "Kod yazmadan iş akışı" | **Logic Apps** |
 | "Kullanıcılar her cihazdan **Windows masaüstüne** erişsin; veri cihazda kalmasın" | **Azure Virtual Desktop** |
 | "Birden çok kullanıcı **aynı VM'de** Windows 11 oturumu" | AVD **multi-session** |
 | "Container **işletim sistemini**, VM **donanımı** sanallaştırır" | Doğru |
 
 **Tuzaklar:**
 - ACI ile AKS: "en basit/hızlı tek container" → ACI; "orkestrasyon/ölçek/çok container" → AKS (veya serverless isteniyorsa Container Apps).
-- Functions ile Logic Apps: **kod** → Functions; **görsel/low-code** → Logic Apps.
+- Functions ile App Service: **olaya tepki veren kısa kod** → Functions; **sürekli çalışan web uygulaması/API** → App Service.
 - App Service ile VM: soru "işletim sistemine erişim" diyorsa VM; "yönetim yükü az" diyorsa App Service.
 - AVD bir "uzak masaüstü protokolü" değil, **yönetilen bir masaüstü sanallaştırma servisidir**; kimlik Entra ID ile yapılır.
 
@@ -294,10 +252,9 @@ Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağ�
 | "App Service'te uygulama başına ödenir" | Ücretlendirilen birim **App Service plan**'dır; aynı plandaki uygulamalar ek compute ücreti doğurmaz ama kaynakları paylaşır |
 | "Container = küçük VM" | Container OS'u sanallaştırır, host çekirdeğini paylaşır; VM'in kendi OS'u vardır |
 | "ACI ile mikroservis platformu kurarım" | ACI'de orkestrasyon yok; mikroservis için Container Apps veya AKS |
-| "Functions yalnızca HTTP ile çalışır" | Zamanlayıcı, kuyruk, blob, Event Grid … birçok tetikleyici var |
-| "Functions her zaman en ucuzu" | Sürekli yüksek yükte sabit bir plan ucuzlayabilir (→ C1.3); Durable olmayan fonksiyonlar uzun iş için uygun değildir |
+| "Functions yalnızca HTTP ile çalışır" | Zamanlayıcı, kuyruk, blob … birçok tetikleyici var |
+| "Functions her zaman en ucuzu" | Sürekli yüksek yükte sabit bir plan ucuzlayabilir (→ C1.3); fonksiyonlar uzun süren işler için uygun değildir |
 | "AVD kullanıcının bilgisayarına Windows kurar" | Masaüstü Azure'daki VM'lerde çalışır; cihaz yalnızca bağlantı istemcisidir |
-| Connection string'i `appsettings.json`'a yazıp repoya koymak | App Service ayarları / Key Vault referansı; ayarlar env var olarak gelir |
 | Laboratuvardan sonra kaynakları bırakmak | `az group delete` — özellikle plan ve ACI süre bazlı ücretlenir |
 
 ---
@@ -306,7 +263,7 @@ Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağ�
 
 - **VM** — Kazanç: Tam kontrol, her yazılım çalışır · Bedel: Tüm OS/yama/ölçek yükü sende
 - **App Service**
-  - Kazanç: Hızlı yayın, yama yok, slot, autoscale
+  - Kazanç: Hızlı yayın, yama yok, autoscale
   - Bedel: Platform kısıtları; plan boşta da ücretlenir
 - **Container Instances**
   - Kazanç: En basit container çalıştırma, saniye bazında ücret
@@ -319,7 +276,7 @@ Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağ�
   - Bedel: Öğrenme eğrisi ve operasyon yükü (node'lar, yükseltmeler) en yüksek
 - **Functions**
   - Kazanç: Olay tetiklemeli, boşta 0 ücret, otomatik ölçek
-  - Bedel: Cold start, çalışma süresi sınırları, durum için Durable gerekir
+  - Bedel: Cold start, çalışma süresi sınırları
 - **AVD**
   - Kazanç: Veri bulutta, merkezi yönetim, her cihazdan erişim
   - Bedel: Ağ gecikmesine duyarlı kullanıcı deneyimi; oturum host'larının maliyeti ve boyutlandırması
@@ -330,11 +287,11 @@ Bir sigorta acentesi ağı dijitalleşme projesinde iş yüklerini şöyle dağ�
 
 - [AZ-900 study guide (skills measured)](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)
 - [Microsoft Learn — Describe Azure compute and networking services](https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/)
-- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview) · [App Service plans](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans) · [Configure an App Service app (app settings, connection strings)](https://learn.microsoft.com/en-us/azure/app-service/configure-common)
+- [App Service overview](https://learn.microsoft.com/en-us/azure/app-service/overview) · [App Service plans](https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
 - [Azure Container Instances](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-overview) · [Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/overview) · [AKS](https://learn.microsoft.com/en-us/azure/aks/what-is-aks)
 - [What is Azure Virtual Desktop?](https://learn.microsoft.com/en-us/azure/virtual-desktop/overview)
-- [Azure Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview) · [Hosting options (Flex Consumption …)](https://learn.microsoft.com/en-us/azure/azure-functions/functions-scale) · [Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local)
-- [`az webapp up`](https://learn.microsoft.com/en-us/cli/azure/webapp#az-webapp-up) · [`az container create`](https://learn.microsoft.com/en-us/cli/azure/container#az-container-create)
+- [Azure Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview) · [Hosting options](https://learn.microsoft.com/en-us/azure/azure-functions/functions-scale)
+- [`az webapp create`](https://learn.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) · [`az container create`](https://learn.microsoft.com/en-us/cli/azure/container#az-container-create)
 
 ---
 

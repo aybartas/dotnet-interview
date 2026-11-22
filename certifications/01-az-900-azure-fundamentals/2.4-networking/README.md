@@ -13,23 +13,23 @@ Azure'daki kaynakların (VM, App Service, veritabanı…) birbirleriyle, interne
 | Servis | Tek cümle |
 |---|---|
 | **Virtual Network (VNet)** | Azure'daki kaynakların **izole**, özel ağı; bir region'a bağlıdır |
-| **Subnet** | VNet'in alt ağı; kaynakları gruplar, güvenlik kuralları subnet'e uygulanır |
+| **Subnet** | VNet'in alt ağı; kaynakları gruplar ve ağı segmentlere böler |
 | **VNet peering** | İki VNet'i **Microsoft omurgası** üzerinden (internete çıkmadan) birbirine bağlar |
+| **Public / private IP adresi** | Kaynağın internetten (public) veya yalnızca VNet içinden (private) ulaşılan adresi |
 | **Azure DNS** | Domain'lerin DNS kayıtlarını Azure'da **barındırır** (domain satmaz) |
 | **VPN Gateway** | On-prem ile Azure arasında **internet üzerinden şifreli** tünel |
 | **ExpressRoute** | On-prem ile Azure arasında **internete çıkmayan özel** bağlantı |
 | **Public endpoint** | Bir servise **internetten** erişilen genel adres |
 | **Private endpoint** (Private Link) | PaaS servisine VNet içinden **özel IP** ile erişim |
 
-Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI laboratuvarıdır (3.7).
+Bu konunun kodu yok; pratik kısım `az` CLI laboratuvarıdır (3.7).
 
 ---
 
 ### 2. Neden?
 
 - **Sınav:** "Hangi bağlantı seçeneği?" (VPN Gateway, ExpressRoute, peering) ve "public mi private endpoint mi?" soruları bu alanın klasikleridir; ayrımı tek bir anahtar ifade yapar ("internetten geçmeden", "şifreli tünel", "iki VNet").
-- **Gerçek işte:** Ağ tasarımı güvenliğin (segmentasyon, NSG, private endpoint → C1.10 defense in depth) ve hybrid mimarinin (→ C1.1) temelidir. Yanlış adres planı (çakışan CIDR'ler) peering'i ve VPN'i sonradan imkânsız kılar.
-- **Bağlam:** IP adresleme, CIDR, DNS ve TCP/IP temelleri → J1.2; kurumsal ağ topolojileri (hub-spoke, Virtual WAN) → S8.3.
+- **Gerçek işte:** Ağ tasarımı güvenliğin (segmentasyon, private endpoint → C1.10 defense in depth) ve hybrid mimarinin (→ C1.1) temelidir. Yanlış adres planı (çakışan CIDR'ler) peering'i ve VPN'i sonradan imkânsız kılar.
 
 ---
 
@@ -41,7 +41,7 @@ Bu konunun C01 projesinde kodu yoktur; pratik kısım `az` CLI laboratuvarıdır
 
 - **Adres alanı:** özel IP aralığı, CIDR ile (ör. `10.0.0.0/16` → ~65 bin adres). Aynı adres alanına bağlanacak ağlarla (diğer VNet'ler, on-prem) **çakışmamalıdır**.
 - **Kapsam:** bir VNet **tek bir region**'dadır, ama o region'ın tüm availability zone'larına yayılır; bir subscription'a aittir.
-- **Subnet:** adres alanının alt aralığı (ör. `10.0.1.0/24` web, `10.0.2.0/24` veri); kaynakları gruplamak ve **NSG** (network security group — izin/engel kuralları) uygulamak için.
+- **Subnet:** adres alanının alt aralığı (ör. `10.0.1.0/24` web, `10.0.2.0/24` veri); kaynakları gruplamak ve ağı **segmentlere** ayırmak için (her segmente ayrı güvenlik kuralları uygulanabilir).
 
 VNet'in sağladığı yetenekler (resmî içerikte sayılan başlıklar):
 
@@ -49,20 +49,25 @@ VNet'in sağladığı yetenekler (resmî içerikte sayılan başlıklar):
   - Açıklama: Ağı subnet'lere bölüp birbirinden ayırmak
   - Örnek: Web / uygulama / veri subnet'leri
 - **İnternet iletişimi**
-  - Açıklama: Kaynağa public IP veya public load balancer ile internetten erişim; giden trafik varsayılan olarak mümkün
-  - Örnek: Public IP'li VM, load balancer
+  - Açıklama: Kaynağa **public IP** ile internetten erişim; giden trafik varsayılan olarak mümkün
+  - Örnek: Public IP'li VM
 - **Azure kaynakları arası iletişim**
-  - Açıklama: Aynı VNet'teki kaynaklar; **service endpoint**/private endpoint ile PaaS servisleri; peering ile diğer VNet'ler
-  - Örnek: VM → Azure SQL (private endpoint)
+  - Açıklama: Aynı VNet'teki kaynaklar doğrudan konuşur; PaaS servislerine private endpoint ile; diğer VNet'lere peering ile
+  - Örnek: VM → storage account (private endpoint)
 - **On-prem ile iletişim**
   - Açıklama: Point-to-site / site-to-site VPN, ExpressRoute
   - Örnek: Ofis ağı ↔ Azure
-- **Trafik yönlendirme**
-  - Açıklama: Varsayılan sistem rotaları; **route table** (user-defined routes) ve BGP ile özel yönlendirme
-  - Örnek: Trafiği bir firewall'dan geçirmek
-- **Trafik filtreleme**
-  - Açıklama: **NSG** (IP/port/protokol kuralları) ve network virtual appliance (NVA — firewall gibi özel cihazlar)
+- **Trafik yönlendirme ve filtreleme**
+  - Açıklama: Subnet/NIC düzeyinde izin/engel kuralları ve özel rotalar tanımlanabilir
   - Örnek: "Yalnızca 443'e izin ver"
+
+**IP adresleme: public ve private IP**
+
+- **Private IP adresi:** VNet'in adres alanından (ör. `10.0.1.4`) verilen, **yalnızca VNet içinden** (ve peering/VPN/ExpressRoute ile bağlı ağlardan) erişilen adres. Her NIC en az bir private IP taşır; varsayılan olarak **dinamik** atanır, istenirse **statik** yapılabilir.
+- **Public IP adresi:** **internetten** erişilebilen adres; ayrı bir kaynaktır ve VM'in NIC'ine veya başka bir kaynağa bağlanır. Dinamik veya statik olabilir. **İsteğe bağlıdır** — prod VM'lerinin çoğunda yoktur — ve VM silinse bile ayrıca silinmedikçe ücretlenmeye devam edebilir (→ C1.5, C1.11).
+- Kural: **iç iletişim** (VM ↔ VM, VM ↔ private endpoint) **private IP** ile; **internetten erişim** gereken giriş noktası için **public IP**.
+
+**Ağ segmentasyonu:** VNet'i subnet'lere bölmek, bir saldırının yayılmasını sınırlar ve her segmente farklı kurallar uygulamayı mümkün kılar (ör. internete açık web subnet'i, yalnızca web subnet'inden erişilebilen veri subnet'i). Defense in depth'in **ağ** katmanıdır (→ C1.10).
 
 #### 3.2 VNet peering
 
@@ -70,7 +75,7 @@ VNet'in sağladığı yetenekler (resmî içerikte sayılan başlıklar):
 
 - **Regional peering:** aynı region'daki VNet'ler · **Global peering:** farklı region'lardaki VNet'ler.
 - **Düşük gecikme, yüksek bant genişliği** — aynı ağdaymış gibi.
-- **Kurallar:** adres alanları **çakışmamalı** · peering **iki yönlü** tanımlanır (her VNet'te bir peering bağlantısı) · **geçişli (transitive) değildir**: A↔B ve B↔C peering'i, A ile C'yi konuşturmaz (A↔C ayrıca peering ister veya hub'da bir router/firewall gerekir) · farklı subscription ve hatta farklı tenant'lardaki VNet'ler de peering yapabilir.
+- **Kurallar:** adres alanları **çakışmamalı** · peering **iki yönlü** tanımlanır (her VNet'te bir peering bağlantısı) · **geçişli (transitive) değildir**: A↔B ve B↔C peering'i, A ile C'yi konuşturmaz (A↔C ayrıca peering ister) · farklı subscription ve hatta farklı tenant'lardaki VNet'ler de peering yapabilir.
 - Ücret: peering'in kendisi değil, peering üzerinden geçen **veri transferi** ücretlendirilir (global peering daha pahalıdır) (→ C1.11).
 
 #### 3.3 Azure DNS
@@ -78,34 +83,29 @@ VNet'in sağladığı yetenekler (resmî içerikte sayılan başlıklar):
 **Azure DNS**, DNS domain'lerini Azure altyapısında barındıran servistir.
 
 - **Güvenilirlik ve performans:** Azure'un dünya çapındaki ad sunucu ağı; anycast ile kullanıcıya en yakın sunucu cevap verir.
-- **Yönetim kolaylığı:** kayıtlar portal, CLI, PowerShell, ARM/Bicep ile yönetilir; aynı faturada, aynı kimlikle.
+- **Yönetim kolaylığı:** kayıtlar portal, CLI, PowerShell, ARM template'leri ile yönetilir; aynı faturada, aynı kimlikle.
 - **Güvenlik:** Azure **RBAC** (kim DNS kaydını değiştirebilir), **activity log** (kim neyi değiştirdi), **resource lock** (kritik zone'un silinmesini engelleme → C1.12).
-- **Alias kayıtları** *(bağlam)*: bir kaydı doğrudan bir Azure kaynağına (public IP, Traffic Manager, Front Door) bağlamak; IP değişince kayıt kendiliğinden güncellenir.
 - **Önemli:** Azure DNS ile **domain satın alınmaz** — domain bir kayıt kuruluşundan (registrar) alınır, NS kayıtları Azure DNS'e yönlendirilir. *(App Service Domains gibi ayrı bir satın alma seçeneği vardır ama bu Azure DNS'in kendisi değildir.)*
-- **Private DNS zone:** VNet içinde, internete açık olmayan **özel isim çözümleme** (ör. `db.internal.contoso.com` → `10.0.2.4`; private endpoint'lerin `privatelink.*` zone'ları).
+- **Private DNS zone:** VNet içinde, internete açık olmayan **özel isim çözümleme** (ör. `db.internal.contoso.com` → `10.0.2.4`); private endpoint'lerin özel IP'ye çözülmesi için de kullanılır.
 
 #### 3.4 VPN Gateway
 
-Bir **VPN**, iki ağ arasında **şifreli tünel** kurar. **Azure VPN Gateway**, bir VNet'e konuşlandırılan ve **public internet üzerinden** IPsec/IKE ile şifreli bağlantı sağlayan sanal ağ geçididir (VNet başına bir VPN gateway).
+Bir **VPN**, iki ağ arasında **şifreli tünel** kurar. **Azure VPN Gateway**, bir VNet'e konuşlandırılan ve **public internet üzerinden** IPsec/IKE ile şifreli bağlantı sağlayan sanal ağ geçididir.
 
 | Bağlantı türü | Ne bağlanır? |
 |---|---|
 | **Site-to-site (S2S)** | Ofis/datacenter ağı ↔ Azure VNet (her iki uçta VPN cihazı) |
 | **Point-to-site (P2S)** | Tek bir istemci (geliştiricinin dizüstü bilgisayarı) ↔ Azure VNet |
-| **VNet-to-VNet** | Azure VNet ↔ Azure VNet (peering'e alternatif; şifreli tünel) |
 
-- **Policy-based** VPN: tüneli hangi trafiğin kullanacağını statik IP aralığı kurallarıyla belirler (eski/kısıtlı; yalnızca belirli senaryolar). **Route-based** VPN: rota tablosuna göre yönlendirir; çoğu senaryo, P2S ve çoklu bağlantılar için önerilen tür.
-- **Yüksek erişilebilirlik:** **active/standby** (varsayılan — bakım/arıza sırasında yedek instance kısa bir kesintiyle devralır) · **active/active** (iki instance da tünel taşır) · **zone-redundant gateway** (instance'lar availability zone'lara yayılır) · **ExpressRoute failover** (ExpressRoute'un yedeği olarak VPN).
-- *(bağlam — güncel SKU durumu)* Microsoft, zone desteksiz (non-AZ) VpnGw1–5 SKU'larını **AZ SKU'larına** taşıyor; duyurulara göre non-AZ SKU'lar Eylül 2026'da emekliye ayrıldı/otomatik taşındı. Sınav SKU adlarını sormaz; güncel durumu VPN Gateway "What's new" sayfasından kontrol et.
+- S2S, **iki ağı** kalıcı olarak birbirine bağlar; P2S ise **tek bir cihazın** uzaktan bağlanması içindir.
+- Kurulumu hızlı ve maliyeti düşüktür; ancak trafik **internetten** geçtiği için gecikme ve bant genişliği internete bağlı değişkendir.
 
 #### 3.5 ExpressRoute
 
-**ExpressRoute**, on-prem ağı Microsoft bulutuna bir **bağlantı sağlayıcısı** (telekom operatörü/ortak tesis) üzerinden bağlayan **özel** bir bağlantıdır; trafik **public internete çıkmaz**.
+**ExpressRoute**, on-prem ağı Microsoft bulutuna bir **bağlantı sağlayıcısı** (telekom operatörü) üzerinden bağlayan **özel** bir bağlantıdır; trafik **public internete çıkmaz**.
 
-- **Faydaları:** daha **yüksek bant genişliği**, daha **öngörülebilir gecikme**, daha yüksek **güvenilirlik**; Azure'un yanında **Microsoft 365** ve Dynamics 365 servislerine de bağlanabilir; dinamik yönlendirme (BGP); yerleşik yedeklilik (bağlantı çifti).
-- **Bağlantı modelleri** *(bağlam)*: CloudExchange co-location, point-to-point Ethernet, any-to-any (IPVPN) ve **ExpressRoute Direct** (Microsoft'un ağına doğrudan, 10/100 Gbps fiziksel port).
-- **Global Reach:** farklı şubelerin on-prem ağlarını ExpressRoute devreleri üzerinden **Microsoft omurgasıyla birbirine** bağlamak.
-- Not: ExpressRoute **özel** bir hattır ama varsayılan olarak **şifreli tünel değildir**; şifreleme gerekiyorsa ExpressRoute Direct'te MACsec veya ExpressRoute üzerinden IPsec kullanılır *(bağlam)*.
+- **Faydaları:** daha **yüksek bant genişliği**, daha **öngörülebilir gecikme**, daha yüksek **güvenilirlik**; Azure'un yanında **Microsoft 365** servislerine de bağlanabilir.
+- **Önemli:** ExpressRoute **özel** bir hattır ama varsayılan olarak **şifreli tünel değildir**; VPN ise internet üzerinden **şifreli** tüneldir.
 
 **VPN Gateway vs ExpressRoute** ⭐
 
@@ -120,32 +120,29 @@ Bir **VPN**, iki ağ arasında **şifreli tünel** kurar. **Azure VPN Gateway**,
   - ExpressRoute: Yüksek, öngörülebilir
 - **Maliyet** — VPN Gateway: Düşük · ExpressRoute: Yüksek
 - **Tipik kullanım**
-  - VPN Gateway: Küçük/orta ofis, geliştirici erişimi (P2S), ExpressRoute yedeği
+  - VPN Gateway: Küçük/orta ofis, geliştirici erişimi (P2S)
   - ExpressRoute: Büyük veri hacmi, kritik hybrid iş yükleri, regülasyon
+
+**Hybrid networking:** On-prem ve Azure'u birlikte kullanan (hybrid) mimarilerde ağ bağlantısı VPN Gateway (hızlı, ucuz, internet üzerinden) veya ExpressRoute (özel, öngörülebilir) ile kurulur; adres alanları çakışmamalıdır.
 
 #### 3.6 Public ve private endpoint'ler
 
 - **Public endpoint:** bir kaynağın internetten erişilebilen adresi (ör. `mystorage.blob.core.windows.net`, `myapp.azurewebsites.net`). Erişim firewall kuralları, kimlik doğrulama ve TLS ile korunur ama adres **internete açıktır**.
-- **Private endpoint** (**Azure Private Link**): bir PaaS servisine (Storage, SQL Database, Key Vault…) VNet'inin içinden bir **özel IP** ile bağlanan ağ arayüzü.
+- **Private endpoint** (**Azure Private Link**): bir PaaS servisine (Storage, SQL Database…) VNet'inin içinden bir **özel IP** ile bağlanan ağ arayüzü.
   - Trafik **Microsoft ağında** kalır; servisin **public erişimi tamamen kapatılabilir**.
   - On-prem ağdan da (VPN/ExpressRoute üzerinden) özel IP ile erişilebilir.
   - DNS: servis adı (`mystorage.blob.core.windows.net`) VNet içinde **private DNS zone** (`privatelink.blob.core.windows.net`) sayesinde özel IP'ye çözülür.
-- *(bağlam)* **Service endpoint:** VNet'in kimliğini servise tanıtıp servis firewall'ında yalnızca o subnet'e izin vermek; servis yine public IP'sinden erişilir. Private endpoint daha sıkı izolasyon sağlar.
 
-*(bağlam — sınavda ad olarak geçebilir)*
+**Public ↔ private endpoint karşılaştırması**
 
-| Servis | Ne yapar? |
-|---|---|
-| **NSG** | Subnet/NIC düzeyinde IP-port-protokol izin/engel kuralları |
-| **Azure Load Balancer** | Katman 4 (TCP/UDP) yük dengeleme |
-| **Application Gateway** | Katman 7 (HTTP) yük dengeleme + **WAF** (web uygulama güvenlik duvarı) |
-| **Azure Front Door** | Global HTTP giriş noktası, CDN, WAF, bölgeler arası yönlendirme |
-| **Azure Firewall** | Yönetilen, durum bilgili ağ güvenlik duvarı |
-| **Azure DDoS Protection** | Dağıtık hizmet reddi saldırılarına karşı koruma (→ C1.10) |
+- **Erişim adresi** — Public endpoint: İnternete açık adres (public IP) · Private endpoint: VNet'teki **özel IP**
+- **Trafik** — Public endpoint: Public internet üzerinden · Private endpoint: **Microsoft ağında**, VNet içinde
+- **Public erişim** — Public endpoint: Açık (firewall kurallarıyla kısıtlanabilir) · Private endpoint: Servis için **tamamen kapatılabilir**
+- **Ne zaman?** — Public endpoint: Herkese açık içerik, basit senaryo · Private endpoint: Hassas veri, kurumsal/regüle ortam
 
 #### 3.7 Pratik — VNet, peering, private DNS ve private endpoint
 
-> Bütçe alarmın kurulu olsun (→ C1.1). VNet, subnet ve peering bağlantısının kendisi ücretsizdir (peering'de **veri transferi** ücretlidir); private DNS zone, private endpoint ve test VM'i **saatlik/aylık küçük ücret** doğurur — laboratuvarı tek oturumda bitirip **sil**. VPN Gateway ve ExpressRoute **kurmuyoruz** (gateway'in kurulumu ~30-45 dk sürer ve sürekli ücretlenir; ExpressRoute sağlayıcı sözleşmesi ister).
+> Bütçe alarmın kurulu olsun (→ C1.1). VNet, subnet ve peering bağlantısının kendisi ücretsizdir (peering'de **veri transferi** ücretlidir); private DNS zone ve private endpoint **saatlik/aylık küçük ücret** doğurur — laboratuvarı tek oturumda bitirip **sil**. VPN Gateway ve ExpressRoute **kurmuyoruz** (gateway'in kurulumu ~30-45 dk sürer ve sürekli ücretlenir; ExpressRoute sağlayıcı sözleşmesi ister).
 
 ```bash
 az login
@@ -188,15 +185,11 @@ az network private-endpoint dns-zone-group create --resource-group $RG --endpoin
 # 7) Disable public access
 az storage account update --resource-group $RG --name $ST --public-network-access Disabled
 
-# 8) Test: a small VM inside VNet-A; run the command via run-command (no SSH needed).
-#    run-command uses the VM agent's outbound connection to Azure, so we create the VM with
-#    default settings (public IP + NSG). The request to storage stays inside the VNet via the private endpoint.
-az vm create --resource-group $RG --name vm-test --image Ubuntu2404 --size Standard_B1s \
-  --vnet-name vnet-a --subnet snet-app \
-  --admin-username azureuser --generate-ssh-keys
-az vm run-command invoke --resource-group $RG --name vm-test --command-id RunShellScript \
-  --scripts "nslookup $ST.blob.core.windows.net; curl -s -o /dev/null -w '%{http_code}\n' https://$ST.blob.core.windows.net/"
-#   From inside the VNet: 10.1.2.x (private IP) — from outside: the request is rejected because public access is disabled
+# 8) Inspect the private endpoint: it received a private IP from snet-pe (10.1.2.x)
+az network private-endpoint show --resource-group $RG --name pe-$ST \
+  --query "{Subnet:subnet.id, Dns:customDnsConfigs[0].fqdn, PrivateIp:customDnsConfigs[0].ipAddresses[0]}" --output json
+# Public access is now disabled: a request from your own machine is rejected
+curl -s -o /dev/null -w '%{http_code}\n' https://$ST.blob.core.windows.net/    # 403 (public network access disabled)
 
 # 9) Cleanup — mandatory
 az group delete --name $RG --yes --no-wait
@@ -211,16 +204,13 @@ az group delete --name $RG --yes --no-wait
   - Gözlem: Storage adı public bir IP'ye çözülür
   - Kavram: Public endpoint
 - **6–8**
-  - Gözlem: VM'den aynı ad `privatelink` üzerinden **10.1.2.x**'e çözülür
-  - Kavram: Private endpoint + private DNS zone
-- **7–8**
-  - Gözlem: Yerel makineden blob isteği reddedilir (HTTP 403 / erişim yok), VM'den ağ erişimi vardır
-  - Kavram: Public erişim kapatıldı; trafik VNet içinde
+  - Gözlem: Private endpoint, `snet-pe` subnet'inden **10.1.2.x** özel IP alır; yerel makineden blob isteği reddedilir (HTTP 403)
+  - Kavram: Private endpoint + public erişimin kapatılması; trafik VNet içinde
 - **(düşünce deneyi)**
   - Gözlem: VNet-B'deki bir VM de private endpoint'e erişebilir mi?
   - Kavram: Peering'li VNet'ten özel IP'ye erişim mümkündür, ama DNS zone'un VNet-B'ye de bağlanması gerekir
 
-`curl` çıktısındaki HTTP kodu kimlik doğrulama olmadığı için 4xx olabilir; önemli olan isteğin **özel IP üzerinden ulaşmasıdır**.
+Önemli olan, servise erişimin **özel IP üzerinden** yapılabilmesi ve public erişimin kapatılmasıdır.
 </details>
 
 ---
@@ -229,9 +219,9 @@ az group delete --name $RG --yes --no-wait
 
 Türkiye'de üç fabrikası ve İstanbul'da bir genel merkezi olan bir üretim şirketi Azure'a geçiyor:
 
-1. **Adres planı:** on-prem `10.0.0.0/12` kullanıyor; Azure VNet'leri çakışmasın diye `10.100.0.0/16` (üretim) ve `10.101.0.0/16` (test) seçiliyor. Üretim VNet'i web, uygulama ve veri **subnet**'lerine bölünüyor; her subnet'e bir **NSG**.
-2. **Genel merkez ↔ Azure:** ERP verisi büyük ve gecikmeye duyarlı → **ExpressRoute** (bir operatör üzerinden). Aynı bağlantının yedeği olarak **site-to-site VPN Gateway**.
-3. **Fabrikalar ↔ Azure:** küçük veri hacmi → **site-to-site VPN**. Fabrikaları birbirine bağlamak için ayrıca **ExpressRoute Global Reach** değerlendiriliyor.
+1. **Adres planı:** on-prem `10.0.0.0/12` kullanıyor; Azure VNet'leri çakışmasın diye `10.100.0.0/16` (üretim) ve `10.101.0.0/16` (test) seçiliyor. Üretim VNet'i web, uygulama ve veri **subnet**'lerine bölünüyor (ağ segmentasyonu); yalnızca web katmanının public IP'si var.
+2. **Genel merkez ↔ Azure:** ERP verisi büyük ve gecikmeye duyarlı → **ExpressRoute** (bir operatör üzerinden). Geçiş döneminde ise hızlı kurulan **site-to-site VPN Gateway** kullanılıyor.
+3. **Fabrikalar ↔ Azure:** küçük veri hacmi → **site-to-site VPN**.
 4. **Evden çalışan mühendisler:** **point-to-site VPN** ile yalnızca test VNet'ine.
 5. **Üretim ↔ test VNet'i:** **VNet peering** (internete çıkmadan); test VNet'inin, üretimin peering yaptığı paylaşılan servis VNet'ine erişemediği fark ediliyor — peering **geçişli değil** — ayrı bir peering ekleniyor.
 6. **Veritabanı ve storage:** Azure SQL Database ve storage account'lara **private endpoint**; public erişim kapatılıyor; isim çözümleme için **private DNS zone**'lar hem Azure VNet'lerine hem (DNS forwarder ile) on-prem'e bağlanıyor.
@@ -250,17 +240,17 @@ Türkiye'de üç fabrikası ve İstanbul'da bir genel merkezi olan bir üretim �
 | "Tek bir geliştiricinin dizüstü bilgisayarından VNet'e bağlanmak" | **Point-to-site VPN** |
 | "İki Azure VNet'ini **Microsoft omurgası** üzerinden bağlamak" | **VNet peering** |
 | "Farklı region'lardaki iki VNet'i bağlamak" | **Global VNet peering** |
-| "Kaynakları ağ içinde gruplayıp ayrı kurallar uygulamak" | **Subnet** (+ NSG) |
+| "Kaynakları ağ içinde gruplayıp ayrı kurallar uygulamak" | **Subnet** (ağ segmentasyonu) |
+| "Yalnızca VNet içinden erişilen adres" / "internetten erişilen adres" | **Private IP** / **Public IP** |
 | "DNS kayıtlarını Azure'da barındırmak, RBAC ile yönetmek" | **Azure DNS** |
 | "VNet içinde özel isim çözümleme" | **Private DNS zone** |
 | "PaaS servisine **özel IP** ile, trafik Microsoft ağında kalarak erişmek; public erişimi kapatmak" | **Private endpoint** (Private Link) |
-| "Şube ağlarını Microsoft omurgasıyla birbirine bağlamak" | **ExpressRoute Global Reach** |
 
 **Tuzaklar:**
 - "Peering transitive'tir" → **Hayır**.
 - "Azure DNS ile domain satın alabilirsiniz" → **Hayır** (barındırır).
 - "ExpressRoute trafiği public internet üzerinden şifreli olarak taşır" → **Hayır** (özel bağlantı; o tanım VPN'indir).
-- "VPN Gateway, iki Azure VNet'ini bağlamanın **tek** yoludur" → **Hayır** (peering de var; VNet-to-VNet VPN de bir seçenek).
+- "Peering ve VPN aynı şeydir" → **Hayır** (peering Microsoft omurgasında, VPN internet üzerinde şifreli tünel; peering iki Azure VNet'i içindir).
 - "Bir VNet birden çok region'a yayılır" → **Hayır** (tek region; birden çok **zone**'a yayılır).
 - "VNet'ler arası peering için adres alanları çakışabilir" → **Hayır**.
 
@@ -272,7 +262,7 @@ Türkiye'de üç fabrikası ve İstanbul'da bir genel merkezi olan bir üretim �
 |---|---|
 | VNet adres alanını on-prem ile çakışacak şekilde seçmek | Baştan bir IP adres planı; çakışan ağlar peering/VPN ile bağlanamaz |
 | Peering'i tek yönlü tanımlayıp "çalışmıyor" demek | İki yönlü tanımlanır (`Connected` durumu) |
-| A↔B↔C peering'iyle A'nın C'ye ulaşmasını beklemek | Peering geçişli değildir; A↔C peering'i veya hub'da router/firewall gerekir |
+| A↔B↔C peering'iyle A'nın C'ye ulaşmasını beklemek | Peering geçişli değildir; A↔C için ayrı peering gerekir |
 | "ExpressRoute = çok hızlı VPN" | VPN internet üzerinden şifreli tüneldir; ExpressRoute internete çıkmayan özel hattır |
 | Private endpoint kurup DNS'i unutmak | Servis adı hâlâ public IP'ye çözülür; private DNS zone ve VNet bağlantısı gerekir |
 | Private endpoint ekleyip public erişimi açık bırakmak | Amaç izolasyonsa public network access **kapatılmalı** |
@@ -284,20 +274,17 @@ Türkiye'de üç fabrikası ve İstanbul'da bir genel merkezi olan bir üretim �
 
 - **VPN Gateway (S2S)**
   - Kazanç: Hızlı kurulum, düşük maliyet, şifreli
-  - Bedel: İnternete bağlı değişken gecikme/bant genişliği; gateway SKU'su verimi sınırlar
+  - Bedel: İnternete bağlı değişken gecikme/bant genişliği
 - **ExpressRoute**
   - Kazanç: Yüksek, öngörülebilir performans; internete çıkmama; M365 erişimi
-  - Bedel: Yüksek maliyet, operatör sözleşmesi, kurulum süresi; şifreleme ayrıca planlanmalı
-- **ExpressRoute + VPN yedeği**
-  - Kazanç: Yüksek erişilebilirlik
-  - Bedel: İki bağlantının maliyeti ve yönetimi
+  - Bedel: Yüksek maliyet, operatör sözleşmesi, kurulum süresi; varsayılan olarak şifreli değil
 - **VNet peering**
   - Kazanç: Düşük gecikme, basit, gateway yok
-  - Bedel: Geçişli değil — çok VNet'te peering sayısı katlanır (hub-spoke tasarımı → S8.3); veri transferi ücreti
+  - Bedel: Geçişli değil — çok VNet'te peering sayısı katlanır; veri transferi ücreti
 - **Private endpoint**
   - Kazanç: Public erişimi kapatma, veri sızıntısı riskini azaltma
   - Bedel: Saatlik endpoint + işlenen veri ücreti; DNS yönetimi karmaşıklığı
-- **Public endpoint + firewall kuralları**
+- **Public endpoint + erişim kuralları**
   - Kazanç: Basit, ek maliyet yok
   - Bedel: Adres internete açık; yanlış yapılandırma riski
 
@@ -309,8 +296,8 @@ Türkiye'de üç fabrikası ve İstanbul'da bir genel merkezi olan bir üretim �
 - [Microsoft Learn — Describe Azure compute and networking services](https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/)
 - [What is Azure Virtual Network?](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview) · [Virtual network peering](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview)
 - [What is Azure DNS?](https://learn.microsoft.com/en-us/azure/dns/dns-overview) · [Azure Private DNS](https://learn.microsoft.com/en-us/azure/dns/private-dns-overview)
-- [What is VPN Gateway?](https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways) · [VPN Gateway — What's new (SKU değişiklikleri)](https://learn.microsoft.com/en-us/azure/vpn-gateway/whats-new)
-- [What is ExpressRoute?](https://learn.microsoft.com/en-us/azure/expressroute/expressroute-introduction) · [ExpressRoute Global Reach](https://learn.microsoft.com/en-us/azure/expressroute/expressroute-global-reach)
+- [What is VPN Gateway?](https://learn.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways)
+- [What is ExpressRoute?](https://learn.microsoft.com/en-us/azure/expressroute/expressroute-introduction)
 - [What is a private endpoint?](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview) · [Private endpoint DNS configuration](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns)
 - [`az network vnet peering`](https://learn.microsoft.com/en-us/cli/azure/network/vnet/peering) · [`az network private-endpoint`](https://learn.microsoft.com/en-us/cli/azure/network/private-endpoint)
 

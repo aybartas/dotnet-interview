@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.1 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 20 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 21 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 16/20**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -85,7 +85,7 @@ Aşağıdaki servislerden hangisi **global** bir servistir, yani belirli bir reg
 
 <details><summary>Cevap</summary>
 
-**C.** Entra ID (ve Front Door, Traffic Manager, Azure DNS) global servislerdir. VM, SQL Database ve storage account bir region'da oluşturulur.
+**C.** Entra ID (ve Azure DNS) global servislerdir. VM, SQL Database ve storage account bir region'da oluşturulur.
 </details>
 
 #### Soru 7: Evet / Hayır
@@ -264,9 +264,22 @@ Bir şirketin kökte "Allowed locations" politikası atanmış bir management gr
 **B.** Management group'a atanan Policy, tüm alt subscription, RG ve kaynaklara miras kalır. Policy **kaynağın** nasıl olabileceğini belirler; RBAC'taki Owner rolü onu aşmaz (→ C1.12).
 </details>
 
+#### Soru 21: Tek seçim
+Bir geliştirici bir VM'i Azure portal'dan, bir diğerini Azure CLI'dan, üçüncüsünü ise REST API ile oluşturuyor. Bu isteklerin **tamamının** geçtiği, kimlik doğrulama ve yetkilendirmeyi yapıp isteği ilgili servise ileten Azure katmanı hangisidir?
+
+- A) Azure Resource Manager (ARM)
+- B) Azure Advisor
+- C) Azure Monitor
+- D) Microsoft Purview
+
+<details><summary>Cevap</summary>
+
+**A.** Portal, CLI, PowerShell, REST API ve SDK'lardan gelen **tüm** kaynak yönetimi istekleri **Azure Resource Manager**'dan geçer; bu yüzden hangi araç kullanılırsa kullanılsın sonuç ve izinler aynıdır. Advisor öneri, Monitor izleme, Purview veri yönetişimi servisidir.
+</details>
+
 ---
 
-**Puanlama:** 18-20 → hazırsın · 14-17 → README 3.3 (zone vs pair) ve 3.5 (RG kuralları) tablolarını tekrar et · < 14 → konuyu baştan çalış ve 3.7 laboratuvarını yap.
+**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.3 (zone vs pair) ve 3.5 (RG kuralları) tablolarını tekrar et · < 15 → konuyu baştan çalış ve 3.8 laboratuvarını yap.
 
 ---
 

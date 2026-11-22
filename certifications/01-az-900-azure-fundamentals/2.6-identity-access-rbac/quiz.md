@@ -40,24 +40,24 @@ Bir şirket, **LDAP ve Kerberos** kullanan ve sunucularının **domain'e katılm
 
 - a) Microsoft Entra ID, OAuth 2.0, OpenID Connect ve SAML gibi modern protokolleri kullanır. — Evet: ☐ · Hayır: ☐
 - b) Microsoft Entra ID, sanal makinelerin geleneksel domain join işlemini doğrudan sağlar. — Evet: ☐ · Hayır: ☐
-- c) Kurum içi Active Directory kullanıcıları Microsoft Entra ID'ye senkronize edilebilir. — Evet: ☐ · Hayır: ☐
+- c) Microsoft Entra ID, Microsoft 365 ve Azure'un kullandığı bulut tabanlı kimlik servisidir. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
 
-**a) Evet · b) Hayır · c) Evet.** Geleneksel domain join (Kerberos/LDAP/GPO) Entra **Domain Services**'tır. Senkronizasyon Entra Connect veya Cloud Sync ile yapılır.
+**a) Evet · b) Hayır · c) Evet.** Geleneksel domain join (Kerberos/LDAP/GPO) Entra **Domain Services**'tır. Entra ID, Microsoft'un bulut tabanlı kimlik ve erişim yönetimi servisidir.
 </details>
 
 #### Soru 4: Tek seçim
-Kurum içindeki Active Directory kullanıcı hesaplarını Microsoft Entra ID ile senkronize etmek için hangi araç kullanılır?
+Aşağıdaki ifadelerden hangisi **Microsoft Entra ID ile kurum içi Active Directory (AD DS)** arasındaki farkı doğru anlatır?
 
-- A) Azure Migrate
-- B) Microsoft Entra Connect
-- C) Azure Arc
-- D) Microsoft Entra Domain Services
+- A) Entra ID Kerberos ve LDAP ile domain join sağlar; AD DS yalnızca bulutta çalışır
+- B) Entra ID, HTTP/HTTPS tabanlı modern protokolleri (SAML, OAuth 2.0, OpenID Connect) kullanan bulut kimlik servisidir; AD DS ise Kerberos/LDAP kullanan, kendi domain controller'larınızda çalışan klasik dizin servisidir
+- C) İkisi de tamamen aynı servisin farklı adlarıdır
+- D) Entra ID yalnızca fiziksel sunucuları yönetir
 
 <details><summary>Cevap</summary>
 
-**B.** Entra Connect (Sync) ve daha hafif Entra Cloud Sync, on-prem AD → Entra ID senkronizasyonunu yapar. Domain Services senkronizasyonun yönü tersidir (Entra ID'den yönetilen domain'e).
+**B.** Entra ID bulutta çalışan, modern web protokolleriyle SSO/MFA sağlayan kimlik servisidir; AD DS ise kurum içindeki domain controller'larda çalışan, Kerberos/LDAP/Group Policy kullanan dizin servisidir. Klasik protokollere ihtiyaç duyan uygulamalar için bulutta **Entra Domain Services** vardır.
 </details>
 
 #### Soru 5: Çoklu seçim (iki doğru cevap)
@@ -70,7 +70,7 @@ Aşağıdakilerden **hangi ikisi** Microsoft Entra ID'nin faydalarındandır?
 
 <details><summary>Cevap</summary>
 
-**A ve C.** Entra ID'nin faydaları: authentication (SSPR, MFA, smart lockout), SSO, uygulama ve cihaz yönetimi, identity protection, Conditional Access. B ve D kimlik özelliği değildir.
+**A ve C.** Entra ID'nin faydaları: authentication (self-service password reset, MFA), SSO, uygulama ve cihaz yönetimi, Conditional Access. B ve D kimlik özelliği değildir.
 </details>
 
 #### Soru 6: Eşleştirme
@@ -154,27 +154,27 @@ Microsoft'un passwordless kimlik doğrulama seçenekleri hangileridir?
 #### Soru 12: Senaryo
 Bir şirket, dış danışmanlık firmasının çalışanlarının **kendi şirket hesaplarıyla** giriş yaparak şirketin SharePoint sitesine ve bir Azure resource group'una erişmesini istiyor. Danışmanlara yeni şifre verilmeyecek. Ne kullanılmalıdır?
 
-- A) Microsoft Entra B2B collaboration
-- B) Azure AD B2C / Entra External ID (müşteri)
+- A) Microsoft Entra External ID — B2B collaboration (guest kullanıcı daveti)
+- B) Azure Policy
 - C) Microsoft Entra Domain Services
 - D) Her danışmana şirket tenant'ında yeni bir kullanıcı hesabı oluşturmak
 
 <details><summary>Cevap</summary>
 
-**A.** B2B, iş ortaklarını kendi kimlikleriyle **misafir (guest)** olarak davet eder. Erişimleri senin tenant'ında grup ve rollerle yönetilir. B müşteriye dönük uygulamalar içindir.
+**A.** B2B collaboration, iş ortaklarını kendi kimlikleriyle **misafir (guest)** olarak davet eder. Erişimleri senin tenant'ında grup ve rollerle yönetilir; ayrı şifre vermen gerekmez. Azure Policy kaynak kurallarıdır, Domain Services klasik AD protokolleridir.
 </details>
 
-#### Soru 13: Senaryo
-Bir e-ticaret şirketi, mobil uygulamasının **müşterilerinin** Google veya Facebook hesaplarıyla kayıt olup giriş yapabilmesini ve giriş sayfalarının şirket markasıyla özelleştirilmesini istiyor. Hangi çözüm uygundur?
+#### Soru 13: Tek seçim
+Microsoft Entra External ID kapsamındaki **guest user (misafir kullanıcı)** için aşağıdakilerden hangisi doğrudur?
 
-- A) Microsoft Entra B2B collaboration
-- B) Müşteri kimliği için Microsoft Entra External ID (eski adıyla B2C senaryosu)
-- C) Azure RBAC
-- D) Microsoft Entra Connect
+- A) Misafir kullanıcı, kendi kimliğiyle (kendi kurumunun hesabı, Microsoft hesabı vb.) giriş yapar ve davet eden tenant'ta grup/rol atamalarıyla yönetilir
+- B) Misafir kullanıcıya her zaman davet eden kurumun yeni bir şifresi verilmelidir
+- C) Misafir kullanıcılar Azure RBAC rolü alamaz
+- D) Misafir kullanıcı yalnızca fiziksel datacenter'lara erişebilir
 
 <details><summary>Cevap</summary>
 
-**B.** Müşteriye dönük kimlik (CIAM): kayıt, sosyal hesaplar, markalı sayfalar. Azure AD B2C Mayıs 2025'ten beri yeni müşterilere satılmıyor; yeni projeler için Microsoft Entra External ID önerilir. Kavram sınavda "B2C" olarak geçebilir.
+**A.** B2B'de dış kullanıcı **kendi kimliğiyle** gelir; davet eden tenant'ta diğer kullanıcılar gibi gruplara ve rollere (ör. Reader) atanabilir ve Conditional Access/MFA ile sınırlanabilir.
 </details>
 
 #### Soru 14: Tek seçim
@@ -183,30 +183,30 @@ Microsoft Entra Conditional Access'in işlevini **en iyi** hangisi tanımlar?
 - A) Kaynakların hangi Azure bölgelerinde oluşturulabileceğini kısıtlar
 - B) Kullanıcı, konum, cihaz ve risk gibi sinyalleri değerlendirerek erişime izin verir, MFA ister veya erişimi engeller
 - C) Kaynakların kazara silinmesini engeller
-- D) Kurum içi AD'yi Entra ID'ye senkronize eder
+- D) Kullanıcıların şifrelerini Azure Storage'a yedekler
 
 <details><summary>Cevap</summary>
 
-**B.** Conditional Access, sinyal → karar → uygulama mantığıyla çalışan if-then politika motorudur. A Azure Policy, C resource lock, D Entra Connect'tir.
+**B.** Conditional Access, sinyal → karar → uygulama mantığıyla çalışan if-then politika motorudur. A Azure Policy, C resource lock, D ise bir senkronizasyon aracıdır.
 </details>
 
 #### Soru 15: Senaryo
 Bir şirket, kullanıcıların **ofis ağından** girişte yalnızca şifre kullanmasını, ama **ofis dışından** girişte ek olarak MFA yapmasını istiyor. Ne yapılandırılmalıdır?
 
-- A) Security defaults
+- A) Her kullanıcıya Owner rolü vermek
 - B) Bir Conditional Access politikası (konum koşulu → MFA iste)
 - C) Azure Policy ile *Allowed locations*
 - D) Resource group üzerinde Reader rol ataması
 
 <details><summary>Cevap</summary>
 
-**B.** Konuma bağlı, koşullu MFA Conditional Access'tir (Entra ID P1). Security defaults koşul tanımlamaz. Azure Policy'nin *Allowed locations* kuralı kullanıcı konumunu değil, **kaynakların** bölgesini kısıtlar.
+**B.** Konuma bağlı, koşullu MFA Conditional Access'tir. Azure Policy'nin *Allowed locations* kuralı kullanıcı konumunu değil, **kaynakların** bölgesini kısıtlar.
 </details>
 
 #### Soru 16: Evet / Hayır
 
 - a) Conditional Access, cihazın kurumsal politikalara uyumlu olup olmadığını bir sinyal olarak kullanabilir. — Evet: ☐ · Hayır: ☐
-- b) Security defaults, tüm kullanıcılara MFA kaydı yaptırır ve eski kimlik doğrulama protokollerini engeller. — Evet: ☐ · Hayır: ☐
+- b) Conditional Access, konuma göre MFA isteyebilir veya erişimi engelleyebilir. — Evet: ☐ · Hayır: ☐
 - c) Conditional Access, bir kullanıcının bir VM'i yeniden başlatma iznini belirler. — Evet: ☐ · Hayır: ☐
 
 <details><summary>Cevap</summary>
@@ -220,7 +220,7 @@ Bir kullanıcının bir resource group'taki tüm kaynakları **görüntüleyebil
 - A) Owner
 - B) Contributor
 - C) Reader
-- D) User Access Administrator
+- D) Bir Entra ID Global Administrator rolü
 
 <details><summary>Cevap</summary>
 

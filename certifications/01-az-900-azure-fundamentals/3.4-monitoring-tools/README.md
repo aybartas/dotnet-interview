@@ -1,6 +1,6 @@
 [← AZ-900 İçindekiler](../README.md) · [📝 Quiz](quiz.md) · [← Önceki konu](../3.3-management-deployment-tools/README.md)
 
-## 3.4 İzleme Araçları: Monitor, Log Analytics, Service Health, Advisor
+## 3.4 İzleme Araçları: Advisor, Service Health, Azure Monitor, Log Analytics, Alerts, Application Insights
 
 > **Sınav Alanı:** Describe Azure management and governance (%30-35) · **Konu Kodu:** C1.14
 >
@@ -18,9 +18,9 @@ AZ-900 üç izleme aracını sorar; her biri **farklı bir soruya** cevap verir:
   - Kısaca: Azure Status + Service Health + Resource Health
 - **Azure Monitor**
   - Cevapladığı soru: "Uygulamam ve kaynaklarım **şu anda nasıl** çalışıyor, ne oldu?"
-  - Kısaca: Metrik + log toplama, analiz (Log Analytics), uyarı (alerts), uygulama izleme (Application Insights), dashboard ve Workbooks
+  - Kısaca: Metrik + log toplama, analiz (Log Analytics), uyarı (alerts), uygulama izleme (Application Insights)
 
-Bu konuda kod yok; pratik, `az` CLI komutlarıyla (Advisor önerileri, action group, metrik ve Service Health uyarısı, Log Analytics sorgusu) yapılır. Portal ekranları (Monitor sayfası, dashboard, Workbooks galerisi) teoride anlatılır.
+Bu konuda kod yok; pratik, `az` CLI komutlarıyla (Advisor önerileri, action group, metrik ve Service Health uyarısı, Log Analytics sorgusu) yapılır. Portal ekranları (Monitor sayfası, Metrics, Logs, Alerts) teoride anlatılır.
 
 ---
 
@@ -28,7 +28,7 @@ Bu konuda kod yok; pratik, `az` CLI komutlarıyla (Advisor önerileri, action gr
 
 - **Sınav:** Bu üç aracın birbirine karıştırılması bu alanın klasik tuzağıdır: "öneri" mi (Advisor), "Azure kaynaklı olay" mı (Service Health), "benim metriğim/log'um" mu (Monitor)? Service Health'in üç parçasının **kapsam farkı** da sık sorulur.
 - **Gerçek işte:** Bir kesintide ilk soru "sorun bizde mi, Azure'da mı?"dır. Service Health bunu dakikalar içinde ayırır; Monitor ve Application Insights ise sorunun **nerede** olduğunu gösterir. Advisor da maliyet ve güvenilirlik iyileştirmelerini **ücretsiz** olarak listeler.
-- **Bağlantılar:** Maliyet önerileri → C1.11 (Cost Management), güvenlik önerileri → C1.10 (Defender for Cloud), KQL derinliği → C2.13, observability derinliği → M13.
+- **Bağlantılar:** Maliyet önerileri → C1.11 (Cost Management), güvenlik önerileri → C1.10 (Defender for Cloud).
 
 ---
 
@@ -40,13 +40,13 @@ Kaynak yapılandırmanı ve kullanım (telemetri) verini analiz edip **kişisell
 
 - **Reliability** (eski adı *High Availability*)
   - Amaç: İş açısından kritik uygulamaların sürekliliği
-  - Örnek öneri: Tek instance VM'i availability set/zone'a taşı, storage için soft delete aç
+  - Örnek öneri: Tek instance VM'i availability set/zone'a taşı
 - **Security**
   - Amaç: Güvenlik açığına yol açabilecek tehdit ve zafiyetleri tespit
-  - Örnek öneri: Defender for Cloud önerileri (Advisor'da da görünür), MFA
+  - Örnek öneri: Defender for Cloud önerileri (Advisor'da da görünür)
 - **Performance**
   - Amaç: Uygulamaların hızını ve yanıt süresini iyileştirme
-  - Örnek öneri: Veritabanı için önerilen index, daha uygun disk türü
+  - Örnek öneri: Daha uygun disk türü veya VM boyutu
 - **Cost**
   - Amaç: Genel Azure harcamasını optimize etme
   - Örnek öneri: Az kullanılan VM'i küçült veya kapat, **reservation** al
@@ -54,8 +54,7 @@ Kaynak yapılandırmanı ve kullanım (telemetri) verini analiz edip **kişisell
   - Amaç: Süreç/iş akışı verimliliği, yönetilebilirlik, dağıtım iyi uygulamaları
   - Örnek öneri: Service Health uyarısı kur, kaynakları tag'le
 
-- **Advisor score:** kategori puanlarından hesaplanan, önerilere ne kadar uyduğunu gösteren yüzde; günlük yenilenir.
-- Öneriler üzerinde yapılabilenler: **uygula** (çoğu zaman tek tıkla veya ilgili kaynağa yönlendirme), **ertele** (belirli süre), **kapat** (dismiss), öneriler için **uyarı** kur, PDF/CSV olarak **dışa aktar**.
+- Öneriler üzerinde yapılabilenler: **uygula**, **ertele** (belirli süre) veya **kapat** (dismiss).
 - Advisor **önerir**, kendiliğinden değiştirmez; Azure Policy gibi **zorlamaz** (→ C1.12).
 
 #### 3.2 Azure Service Health
@@ -67,18 +66,20 @@ Azure platformunun sağlık durumunu **üç kapsamda** gösterir ⭐:
   - Ne gösterir?: Geniş çaplı (birçok müşteriyi etkileyen) olayların genel durum sayfası; giriş gerektirmez
 - **Service Health**
   - Kapsam: **Senin** subscription'ların, kullandığın servisler ve region'lar
-  - Ne gösterir?: **Service issues** (hizmet sorunları), **planned maintenance** (planlı bakım), **health advisories** (aksiyon gerektiren değişiklikler, ör. bir özelliğin emekliliği), **security advisories**; olay geçmişi ve **kök neden analizi (RCA)** raporları; **Service Health alert**'leri
+  - Ne gösterir?: **Service issues** (hizmet sorunları — şu an seni etkileyen kesinti), **planned maintenance** (planlı bakım), **health advisories** (aksiyon gerektiren değişiklikler, ör. bir özelliğin emekliliği); olay geçmişi ve **Service Health alert**'leri; **bölgeye özgü** sorunları da gösterir
 - **Resource Health**
   - Kapsam: **Tek bir kaynak** (ör. bir VM, bir SQL veritabanı)
   - Ne gösterir?: Kaynağın mevcut ve geçmiş sağlık durumu (Available / Unavailable / Degraded / Unknown) ve sorun Azure platformundan mı, kullanıcı eyleminden mi kaynaklanıyor
 
 > Kural: **genel Azure** → Azure Status · **benim aboneliğim/bölgem** → Service Health · **tek bir kaynağım** → Resource Health.
 
-Service Health uyarıları, teknik olarak **Activity Log alert**'tir (kategori = ServiceHealth) ve bir **action group**'a (e-posta, SMS, webhook…) bağlanır (pratik → 3.6).
+Service Health uyarıları bir **action group**'a (e-posta, SMS, webhook…) bağlanır (pratik → 3.7).
+
+**Azure Status ↔ Service Health:** Azure Status **herkese açık** genel durum sayfasıdır (giriş gerekmez, tüm Azure); Service Health ise **giriş gerektirir** ve yalnızca **senin** subscription/servis/region'larını ilgilendiren olayları kişiselleştirilmiş gösterir.
 
 #### 3.3 Azure Monitor
 
-Azure, on-prem ve diğer bulutlardaki kaynaklardan **telemetri toplayan, analiz eden ve buna göre harekete geçen** birleşik izleme platformu.
+Azure, on-prem ve diğer bulutlardaki kaynaklardan **telemetri toplayan, analiz eden ve buna göre harekete geçen** birleşik izleme platformu. Azure kaynaklarının **metriklerini** ve **log'larını** toplar, analiz eder ve **uyarı** üretir.
 
 **İki temel veri türü:**
 
@@ -87,39 +88,58 @@ Azure, on-prem ve diğer bulutlardaki kaynaklardan **telemetri toplayan, analiz 
   - Logs (log'lar): Zaman damgalı **olay kayıtları** (metin, yapılandırılmış alanlar)
 - **Güçlü yanı**
   - Metrics (metrikler): Hafif, **neredeyse gerçek zamanlı**, grafik ve eşik uyarısı
-  - Logs (log'lar): Zengin bağlam, çok kaynaklı **sorgulama** (KQL), kök neden analizi
-- **Araç** — Metrics (metrikler): **Metrics explorer** · Logs (log'lar): **Log Analytics** (workspace)
+  - Logs (log'lar): Zengin bağlam, çok kaynaklı **sorgulama**, kök neden analizi
+- **Araç** — Metrics (metrikler): **Metrics explorer** · Logs (log'lar): **Log Analytics**
 
-**Veri kaynakları (katmanlar):** uygulama (Application Insights), işletim sistemi (Azure Monitor Agent), Azure kaynakları (platform metrikleri, resource log'ları), subscription (**Activity Log** — "kim, ne zaman, hangi kaynağı değiştirdi?"), tenant (Entra ID log'ları).
+**Veri kaynakları (katmanlar):** uygulama (Application Insights), işletim sistemi, Azure kaynakları (platform metrikleri, resource log'ları), subscription (**Activity Log** — "kim, ne zaman, hangi kaynağı değiştirdi?"), tenant (Entra ID log'ları).
 
-**Azure Monitor'un parçaları (sınavın adını andığı):**
+**Azure Monitor'un parçaları:** **Log Analytics** (log toplama ve sorgulama), **Alerts** (uyarılar), **Application Insights** (uygulama performans izleme) — sırasıyla aşağıda.
 
-- **Log Analytics:** log verisini toplayan **workspace** ve bu veriyi **KQL** (Kusto Query Language) ile sorgulama aracı; birçok kaynağın log'unu tek yerde birleştirir.
+#### 3.4 Log Analytics
 
-  ```kusto
-  // Top 5 requests with the most failures in the last day (Application Insights table)
-  AppRequests
-  | where TimeGenerated > ago(1d) and Success == false
-  | summarize failures = count() by Name
-  | top 5 by failures
-  ```
+**Azure Log Analytics**, Azure Monitor'un log verisini **toplayan, saklayan ve sorgulayan** bileşenidir: log'lar bir **Log Analytics workspace**'inde birikir ve **KQL** (Kusto Query Language) ile sorgulanır.
 
-- **Azure Monitor alerts:** bir **koşul** sağlandığında (metrik eşiği, log sorgusu sonucu, Activity Log olayı) çalışan **uyarı kuralı** → bir **action group**'u tetikler. Uyarı türleri: **metric alert**, **log search alert**, **activity log alert** (Service Health ve Resource Health uyarıları dahil); *(bağlam)* Prometheus ve smart detection uyarıları. Action group eylemleri: e-posta, SMS, push, sesli arama, **webhook**, **Logic App**, **Azure Function**, Automation runbook, ITSM.
-- **Application Insights:** uygulama performans izleme (**APM**) — istek süreleri ve sayıları, **hata oranı**, **bağımlılık** çağrıları (DB, HTTP), sayfa görüntüleme ve tarayıcı performansı, exception'lar, uygulama haritası; **availability test**'ler (uygulamaya dünyanın farklı noktalarından düzenli istek atıp erişilebilirliği ölçme). Uygulama SDK/OpenTelemetry ile veya bazı servislerde **kod değişikliği olmadan** (auto-instrumentation) izlenebilir; Azure dışında (on-prem, başka bulut) çalışan uygulamaları da izler. Güncel Application Insights kaynakları bir **Log Analytics workspace**'ine bağlıdır (*workspace-based*; klasik kaynaklar 29 Şubat 2024'te emekliye ayrıldı).
+- **Log verisi toplama:** birçok kaynağın (VM'ler, Azure kaynakları, uygulamalar) log'u **tek bir workspace**'te birleşir.
+- **Log sorguları:** KQL ile filtreleme (`where`), özetleme (`summarize`), sıralama (`order by`); sonuç tablo veya grafik olarak görüntülenir.
+- **Log analizi:** olayları kaynaklar arası ilişkilendirerek **kök neden** bulmak ("hata hangi dağıtımdan sonra başladı?") ve sorguyu uyarı kuralına dönüştürmek.
+- Maliyet **alınan veri** hacmine bağlıdır.
 
-#### 3.4 Azure Monitor merkezi dashboard'u ve görselleştirme
+```kusto
+// Failed requests in the last day grouped by name (illustrative query)
+AppRequests
+| where TimeGenerated > ago(1d) and Success == false
+| summarize failures = count() by Name
+| top 5 by failures
+```
 
-- **Azure Monitor sayfası** (portal): tüm izleme yeteneklerine **tek giriş noktası** — Metrics, Logs, Alerts, Insights, Workbooks, Activity Log.
-- **Azure dashboard'ları:** metrik grafiklerini, log sorgu sonuçlarını, kaynak kutucuklarını ve Markdown notlarını **tek ekranda** toplayan, kaydedilip **RBAC ile paylaşılabilen** portal panoları (ör. ekip için "üretim sağlığı" panosu). *(bağlam)* Dashboard'lar JSON olarak dışa aktarılıp şablonla dağıtılabilir; **Grafana** (Azure Managed Grafana) da Azure Monitor verisini gösterebilir.
-- **Insights:** belirli kaynak türleri için **hazır (küratörlü)** izleme görünümleri — **VM insights**, **Container insights** (AKS), Storage insights, **Application Insights**.
+> Kural: **tek bir kaynağın sayısal değeri / hızlı grafik** → Metrics · **birçok kaynağın olay kayıtlarında arama ve analiz** → Log Analytics (KQL).
 
-#### 3.5 Azure Monitor raporları: Workbooks
+#### 3.5 Azure Monitor Alerts
 
-- **Workbooks:** metrik, log sorgusu, parametre (zaman aralığı, subscription seçici), grafik, tablo ve açıklama metnini birleştiren **etkileşimli rapor** belgeleri. Galeride hazır şablonlar vardır (ör. VM performansı, Activity Log özeti, Advisor önerileri); kopyalanıp özelleştirilebilir ve ekiple paylaşılabilir.
-- Dashboard ↔ Workbook: dashboard **anlık bakış panosu** (birçok kaynaktan kutucuk); workbook **zengin, etkileşimli analiz raporu** (parametreli, adım adım hikâye).
-- Diğer rapor yolları: Log Analytics sorgusunun sonucunu `render timechart` ile grafiğe dökmek; uyarı geçmişi ve **Activity Log** görünümleri; *(bağlam)* Power BI'a aktarma.
+**Alert**, izlenen veride bir **koşul** sağlandığında otomatik bildirim veya eylem üreten mekanizmadır.
 
-#### 3.6 Pratik — CLI ile izleme ve uyarı
+- **Alert rule (uyarı kuralı):** *Ne izlenecek* (kapsam) + *hangi koşulda* (condition) + *ne yapılacak* (action group).
+- **Alert türleri:**
+  - **Metric alert** — Metrik bir eşiği aşınca (ör. "CPU > %80, 5 dakika boyunca"): hızlı ve ucuz.
+  - **Log alert (log search alert)** — Bir log sorgusunun sonucu koşulu sağlayınca (ör. "son 5 dakikada hata sayısı > 50"): daha esnek, biraz daha gecikmeli.
+  - **Activity log alert** — Abonelikteki bir yönetim olayında (ör. bir kaynağın silinmesi) veya **Service Health** olayında.
+- **Alert conditions (koşullar):** eşik değeri, karşılaştırma operatörü (>, <), zaman penceresi ve değerlendirme sıklığı.
+- **Action group:** uyarı tetiklenince **kime/neye** bildirileceğini tanımlayan yeniden kullanılabilir küme: **e-posta, SMS, push, sesli arama, webhook** gibi eylemler. Kural bildirim göndermez; **action group**'u tetikler.
+
+#### 3.6 Application Insights
+
+**Application Insights**, Azure Monitor'un **uygulama performans izleme (APM)** özelliğidir: çalışan uygulamanın kendisinden **telemetri** toplar.
+
+- **Request tracking (istek izleme):** istek sayısı, yanıt süresi, başarısız istekler.
+- **Dependency tracking (bağımlılık izleme):** uygulamanın çağırdığı veritabanı, HTTP servisi gibi bağımlılıkların süresi ve hataları.
+- **Exception tracking (hata izleme):** işlenmeyen hatalar ve ayrıntıları.
+- **Distributed tracing (dağıtık izleme):** bir kullanıcı isteğinin birden çok servis/bileşen arasındaki yolculuğunu **tek bir izde** birleştirir; yavaşlığın hangi bileşende olduğunu gösterir (uygulama haritası).
+- **Application availability and performance:** **availability test**'ler uygulamaya dünyanın farklı noktalarından düzenli istek atıp erişilebilirliği ve yanıt süresini ölçer.
+- Application Insights verisi **Log Analytics workspace**'ine akar ve oradan sorgulanabilir; Azure'da, on-prem'de veya başka bulutta çalışan uygulamaları izleyebilir.
+
+> Kural: **"Uygulamamın istek süreleri, hata oranı, bağımlılıkları"** → Application Insights · **"VM'in CPU'su"** → Azure Monitor metrikleri.
+
+#### 3.7 Pratik — CLI ile izleme ve uyarı
 
 Maliyet: action group, uyarı kuralları ve boş bir storage account'un maliyeti ihmal edilebilir; Log Analytics workspace yalnızca **alınan veri** kadar ücret çıkarır (bu laboratuvarda neredeyse sıfır). Bütçe alarmın kurulu olsun (→ C1.1, C1.11). Komutlar Cloud Shell'de (Bash) çalıştırılabilir.
 
@@ -171,7 +191,7 @@ az monitor activity-log alert list --resource-group $RG --output table
 az group delete --name $RG --yes --no-wait
 ```
 
-> Workspace'e gerçek log akması için kaynaklarda **diagnostic settings** tanımlanır (ör. Activity Log'u workspace'e gönder → `AzureActivity` tablosu); bu, C2.13'te derinleştirilir.
+> Workspace'e gerçek log akması için kaynaklarda log gönderimi (diagnostic settings) tanımlanır; bu laboratuvarda KQL akışını görmek için satır içi bir tablo kullandık.
 
 ---
 
@@ -182,7 +202,7 @@ Bir e-ticaret şirketinde pazartesi sabahı ödeme sayfası yavaşlıyor:
 1. **Application Insights** uyarısı (log search alert: "son 5 dakikada ödeme isteklerinin hata oranı %5'i geçti") **action group** üzerinden nöbetçi ekibe SMS ve Teams webhook'u gönderiyor.
 2. Ekip önce **Service Health**'e bakıyor: West Europe'ta Azure SQL Database için aktif bir **service issue** var mı? Yok. **Resource Health**: veritabanı *Available*. Sorun Azure'da değil, uygulamada.
 3. Application Insights'ın **bağımlılık** görünümü, ödeme servisinin dış bir kur servisine yaptığı çağrının 4 saniyeye çıktığını gösteriyor; **Log Analytics**'te KQL ile hangi sürümden sonra başladığı bulunuyor (Activity Log'da o sabah bir deployment var).
-4. Olay sonrası ekip, haftalık toplantı için hata oranı ve gecikmeyi gösteren bir **Workbook** hazırlıyor; operasyon ekranına bir **dashboard** sabitleniyor.
+4. Olay sonrası ekip, Application Insights'taki hata oranı ve gecikme grafiklerini kalıcı bir **metric alert** ve **log alert** kuralına dönüştürüyor.
 5. Aynı hafta **Advisor**, gece boş çalışan iki büyük test VM'ini (Cost) ve tek instance çalışan bir üretim VM'ini (Reliability) öneri olarak listeliyor; ekip birini kapatıyor, diğerini zone'lara yayıyor.
 
 ---
@@ -201,8 +221,7 @@ Bir e-ticaret şirketinde pazartesi sabahı ödeme sayfası yavaşlıyor:
 | "Birden çok kaynağın **log'larını sorgula/analiz et**" | **Log Analytics** (KQL) |
 | "CPU %80'i geçince **e-posta/SMS** gönder" | **Azure Monitor alert** + **action group** |
 | "Kim bu kaynağı sildi/değiştirdi?" | **Activity Log** (Azure Monitor) |
-| "Metrikleri ve log'ları **tek ekranda** topla, ekiple paylaş" | **Azure dashboard** |
-| "Parametreli, **etkileşimli rapor**" | **Workbooks** |
+| "Bir uygulama isteğinin **servisler arası yolculuğu**" | **Application Insights** (distributed tracing) |
 
 **Tuzaklar:**
 - Advisor ↔ Defender for Cloud: ikisi de güvenlik önerisi gösterir; ama **beş kategoride genel öneri** = Advisor, **güvenlik duruşu/secure score/tehdit koruması** = Defender for Cloud (→ C1.10).
@@ -245,9 +264,6 @@ Bir e-ticaret şirketinde pazartesi sabahı ödeme sayfası yavaşlıyor:
 - **Metrik alert vs log search alert**
   - Kazanç: Metrik: hızlı ve ucuz · Log: karmaşık koşul
   - Bedel: Log alert daha gecikmeli ve sorgu başına maliyetli
-- **Dashboard vs Workbook**
-  - Kazanç: Dashboard: anlık bakış · Workbook: derin, etkileşimli rapor
-  - Bedel: İkisini birden sürdürmek bakım ister
 
 ---
 
@@ -258,8 +274,8 @@ Bir e-ticaret şirketinde pazartesi sabahı ödeme sayfası yavaşlıyor:
 - [Azure Advisor overview](https://learn.microsoft.com/en-us/azure/advisor/advisor-overview) · [`az advisor`](https://learn.microsoft.com/en-us/cli/azure/advisor)
 - [Azure Service Health overview](https://learn.microsoft.com/en-us/azure/service-health/overview) · [Resource Health overview](https://learn.microsoft.com/en-us/azure/service-health/resource-health-overview) · [Azure status](https://azure.status.microsoft/)
 - [Azure Monitor overview](https://learn.microsoft.com/en-us/azure/azure-monitor/overview) · [Alerts overview](https://learn.microsoft.com/en-us/azure/azure-monitor/alerts/alerts-overview) · [Action groups](https://learn.microsoft.com/en-us/azure/azure-monitor/alerts/action-groups)
-- [Application Insights overview](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) · [Classic Application Insights retirement (29 Şubat 2024)](https://azure.microsoft.com/updates/we-re-retiring-classic-application-insights-on-29-february-2024)
-- [Log Analytics tutorial](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-tutorial) · [Azure Workbooks](https://learn.microsoft.com/en-us/azure/azure-monitor/visualize/workbooks-overview) · [Azure dashboards](https://learn.microsoft.com/en-us/azure/azure-portal/azure-portal-dashboards)
+- [Application Insights overview](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
+- [Log Analytics tutorial](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-tutorial)
 
 ---
 

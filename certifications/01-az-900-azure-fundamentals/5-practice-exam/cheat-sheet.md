@@ -9,15 +9,12 @@
 
 ### 1. Ezberlenecek sayılar
 
-**SLA → aylık kesinti bütçesi** (→ [C1.2](../1.2-cloud-benefits/README.md))
+**Bulut kavramları** (→ [C1.1](../1.1-cloud-computing-models-pricing/README.md), [C1.2](../1.2-cloud-benefits/README.md))
 
-- %99 → ~7 sa 18 dk
-- %99,9 → ~43 dk 48 sn
-- %99,95 → ~21 dk 53 sn
-- %99,99 → ~4 dk 22 sn
-- Her ek "9" kesinti bütçesini **10'a böler**.
-- **Seri** bileşenler: SLA'lar **çarpılır** (toplam en zayıftan da düşük). **Paralel/yedekli**: `1 − (1−a)(1−b)` (toplam yükselir).
-- **Preview** servisin SLA'sı **yoktur**; ücretsiz katmanlarda da genellikle yoktur.
+- **CapEx** = baştan, fiziksel altyapıya büyük yatırım · **OpEx** = kullandıkça, dönemsel harcama (bulut = OpEx).
+- **Scale up/down** = aynı kaynağı güçlendir/zayıflat (vertical) · **Scale out/in** = kaynak sayısını artır/azalt (horizontal).
+- **HA** = kesintisiz sürmek · **Reliability** = arızadan toparlanmak · **Scalability** = yetenek · **Elasticity** = otomatik ölçekleme.
+- Veri, cihazlar, hesaplar ve kimlikler **her modelde müşteride**; fiziksel altyapı, host ve sanallaştırma katmanı bulutta **Microsoft'ta**.
 
 **Mimari** (→ [C1.4](../2.1-core-architecture/README.md), [C1.5](../2.2-compute-virtual-machines/README.md))
 
@@ -32,10 +29,11 @@
 - Önerilen en az süre: Cool **30**, Cold **90**, Archive **180** gün; Archive **çevrimdışıdır**, önce rehydrate (saatler).
 - Storage account adı: **3–24** karakter, küçük harf + rakam, Azure genelinde benzersiz.
 
-**Destek planları** (→ [C1.22](../4.7-support-sla-lifecycle/README.md))
+**Ağ ve bağlantı** (→ [C1.7](../2.4-networking/README.md))
 
-- Sıra: **Basic** (ücretsiz, her abonelikte) → **Developer** (üretim dışı) → **Standard** (üretim, 7/24) → **Professional Direct** (iş-kritik) → **Unified** (kurum geneli, atanmış TAM).
-- Basic **teknik destek vermez**; faturalama ve abonelik desteği verir.
+- **Private IP** = VNet içi adres · **Public IP** = internetten erişilen adres (isteğe bağlı).
+- **Site-to-site VPN** = ofis ağı ↔ Azure · **Point-to-site VPN** = tek cihaz ↔ Azure · **ExpressRoute** = internete çıkmayan özel hat (varsayılan olarak şifreli değil).
+- **Peering** geçişli değildir; adres alanları çakışmamalıdır.
 
 ---
 
@@ -86,25 +84,22 @@
 - "Kimsin?" → **authentication** · "Ne yapabilirsin?" → **authorization**
 - "Tek girişle birçok uygulama" → **SSO**
 - "Konuma/cihaza/risk durumuna göre MFA iste" → **Conditional Access**
-- "İş ortağı kendi hesabıyla girsin" → **B2B** · "Müşteri uygulaması için kayıt/giriş" → **B2C / External ID**
+- "İş ortağı kendi hesabıyla misafir olarak girsin" → **Entra External ID / B2B collaboration (guest user)**
 - "Eski LDAP/Kerberos uygulamaları, domain join, DC yönetmeden" → **Entra Domain Services**
 - "Asla güvenme, her zaman doğrula, en az yetki, ihlal varsay" → **Zero Trust**
 - "Katman katman koruma" → **defense in depth**
 - "Secure score, öneriler, iş yükü koruması" → **Defender for Cloud**
-- "Sırlar, anahtarlar, sertifikalar" → **Key Vault**
 
 **Yönetim ve yönetişim**
 
 - "Kullanıcı **ne yapabilir**?" → **RBAC** · "Kaynak **nasıl olmalı**?" → **Azure Policy**
 - "Kazara silinmesin" → **CanNotDelete lock** · "Hiç değişmesin" → **ReadOnly lock** (Owner'ı da durdurur)
 - "Maliyeti departmana göre ayır" → **tag**
-- "Azure'a geçersem ne tutar?" → **Pricing Calculator** · "On-prem mi, Azure mu?" → **TCO / Azure Migrate business case**
+- "Azure'a geçersem ne tutar?" → **Pricing Calculator** · "Ne harcadım, ay sonu tahmini ne?" → **Cost Management** (kredi bitince kaynakları durduran → **spending limit**)
 - "Bütçe ve uyarı, harcama analizi" → **Cost Management**
 - "Verinin haritası, sınıflandırma, soy ağacı" → **Microsoft Purview**
-- "GDPR'a ne kadar uyumluyuz, compliance score" → **Purview Compliance Manager**
-- "Microsoft'un ISO/SOC denetim raporları" → **Service Trust Portal**
 - "Azure dışındaki sunucuları Azure'dan yönet" → **Azure Arc**
-- "Ortamı tekrar tekrar aynı kur" → **IaC (ARM template / Bicep)**
+- "Ortamı tekrar tekrar aynı kur" → **IaC (ARM template, JSON, deklaratif)** · "Tüm isteklerin geçtiği katman" → **Azure Resource Manager**
 - "Tarayıcıdan, kurulumsuz CLI/PowerShell" → **Cloud Shell**
 
 **İzleme**
@@ -123,16 +118,18 @@
 - **Availability set vs zone:** datacenter **içi** vs datacenter'lar **arası**.
 - **Zone vs region pair:** datacenter arızası vs bölgesel felaket.
 - **VPN Gateway vs ExpressRoute:** internet üzerinden şifreli vs **özel hat**.
-- **Service endpoint vs private endpoint:** servis yine public IP'de vs servise **özel IP**.
+- **Public endpoint vs private endpoint:** internete açık adres vs servise **özel IP** (public erişim kapatılabilir).
 - **RBAC vs Policy:** kişi vs kaynak.
 - **Lock vs Policy:** silme/değiştirmeyi engeller vs yapılandırma kuralı.
 - **Advisor vs Service Health vs Monitor:** öneri vs Azure'un sağlığı vs kendi kaynaklarının telemetrisi.
 - **Service Health vs Azure Status:** **senin** aboneliğini etkileyen olaylar vs herkese açık genel durum.
-- **Pricing Calculator vs TCO:** "Azure'da ne tutar?" vs "on-prem'e göre ne kazandırır?"
+- **Pricing Calculator vs Cost Management:** "Azure'da ne **tutar**?" (önce, tahmin) vs "ne **harcadım**?" (gerçekleşen).
+- **ARM vs ARM template:** yönetim/dağıtım **servisi** vs ona verilen JSON **dosyası**.
+- **Budget vs spending limit:** yalnızca **uyarır** vs kaynakları **durdurur** (kredili abonelik türleri).
 - **Entra ID vs Entra Domain Services:** modern kimlik (OAuth/OIDC/SAML) vs klasik domain (LDAP/Kerberos/NTLM).
 - **Azure RBAC vs Entra rolleri:** Azure kaynakları vs directory (kullanıcı, lisans).
-- **AVD vs Windows 365:** esnek, multi-session Azure servisi vs kullanıcı başına sabit fiyatlı Cloud PC.
-- **Purview vs Compliance Manager vs Service Trust Portal:** verinin yönetişimi vs **senin** uyumluluk puanın vs **Microsoft'un** denetim raporları.
+- **VM vs container vs Functions:** donanımı sanallaştırır (tam OS) vs OS'u sanallaştırır (çekirdek paylaşır) vs sunucusuz, olay tetiklemeli kod.
+- **Metric alert vs log alert:** metrik eşiği vs log sorgusu sonucu (ikisi de **action group**'u tetikler).
 
 ---
 
@@ -143,81 +140,81 @@
 - MFA'yı açmak ve şifre politikası **her zaman müşterinin** sorumluluğudur.
 - Ayarlar hiyerarşide **yukarıdan aşağı miras** kalır: management group → subscription → RG → kaynak.
 - RBAC izinleri **toplanır**: Reader + Contributor = Contributor.
-- Redundancy **yedek değildir**: silinen veri tüm kopyalardan silinir; geri dönüş için backup / soft delete gerekir (→ [C1.19](../4.4-backup-dr-migration/README.md)).
+- Redundancy **yedek değildir**: bir kopyadan silinen veri tüm kopyalardan silinir.
 - **Gelen** veri trafiği genellikle ücretsiz, **giden** (egress) ücretlidir.
 - Deallocate edilmiş VM compute ücreti almaz; **disk** (ve varsa **statik** public IP) ücreti sürer.
 
 ---
 
-### 5. Mini quiz — son eklenen konular
+### 5. Mini quiz — hızlı ısınma
 
 #### Soru 1: Tek seçim
 
-Bir şirket, GDPR gereksinimlerine göre **kendi** uyumluluk durumunu bir puanla izlemek ve yapılacak iyileştirme adımlarının listesini görmek istiyor. Hangisini kullanmalı?
+Bir dış danışmanlık firmasının çalışanları, **kendi şirket hesaplarıyla** giriş yaparak kuruluşun uygulamalarına erişecek; onlara yeni parola verilmeyecek. Ne kullanılır?
 
-- A) Service Trust Portal
-- B) Microsoft Purview Compliance Manager
+- A) Microsoft Entra Domain Services
+- B) Microsoft Entra External ID — B2B collaboration (guest user)
 - C) Azure Policy
-- D) Azure Advisor
+- D) Azure Resource Lock
 
 <details><summary>Cevap</summary>
 
-**B.** Compliance Manager hazır düzenleme değerlendirmeleri, iyileştirme eylemleri ve **compliance score** sunar. Service Trust Portal Microsoft'un **kendi** denetim raporlarını verir (A); Azure Policy kaynak yapılandırmasını zorlar ama düzenleme bazlı bir puan ve eylem listesi vermez (C); Advisor maliyet/güvenilirlik/performans önerileri verir (D).
+**B.** B2B collaboration, dış kullanıcıları **kendi kimlikleriyle misafir (guest)** olarak davet eder. Domain Services klasik AD protokolleri içindir; Policy ve lock kaynak yönetişimidir.
 </details>
 
 #### Soru 2: Tek seçim
 
-Yöneticiler, operatörlerin VM'leri **başlatıp durdurabilmesini** ama **silememesini** istiyor. Hiçbir built-in rol tam olarak uymuyor. Ne yapılmalı?
+Bir yönetici, kullanıcıların bir resource group'ta kaynakları **yalnızca görüntüleyebilmesini** istiyor. Hangi built-in rol uygundur?
 
-- A) Operatörlere Owner rolü verip bir CanNotDelete lock eklemek
-- B) Uygun `Actions` listesiyle bir **custom rol** tanımlayıp en dar kapsamda atamak
-- C) Azure Policy ile VM silmeyi engellemek
-- D) Operatörleri Global Administrator yapmak
+- A) Owner
+- B) Contributor
+- C) Reader
+- D) Hiçbiri; Azure Policy kullanılmalı
 
 <details><summary>Cevap</summary>
 
-**B.** Built-in roller yetmediğinde **custom rol** (Actions/NotActions/AssignableScopes) tanımlanır ve en az yetki ilkesiyle atanır. Owner gereğinden fazla yetki verir; lock tüm kullanıcıları etkiler ve Owner kaldırabilir (A). Policy kaynağın özelliklerini denetler, "kimin silebileceğini" değil (C). Global Administrator bir Entra (directory) rolüdür (D).
+**C.** **Reader** yalnızca görüntüleme izni verir. Contributor kaynak oluşturur/siler; Owner ayrıca erişimi yönetir. Policy kullanıcıyı değil, kaynağın özelliklerini denetler.
 </details>
 
 #### Soru 3: Evet / Hayır
 
 Her ifade için Evet veya Hayır seç.
 
-- a) Azure Virtual Desktop, birden çok kullanıcının aynı VM'i paylaştığı Windows 11 **multi-session** destekler.
-- b) Windows 365, oturum host'larını kendi Azure aboneliğinde ölçeklediğin bir servistir.
-- c) Bir kullanıcının bir storage account'ta **Contributor** rolü olması, o hesaptaki blob'ları Entra kimliğiyle okuyabileceği anlamına gelir.
+- a) Azure Virtual Desktop, Azure'da çalışan bir masaüstü ve uygulama sanallaştırma servisidir.
+- b) Bir resource group'a konan tag, içindeki kaynaklara varsayılan olarak otomatik uygulanır.
+- c) ARM template'leri JSON biçiminde, deklaratif dosyalardır.
 
 <details><summary>Cevap</summary>
 
-**a) Evet · b) Hayır · c) Hayır.** Windows 365 kullanıcı başına sabit fiyatlı, Microsoft'un yönettiği Cloud PC'dir; host'ları sen ölçeklemezsin. Contributor bir **control plane** rolüdür; Entra kimliğiyle blob okumak için *Storage Blob Data Reader* gibi bir **data plane** rolü gerekir.
+**a) Evet · b) Hayır · c) Evet.** Tag'ler varsayılan olarak miras alınmaz (RBAC, Policy ve lock alınır). ARM template'leri deklaratif JSON'dır.
 </details>
 
 #### Soru 4: Tek seçim
 
-Bir yönetici portalda doğal dille "Bu abonelikte son bir haftada maliyeti en çok artan kaynaklar hangileri?" diye sormak ve bir Azure CLI taslağı almak istiyor. Hangisi bu deneyimi sağlar?
+Bir ekip, uygulamasındaki **istek sürelerini, hata oranını ve bağımlılık çağrılarını** izlemek istiyor. Hangi servis uygundur?
 
-- A) Azure Cloud Shell
-- B) Microsoft Copilot in Azure
-- C) Azure Service Health
-- D) Azure Arc
+- A) Azure Advisor
+- B) Azure Service Health
+- C) Application Insights
+- D) Azure Policy
 
 <details><summary>Cevap</summary>
 
-**B.** Copilot in Azure portalda doğal dil soruları yanıtlar ve komut/şablon taslağı üretir; kullanıcının kendi RBAC yetkisiyle çalışır. Cloud Shell yalnızca komut çalıştırma ortamıdır (A); Service Health Azure olaylarını gösterir (C); Arc Azure dışı kaynakları yönetime alır (D).
+**C.** Application Insights, Azure Monitor'un uygulama performans izleme (APM) özelliğidir: istek, bağımlılık, hata ve dağıtık izleme verilerini toplar.
 </details>
 
 #### Soru 5: Tek seçim
 
-Uygulama **App Service (%99,95)** ve **Azure SQL Database (%99,99)** kullanıyor; ikisi seri bağlı. Toplam SLA yaklaşık nedir?
+Bir yönetici, kredili bir abonelikte kredi bittiğinde **kaynakların otomatik olarak devre dışı kalmasını** istiyor. Hangisi bunu sağlar?
 
-- A) %99,99
-- B) %99,95
-- C) %99,94
-- D) %99,97
+- A) Cost Management budget
+- B) Pricing Calculator
+- C) Spending limit
+- D) Resource tags
 
 <details><summary>Cevap</summary>
 
-**C.** Seri bağlı bileşenlerde SLA'lar çarpılır: `0,9995 × 0,9999 ≈ 0,9994`. Toplam, en zayıf bileşenden (%99,95) bile düşüktür.
+**C.** Spending limit, kredili/ücretsiz abonelik türlerinde kredi bitince kaynakları durdurur. **Budget** yalnızca uyarır; Pricing Calculator tahmin aracıdır; tag raporlama içindir.
 </details>
 
 ---

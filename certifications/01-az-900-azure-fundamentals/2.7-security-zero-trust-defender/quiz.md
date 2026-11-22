@@ -33,7 +33,7 @@ Her uygulamayı Zero Trust ilkesiyle eşleştirin: **Verify explicitly · Use le
 
 <details><summary>Cevap</summary>
 
-**1 → Least privilege** (just-in-time) · **2 → Verify explicitly** (tüm sinyallerle doğrula) · **3 → Assume breach** (etki alanını küçült) · **4 → Assume breach** (şifrele, tespit et).
+**1 → Least privilege** (gerektiği kadar ve gerektiği süre yetki) · **2 → Verify explicitly** (tüm sinyallerle doğrula) · **3 → Assume breach** (etki alanını küçült) · **4 → Assume breach** (şifrele, tespit et).
 </details>
 
 #### Soru 3: Evet / Hayır
@@ -69,7 +69,7 @@ Defense in depth katmanlarını **dıştan içe** doğru sıralayın: Ağ · Ver
 </details>
 
 #### Soru 6: Tek seçim
-Azure DDoS Protection, defense in depth modelinin hangi katmanında yer alır?
+Büyük ölçekli DDoS saldırılarına karşı koruma, defense in depth modelinin hangi katmanında yer alır?
 
 - A) Veri
 - B) Uygulama
@@ -85,8 +85,8 @@ Azure DDoS Protection, defense in depth modelinin hangi katmanında yer alır?
 Her kontrolü defense in depth katmanıyla eşleştirin: **Kimlik ve erişim · Ağ · Compute · Uygulama · Veri**
 
 1. VM'lerde işletim sistemi yamalarını güncel tutmak
-2. Connection string'leri kodda değil Azure Key Vault'ta saklamak
-3. Subnet'ler arasında NSG ile varsayılan olarak trafiği engellemek
+2. Parolaları ve anahtarları uygulama koduna gömmemek
+3. Subnet'lere bölerek ağı segmentlere ayırmak ve trafiği varsayılan olarak engellemek
 4. Tüm yöneticiler için MFA zorunluluğu
 5. Veritabanını durağan halde (at rest) şifrelemek
 
@@ -137,7 +137,7 @@ Defender for Cloud'da, önerilerin uygulanma durumuna göre bir subscription'ın
 
 - A) Advisor score
 - B) Secure score
-- C) SLA
+- C) Cost score
 - D) Compliance score
 
 <details><summary>Cevap</summary>
@@ -151,11 +151,11 @@ Aşağıdakilerden **hangi ikisi** Microsoft Defender for Cloud'un yeteneklerind
 - A) Bir VM'e yönelik kaba kuvvet (brute-force) giriş denemelerinde güvenlik uyarısı üretmek
 - B) Kaynakları kazara silinmeye karşı kilitlemek
 - C) Yanlış yapılandırılmış kaynaklar için güvenlik önerileri sunmak
-- D) Kurum içi AD kullanıcılarını Entra ID'ye senkronize etmek
+- D) Kullanıcıların parolalarını düz metin olarak saklamak
 
 <details><summary>Cevap</summary>
 
-**A ve C.** A tehdit tespiti (Defend/CWP), C duruş önerisidir (Secure/CSPM). B resource lock (→ C1.12), D Entra Connect'tir (→ C1.9).
+**A ve C.** A tehdit tespiti (Defend/CWP), C duruş önerisidir (Secure/CSPM). B resource lock'ın (→ C1.12) işidir; D ise bir güvenlik özelliği değil, kötü bir uygulamadır.
 </details>
 
 #### Soru 13: Senaryo
@@ -185,7 +185,7 @@ Azure Advisor'ın **Security** kategorisinde gösterilen öneriler nereden gelir
 </details>
 
 #### Soru 15: Senaryo
-Bir uygulamada SQL injection zafiyeti bulundu. Ancak saldırganın simülasyonu, veritabanının private endpoint arkasında olması, uygulamanın yalnızca tek tabloya okuma yetkisi olan bir kimlik kullanması ve verilerin şifreli olması nedeniyle sınırlı veriye ulaşabildi. Bu durum en iyi hangi kavramı örnekler?
+Bir uygulamada bir güvenlik zafiyeti bulundu. Ancak saldırganın simülasyonu, veritabanının private endpoint arkasında olması, uygulamanın yalnızca okuma yetkisi olan bir kimlikle çalışması ve verilerin şifreli olması nedeniyle sınırlı veriye ulaşabildi. Bu durum en iyi hangi kavramı örnekler?
 
 - A) Single sign-on
 - B) Defense in depth
@@ -203,4 +203,4 @@ Bir uygulamada SQL injection zafiyeti bulundu. Ancak saldırganın simülasyonu,
 
 ---
 
-➡️ **Sonraki konu:** [3.1 Maliyet Yönetimi: Pricing Calculator, TCO, Budgets](../3.1-cost-management/README.md) · [AZ-900 İçindekiler](../README.md)
+➡️ **Sonraki konu:** [3.1 Maliyet Yönetimi: Pricing Calculator, Cost Management, Tag'ler](../3.1-cost-management/README.md) · [AZ-900 İçindekiler](../README.md)

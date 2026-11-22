@@ -28,7 +28,7 @@ Küçük bir ofis, Azure'daki VNet'ine **düşük maliyetle** ve **şifreli** bi
 
 - A) ExpressRoute Direct
 - B) Site-to-site VPN (VPN Gateway)
-- C) ExpressRoute Global Reach
+- C) VNet peering
 - D) Private endpoint
 
 <details><summary>Cevap</summary>
@@ -87,7 +87,7 @@ Aynı subscription'daki iki Azure VNet'ini, **gateway kurmadan**, düşük gecik
 #### Soru 7: Çoklu seçim (iki doğru cevap)
 Azure Virtual Network'ün **hangi iki** yeteneği resmî tanımda yer alır?
 
-- A) Ağ trafiğini NSG'lerle filtreleme
+- A) Ağı subnet'lere bölerek izole etme (segmentasyon)
 - B) Domain adı satın alma
 - C) On-prem ağlarla iletişim (VPN/ExpressRoute)
 - D) Uygulama kodunu derleme
@@ -101,9 +101,9 @@ Azure Virtual Network'ün **hangi iki** yeteneği resmî tanımda yer alır?
 Bir şirket, `contoso.com` domain'inin DNS kayıtlarını Azure'da barındırmak ve kayıtları kimin değiştirebileceğini **Azure RBAC** ile yönetmek istiyor. Hangi servisi kullanmalıdır?
 
 - A) Azure DNS
-- B) Azure Front Door
+- B) Azure Virtual Network
 - C) VPN Gateway
-- D) Azure Firewall
+- D) ExpressRoute
 
 <details><summary>Cevap</summary>
 
@@ -128,7 +128,7 @@ Bir uygulama ekibi, Azure SQL Database'e yalnızca VNet içinden, **özel bir IP
 
 - A) Public endpoint
 - B) Private endpoint (Azure Private Link)
-- C) ExpressRoute Global Reach
+- C) VNet peering
 - D) Azure DNS public zone
 
 <details><summary>Cevap</summary>
@@ -163,29 +163,29 @@ Her ihtiyacı bağlantı seçeneğiyle eşleştirin: **VNet peering · Site-to-s
 </details>
 
 #### Soru 13: Tek seçim
-VPN Gateway'de **varsayılan** yüksek erişilebilirlik yapılandırması hangisidir?
+Bir şirket, VNet içindeki sunucuların `db.internal.contoso.com` gibi **yalnızca iç ağda çözülen** isimlerle birbirine ulaşmasını istiyor. İsimler internete açık olmayacak. Hangisi kullanılmalıdır?
 
-- A) Active/active
-- B) Active/standby
-- C) Zone-redundant (her zaman)
-- D) Yüksek erişilebilirlik yoktur
+- A) Azure Private DNS zone
+- B) Genel (public) DNS zone
+- C) Public IP adresi
+- D) ExpressRoute
 
 <details><summary>Cevap</summary>
 
-**B.** Varsayılan olarak gateway iki instance ile **active/standby** çalışır; bakım veya arızada yedek instance kısa bir kesintiyle devralır. Active/active ve zone-redundant gateway'ler ek yapılandırma seçenekleridir.
+**A.** **Private DNS zone**, VNet içinde internete açık olmayan özel isim çözümleme sağlar. Public DNS zone isimleri internete açar; public IP ve ExpressRoute isim çözümleme servisi değildir.
 </details>
 
 #### Soru 14: Tek seçim
-Bir şirketin farklı ülkelerdeki iki şubesi ayrı ExpressRoute devreleriyle Azure'a bağlı. Şubeler arası trafiği de Microsoft omurgası üzerinden taşımak istiyorlar. Hangi özellik bunu sağlar?
+Bir VM'in, internetten **doğrudan erişilebilir** olması gerekmiyor; yalnızca aynı VNet'teki diğer VM'lerle konuşacak. Bu VM için hangisi doğru yaklaşımdır?
 
-- A) ExpressRoute Global Reach
-- B) Point-to-site VPN
-- C) Private DNS zone
-- D) Azure Load Balancer
+- A) VM'e yalnızca private IP vermek (public IP eklememek)
+- B) VM'e mutlaka statik bir public IP eklemek
+- C) VM'i başka bir region'a taşımak
+- D) VM için ExpressRoute devresi kurmak
 
 <details><summary>Cevap</summary>
 
-**A.** Global Reach, ExpressRoute devreleri üzerinden on-prem siteleri birbirine bağlar.
+**A.** Private IP, VNet içi (ve bağlı ağlardan) iletişim içindir; **public IP isteğe bağlıdır** ve yalnızca internetten erişim gereken kaynaklara eklenir. Gereksiz public IP saldırı yüzeyini ve maliyeti artırır.
 </details>
 
 #### Soru 15: Evet / Hayır
@@ -193,7 +193,7 @@ Bir şirketin farklı ülkelerdeki iki şubesi ayrı ExpressRoute devreleriyle A
 | İfade | Evet | Hayır |
 |---|---|---|
 | a) ExpressRoute ile Microsoft 365 gibi Microsoft bulut servislerine de bağlanılabilir. | ☐ | ☐ |
-| b) VPN Gateway, ExpressRoute bağlantısı için yedek (failover) olarak kullanılabilir. | ☐ | ☐ |
+| b) Site-to-site VPN, on-prem ile Azure'u internet üzerinden şifreli tünelle bağlar. | ☐ | ☐ |
 | c) ExpressRoute trafiği public internet üzerinden şifreli bir tünelle taşır. | ☐ | ☐ |
 
 <details><summary>Cevap</summary>
@@ -204,14 +204,14 @@ Bir şirketin farklı ülkelerdeki iki şubesi ayrı ExpressRoute devreleriyle A
 #### Soru 16: Tek seçim
 Bir VNet'te web sunucularını ve veritabanı sunucularını ayrı gruplara ayırıp her gruba farklı ağ güvenlik kuralları uygulamak istiyorsunuz. Ne kullanmalısınız?
 
-- A) Ayrı subnet'ler ve her subnet'e bir NSG
+- A) Ayrı subnet'ler (ağ segmentasyonu)
 - B) Ayrı Azure DNS zone'ları
 - C) ExpressRoute devreleri
 - D) Ayrı resource group'lar
 
 <details><summary>Cevap</summary>
 
-**A.** Subnet'ler ağ segmentasyonu sağlar; NSG'ler subnet (veya NIC) düzeyinde izin/engel kurallarıdır. Resource group ağ izolasyonu sağlamaz (→ C1.4).
+**A.** Subnet'ler ağ segmentasyonu sağlar; her subnet'e ayrı güvenlik kuralları uygulanabilir. Resource group ağ izolasyonu sağlamaz (→ C1.4).
 </details>
 
 #### Soru 17: Tek seçim
@@ -231,13 +231,13 @@ Aşağıdakilerden hangisi bir **public endpoint**'tir?
 Bir şirket üç Azure VNet'ini (hub, spoke-1, spoke-2) birbirine bağlıyor: hub↔spoke-1 ve hub↔spoke-2 peering'leri var. spoke-1'deki VM'ler spoke-2'deki VM'lere ulaşamıyor. Neden?
 
 - A) VNet peering yalnızca farklı region'lar arasında çalışır
-- B) VNet peering geçişli değildir; spoke-1↔spoke-2 için ayrı peering ya da hub'da yönlendirme (ör. firewall/router) gerekir
+- B) VNet peering geçişli değildir; spoke-1↔spoke-2 için ayrı bir peering gerekir
 - C) Spoke VNet'lerin DNS zone'u yoktur
 - D) Peering için ExpressRoute zorunludur
 
 <details><summary>Cevap</summary>
 
-**B.** Peering transitive değildir. Çözüm: doğrudan spoke-1↔spoke-2 peering'i veya hub'daki bir NVA/Azure Firewall üzerinden route table ile yönlendirme (hub-spoke tasarımı → S8.3).
+**B.** Peering transitive (geçişli) değildir. Çözüm: spoke-1↔spoke-2 arasında doğrudan ayrı bir peering tanımlamaktır.
 </details>
 
 ---

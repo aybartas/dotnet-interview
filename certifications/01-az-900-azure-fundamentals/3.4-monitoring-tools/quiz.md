@@ -55,8 +55,8 @@ Bir yönetici, Microsoft'un önümüzdeki hafta **kendi aboneliğindeki** VM'ler
 
 - A) Azure Status sayfasını her gün kontrol etmek
 - B) Azure Service Health'te bir Service Health alert oluşturmak
-- C) Azure Advisor score'u izlemek
-- D) Bir Workbook oluşturmak
+- C) Azure Advisor önerilerini izlemek
+- D) Bir resource lock oluşturmak
 
 <details><summary>Cevap</summary>
 
@@ -94,7 +94,7 @@ Birden çok kaynaktan toplanan log verisini **sorgulayıp analiz etmek** için A
 - A) Metrics explorer
 - B) Log Analytics
 - C) Azure Status
-- D) Advisor score
+- D) Azure Policy
 
 <details><summary>Cevap</summary>
 
@@ -122,7 +122,7 @@ Bir VM'in CPU kullanımı 10 dakika boyunca %85'in üzerinde kalırsa operasyon 
 
 <details><summary>Cevap</summary>
 
-**a) Evet · b) Evet · c) Hayır.** Action group'lar e-posta, SMS, push, sesli arama, webhook, Logic App, Azure Function, Automation runbook gibi eylemler tetikleyebilir.
+**a) Evet · b) Evet · c) Hayır.** Action group'lar e-posta, SMS, push, sesli arama, webhook gibi birçok bildirim ve eylem türünü tetikleyebilir.
 </details>
 
 #### Soru 10: Tek seçim
@@ -139,29 +139,29 @@ Bir denetçi, geçen hafta bir resource group'taki bir storage account'u **kimin
 </details>
 
 #### Soru 11: Tek seçim
-Bir ekip, farklı kaynaklardan metrik grafiklerini ve log sorgu sonuçlarını **tek bir ekranda** toplayıp diğer ekip üyeleriyle **paylaşmak** istiyor. Ne kullanmalıdır?
+Bir ekip, bir log sorgusunun sonucu "son 5 dakikada 50'den fazla hata kaydı" koşulunu sağladığında uyarı almak istiyor. Hangi uyarı türü uygundur?
 
-- A) Azure dashboard
-- B) Azure Advisor
-- C) Resource lock
-- D) Azure Status
+- A) Metric alert
+- B) Log alert (log search alert)
+- C) Azure Status
+- D) Resource lock
 
 <details><summary>Cevap</summary>
 
-**A.** Azure dashboard'ları portalda kutucuklardan oluşan, kaydedilip RBAC ile paylaşılabilen panolardır.
+**B.** Bir **log sorgusunun** sonucuna dayanan uyarı **log alert**'tir. Metric alert, CPU/istek sayısı gibi **metriklerin** eşiğini izler; Azure Status genel durum sayfasıdır.
 </details>
 
-#### Soru 12: Tek seçim
-Metrik, log sorgusu, parametre ve açıklama metnini birleştiren **etkileşimli raporlar** oluşturmak için Azure Monitor'un hangi özelliği kullanılır?
+#### Soru 12: Eşleştirme
+Her ifadeyi Application Insights özelliğiyle eşleştirin: **Request tracking · Dependency tracking · Exception tracking · Distributed tracing**
 
-- A) Workbooks
-- B) Action groups
-- C) Service Health
-- D) Advisor score
+1. Uygulamanın çağırdığı veritabanı ve dış HTTP servislerinin süre ve hata verileri
+2. Uygulamada oluşan işlenmeyen hataların ayrıntıları
+3. Bir kullanıcı isteğinin birden çok servis arasındaki yolculuğunu tek bir izde görmek
+4. Uygulamaya gelen isteklerin sayısı ve yanıt süreleri
 
 <details><summary>Cevap</summary>
 
-**A.** Workbooks; parametreli, etkileşimli, paylaşılabilir raporlardır ve galeride hazır şablonları vardır.
+**1 → Dependency tracking · 2 → Exception tracking · 3 → Distributed tracing · 4 → Request tracking.**
 </details>
 
 #### Soru 13: Senaryo
@@ -246,4 +246,4 @@ Azure Monitor'un topladığı **iki temel veri türü** hangileridir?
 
 ---
 
-➡️ **Sonraki konu:** [4.1 Veri ve Analitik Servisleri](../4.1-data-analytics/README.md) · [AZ-900 İçindekiler](../README.md)
+➡️ **Sonraki konu:** [5 Deneme Sınavı ve Sınav Stratejisi](../5-practice-exam/README.md) · [AZ-900 İçindekiler](../README.md)
