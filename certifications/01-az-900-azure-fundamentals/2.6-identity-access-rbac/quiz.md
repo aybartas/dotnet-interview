@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.6 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 22 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 25 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo). Gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 18/22**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo). Gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 20/25**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -290,9 +290,42 @@ Aşağıdaki gereksinimlerden hangisi Azure RBAC ile **değil**, Azure Policy il
 **C.** RBAC **kullanıcının** ne yapabileceğini, Policy **kaynağın** nasıl olabileceğini (bölge, SKU, tag) belirler. Policy'nin Deny etkisi Owner'ı da durdurur (→ C1.12). A, B ve D rol atamalarıyla çözülür.
 </details>
 
+#### Soru 23: Sıralama
+Aşağıdaki kimlik doğrulama yaklaşımlarını **güvenlik düzeyi en düşükten en yükseğe** doğru sıralayın: Passwordless (FIDO2 anahtarı / Windows Hello) · Yalnızca parola · Parola + MFA
+
+<details><summary>Cevap</summary>
+
+**Yalnızca parola → Parola + MFA → Passwordless.** Parola tek başına tahmin edilir, tekrar kullanılır ve phishing ile çalınır; MFA ikinci bir faktör ekler; passwordless parolayı tamamen kaldırır ve phishing'e dayanıklı, zaten çok faktörlü yöntemler kullanır.
+</details>
+
+#### Soru 24: Tek seçim
+Bir şirket, kullanıcının oturumu **riskli** görüldüğünde (ör. sızdırılmış kimlik bilgisi şüphesi, olağandışı konumdan giriş) ek doğrulama istemek, risk çok yüksekse erişimi **engellemek** istiyor. Hangi özellik kullanılır?
+
+- A) Azure Policy
+- B) Risk sinyalini kullanan bir Microsoft Entra Conditional Access politikası
+- C) Resource lock
+- D) Azure RBAC'ta Reader rolü
+
+<details><summary>Cevap</summary>
+
+**B.** Conditional Access; kullanıcı/grup, konum, cihaz, uygulama ve **risk** sinyallerine göre erişime izin verir, **MFA ister** veya **engeller**. Policy kaynak kurallarıdır, lock silme korumasıdır, RBAC kaynak işlemlerini yetkilendirir.
+</details>
+
+#### Soru 25: Eşleştirme
+Bir rol atamasının her parçasını örneğiyle eşleştirin: **Security principal · Role definition · Scope**
+
+1. `rg-web-prod` resource group'u
+2. "Denetçiler" Entra ID grubu
+3. *Reader* rolünün izin listesi (yalnızca okuma)
+
+<details><summary>Cevap</summary>
+
+**1 → Scope** (NEREDE) · **2 → Security principal** (KİM — kullanıcı, grup, service principal veya managed identity) · **3 → Role definition** (NE — izinlerin listesi). Üçü birlikte bir **role assignment** oluşturur.
+</details>
+
 ---
 
-**Puanlama:** 20-22 → hazırsın · 15-19 → README 3.4–3.10'daki karşılaştırma tablolarını tekrar et · < 15 → konuyu baştan çalış ve 3.11 laboratuvarını yap.
+**Puanlama:** 23-25 → hazırsın · 18-22 → README 3.4–3.10'daki karşılaştırma tablolarını tekrar et · < 18 → konuyu baştan çalış ve 3.11 laboratuvarını yap.
 
 ---
 

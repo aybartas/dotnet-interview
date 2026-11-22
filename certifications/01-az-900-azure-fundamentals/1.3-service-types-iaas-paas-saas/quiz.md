@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 1.3 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 15 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 20 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 12/15**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 16/20**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -194,9 +194,72 @@ Bir yazılım ekibi kendi geliştirdiği uygulamayı çalıştıracak ve **en az
 **a) Evet · b) Hayır · c) Evet.** Kademeli taşıma (önce rehost, sonra refactor) yaygın bir stratejidir. Hesaplar ve kimlikler her modelde müşteridedir (→ C1.1). Serverless düşük/düzensiz yükte ucuzdur; sürekli yüksek yükte çağrı + GB-saniye toplamı sabit bir plandan fazla olabilir.
 </details>
 
+#### Soru 16: Eşleştirme
+Her senaryoyu en uygun hizmet türüyle eşleştirin: **IaaS · PaaS · SaaS**
+
+1. Bir ekip, kendi yazdığı web API'sini işletim sistemi yönetmeden yayınlamak istiyor.
+2. Bir şirket, özel bir sürücü gerektiren eski bir uygulamayı değiştirmeden taşımak istiyor.
+3. Çalışanlara hazır bir e-posta ve takvim uygulaması sunulacak.
+4. Geliştiriciler dakikalar içinde açıp işi bitince silecekleri özel yapılandırmalı test sunucularına ihtiyaç duyuyor.
+
+<details><summary>Cevap</summary>
+
+**1 → PaaS** (App Service) · **2 → IaaS** (VM, lift-and-shift) · **3 → SaaS** (Microsoft 365) · **4 → IaaS** (test/geliştirme ortamı VM'leri).
+</details>
+
+#### Soru 17: Tek seçim
+Bir uygulama **Azure App Service** üzerinde çalışıyor. Aşağıdakilerden hangisi **müşterinin** sorumluluğunda kalır?
+
+- A) App Service'in çalıştığı sunucuların işletim sistemi yamaları
+- B) Uygulamanın kodu ve uygulamanın sakladığı veri
+- C) Fiziksel sunucuların donanım arızaları
+- D) Runtime'ın (ör. .NET) platform düzeyindeki kurulumu ve bakımı
+
+<details><summary>Cevap</summary>
+
+**B.** PaaS'ta Microsoft altyapıyı, işletim sistemini ve runtime'ı yönetir; müşteri **kodunu, verisini** ve uygulama yapılandırmasını yönetir. A, C ve D Microsoft'tadır.
+</details>
+
+#### Soru 18: Evet / Hayır
+
+- a) Azure Virtual Machines, müşteriye işletim sistemi üzerinde tam kontrol veren bir IaaS hizmetidir. — Evet: ☐ · Hayır: ☐
+- b) Microsoft 365 kullanan bir şirket, kullanıcı hesaplarının ve verinin güvenliğinden sorumlu değildir. — Evet: ☐ · Hayır: ☐
+- c) Serverless bir fonksiyon çalışmıyorken genellikle compute ücreti doğmaz. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Hayır · c) Evet.** SaaS'ta bile hesaplar, kimlikler ve veri müşteride kalır (→ C1.1). Serverless'te ücret çağrı ve çalışma süresine göredir; boşta ücret yoktur.
+</details>
+
+#### Soru 19: Tek seçim
+Aşağıdakilerden hangisi **PaaS**'ın IaaS'a göre bir **dezavantajıdır**?
+
+- A) İşletim sistemi yamalarının müşteri tarafından yapılması gerekir
+- B) Platformun desteklemediği özel bir bileşen veya işletim sistemi ayarı kurulamaz
+- C) Uygulama ölçeklenemez
+- D) Fiziksel sunucuları müşteri satın almak zorundadır
+
+<details><summary>Cevap</summary>
+
+**B.** PaaS daha az yönetim yükü getirir ama **daha az kontrol** demektir: OS'a erişim yoktur, platformun izin vermediği bileşen kurulamaz. A IaaS'ın yüküdür; PaaS yerleşik ölçekleme sunar (C yanlış); fiziksel sunucular hiçbir bulut modelinde müşteride değildir (D yanlış).
+</details>
+
+#### Soru 20: Senaryo
+Bir ekip; olay tetiklemeli kısa bir kodu **sunucu sağlamadan**, yük artınca **otomatik ölçeklenen** ve **yalnızca çalıştığı süre için ücretlenen** bir hizmette çalıştırmak istiyor. Bu nitelikler hangi modeli tanımlar ve Azure'daki örneği nedir?
+
+- A) IaaS — Azure Virtual Machines
+- B) Serverless — Azure Functions
+- C) SaaS — Microsoft 365
+- D) Private cloud — kurum içi sunucu
+
+<details><summary>Cevap</summary>
+
+**B.** Olay tetiklemeli çalışma, otomatik ölçekleme (sıfıra kadar), kullanım kadar ücret ve altyapı yönetiminin olmaması **serverless**'in nitelikleridir; Azure'daki örneği **Azure Functions**'tır. Serverless, PaaS'ın en "yönetimsiz" biçimidir.
+</details>
+
 ---
 
-**Puanlama:** 14-15 → hazırsın · 11-13 → README 3.6'daki karar sırasını ve "aynı teknoloji, farklı tür" tablosunu tekrar et · < 11 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
+**Puanlama:** 18-20 → hazırsın · 14-17 → README 3.6'daki karar sırasını ve "aynı teknoloji, farklı tür" tablosunu tekrar et · < 14 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
 
 ---
 

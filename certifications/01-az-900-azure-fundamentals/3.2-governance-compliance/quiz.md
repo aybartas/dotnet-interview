@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 3.2 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 18 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 21 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 15/18**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -238,9 +238,48 @@ Bir şirket, kaynaklara `env` tag'inin **resource group'tan otomatik olarak kopy
 **B.** Tag'ler varsayılan olarak miras **alınmaz** (A yanlış; → C1.11). Modify etkili politika yeni/güncellenen kaynaklara tag'i ekler; mevcut kaynakları remediation task düzeltir.
 </details>
 
+#### Soru 19: Tek seçim
+Bir şirket, geliştirme aboneliğinde yalnızca **VM, VNet ve storage account** oluşturulabilmesini, diğer tüm kaynak türlerinin (ör. veritabanları) engellenmesini istiyor. Hangi çözüm uygundur?
+
+- A) Abonelik kapsamında *Allowed resource types* Azure Policy tanımını Deny etkisiyle atamak
+- B) Aboneliğe CanNotDelete lock uygulamak
+- C) Geliştiricilere Reader rolü vermek
+- D) Tüm kaynaklara `env=dev` tag'i eklemek
+
+<details><summary>Cevap</summary>
+
+**A.** *Allowed resource types* politikası, izin verilen listede olmayan **kaynak türlerinin** oluşturulmasını engeller (Owner dahil herkes için). Lock silmeyi engeller, Reader her şeyi yasaklar, tag yalnızca meta veridir.
+</details>
+
+#### Soru 20: Eşleştirme
+Her Azure Policy kavramını tanımıyla eşleştirin: **Policy definition · Policy assignment · Initiative · Compliance**
+
+1. Kuralın belirli bir kapsama (management group, subscription, resource group) uygulanması
+2. Koşulu ve etkiyi (ör. Deny) içeren kural
+3. Kaynakların kurallara uyup uymadığını gösteren değerlendirme sonucu
+4. Birlikte yönetilen birden çok kural tanımının grubu
+
+<details><summary>Cevap</summary>
+
+**1 → Policy assignment · 2 → Policy definition · 3 → Compliance** (uyumlu / uyumsuz kaynaklar) · **4 → Initiative.**
+</details>
+
+#### Soru 21: Eşleştirme
+Her ihtiyacı Microsoft Purview yeteneğiyle eşleştirin: **Data discovery · Data catalog · Data classification · Data lineage**
+
+1. "Bu rapordaki veri hangi kaynaktan geliyor, hangi işlemlerden geçti?"
+2. "Kuruluşun hangi sistemlerinde veri var?" sorusu için kaynakları otomatik taramak
+3. Kullanıcıların veri varlıklarını aranabilir bir listede bulması
+4. Kredi kartı numarası içeren sütunların otomatik etiketlenmesi
+
+<details><summary>Cevap</summary>
+
+**1 → Data lineage** (soy ağacı) · **2 → Data discovery** (keşif) · **3 → Data catalog** (katalog) · **4 → Data classification** (sınıflandırma).
+</details>
+
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.2'deki etkiler tablosunu ve 3.3'teki lock türlerini tekrar et · < 12 → konuyu baştan çalış, 3.5'teki laboratuvarı uygula.
+**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.2'deki etkiler tablosunu ve 3.3'teki lock türlerini tekrar et · < 15 → konuyu baştan çalış, 3.5'teki laboratuvarı uygula.
 
 ---
 

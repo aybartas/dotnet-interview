@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.3 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 18 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 21 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 15/18**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -237,9 +237,48 @@ Bir ekip, tek bir container'ı **VM veya orkestratör yönetmeden**, saniye baz�
 **B.** Tek container'ı en hızlı ve en basit biçimde çalıştırmak **Azure Container Instances**'tır. AKS çok sayıda container'ın orkestrasyonu içindir; AVD masaüstü sanallaştırmadır; scale set VM grubudur.
 </details>
 
+#### Soru 19: Tek seçim
+Bir şirket, kurumsal web sitesini ve mobil uygulamasının **REST API**'sini aynı platformda, işletim sistemi yönetmeden barındırmak istiyor. Windows veya Linux seçebilmeli ve .NET, Java, Node.js veya Python kullanabilmeli. Hangisi **en uygundur**?
+
+- A) Azure App Service (Web Apps ve API Apps)
+- B) Azure Virtual Desktop
+- C) Azure Container Instances
+- D) Azure Virtual Machines
+
+<details><summary>Cevap</summary>
+
+**A.** App Service, **web uygulamalarını** (Web Apps), **REST API**'leri ve mobil backend'leri OS yönetmeden barındıran PaaS'tır; Windows/Linux ve birçok dili destekler. VM OS yönetimi ister; ACI tek container içindir; AVD masaüstü sanallaştırmadır.
+</details>
+
+#### Soru 20: Senaryo
+Bir görev günde bir kez, yaklaşık 30 saniye çalışıyor. Ekip iki seçeneği karşılaştırıyor: (1) 7/24 açık küçük bir VM, (2) zamanlayıcı tetiklemeli bir Azure Function. Aşağıdakilerden hangisi **doğrudur**?
+
+- A) VM her zaman daha ucuzdur çünkü sabit fiyatlıdır
+- B) Function yalnızca çalıştığı süre için ücretlenir ve sunucu yönetimi gerektirmez; VM boşta beklerken de ücretlenir ve OS yönetimi gerektirir
+- C) Function'ı kullanmak için önce bir VM oluşturmak gerekir
+- D) İkisi de aynı yönetim yükünü getirir
+
+<details><summary>Cevap</summary>
+
+**B.** Seyrek ve kısa çalışan, olay/zamanlayıcı tetiklemeli işte **Functions** boşta ücret üretmez ve altyapı yönetimi yoktur. VM sürekli çalıştığı sürece (deallocate edilmedikçe) ücretlenir ve işletim sistemi bakımı müşteridedir.
+</details>
+
+#### Soru 21: Tek seçim
+Bir ekip, uzun süre **sürekli çalışan**, kendi bağımlılıklarını paketlemiş taşınabilir bir uygulamayı her ortamda (geliştirici makinesi, test, bulut) **aynı şekilde** çalıştırmak istiyor. Container ve Azure Functions arasında hangisi bu ihtiyaca daha uygundur ve neden?
+
+- A) Functions; çünkü uzun süre sürekli çalışan işler için tasarlanmıştır
+- B) Container; çünkü uygulama ve bağımlılıkları tek bir image olarak paketlenir, her ortamda aynı çalışır ve süre sınırı yoktur
+- C) İkisi de aynıdır
+- D) Hiçbiri; yalnızca VM kullanılabilir
+
+<details><summary>Cevap</summary>
+
+**B.** **Container**, uygulamayı bağımlılıklarıyla birlikte taşınabilir bir image'a paketler ve sürekli çalışabilir. **Functions** ise olay tetiklemeli **kısa** kod içindir; tek bir çağrının süresi sınırlıdır.
+</details>
+
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.5'teki karar ağacını tekrar et · < 12 → konuyu baştan çalış ve 3.6'daki laboratuvarı uygula.
+**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.5'teki karar ağacını tekrar et · < 15 → konuyu baştan çalış ve 3.6'daki laboratuvarı uygula.
 
 ---
 

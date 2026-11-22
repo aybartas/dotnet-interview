@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 1.1 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 18 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 22 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Önce cevabını ver, sonra `<details>` içindeki gerekçeyi oku. Hedef: **≥ 15/18**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Önce cevabını ver, sonra `<details>` içindeki gerekçeyi oku. Hedef: **≥ 18/22**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -236,9 +236,59 @@ Bir şirket e-posta altyapısını kendi Exchange sunucularından Microsoft 365'
 **C.** SaaS'ta uygulama, OS ve fiziksel katman Microsoft'tadır (A, B, D); hesaplar/kimlikler ve veri her modelde müşteride kalır.
 </details>
 
+#### Soru 19: Evet / Hayır
+
+- a) IaaS modelinde, VM'lerin üzerinde çalıştığı **sanallaştırma katmanı (hypervisor)** Microsoft'un sorumluluğundadır. — Evet: ☐ · Hayır: ☐
+- b) PaaS modelinde **fiziksel datacenter**'ın güvenliği müşteri ile Microsoft arasında paylaşılır. — Evet: ☐ · Hayır: ☐
+- c) IaaS modelinde VM'in **işletim sistemi yamaları** müşterinin sorumluluğundadır. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Hayır · c) Evet.** Fiziksel datacenter, fiziksel ağ, host'lar ve üzerlerindeki sanallaştırma katmanı bulutun **her** modelinde tamamen Microsoft'tadır (paylaşılmaz). İşletim sistemi IaaS'ta müşteride, PaaS ve SaaS'ta Microsoft'tadır.
+</details>
+
+#### Soru 20: Senaryo
+Bir sağlık kuruluşu, yasa gereği hasta verisinin **Türkiye dışına çıkmamasını** ve ayrıca verinin kuruluşun **fiziksel kontrolünde** kalmasını zorunlu tutuyor. Randevu web sitesinin ise kampanya dönemlerinde hızla ölçeklenmesi gerekiyor. Hangi dağıtım modeli bu gereksinimlerin **ikisini birden** karşılar?
+
+- A) Yalnızca public cloud
+- B) Hybrid cloud — hasta verisi kurum içi private altyapıda, web sitesi public cloud'da
+- C) Multicloud — iki farklı public cloud sağlayıcısı
+- D) Yalnızca SaaS uygulamaları
+
+<details><summary>Cevap</summary>
+
+**B.** "Verinin fiziksel kontrolde kalması" private altyapıyı, "hızla ölçeklenme" public cloud'u gerektirir; ikisinin birlikte kullanımı **hybrid cloud**'dur. Yalnızca "veri belirli bir ülkede kalsın" denseydi, o coğrafyadaki bir Azure region'ını seçmek yeterli olabilirdi; ancak fiziksel kontrol şartı bunu dışarıda bırakır. Multicloud birden çok public cloud'dur ve fiziksel kontrol sağlamaz.
+</details>
+
+#### Soru 21: Tek seçim
+Aşağıdakilerden hangisi **private cloud**'un bir **sınırlamasıdır**?
+
+- A) Fiziksel altyapı üzerinde hiçbir kontrol olmaması
+- B) Kapasitenin sahip olunan donanımla sınırlı olması ve donanım, bakım ve personel maliyetinin kuruluşta kalması
+- C) Kaynakların başka kuruluşlarla aynı fiziksel altyapıda paylaşılması
+- D) Kullandıkça ödeme modelinin zorunlu olması
+
+<details><summary>Cevap</summary>
+
+**B.** Private cloud tam kontrol ve uyumluluk sağlar; bedeli **CapEx**, bakım/personel yükü ve donanımla sınırlı ölçektir. A ve C public cloud'un özellikleridir; D tüketim bazlı modeldir.
+</details>
+
+#### Soru 22: Çoklu seçim (iki doğru cevap)
+Bir şirket kendi datacenter'ından **consumption-based (tüketim bazlı)** bir bulut modeline geçiyor. Aşağıdakilerden **hangi ikisi** bu geçişin doğrudan sonucudur?
+
+- A) Zirve yüke göre önceden donanım satın alma ihtiyacı ortadan kalkar
+- B) Kaynak silindiğinde o kaynak için ödeme durur
+- C) Aylık fatura her zaman sabit ve önceden bellidir
+- D) Datacenter'ın fiziksel güvenliği şirketin sorumluluğuna geçer
+
+<details><summary>Cevap</summary>
+
+**A ve B.** Tüketim bazlı modelde ön yatırım yoktur, kapasite talebi izler ve kullanılmayan kaynak için ödenmez. Fatura kullanıma göre **değişir** (C yanlış; öngörmek için bütçe ve forecast kullanılır). Fiziksel güvenlik bulutta Microsoft'tadır (D yanlış).
+</details>
+
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README'nin 3.2 ve 3.4 bölümlerini tekrar et · < 12 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
+**Puanlama:** 20-22 → hazırsın · 16-19 → README'nin 3.2 ve 3.4 bölümlerini tekrar et · < 16 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
 
 ---
 

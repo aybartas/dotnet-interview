@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 3.1 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 19 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 23 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 16/19**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 19/23**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -163,7 +163,7 @@ Her ihtiyacı araçla eşleştirin: **Pricing Calculator · Cost Management (cos
 </details>
 
 #### Soru 13: Tek seçim
-Bir şirket Azure Marketplace'ten üçüncü taraf bir güvenlik duvarı imajıyla VM dağıtıyor. Fatura hakkında hangisi doğrudur?
+Bir şirket Azure Marketplace'ten ücretli, üçüncü taraf bir yazılım imajıyla VM dağıtıyor. Fatura hakkında hangisi doğrudur?
 
 - A) Yalnızca Microsoft'un VM ücreti ödenir
 - B) VM ücretine ek olarak satıcının yazılım ücreti de ödenebilir
@@ -251,9 +251,61 @@ Bir öğrenci, ücretsiz Azure kredisi kullanıyor ve kredi bittiğinde **kaynak
 **C.** Spending limit, kredili/ücretsiz abonelik türlerinde kredi bitince kaynakları durdurur (sert sınır). **Budget** harcamayı durdurmaz, yalnızca uyarır; Pricing Calculator tahmin aracıdır; tag'ler raporlama içindir.
 </details>
 
+#### Soru 20: Eşleştirme
+Her raporlama ihtiyacını doğru tag ile eşleştirin: **env · costCenter · project · owner**
+
+1. Bir kaynakta sorun çıktığında kime ulaşılacağını bilmek
+2. Üretim ile test ortamlarının maliyetini ayrı görmek
+3. Faturayı departman bütçelerine dağıtmak
+4. E-ticaret girişiminin toplam bulut maliyetini çıkarmak
+
+<details><summary>Cevap</summary>
+
+**1 → owner** (sahiplik) · **2 → env** (ortam bazlı) · **3 → costCenter** (departman bazlı maliyet dağıtımı) · **4 → project** (proje bazlı).
+</details>
+
+#### Soru 21: Çoklu seçim (iki doğru cevap)
+Bir storage account'un **aylık depolama maliyetini** aşağıdakilerden **hangi ikisi** doğrudan etkiler?
+
+- A) Seçilen redundancy seçeneği (ör. LRS yerine GZRS)
+- B) Hesaba erişen kullanıcıların Entra ID'deki görünen adları
+- C) Verinin bulunduğu access tier (Hot, Cool, Cold, Archive)
+- D) Hesaba atanan tag sayısı
+
+<details><summary>Cevap</summary>
+
+**A ve C.** Storage maliyeti; saklanan veri miktarı, **redundancy** (daha çok kopya = daha pahalı), **access tier** ve işlem sayısıyla belirlenir. Kullanıcı adları ve tag sayısı ücreti etkilemez.
+</details>
+
+#### Soru 22: Çoklu seçim (iki doğru cevap)
+Bir şirket Azure faturasını düşürmek istiyor. Aşağıdakilerden **hangi ikisi** geçerli **cost optimization** adımlarıdır?
+
+- A) Az kullanılan VM'leri daha küçük bir boyuta indirmek (right-sizing)
+- B) Tüm storage hesaplarını LRS'ten RA-GZRS'e yükseltmek
+- C) Kullanılmayan diskleri ve public IP'leri silmek
+- D) Tüm kaynakları pay-as-you-go'dan çıkarıp her birine 3 yıllık reservation almak
+
+<details><summary>Cevap</summary>
+
+**A ve C.** Doğru boyutlandırma ve kullanılmayan kaynakların silinmesi doğrudan tasarruftur. RA-GZRS maliyeti **artırır** (B); reservation yalnızca **sürekli çalışacak, sabit** yüklerde mantıklıdır — her kaynağa uygulamak kısa süreli/değişken yüklerde boşa ödeme demektir (D).
+</details>
+
+#### Soru 23: Tek seçim
+Bir şirket, uygulamasının Azure'dan **internete** gönderdiği veri miktarı arttıkça faturanın da arttığını fark ediyor; içeri yüklenen veri ise faturayı etkilemiyor. Bu durum hangi maliyet faktörünü gösterir?
+
+- A) Bölge (region) fiyat farkı
+- B) Ağ bant genişliği — giden (egress) trafik ücretlidir, gelen trafik genellikle ücretsizdir
+- C) Subscription türü
+- D) Tag eksikliği
+
+<details><summary>Cevap</summary>
+
+**B.** Ağ trafiğinde **gelen** (ingress) veri genellikle ücretsiz, **giden** (egress) — internete, bölgeler arası — veri ücretlidir.
+</details>
+
 ---
 
-**Puanlama:** 17-19 → hazırsın · 13-16 → README 3.2–3.3 (araç ayrımı, Cost Management) ve 3.4 (tag kuralları) bölümlerini tekrar et · < 13 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
+**Puanlama:** 21-23 → hazırsın · 17-20 → README 3.2–3.3 (araç ayrımı, Cost Management) ve 3.4 (tag kuralları) bölümlerini tekrar et · < 17 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
 
 ---
 

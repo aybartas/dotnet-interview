@@ -61,7 +61,14 @@ Bunların hepsini bağlayan kavram **tag**'dir: maliyeti departmana, projeye, or
   - Açıklama: Üçüncü taraf ürünlerde Azure ücretine ek olarak **satıcının ücreti**
   - Örnek: Marketplace'ten alınan ücretli üçüncü taraf bir yazılım imajı
 
-**Tasarruf yolları**:
+**Faturayı oluşturan ana kalemler:**
+
+- **Compute maliyeti** — VM, App Service planı gibi işlem kaynakları **çalıştığı süre** (saniye/saat) ve **boyut** (vCPU/RAM) üzerinden ücretlenir; deallocate edilen VM compute ücreti üretmez.
+- **Storage maliyeti** — saklanan veri miktarı (GB/ay), **redundancy** (LRS < ZRS < GRS…), **access tier** (Hot pahalı depolama / ucuz erişim, Archive tersi) ve işlem (okuma/yazma) sayısı belirler.
+- **Ağ bant genişliği maliyeti** — **gelen** veri genellikle ücretsiz; **giden** (internete, bölgeler arası, zone'lar arası) veri ücretlidir.
+- **Kullanım süresi** — tüketim bazlı modelde kaynak ne kadar çalışırsa o kadar ödenir; kullanılmayanı kapatmak/silmek en doğrudan tasarruftur.
+
+**Tasarruf yolları (cost optimization)**:
 
 - **Reservations**
   - Ne?: Belirli kaynak (ör. VM boyutu + bölge) için 1/3 yıllık taahhüt
@@ -132,6 +139,17 @@ Azure (ve bağlanırsa AWS) harcamasını **izleme, analiz etme ve optimize etme
 | Operasyon ve otomasyon | `autoShutdown=true` olan VM'leri gece kapat |
 | Güvenlik | `dataClassification=confidential` |
 | Uyumluluk/yönetişim | `owner` tag'i olmayan kaynağa izin verme (Policy) |
+
+**Yaygın tag stratejileri:**
+
+| Tag (anahtar) | Örnek değer | Cevapladığı soru |
+|---|---|---|
+| `env` | `prod`, `test`, `dev` | **Ortam bazlı**: üretim ile test ayrı raporlansın; gece kapatılacak dev kaynakları bulunsun |
+| `costCenter` / `department` | `1001`, `finans`, `pazarlama` | **Departman bazlı**: fatura hangi bütçeden ödenecek? |
+| `project` / `app` | `eticaret`, `crm` | **Proje bazlı**: bir projenin toplam maliyeti ne? |
+| `owner` | `ayse@contoso.com`, `platform-ekibi` | **Sahiplik**: bu kaynaktan kim sorumlu, sorunda kime ulaşılır? |
+
+> Tag'ler **anahtar-değer çiftleridir** (`env=prod`): anahtar kategoriyi, değer o kategorideki yeri belirtir. Bir kaynağa birden çok tag verilebilir; cost analysis'te **group by tag** ile maliyet bu kırılımlarda raporlanır (**cost allocation**).
 
 **Kurallar:**
 - Tag'ler **varsayılan olarak miras alınmaz**: resource group'un `costCenter=1001` tag'i içerideki kaynağa **geçmez**. Tag'i unutulmuş kaynakların maliyeti raporda **"(no tag)"** satırına düşer.

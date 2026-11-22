@@ -134,6 +134,13 @@ ARM'ın faydaları:
 | **Otomasyon** | Dağıtım betiklerle veya pipeline'larla otomatik yapılır; insan hatası azalır |
 
 - **Deklaratif** ("**ne** istiyorum": son durumu tanımla, nasıl kurulacağını araç çözsün — **ARM template**) ↔ **imperatif** ("**nasıl**": adım adım komutlar — `az` / PowerShell betikleri).
+
+| | İmperatif (CLI/PowerShell betiği) | Deklaratif (ARM template) |
+|---|---|---|
+| Ne yazarsın? | **Adımları**: "önce RG oluştur, sonra storage, sonra web app" | **Son durumu**: "bu RG'de şu storage ve şu web app olsun" |
+| Sıra ve bağımlılık | Betiği yazan belirler | ARM çözer (`dependsOn`) |
+| Tekrar çalıştırma | Kaynak zaten varsa hata verebilir; kontrolü betiği yazan ekler | **İdempotent**: eksik olan oluşur, aynı olan dokunulmaz |
+| Uygun olduğu iş | Hızlı, tek seferlik işler; sorgu ve küçük otomasyon | Ortamın tamamını tekrarlanabilir biçimde kurmak |
 - Azure'un yerel IaC biçimi **ARM template**'tir; aynı şablon tekrar tekrar dağıtılabilir (**repeatable deployment**) ve kaynak sağlama süreci **otomatiktir** (**automated provisioning**).
 
 #### 3.6 ARM template'leri

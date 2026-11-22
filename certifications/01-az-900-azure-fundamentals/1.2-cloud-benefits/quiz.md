@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 1.2 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 20 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe cloud concepts* (%25-30) · 22 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 16/20**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 18/22**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -264,9 +264,33 @@ Bir haber sitesi, büyük bir olay olduğunda **önceden tahmin edilemeyen** tra
 **C.** Öngörülemeyen yükte maliyeti talebe bağlayan ve insan müdahalesi gerektirmeyen yaklaşım elasticity'dir. A boşta kapasite için öder; B tahmine dayalıdır ve öngörülemeyen sıçramayı kaçırır; D tek arıza noktasıdır ve üst sınırı vardır.
 </details>
 
+#### Soru 21: Eşleştirme
+Her senaryoyu doğru faydayla eşleştirin: **Scalability · Predictability · Security · Governance**
+
+1. Kuruluş, tüm kaynakların kurumsal adlandırma ve bölge kurallarına uyduğunu otomatik denetliyor.
+2. Ekip, yük artmadan önce kaynak sayısını elle 4'ten 10'a çıkarabiliyor.
+3. Sağlayıcı, işletim sistemi yamalarını PaaS'ta otomatik uyguluyor ve altyapıyı tehditlere karşı koruyor.
+4. Finans ekibi, gelecek çeyreğin bulut harcamasını kullanım verisine göre güvenle tahmin ediyor.
+
+<details><summary>Cevap</summary>
+
+**1 → Governance** (kurallara uyum, denetim) · **2 → Scalability** (elle olduğu için elasticity değil) · **3 → Security** · **4 → Predictability** (maliyet).
+</details>
+
+#### Soru 22: Evet / Hayır
+
+- a) Vertical scaling'in (scale up) bir üst sınırı vardır: en büyük VM boyutundan daha büyüğüne çıkılamaz. — Evet: ☐ · Hayır: ☐
+- b) Horizontal scaling (scale out), birden çok instance kullandığı için yüksek erişilebilirliğe de katkı sağlar. — Evet: ☐ · Hayır: ☐
+- c) Reliability, hizmetin hiçbir zaman kesintiye uğramayacağının garantisidir. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Evet · c) Hayır.** Scale up tek kaynağın sınırına takılır; scale out instance sayısını artırdığı için tek arıza noktasını da kaldırır. Reliability "hiç kesinti olmaz" değil, arızadan **toparlanıp** çalışmaya devam edebilmektir.
+</details>
+
 ---
 
-**Puanlama:** 18-20 → hazırsın · 14-17 → README 3.1'deki "karıştırılan çiftler"i tekrar et · < 14 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
+**Puanlama:** 20-22 → hazırsın · 16-19 → README 3.1'deki "karıştırılan çiftler"i tekrar et · < 16 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
 
 ---
 

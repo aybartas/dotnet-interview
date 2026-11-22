@@ -73,6 +73,16 @@ Azure platformunun sağlık durumunu **üç kapsamda** gösterir ⭐:
 
 > Kural: **genel Azure** → Azure Status · **benim aboneliğim/bölgem** → Service Health · **tek bir kaynağım** → Resource Health.
 
+**Service Health olay türleri** ⭐:
+
+| Olay türü | Ne anlatır? | Örnek |
+|---|---|---|
+| **Service issues** (hizmet sorunları) | Şu anda kullandığın servisleri/bölgeleri etkileyen **plansız** sorun ya da kesinti | "West Europe'ta Azure SQL Database'e bağlantı hataları" |
+| **Planned maintenance** (planlı bakım) | Microsoft'un **önceden duyurduğu** ve kaynaklarının erişilebilirliğini etkileyebilecek bakım | "Gelecek salı VM host'larında güncelleme; VM'ler yeniden başlatılabilir" |
+| **Health advisories** (sağlık bildirimleri) | Kesinti değil, **aksiyon gerektiren değişiklik**: bir özelliğin emekliye ayrılması, kullandığın bir sürümün desteğinin bitmesi, kota aşımı riski | "Kullandığın API sürümü 6 ay sonra destekten çıkacak; yükselt" |
+
+Service Health bu olayları **bölgeye ve servise göre** filtreler: yalnızca senin kullandığın region'lardaki ve servislerdeki olaylar görünür. Geçmiş olaylar da (kök neden açıklamalarıyla) burada saklanır.
+
 Service Health uyarıları bir **action group**'a (e-posta, SMS, webhook…) bağlanır (pratik → 3.7).
 
 **Azure Status ↔ Service Health:** Azure Status **herkese açık** genel durum sayfasıdır (giriş gerekmez, tüm Azure); Service Health ise **giriş gerektirir** ve yalnızca **senin** subscription/servis/region'larını ilgilendiren olayları kişiselleştirilmiş gösterir.

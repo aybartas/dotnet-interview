@@ -3,7 +3,7 @@
 > **Son Güncelleme:** Kasım 2026 · **Resmî Sınav Hedefleri:** [Skills measured as of July 20, 2026](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-900)
 > **Sınav Formatı:** 40-60 soru · 45-60 dakika · Geçme puanı: **700 / 1000** · Soru tipleri: Tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo
 >
-> Bu doküman, AZ-900 müfredatının **14 konusunun** teorik anlatımlarını, karşılaştırma matrislerini, sınav ipuçlarını ve **300'ü aşkın** sınav formatında özgün quiz ve deneme sınavı sorusunu tek bir kaynakta birleştirir. **İçerik yalnızca resmî AZ-900 müfredatındaki konularla sınırlıdır**; müfredat dışı servisler (ör. yük dengeleme, AI/ML, DevOps, destek planları/SLA hesapları) kasıtlı olarak yer almaz.
+> Bu doküman, AZ-900 müfredatının **14 konusunun** teorik anlatımlarını, karşılaştırma matrislerini, sınav ipuçlarını ve **350'yi aşkın** sınav formatında özgün quiz ve deneme sınavı sorusunu tek bir kaynakta birleştirir. **İçerik yalnızca resmî AZ-900 müfredatındaki konularla sınırlıdır**; müfredat dışı servisler (ör. yük dengeleme, AI/ML, DevOps, destek planları/SLA hesapları) kasıtlı olarak yer almaz.
 
 > 📱 **Nasıl okunur?** Her konu kendi klasöründe: `README.md` konu anlatımı, `quiz.md` gerekçeli sorular. Her sayfanın başında ve sonunda *İçindekiler / Quiz / Sonraki konu* linkleri var; telefonda konudan konuya kaydırmadan geçebilirsin. Sınavdan önceki gün: [⚡ Hızlı Tekrar Kartı](5-practice-exam/cheat-sheet.md).
 

@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 3.3 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 17 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 21 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 14/17**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -229,9 +229,59 @@ Aşağıdakilerden hangisi **Azure Resource Manager (ARM)** ile **ARM template**
 **B.** **ARM** servistir (her yönetim isteği ondan geçer, RBAC/Policy/lock'ı uygular); **ARM template** ise dağıtılacak kaynakları deklaratif olarak tarif eden JSON dosyasıdır. Template, ARM'ın deklaratif dağıtım yeteneğine verilen girdidir.
 </details>
 
+#### Soru 18: Tek seçim
+Bir yönetici şu iki komutu karşılaştırıyor: `az group create --name rg-demo --location westeurope` ve `New-AzResourceGroup -Name rg-demo -Location westeurope`. Hangi ifade doğrudur?
+
+- A) İlki Azure PowerShell cmdlet'i, ikincisi Azure CLI komutudur
+- B) İlki Azure CLI (`az`) komutu, ikincisi Azure PowerShell **cmdlet**'idir; ikisi de aynı işi yapar ve Azure Resource Manager'dan geçer
+- C) İkisi yalnızca Windows'ta çalışır
+- D) İkincisi yalnızca portaldan çalıştırılabilir
+
+<details><summary>Cevap</summary>
+
+**B.** Azure CLI komutları `az` ile başlar; Azure PowerShell **cmdlet**'leri `Verb-AzNoun` biçimindedir. İkisi de Windows, Linux, macOS ve Cloud Shell'de çalışır ve aynı ARM katmanını kullanır.
+</details>
+
+#### Soru 19: Eşleştirme
+Her yaklaşımı tanımıyla eşleştirin: **İmperatif · Deklaratif**
+
+1. "Önce resource group'u oluştur, sonra storage account'u, sonra web app'i" diye adım adım komut yazmak
+2. "Bu resource group'ta şu storage account ve şu web app bulunsun" diye son durumu tanımlamak
+3. Aynı tanım ikinci kez uygulandığında, değişiklik yoksa hiçbir şeyin değişmemesi (idempotent)
+4. `az` komutlarından oluşan bir Bash betiği
+
+<details><summary>Cevap</summary>
+
+**1 → İmperatif · 2 → Deklaratif · 3 → Deklaratif** (ARM template) · **4 → İmperatif.**
+</details>
+
+#### Soru 20: Evet / Hayır
+
+- a) Azure Cloud Shell hem Bash hem PowerShell deneyimi sunar. — Evet: ☐ · Hayır: ☐
+- b) Azure Arc, Kubernetes kümelerini ve başka bulut sağlayıcılarındaki sunucuları Azure'dan yönetmeyi sağlar. — Evet: ☐ · Hayır: ☐
+- c) Bir ARM template yalnızca resource group kapsamına dağıtılabilir; subscription veya management group kapsamına dağıtılamaz. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Evet · c) Hayır.** Şablonlar resource group, **subscription**, **management group** veya tenant kapsamına dağıtılabilir (deployment scopes); resource group en yaygın olanıdır.
+</details>
+
+#### Soru 21: Tek seçim
+Azure portal'ın **en uygun** olduğu iş aşağıdakilerden hangisidir?
+
+- A) Aynı 50 ortamı her seferinde birebir aynı ve sürüm kontrollü şekilde kurmak
+- B) Kaynakları web tabanlı grafik arayüzle keşfetmek, yapılandırmak, dağıtmak ve izlemek
+- C) Kurum içi sunuculara Azure Policy uygulamak
+- D) Kaynak bağımlılıklarını şablonla tanımlamak
+
+<details><summary>Cevap</summary>
+
+**B.** Portal web tabanlı, grafik yönetim konsoludur: kaynak oluşturma, yapılandırma, dağıtım ve izleme. Tekrarlanabilir kurulum için IaC/ARM template (A, D), kurum içi sunucular için Azure Arc (C) kullanılır.
+</details>
+
 ---
 
-**Puanlama:** 16-17 → hazırsın · 12-15 → README 3.4–3.6'yı (ARM, IaC, şablonlar) tekrar et · < 12 → konuyu baştan çalış, 3.7'deki ARM template laboratuvarını uygula.
+**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.4–3.6'yı (ARM, IaC, şablonlar) tekrar et · < 15 → konuyu baştan çalış, 3.7'deki ARM template laboratuvarını uygula.
 
 ---
 

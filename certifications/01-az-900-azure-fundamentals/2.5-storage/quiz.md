@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.5 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 20 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 24 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 16/20**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 20/24**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -262,9 +262,58 @@ Bir ekip; Blob, Files, Queue ve Table servislerini **tek bir hesapta** kullanmak
 **a) Evet · b) Hayır · c) Evet.** Ad, endpoint URL'sinin parçasıdır (`<ad>.blob.core.windows.net`); Premium türler yalnızca LRS/ZRS sunar; tier blob düzeyinde ayarlanabilir (`az storage blob set-tier`, `SetAccessTier`).
 </details>
 
+#### Soru 21: Eşleştirme
+Her kullanım senaryosunu doğru blob türüyle eşleştirin: **Block blob · Append blob · Page blob**
+
+1. Bir uygulamanın sürekli sonuna yeni satır eklediği log dosyası
+2. Kullanıcıların yüklediği fotoğraflar ve PDF belgeleri
+3. Rastgele okuma/yazma yapılan sanal makine diski
+
+<details><summary>Cevap</summary>
+
+**1 → Append blob** (yalnızca sona ekleme) · **2 → Block blob** (dosyalar; en yaygın tür) · **3 → Page blob** (512 baytlık sayfalarda rastgele erişim; VM disklerinin altyapısı).
+</details>
+
+#### Soru 22: Tek seçim
+Bir uygulamanın bileşenleri arasında **asenkron iş listesi** oluşturmak gerekiyor: web katmanı sipariş mesajlarını bırakacak, arka plan işi bunları sırayla alıp işleyecek. Ayrıca sipariş meta verileri **şemasız anahtar-değer** biçiminde saklanacak. Sırasıyla hangi servisler kullanılmalıdır?
+
+- A) Azure Files, ardından Blob Storage
+- B) Azure Queue Storage, ardından Azure Table Storage
+- C) Managed disk, ardından Azure Files
+- D) Table Storage, ardından Queue Storage
+
+<details><summary>Cevap</summary>
+
+**B.** Bileşenler arası mesaj kuyruğu **Queue Storage**; şemasız NoSQL anahtar-değer verisi **Table Storage**'dır. Files paylaşılan klasör, Blob nesne depolama, managed disk VM diskidir.
+</details>
+
+#### Soru 23: Tek seçim
+Bir ekip, çok küçük nesnelere **çok düşük gecikmeyle** ve yüksek işlem hızıyla erişmesi gereken bir uygulama için storage account seçiyor; coğrafi (GRS) redundancy gerekmiyor. Hangisi **en uygundur**?
+
+- A) Standard general-purpose v2, Archive tier
+- B) Premium block blob storage account (SSD tabanlı)
+- C) Standard general-purpose v2, RA-GZRS
+- D) Azure Data Box
+
+<details><summary>Cevap</summary>
+
+**B.** **Premium** hesaplar SSD tabanlıdır, düşük gecikme ve yüksek işlem hızı sağlar; yalnızca LRS/ZRS sunar (burada sorun değil). Standard GPv2 çoğu senaryo için varsayılandır ama premium performans sağlamaz; Archive çevrimdışıdır; Data Box taşıma cihazıdır.
+</details>
+
+#### Soru 24: Evet / Hayır
+
+- a) Archive tier'daki bir blob, rehydrate edilmeden doğrudan okunamaz. — Evet: ☐ · Hayır: ☐
+- b) Hot tier'da depolama ücreti en yüksek, erişim (okuma) ücreti ise en düşüktür. — Evet: ☐ · Hayır: ☐
+- c) Seyrek okunan veriyi Hot yerine Cool tier'da tutmak her zaman toplam maliyeti artırır. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Evet · c) Hayır.** Tier seçimi bir dengedir: depolama ucuzladıkça erişim pahalılaşır. **Seyrek** okunan veride Cool/Cold daha ucuz depolama sayesinde toplam maliyeti genellikle **düşürür**; sık okunan veride ise Hot daha ucuzdur.
+</details>
+
 ---
 
-**Puanlama:** 18-20 → hazırsın · 14-17 → README 3.2 (redundancy) ve 3.3 (tier) tablolarını tekrar et · < 14 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
+**Puanlama:** 22-24 → hazırsın · 17-21 → README 3.2 (redundancy) ve 3.3 (tier) tablolarını tekrar et · < 17 → konuyu baştan çalış, sonra bu quiz'i yeniden çöz.
 
 ---
 

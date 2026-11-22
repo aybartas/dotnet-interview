@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.2 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 18 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 21 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 15/18**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -242,9 +242,46 @@ Bir e-ticaret sitesinin web katmanı için şu gereksinimler var: (1) trafik art
 **B.** Scale set + autoscale otomatik ölçeği, zone'lara yayılma datacenter arızasına dayanıklılığı sağlar. A otomatik ölçek ve datacenter koruması sunmaz; C yalnızca depolama kapasitesini artırır; D tek arıza noktasıdır.
 </details>
 
+#### Soru 19: Eşleştirme
+Her VM bileşenini, sağladığı yetenekle eşleştirin: **VM boyutu (size) · Image · Managed disk · NIC**
+
+1. VM'in kurulacağı işletim sistemi ve hazır yazılım
+2. vCPU, bellek ve ağ bant genişliği miktarı
+3. İşletim sistemi ve verinin kalıcı olarak saklandığı blok depolama
+4. VM'i subnet'e bağlayan ve özel IP'yi taşıyan sanal ağ kartı
+
+<details><summary>Cevap</summary>
+
+**1 → Image · 2 → VM boyutu · 3 → Managed disk · 4 → NIC.** Boyut **compute**, disk **storage**, NIC/VNet **networking** bileşenidir; image ise VM'in başlangıç işletim sistemini belirler.
+</details>
+
+#### Soru 20: Evet / Hayır
+
+- a) Bir availability set'teki VM'ler, planlı bakım sırasında **update domain**'lere göre sırayla yeniden başlatılır. — Evet: ☐ · Hayır: ☐
+- b) Farklı **fault domain**'lerdeki VM'ler aynı güç kaynağını ve ağ anahtarını paylaşır. — Evet: ☐ · Hayır: ☐
+- c) Bir VM'in boyutu, ihtiyaç değiştiğinde sonradan büyütülebilir veya küçültülebilir. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Hayır · c) Evet.** Fault domain, ortak güç ve ağ donanımını paylaşan raf grubudur; VM'leri **farklı** fault domain'lere koymak, bir raf arızasının hepsini etkilemesini önler. Boyut değişikliği genellikle yeniden başlatma gerektirir.
+</details>
+
+#### Soru 21: Tek seçim
+Bir şirket, tüm VM'lerinin kurumun onayladığı güvenlik ayarları ve yazılımlarla **aynı başlangıç durumundan** kurulmasını istiyor. Ne kullanmalıdır?
+
+- A) Her VM için Azure Marketplace'ten farklı bir image seçmek
+- B) Onaylı yapılandırmayı içeren **özel (custom) bir VM image**'ı oluşturup tüm VM'leri bundan dağıtmak
+- C) VM'leri farklı region'lara dağıtmak
+- D) VM'lere public IP atamak
+
+<details><summary>Cevap</summary>
+
+**B.** Image, VM'in işletim sistemini ve kurulu yazılımını belirler; kurumsal bir **custom image**, her VM'in aynı onaylı durumla başlamasını sağlar. Marketplace image'ları hazır işletim sistemleri/ürünler sunar ama kurumun özel ayarlarını içermez.
+</details>
+
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.2 (VM kaynakları ve ücretlendirme) ile 3.4'teki karşılaştırma tablosunu tekrar et · < 12 → konuyu baştan çalış ve 3.5 laboratuvarını yap.
+**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.2 (VM kaynakları ve ücretlendirme) ile 3.4'teki karşılaştırma tablosunu tekrar et · < 15 → konuyu baştan çalış ve 3.5 laboratuvarını yap.
 
 ---
 

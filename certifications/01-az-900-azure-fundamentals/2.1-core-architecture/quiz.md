@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.1 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 21 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 24 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 20/24**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -277,9 +277,46 @@ Bir geliştirici bir VM'i Azure portal'dan, bir diğerini Azure CLI'dan, üçün
 **A.** Portal, CLI, PowerShell, REST API ve SDK'lardan gelen **tüm** kaynak yönetimi istekleri **Azure Resource Manager**'dan geçer; bu yüzden hangi araç kullanılırsa kullanılsın sonuç ve izinler aynıdır. Advisor öneri, Monitor izleme, Purview veri yönetişimi servisidir.
 </details>
 
+#### Soru 22: Eşleştirme
+Her işlemi, uygulanacağı **en uygun kapsamla** eşleştirin: **Management group · Subscription · Resource group · Resource**
+
+1. Şirketin tüm abonelikleri için "yalnızca AB bölgeleri" politikası
+2. Bir uygulamanın test ortamındaki tüm kaynakların tek komutla silinmesi
+3. Yalnızca tek bir üretim veritabanı sunucusuna silme kilidi
+4. Bir departmanın kaynaklarına ayrı fatura ve ayrı bütçe
+
+<details><summary>Cevap</summary>
+
+**1 → Management group** (tüm alt aboneliklere miras) · **2 → Resource group** (birlikte yaşayan kaynakların kabı) · **3 → Resource** (yalnızca o kaynak) · **4 → Subscription** (faturalama sınırı).
+</details>
+
+#### Soru 23: Evet / Hayır
+
+- a) Availability zone'lar, bir region **içindeki** fiziksel olarak ayrı datacenter gruplarıdır. — Evet: ☐ · Hayır: ☐
+- b) Bir region pair'deki iki bölge genellikle aynı coğrafyada (ör. Avrupa) bulunur. — Evet: ☐ · Hayır: ☐
+- c) Bir region, birden çok coğrafyaya yayılan tek bir datacenter'dır. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Evet · c) Hayır.** Region, bir coğrafi alanda düşük gecikmeli ağla bağlı **bir veya daha çok** datacenter'dır; zone'lar region'ın içindedir; eşleşik bölgeler veri ikametgâhı için aynı coğrafyada tutulur.
+</details>
+
+#### Soru 24: Tek seçim
+Çin'de hizmet verecek bir şirket, Çin regülasyonlarına uygun ve global Azure'dan fiziksel olarak ayrı işletilen bir Azure ortamına ihtiyaç duyuyor. Hangisi bu ihtiyacı karşılar?
+
+- A) Bir availability zone
+- B) Bir region pair
+- C) Azure'un sovereign region'ı olan, 21Vianet tarafından işletilen Azure China
+- D) Ayrı bir management group
+
+<details><summary>Cevap</summary>
+
+**C.** Sovereign region'lar ana Azure'dan yasal ve işletimsel olarak ayrılmıştır: **Azure Government** (ABD kamu) ve **Azure China** (21Vianet işletir). Zone, pair ve management group bu tür yasal ayrım sağlamaz.
+</details>
+
 ---
 
-**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.3 (zone vs pair) ve 3.5 (RG kuralları) tablolarını tekrar et · < 15 → konuyu baştan çalış ve 3.8 laboratuvarını yap.
+**Puanlama:** 22-24 → hazırsın · 17-21 → README 3.3 (zone vs pair) ve 3.5 (RG kuralları) tablolarını tekrar et · < 17 → konuyu baştan çalış ve 3.8 laboratuvarını yap.
 
 ---
 

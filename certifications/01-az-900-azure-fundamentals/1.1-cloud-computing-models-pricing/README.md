@@ -163,6 +163,31 @@ Tabloyu ezberlemek yerine **üç kural** yeterli:
 - Datacenter'ını buluta bağlamanın ağ tarafı (VPN Gateway, ExpressRoute) → C1.7.
 - Hybrid ≠ multicloud: hybrid **kendi altyapın + public cloud**; multicloud **birden çok public cloud**. Bir kuruluş ikisi birden olabilir.
 
+**Üç modelin karşılaştırması:**
+
+| | Public cloud | Private cloud | Hybrid cloud |
+|---|---|---|---|
+| Altyapının sahibi | Sağlayıcı | Kuruluşun kendisi | İkisi birlikte |
+| Ön yatırım (CapEx) | Yok | Yüksek | Private kısım için var |
+| Ölçek | Neredeyse sınırsız, dakikalar içinde | Sahip olunan donanımla sınırlı | Esnek kısım bulutta |
+| Kontrol | Fiziksel katmanda yok | **Tam** | Hassas kısım üzerinde tam |
+| Bakım ve donanım sorumluluğu | Sağlayıcı | Kuruluş | Paylaşılmış |
+| Ne zaman? | Hızlı başlangıç, değişken yük | Sıkı regülasyon, özel donanım | Regülasyon + ölçek ihtiyacı birlikte, kademeli taşıma |
+
+**On-premises ve bulutun birlikte kullanımı** — hybrid'in tipik biçimleri:
+
+- **Hassas veri yerinde, uygulama bulutta:** müşteri kayıtları kurum içi veritabanında; web ön yüzü ve API'ler bulutta, güvenli bağlantıyla veriye erişir.
+- **Cloud bursting:** normal yük kurum içi kapasiteyle karşılanır; zirvede taşan yük buluta yönlendirilir.
+- **Kademeli taşıma:** iş yükleri tek seferde değil, öncelik sırasına göre buluta taşınır; geçiş döneminde iki ortam birlikte çalışır.
+- **Felaket kurtarma hedefi:** kurum içi sistemlerin ikinci kopyası bulutta tutulur.
+
+**Veri egemenliği (data sovereignty) ve güvenlik gereksinimleri.** Bazı yasalar ve sektör kuralları verinin **belirli bir ülke veya coğrafyada** kalmasını, belirli kişilerce işletilmesini veya belirli denetimlerden geçmesini ister. Model seçiminde bu gereksinim belirleyicidir:
+
+- Veri **belirli bir coğrafyada** kalmalıysa → public cloud'da o coğrafyadaki **region**'ı seçmek çoğu zaman yeterlidir (→ C1.4).
+- Veri **kuruluşun fiziksel kontrolünden çıkmamalıysa** → o veri için **private cloud**, geri kalan iş yükleri için public cloud → **hybrid**.
+- Kamu kurumları gibi **ayrılmış bir bulut** gerektiren durumlarda → **sovereign region**'lar (ör. Azure Government) (→ C1.4).
+- Hangi model seçilirse seçilsin **verinin sınıflandırılması, erişim kontrolü ve şifreleme** müşterinin sorumluluğunda kalır (shared responsibility, 3.2).
+
 #### 3.4 Consumption-based model: CapEx vs OpEx ⭐
 
 **Consumption-based (tüketim bazlı) model:** yalnızca kullandığın kaynak için, kullandığın süre/miktar kadar ödersin.

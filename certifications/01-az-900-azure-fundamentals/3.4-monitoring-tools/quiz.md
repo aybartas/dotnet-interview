@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 3.4 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 18 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure management and governance* (%30-35) · 21 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 15/18**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, eşleştirme, senaryo); gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -240,9 +240,45 @@ Azure Monitor'un topladığı **iki temel veri türü** hangileridir?
 **A ve C.** Metrikler sayısal ve neredeyse gerçek zamanlı değerlerdir; log'lar zaman damgalı olay kayıtlarıdır. Faturalar Cost Management'ın, politikalar Azure Policy'nin konusudur.
 </details>
 
+#### Soru 19: Eşleştirme
+Her bildirimi Service Health olay türüyle eşleştirin: **Service issue · Planned maintenance · Health advisory**
+
+1. "Kullandığınız bir API sürümü altı ay sonra destekten kaldırılacak; yükseltme yapın."
+2. "Şu anda West Europe'ta Azure Storage'a erişimde hatalar yaşanıyor."
+3. "Gelecek salı VM host'larında güncelleme yapılacak; VM'leriniz yeniden başlatılabilir."
+
+<details><summary>Cevap</summary>
+
+**1 → Health advisory** (kesinti değil, aksiyon gerektiren değişiklik) · **2 → Service issue** (şu anki plansız sorun) · **3 → Planned maintenance** (önceden duyurulan bakım).
+</details>
+
+#### Soru 20: Evet / Hayır
+
+- a) Azure Service Health, yalnızca kullandığın servisleri ve region'ları etkileyen olayları gösterir. — Evet: ☐ · Hayır: ☐
+- b) Azure Advisor'ın Operational Excellence kategorisi, süreç ve dağıtım iyi uygulamalarına yönelik öneriler sunar. — Evet: ☐ · Hayır: ☐
+- c) Bir metric alert kuralı, bildirim göndermek için bir action group'a ihtiyaç duymaz. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Evet · c) Hayır.** Service Health kişiselleştirilmiştir (genel durum Azure Status'tadır). Uyarı kuralı koşulu izler; e-posta/SMS gibi bildirimleri **action group** gönderir.
+</details>
+
+#### Soru 21: Senaryo
+Bir sipariş isteği sırasıyla web uygulaması → ödeme servisi → stok servisi → veritabanı üzerinden geçiyor ve bazı istekler yavaş. Ekip, **tek bir isteğin** bu bileşenlerin her birinde ne kadar zaman harcadığını **tek bir görünümde** görmek istiyor. Application Insights'ın hangi yeteneği kullanılır?
+
+- A) Availability test
+- B) Distributed tracing (dağıtık izleme)
+- C) Azure Status
+- D) Metric alert
+
+<details><summary>Cevap</summary>
+
+**B.** **Distributed tracing**, bir isteğin birden çok servis arasındaki yolculuğunu tek bir izde birleştirir ve yavaşlığın hangi bileşende olduğunu gösterir. Availability test dışarıdan erişilebilirliği ölçer; metric alert eşik uyarısıdır.
+</details>
+
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.2'deki üç Service Health bileşenini ve 5. bölümdeki araç seçimi tablosunu tekrar et · < 12 → konuyu baştan çalış ve 3.6 laboratuvarını yap.
+**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.2'deki üç Service Health bileşenini ve 5. bölümdeki araç seçimi tablosunu tekrar et · < 15 → konuyu baştan çalış ve 3.6 laboratuvarını yap.
 
 ---
 

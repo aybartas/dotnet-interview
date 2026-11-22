@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.4 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 18 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 21 soru
 >
-> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 15/18**.
+> Sorular **özgündür** ve sınav formatındadır; gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 17/21**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -240,9 +240,46 @@ Bir şirket üç Azure VNet'ini (hub, spoke-1, spoke-2) birbirine bağlıyor: hu
 **B.** Peering transitive (geçişli) değildir. Çözüm: spoke-1↔spoke-2 arasında doğrudan ayrı bir peering tanımlamaktır.
 </details>
 
+#### Soru 19: Evet / Hayır
+
+- a) Private endpoint, bir PaaS servisine VNet içindeki özel bir IP adresiyle erişim sağlar. — Evet: ☐ · Hayır: ☐
+- b) Public endpoint kullanan bir servise internetten erişilebilir; erişim kimlik doğrulama ve erişim kurallarıyla kısıtlanabilir. — Evet: ☐ · Hayır: ☐
+- c) Bir servise private endpoint eklendiğinde, servisin public erişimi her zaman otomatik olarak kapanır. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Evet · c) Hayır.** Private endpoint özel erişim yolu ekler; public erişim ayrıca ve bilinçli olarak **kapatılmalıdır**. Amaç izolasyonsa private endpoint + public erişimin kapatılması birlikte uygulanır.
+</details>
+
+#### Soru 20: Tek seçim
+Bir şirket VNet'ini web, uygulama ve veri katmanları için **ayrı subnet'lere** bölüyor; veri subnet'ine yalnızca uygulama subnet'inden erişilebilecek. Bu yaklaşımın **temel güvenlik faydası** nedir?
+
+- A) Tüm kaynakların internetten erişilebilir olması
+- B) Ağ segmentasyonu: bir katman ele geçirilse bile saldırganın diğer katmanlara yayılması sınırlanır
+- C) VM'lerin daha hızlı başlaması
+- D) Storage maliyetinin düşmesi
+
+<details><summary>Cevap</summary>
+
+**B.** Subnet'lerle **ağ segmentasyonu**, her segmente ayrı kurallar uygulanmasını ve yatay hareketin sınırlanmasını sağlar; defense in depth'in **ağ** katmanıdır (→ C1.10).
+</details>
+
+#### Soru 21: Senaryo
+Bir şirket, kurum içi datacenter'ı ile Azure arasında büyük hacimli ERP verisini **öngörülebilir gecikmeyle** taşımak istiyor ve trafiğin **public internete çıkmaması** şart. Ayrıca evden çalışan birkaç yöneticinin dizüstü bilgisayarlarından Azure VNet'e güvenli bağlanması gerekiyor. Hangi kombinasyon **en uygundur**?
+
+- A) Datacenter için point-to-site VPN, yöneticiler için ExpressRoute
+- B) Datacenter için ExpressRoute, yöneticiler için point-to-site VPN
+- C) Her ikisi için VNet peering
+- D) Her ikisi için Azure DNS
+
+<details><summary>Cevap</summary>
+
+**B.** İnternete çıkmayan, öngörülebilir gecikmeli kurumsal bağlantı **ExpressRoute**'tur; tek cihazların güvenli bağlantısı **point-to-site VPN**'dir. Peering yalnızca Azure VNet'leri arasındadır; Azure DNS isim çözümleme servisidir.
+</details>
+
 ---
 
-**Puanlama:** 16-18 → hazırsın · 12-15 → README 3.5'teki "VPN Gateway vs ExpressRoute" tablosunu ve peering kurallarını tekrar et · < 12 → konuyu baştan çalış ve 3.7'deki laboratuvarı uygula.
+**Puanlama:** 19-21 → hazırsın · 15-18 → README 3.5'teki "VPN Gateway vs ExpressRoute" tablosunu ve peering kurallarını tekrar et · < 15 → konuyu baştan çalış ve 3.7'deki laboratuvarı uygula.
 
 ---
 

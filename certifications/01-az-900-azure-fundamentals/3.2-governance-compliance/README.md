@@ -88,6 +88,19 @@ Bu konu resmî hedefteki üç aracı — Policy, lock, Purview — derinlemesine
 4. **Mevcut** uyumsuz kaynaklar silinmez; **compliance** panosunda "Non-compliant" olarak listelenir.
 5. Gerekirse **remediation task** ile düzeltilir (Modify/DeployIfNotExists etkili politikalar için).
 
+**Tipik politika senaryoları (organizational standards):** Azure, yüzlerce **built-in** tanım sunar; en sık kullanılanlar kuruluşun standartlarını kaynak düzeyinde zorlar:
+
+| Kurumsal standart | Built-in politika örneği | Tipik etki |
+|---|---|---|
+| Veri yalnızca belirli bölgelerde kalsın | *Allowed locations* | Deny |
+| Yalnızca onaylı kaynak türleri kullanılsın (ör. "bu abonelikte yalnızca VM, VNet ve storage") | *Allowed resource types* | Deny |
+| Gereksiz pahalı VM boyutları açılmasın | *Allowed virtual machine size SKUs* | Deny |
+| Kullanılmaması gereken kaynak türleri engellensin | *Not allowed resource types* | Deny |
+| Her kaynakta maliyet tag'i olsun | *Require a tag on resources* | Deny |
+| Eksik tag gruptan kopyalansın | *Inherit a tag from the resource group if missing* | Modify |
+
+> *Allowed locations* kaynağın **nerede**, *Allowed resource types* kaynağın **ne tür** olabileceğini sınırlar; ikisi de **kim oluşturursa oluştursun** uygulanır (Owner dahil).
+
 **Policy ↔ RBAC:** RBAC **kullanıcının** ne yapabileceğini belirler ("Ali bu RG'de kaynak oluşturabilir"); Policy **kaynağın** nasıl olabileceğini belirler ("bu RG'deki kaynaklar yalnızca West Europe'ta olabilir"). İkisi birlikte çalışır: Owner rolündeki biri bile Deny politikasına aykırı kaynağı oluşturamaz.
 
 #### 3.3 Resource lock'lar ⭐

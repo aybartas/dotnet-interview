@@ -2,9 +2,9 @@
 
 ### 📝 Bölüm 2.7 Quiz Soruları
 
-> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 15 soru
+> Teori: [README.md](README.md) · Sınav alanı: *Describe Azure architecture and services* (%35-40) · 20 soru
 >
-> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, eşleştirme, senaryo). Gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 12/15**.
+> Sorular **özgündür** ve sınav formatındadır (tek seçim, çoklu seçim, evet/hayır, sıralama, eşleştirme, senaryo). Gerçek sınav soruları gizlilik sözleşmesi (NDA) kapsamındadır ve burada kullanılmaz. Hedef: **≥ 16/20**.
 
 > 💡 Soruları çözdükten sonra alttaki **Cevap** butonuna tıklayarak gerekçeli çözümü inceleyebilirsiniz. Hedef: ≥ %80 başarı.
 
@@ -197,9 +197,72 @@ Bir uygulamada bir güvenlik zafiyeti bulundu. Ancak saldırganın simülasyonu,
 **B.** Uygulama katmanı aşılsa bile ağ (private endpoint), kimlik (en az yetki) ve veri (şifreleme) katmanları hasarı sınırladı. Katmanlı savunmanın amacı budur (bu kontrollerin bir kısmı Zero Trust'ın "least privilege" ve "assume breach" ilkeleriyle de örtüşür).
 </details>
 
+#### Soru 16: Eşleştirme
+Her Defender for Cloud yeteneğini, yaptığı işle eşleştirin: **Cloud security posture management (CSPM) · Cloud workload protection (CWP)**
+
+1. Storage account'un public erişime açık olduğunu tespit edip kapatılmasını önermek
+2. Bir VM'e yönelik olağandışı sayıda başarısız giriş denemesi için güvenlik uyarısı üretmek
+3. Önerilerin uygulanma oranına göre secure score hesaplamak
+4. Çalışan bir sunucuda şüpheli bir işlemi tespit etmek
+
+<details><summary>Cevap</summary>
+
+**1 → CSPM · 2 → CWP · 3 → CSPM · 4 → CWP.** CSPM **yapılandırmayı** değerlendirir ("kapı kilitli mi?"); CWP çalışan iş yüklerine yönelik **tehditleri** tespit eder ("biri kapıyı zorluyor mu?").
+</details>
+
+#### Soru 17: Evet / Hayır
+
+- a) Defender for Cloud'un temel güvenlik değerlendirmesi, önerileri ve secure score'u ücretsiz olarak sunulur. — Evet: ☐ · Hayır: ☐
+- b) Defense in depth modelinde "compute" katmanı, sanal makinelerin yamalarını güncel tutmayı ve VM erişimini kısıtlamayı kapsar. — Evet: ☐ · Hayır: ☐
+- c) Bulutta defense in depth'in fiziksel güvenlik katmanı müşterinin sorumluluğundadır. — Evet: ☐ · Hayır: ☐
+
+<details><summary>Cevap</summary>
+
+**a) Evet · b) Evet · c) Hayır.** Temel CSPM ücretsizdir; gelişmiş iş yükü koruması ücretlidir. Fiziksel güvenlik (datacenter binası, donanım) bulutta **Microsoft'tadır** (→ C1.1).
+</details>
+
+#### Soru 18: Senaryo
+Bir güvenlik ekibi, "bir sunucu ele geçirilmiş olabilir" varsayımıyla tasarım yapıyor: ağı segmentlere ayırıyor, tüm trafiği şifreliyor ve anormal davranışı tespit etmek için sürekli izleme kuruyor. Bu yaklaşım Zero Trust'ın hangi ilkesidir?
+
+- A) Verify explicitly
+- B) Use least privilege access
+- C) Assume breach
+- D) Defense in depth'in fiziksel katmanı
+
+<details><summary>Cevap</summary>
+
+**C.** **Assume breach**: ihlal olmuş gibi tasarla — etki alanını segmentasyonla küçült, uçtan uca şifrele, analitikle tespit et. Verify explicitly her isteği sinyallerle doğrulamak, least privilege yalnızca gereken kadar yetki vermektir.
+</details>
+
+#### Soru 19: Tek seçim
+Defense in depth modelinde **çevre (perimeter)** katmanının amacı nedir?
+
+- A) Verinin şifrelenmesi
+- B) Ağın dış sınırını büyük ölçekli saldırılardan (ör. DDoS) korumak ve kötü niyetli trafiği içeri girmeden filtrelemek
+- C) Kullanıcılara MFA zorunluluğu getirmek
+- D) Uygulama kodundaki zafiyetleri gidermek
+
+<details><summary>Cevap</summary>
+
+**B.** Çevre katmanı ağın **dış sınırını** korur. A veri, C kimlik ve erişim, D uygulama katmanıdır.
+</details>
+
+#### Soru 20: Tek seçim
+Bir uygulamaya yalnızca kendi işini yapmaya **yetecek en düşük** yetkiyi vermek, bu yetkiyi mümkün olan **en dar kapsamda** ve yalnızca gerektiği **süre** boyunca tanımlamak hangi ilkedir?
+
+- A) Use least privilege access
+- B) Verify explicitly
+- C) Assume breach
+- D) Shared responsibility
+
+<details><summary>Cevap</summary>
+
+**A.** **Least privilege**: just-enough ve just-in-time erişim. Azure'daki karşılığı dar kapsamlı RBAC rol atamalarıdır (→ C1.9).
+</details>
+
 ---
 
-**Puanlama:** 14-15 → hazırsın · 11-13 → README 3.1 (üç ilke) ve 3.2 (katman tablosu) bölümlerini tekrar et · < 11 → konuyu baştan çalış ve 3.2'deki alıştırmayı yap.
+**Puanlama:** 18-20 → hazırsın · 14-17 → README 3.1 (üç ilke) ve 3.2 (katman tablosu) bölümlerini tekrar et · < 14 → konuyu baştan çalış ve 3.2'deki alıştırmayı yap.
 
 ---
 

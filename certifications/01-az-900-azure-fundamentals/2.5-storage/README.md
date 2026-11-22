@@ -76,7 +76,17 @@ Bu konu sınavın beş sorusunu cevaplar:
 
 > Premium türler SSD tabanlıdır ve **coğrafi** (GRS/GZRS) redundancy sunmaz.
 
-**Blob hiyerarşisi:** storage account → **container** → **blob**. Blob türleri: **block** (dosyalar; en yaygın), **append** (sona ekleme — log), **page** (rastgele okuma/yazma — VM diskleri).
+**Blob hiyerarşisi:** storage account → **container** → **blob**. Üç blob türü vardır ve tür, blob oluşturulurken seçilir:
+
+| Blob türü | Nasıl yazılır? | Tipik kullanım |
+|---|---|---|
+| **Block blob** | Veri bloklar halinde yüklenir; dosyanın tamamı yazılır/değiştirilir | Belgeler, görseller, videolar, yedek dosyaları — **en yaygın** tür; access tier'lar (Hot/Cool/Cold/Archive) bu türde kullanılır |
+| **Append blob** | Yalnızca **sona ekleme**; var olan kısım değiştirilmez | **Log** dosyaları, denetim kayıtları — sürekli büyüyen veri |
+| **Page blob** | 512 baytlık sayfalarda **rastgele okuma/yazma** | **VM diskleri** (managed disk'lerin altyapısı) — sık ve rastgele erişilen büyük dosyalar |
+
+**Standard ↔ Premium:** Standard hesaplar **HDD tabanlıdır**, GB başına ucuzdur ve çoğu senaryoya yeter; tüm redundancy seçeneklerini sunar. Premium hesaplar **SSD tabanlıdır**, düşük gecikme ve yüksek işlem hızı sağlar ama daha pahalıdır ve yalnızca LRS/ZRS sunar.
+
+**Managed disks:** VM'lere bağlanan blok depolama birimleridir; Azure diski senin yerine yönetir (depolama hesabı, yerleşim ve dayanıklılık platformdadır). Türleri (Standard HDD, Standard SSD, Premium SSD…) performans ve maliyeti belirler; disk VM silinse bile ayrı bir kaynak olarak kalır (→ C1.5).
 
 #### 3.2 Redundancy ⭐
 
